@@ -22,15 +22,15 @@ export default function TodayPage() {
         <div className="pointer-events-none absolute left-[4.1rem] right-[4.1rem] top-0 z-10 py-1 text-center">
           <div className="absolute inset-x-[-2rem] -top-5 bottom-[-0.5rem] bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.80)_0%,rgba(0,0,0,0.54)_42%,rgba(0,0,0,0.17)_68%,transparent_82%)]" />
           <div className="relative">
-          <p className="text-[11px] tracking-[0.43em] text-[#f4b65f]">
-            MANYANG DREAM
-          </p>
-          <h1 className={`mt-1.5 text-[26px] font-semibold leading-tight text-[#ffd98a] ${ui.textGlow}`}>
-            마냥 꿈해몽
-          </h1>
-          <p className="mx-auto mt-1.5 max-w-[320px] text-[14px] leading-5 text-[#fff3d7]">
-            사라진 꿈을 고양이가 읽어드립니다
-          </p>
+            <p className="text-[11px] tracking-[0.43em] text-[#f4b65f]">
+              MANYANG DREAM
+            </p>
+            <h1 className={`mt-1.5 text-[26px] font-semibold leading-tight text-[#ffd98a] ${ui.textGlow}`}>
+              마냥 꿈해몽
+            </h1>
+            <p className="mx-auto mt-1.5 max-w-[320px] text-[14px] leading-5 text-[#fff3d7]">
+              사라진 꿈을 고양이가 읽어드립니다
+            </p>
           </div>
         </div>
 
@@ -39,10 +39,10 @@ export default function TodayPage() {
         </button>
       </header>
 
-      <div className="mt-auto space-y-3 pb-5">
+      <div className="mt-auto space-y-1.5 pb-1">
         <Link
           href="/write"
-          className="block transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-[#f7d58b]"
+          className="mx-auto block w-[86%] transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-[#f7d58b]"
         >
           <Image
             src="/manyang/dreammemory-button-1.png"
@@ -56,7 +56,7 @@ export default function TodayPage() {
         </Link>
         <Link
           href="/morning"
-          className="block transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-[#f7d58b]"
+          className="mx-auto block w-[68%] transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-[#f7d58b]"
         >
           <Image
             src="/manyang/dreammemory-button-2.png"

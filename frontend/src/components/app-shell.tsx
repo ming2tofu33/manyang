@@ -48,7 +48,7 @@ export function AppShell({
         <div className={scrimClassName} />
         <div className={bottomScrimClassName} />
 
-        <div className="relative z-10 flex min-h-screen flex-col px-6 pb-6 pt-8">
+        <div className="relative z-10 flex min-h-screen flex-col px-6 pb-1.5 pt-8">
           {showHeader ? (
             <header className="flex min-h-14 items-center justify-between">
               {backHref ? (

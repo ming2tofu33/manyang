@@ -24,20 +24,20 @@ export function BottomNav() {
           const isActive = active?.key === item.key;
 
           return (
-          <Link
-            key={item.key}
-            href={item.href}
-            className={[
-              "relative rounded-[1.5rem] transition",
-              "focus:outline-none focus:ring-2 focus:ring-[#d799ff]",
-            ].join(" ")}
-            aria-current={isActive ? "page" : undefined}
-          >
-            {isActive ? (
-              <span className="absolute inset-x-4 top-[18px] h-12 rounded-full bg-[#c775ff]/14 blur-md" />
-            ) : null}
-            <span className="sr-only">{item.label}</span>
-          </Link>
+            <Link
+              key={item.key}
+              href={item.href}
+              className={[
+                "relative rounded-[1.5rem] transition",
+                "focus:outline-none focus:ring-2 focus:ring-[#d799ff]",
+              ].join(" ")}
+              aria-current={isActive ? "page" : undefined}
+            >
+              {isActive ? (
+                <span className="absolute inset-x-4 top-[18px] h-12 rounded-full bg-[#c775ff]/14 blur-md" />
+              ) : null}
+              <span className="sr-only">{item.label}</span>
+            </Link>
           );
         })}
       </div>
