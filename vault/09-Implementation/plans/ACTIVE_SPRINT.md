@@ -26,13 +26,15 @@ status: active
 | UI-01 | 모바일 shell과 홈 화면 | done | P0 | 홈 CTA와 하단 nav 구현 |
 | UI-02 | 핵심 메뉴 화면 1차 구현 | done | P0 | 꿈쓰기/기록/백과/아침기분/로딩/결과 화면 라우팅 |
 | ASSET-01 | 분리 에셋 제작 요청서 | done | P1 | 필요한 이미지 에셋과 생성 가이드 정리 |
-| DATA-01 | 백과사전 seed 10개 구현 | todo | P0 | seed 타입과 목록 렌더링 |
-| AI-01 | mock 분석 API 구현 | todo | P0 | 꿈 입력 시 결과 JSON 반환 |
+| BE-01 | backend mock 도메인 모듈 분리 | done | P0 | seed, matcher, mock analyzer, 테스트 구현 |
+| DATA-01 | 백과사전 seed 10개 구현 | doing | P0 | backend seed 구현 완료, 프론트 목록 렌더링 연결 대기 |
+| AI-01 | mock 분석 API 구현 | doing | P0 | mock analyzer 구현 완료, Next API route 연결 대기 |
 | FLOW-01 | 입력→결과→저장→기록 루프 | todo | P0 | localStorage 기반 end-to-end |
 
 ## Current Plan
 
 - [[plans/2026-05-24-mvp-foundation|MVP Foundation Plan]]
+- [[../../../docs/plans/2026-05-24-backend-mock-analysis|Backend Mock Analysis Plan]]
 
 ## Notes
 
@@ -46,5 +48,6 @@ status: active
 - UI-01: `frontend/src/app/page.tsx` 기본 Next 화면을 마냥 홈 셸로 교체, `http://127.0.0.1:3000` 브라우저 스냅샷에서 제목/CTA/하단 내비게이션 확인. Screenshot: `manyang-home-mobile.png`.
 - UI-02: `frontend/src/app/write`, `/archive`, `/encyclopedia`, `/morning`, `/loading`, `/result` 1차 화면 구현. Mobile screenshots: `manyang-today-v4.png`, `manyang-write-mobile-v4.png`, `manyang-archive-mobile-v4.png`, `manyang-encyclopedia-mobile-v4.png`.
 - ASSET-01: [[../../08-Design/Asset-Generation-Brief|Asset Generation Brief]] 작성.
+- BE-01: `backend/` TypeScript 도메인 모듈 생성. `encyclopediaEntries`, `findMatchingSymbols`, `analyzeDream` 구현. `npm test`, `npm run typecheck` 통과.
 - Verification: `npm test`, `npm run lint`, `npm run build` 통과.
 - Dev server: `http://127.0.0.1:3000` 응답 확인.
