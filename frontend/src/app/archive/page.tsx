@@ -1,4 +1,5 @@
 import { AppShell } from "@/components/app-shell";
+import { DreamArchiveList } from "@/components/dream-archive-list";
 import { cn, ui } from "@/lib/styles";
 
 const days = Array.from({ length: 35 }, (_, index) => index + 1);
@@ -31,20 +32,7 @@ export default function ArchivePage() {
           </div>
         </section>
 
-        <section className={cn(ui.panel, "p-4")}>
-          <p className="text-sm text-[#f0bc7d]">2026.05.24</p>
-          <h2 className="mt-2 text-2xl text-[#ffd98a]">맨발로 복도를 달린 꿈</h2>
-          <p className="mt-3 leading-7 text-[#fff3d7]/86">
-            복도를 맨발로 빠르게 달렸어요. 누군가 뒤에서 부르는 것 같았지만 멈추지 않았어요.
-          </p>
-          <div className="mt-4 flex gap-2">
-            {["복도", "신발", "문"].map((symbol) => (
-              <span key={symbol} className={ui.chip}>
-                {symbol}
-              </span>
-            ))}
-          </div>
-        </section>
+        <DreamArchiveList />
       </div>
     </AppShell>
   );

@@ -29,7 +29,7 @@ status: active
 | BE-01 | backend mock 도메인 모듈 분리 | done | P0 | seed, matcher, mock analyzer, 테스트 구현 |
 | DATA-01 | 백과사전 seed 10개 구현 | doing | P0 | backend seed 구현 완료, 프론트 목록 렌더링 연결 대기 |
 | AI-01 | mock 분석 API 구현 | done | P0 | `POST /api/dreams/analyze`가 mock analyzer 결과 JSON 반환 |
-| FLOW-01 | 입력→결과→저장→기록 루프 | todo | P0 | localStorage 기반 end-to-end |
+| FLOW-01 | 입력→결과→저장→기록 루프 | review | P0 | localStorage 루프 구현 완료, 브라우저 클릭 검증 대기 |
 
 ## Current Plan
 
@@ -50,5 +50,6 @@ status: active
 - ASSET-01: [[../../08-Design/Asset-Generation-Brief|Asset Generation Brief]] 작성.
 - BE-01: `backend/` TypeScript 도메인 모듈 생성. `encyclopediaEntries`, `findMatchingSymbols`, `analyzeDream` 구현. `npm test`, `npm run typecheck` 통과.
 - AI-01: `frontend/src/app/api/dreams/analyze/route.ts` 생성. `@manyang/backend` 로컬 패키지를 Next route handler에서 호출. `frontend`의 `npm test`, `npm run lint`, `npm run build` 통과.
+- FLOW-01: `DreamEntryForm`, `DreamResultReceipt`, `DreamArchiveList`, `dream-storage` 추가. `frontend`의 `npm test`, `npm run lint`, `npm run build` 통과. Browser MCP가 다른 세션 프로필을 사용 중이라 클릭 검증은 대기.
 - Verification: `npm test`, `npm run lint`, `npm run build` 통과.
 - Dev server: `http://127.0.0.1:3000` 응답 확인.
