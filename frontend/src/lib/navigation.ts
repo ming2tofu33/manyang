@@ -14,7 +14,8 @@ export const bottomNavItems: BottomNavItem[] = [
     label: "오늘",
     href: "/",
     icon: "moon",
-    match: (pathname) => pathname === "/" || pathname.startsWith("/morning"),
+    match: (pathname) =>
+      pathname === "/" || pathname.startsWith("/morning") || pathname.startsWith("/seed"),
   },
   {
     key: "write",

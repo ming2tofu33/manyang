@@ -69,6 +69,12 @@ export default function TodayPage() {
           />
         </Link>
         <Link
+          href="/seed"
+          className="mx-auto flex min-h-12 w-[78%] items-center justify-center rounded-full border border-[#b98255]/75 bg-[rgba(5,4,11,0.62)] px-4 text-center text-base font-semibold text-[#f2c27d] shadow-[0_0_22px_rgba(0,0,0,0.28)] backdrop-blur-xl transition hover:border-[#ffd08a]/75 focus:outline-none focus:ring-2 focus:ring-[#f7d58b]"
+        >
+          꿈 씨앗 심기
+        </Link>
+        <Link
           href="/morning"
           className="mx-auto block h-10 px-4 text-center text-base text-[#f2c27d] underline-offset-4 hover:underline focus:outline-none focus:ring-2 focus:ring-[#f7d58b]"
         >

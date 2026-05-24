@@ -19,4 +19,7 @@ describe("bottom navigation", () => {
   it("maps morning mood flow back to today", () => {
     expect(getActiveNavItem("/morning")?.label).toBe("오늘");
   });
+  it("maps dream seed flow back to today", () => {
+    expect(getActiveNavItem("/seed")?.key).toBe("today");
+  });
 });
