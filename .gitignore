@@ -1,0 +1,10 @@
+.playwright-mcp/
+output/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+
+# Local environment files
+.env
+.env.*
