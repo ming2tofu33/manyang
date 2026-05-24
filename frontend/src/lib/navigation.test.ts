@@ -1,0 +1,22 @@
+import { describe, expect, it } from "vitest";
+
+import { bottomNavItems, getActiveNavItem } from "./navigation";
+
+describe("bottom navigation", () => {
+  it("keeps the four MVP menu items in reference order", () => {
+    expect(bottomNavItems.map((item) => item.label)).toEqual([
+      "오늘",
+      "꿈쓰기",
+      "기록",
+      "백과",
+    ]);
+  });
+
+  it("marks nested encyclopedia pages as encyclopedia", () => {
+    expect(getActiveNavItem("/encyclopedia/corridor")?.label).toBe("백과");
+  });
+
+  it("maps morning mood flow back to today", () => {
+    expect(getActiveNavItem("/morning")?.label).toBe("오늘");
+  });
+});

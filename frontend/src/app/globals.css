@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+:root {
+  --background: #05040b;
+  --foreground: #fff3d7;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-gowun-batang);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-gowun-batang), serif;
+}
+
+button {
+  cursor: pointer;
+}
+
+.orb-pulse {
+  animation: orb-pulse 2.8s ease-in-out infinite;
+  filter: drop-shadow(0 0 34px rgba(185, 97, 255, 0.5));
+}
+
+@keyframes orb-pulse {
+  0%,
+  100% {
+    transform: scale(0.98);
+    opacity: 0.92;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 1;
+  }
+}
