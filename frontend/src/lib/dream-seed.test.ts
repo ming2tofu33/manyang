@@ -4,6 +4,7 @@ import {
   createDreamSeedRecord,
   dreamSeedKey,
   getDreamSeed,
+  getDreamSeedSnapshot,
   saveDreamSeed,
   type DreamSeedInput,
   type StorageLike,
@@ -60,5 +61,19 @@ describe("dream seed storage", () => {
     const storage = createMemoryStorage({ [dreamSeedKey]: "{not-json" });
 
     expect(getDreamSeed(storage)).toBeNull();
+  });
+
+  test("returns stable dream seed snapshot references while storage is unchanged", () => {
+    const storage = createMemoryStorage();
+    const record = createDreamSeedRecord({
+      intentId: "question",
+      intentLabel: "지금 내 마음이 궁금해",
+      note: "",
+      seedDate: "2026-05-24",
+    });
+
+    saveDreamSeed(storage, record);
+
+    expect(getDreamSeedSnapshot(storage)).toBe(getDreamSeedSnapshot(storage));
   });
 });
