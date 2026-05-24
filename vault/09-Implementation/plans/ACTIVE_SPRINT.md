@@ -30,6 +30,7 @@ status: active
 | DATA-01 | 백과사전 seed 10개 구현 | doing | P0 | backend seed 구현 완료, 프론트 목록 렌더링 연결 대기 |
 | AI-01 | mock 분석 API 구현 | done | P0 | `POST /api/dreams/analyze`가 mock analyzer 결과 JSON 반환 |
 | FLOW-01 | 입력→결과→저장→기록 루프 | review | P0 | localStorage 루프 구현 완료, 브라우저 클릭 검증 대기 |
+| SEED-01 | 자기 전 꿈 씨앗 화면 | review | P1 | `/seed` 화면, 저장 루프, 홈 진입점 구현 |
 
 ## Current Plan
 
@@ -43,6 +44,8 @@ status: active
 - 참고 이미지는 `ref/` 폴더에 있다.
 
 ## Evidence
+
+- SEED-01: `/seed` 화면과 `manyang:dream-seed` localStorage 저장 구현. `frontend`의 `npm test`, `npm run lint`, `npm run build` 통과. 모바일 브라우저에서 홈 진입, 선택 상태, 100자 제한, 저장, reload persistence, Today nav active 상태 확인.
 
 - SETUP-01: `frontend/` 생성 완료, `npm run lint` 통과, `npm run build` 통과.
 - UI-01: `frontend/src/app/page.tsx` 기본 Next 화면을 마냥 홈 셸로 교체, `http://127.0.0.1:3000` 브라우저 스냅샷에서 제목/CTA/하단 내비게이션 확인. Screenshot: `manyang-home-mobile.png`.
