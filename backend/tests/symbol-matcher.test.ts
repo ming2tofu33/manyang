@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { findMatchingSymbols } from "../src/services/symbol-matcher.js";
+import { findMatchingSymbols } from "../src/services/symbol-matcher";
 
 describe("findMatchingSymbols", () => {
   test("matches canonical symbols from a Korean dream sentence", () => {

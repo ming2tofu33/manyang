@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
 
-import type { DreamAnalysisRequest, DreamAnalysisResponse, EncyclopediaEntry } from "../contracts/dream.js";
-import { getEntryBySymbol } from "../data/encyclopedia.js";
-import { findMatchingSymbols } from "./symbol-matcher.js";
+import type { DreamAnalysisRequest, DreamAnalysisResponse, EncyclopediaEntry } from "../contracts/dream";
+import { getEntryBySymbol } from "../data/encyclopedia";
+import { findMatchingSymbols } from "./symbol-matcher";
 
 const moodLabels: Record<string, string> = {
   anxious: "불안",

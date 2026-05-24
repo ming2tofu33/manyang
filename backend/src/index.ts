@@ -5,8 +5,8 @@ export type {
   DreamCardResponse,
   DreamSymbolCategory,
   EncyclopediaEntry,
-} from "./contracts/dream.js";
-export { encyclopediaEntries, getEntryBySymbol } from "./data/encyclopedia.js";
-export { analyzeDream } from "./services/mock-analysis.js";
-export { findMatchingSymbols } from "./services/symbol-matcher.js";
-export type { SymbolMatch, SymbolMatchOptions } from "./services/symbol-matcher.js";
+} from "./contracts/dream";
+export { encyclopediaEntries, getEntryBySymbol } from "./data/encyclopedia";
+export { analyzeDream } from "./services/mock-analysis";
+export { findMatchingSymbols } from "./services/symbol-matcher";
+export type { SymbolMatch, SymbolMatchOptions } from "./services/symbol-matcher";

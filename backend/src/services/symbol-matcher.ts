@@ -1,5 +1,5 @@
-import { encyclopediaEntries } from "../data/encyclopedia.js";
-import type { EncyclopediaEntry } from "../contracts/dream.js";
+import { encyclopediaEntries } from "../data/encyclopedia";
+import type { EncyclopediaEntry } from "../contracts/dream";
 
 export type SymbolMatch = {
   entry: EncyclopediaEntry;

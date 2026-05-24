@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { analyzeDream } from "../src/services/mock-analysis.js";
+import { analyzeDream } from "../src/services/mock-analysis";
 
 describe("analyzeDream", () => {
   test("returns an API-compatible mock analysis with matched symbols", () => {

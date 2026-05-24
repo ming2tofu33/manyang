@@ -28,7 +28,7 @@ status: active
 | ASSET-01 | 분리 에셋 제작 요청서 | done | P1 | 필요한 이미지 에셋과 생성 가이드 정리 |
 | BE-01 | backend mock 도메인 모듈 분리 | done | P0 | seed, matcher, mock analyzer, 테스트 구현 |
 | DATA-01 | 백과사전 seed 10개 구현 | doing | P0 | backend seed 구현 완료, 프론트 목록 렌더링 연결 대기 |
-| AI-01 | mock 분석 API 구현 | doing | P0 | mock analyzer 구현 완료, Next API route 연결 대기 |
+| AI-01 | mock 분석 API 구현 | done | P0 | `POST /api/dreams/analyze`가 mock analyzer 결과 JSON 반환 |
 | FLOW-01 | 입력→결과→저장→기록 루프 | todo | P0 | localStorage 기반 end-to-end |
 
 ## Current Plan
@@ -49,5 +49,6 @@ status: active
 - UI-02: `frontend/src/app/write`, `/archive`, `/encyclopedia`, `/morning`, `/loading`, `/result` 1차 화면 구현. Mobile screenshots: `manyang-today-v4.png`, `manyang-write-mobile-v4.png`, `manyang-archive-mobile-v4.png`, `manyang-encyclopedia-mobile-v4.png`.
 - ASSET-01: [[../../08-Design/Asset-Generation-Brief|Asset Generation Brief]] 작성.
 - BE-01: `backend/` TypeScript 도메인 모듈 생성. `encyclopediaEntries`, `findMatchingSymbols`, `analyzeDream` 구현. `npm test`, `npm run typecheck` 통과.
+- AI-01: `frontend/src/app/api/dreams/analyze/route.ts` 생성. `@manyang/backend` 로컬 패키지를 Next route handler에서 호출. `frontend`의 `npm test`, `npm run lint`, `npm run build` 통과.
 - Verification: `npm test`, `npm run lint`, `npm run build` 통과.
 - Dev server: `http://127.0.0.1:3000` 응답 확인.

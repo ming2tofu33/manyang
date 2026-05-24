@@ -1,4 +1,4 @@
-import type { EncyclopediaEntry } from "../contracts/dream.js";
+import type { EncyclopediaEntry } from "../contracts/dream";
 
 export const encyclopediaEntries: EncyclopediaEntry[] = [
   {

@@ -1,0 +1,41 @@
+import { describe, expect, test } from "vitest";
+
+import { POST } from "./route";
+
+function createJsonRequest(body: unknown): Request {
+  return new Request("http://localhost/api/dreams/analyze", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+}
+
+describe("POST /api/dreams/analyze", () => {
+  test("returns a mock dream analysis response", async () => {
+    const response = await POST(
+      createJsonRequest({
+        dreamText: "낡은 학교 복도에서 신발을 잃어버렸어요.",
+        dreamDate: "2026-05-24",
+        wakeMood: "anxious",
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    const body = await response.json();
+
+    expect(body.symbols).toEqual(expect.arrayContaining(["학교", "복도", "신발", "잃어버림"]));
+    expect(body.summary).toContain("꿈");
+    expect(body.card.name).toContain("밤");
+  });
+
+  test("returns 400 when dreamText is empty", async () => {
+    const response = await POST(createJsonRequest({ dreamText: "   " }));
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toEqual({
+      error: "dreamText is required",
+    });
+  });
+});
