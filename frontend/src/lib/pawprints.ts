@@ -24,6 +24,7 @@ export type PawprintSaveResult = {
 
 export const pawprintRecordsKey = "manyang:pawprints";
 export const pawprintChangedEvent = "manyang:pawprints-changed";
+export const pawprintStampUnlockCount = 7;
 
 const pawprintTimeZone = "Asia/Seoul";
 const pawprintDayBoundaryHours = 5;
@@ -74,6 +75,20 @@ function formatAppDate(date: Date): string {
   return `${values.year}-${values.month}-${values.day}`;
 }
 
+function getUniqueAppDates(records: PawprintRecord[]): Set<string> {
+  return new Set(records.map((record) => record.appDate));
+}
+
+function shiftAppDate(appDate: string, dayDelta: number): string {
+  const [year, month, day] = appDate.split("-").map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day + dayDelta));
+  const shiftedYear = date.getUTCFullYear();
+  const shiftedMonth = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const shiftedDay = String(date.getUTCDate()).padStart(2, "0");
+
+  return `${shiftedYear}-${shiftedMonth}-${shiftedDay}`;
+}
+
 export function getPawprintAppDate(date = new Date()): string {
   const shiftedDate = new Date(date.getTime() - pawprintDayBoundaryHours * 60 * 60 * 1000);
 
@@ -119,6 +134,29 @@ export function savePawprint(storage: StorageLike, record: PawprintRecord): Pawp
   storage.setItem(pawprintRecordsKey, JSON.stringify([record, ...records]));
 
   return { created: true, record };
+}
+
+export function countMonthlyPawprints(records: PawprintRecord[], year: number, month: number): number {
+  const monthPrefix = `${year}-${String(month).padStart(2, "0")}-`;
+
+  return [...getUniqueAppDates(records)].filter((appDate) => appDate.startsWith(monthPrefix)).length;
+}
+
+export function getCurrentPawprintStreak(records: PawprintRecord[], todayAppDate = getPawprintAppDate()): number {
+  const appDates = getUniqueAppDates(records);
+  let currentAppDate = appDates.has(todayAppDate) ? todayAppDate : shiftAppDate(todayAppDate, -1);
+  let streak = 0;
+
+  while (appDates.has(currentAppDate)) {
+    streak += 1;
+    currentAppDate = shiftAppDate(currentAppDate, -1);
+  }
+
+  return streak;
+}
+
+export function isPawprintStampUnlocked(records: PawprintRecord[]): boolean {
+  return getUniqueAppDates(records).size >= pawprintStampUnlockCount;
 }
 
 export function subscribeToPawprints(onStoreChange: () => void): () => void {

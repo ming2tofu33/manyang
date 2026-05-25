@@ -1,13 +1,17 @@
 import { describe, expect, test } from "vitest";
 
 import {
+  countMonthlyPawprints,
   createPawprintRecord,
+  getCurrentPawprintStreak,
   getPawprintAppDate,
   getPawprintSnapshot,
   getPawprints,
+  isPawprintStampUnlocked,
   pawprintRecordsKey,
   savePawprint,
   type PawprintInput,
+  type PawprintRecord,
   type StorageLike,
 } from "./pawprints";
 
@@ -28,6 +32,10 @@ function createInput(input: Partial<PawprintInput> = {}): PawprintInput {
     sourceId: "morning-2026-05-25",
     ...input,
   };
+}
+
+function createRecords(appDates: string[]): PawprintRecord[] {
+  return appDates.map((appDate) => createPawprintRecord(createInput({ appDate, sourceId: `source-${appDate}` })));
 }
 
 describe("pawprint storage", () => {
@@ -85,5 +93,49 @@ describe("pawprint storage", () => {
     savePawprint(storage, record);
 
     expect(getPawprintSnapshot(storage)).toBe(getPawprintSnapshot(storage));
+  });
+
+  test("counts unique monthly pawprint app dates", () => {
+    const mayRecord = createPawprintRecord(createInput({ appDate: "2026-05-01", sourceId: "may-1" }));
+    const mayDuplicate = createPawprintRecord(createInput({ appDate: "2026-05-01", sourceId: "may-duplicate" }));
+    const nextMayRecord = createPawprintRecord(createInput({ appDate: "2026-05-31", sourceId: "may-31" }));
+    const juneRecord = createPawprintRecord(createInput({ appDate: "2026-06-01", sourceId: "june-1" }));
+
+    expect(countMonthlyPawprints([mayRecord, mayDuplicate, nextMayRecord, juneRecord], 2026, 5)).toBe(2);
+  });
+
+  test("counts the current streak ending today", () => {
+    const records = createRecords(["2026-05-23", "2026-05-24", "2026-05-25"]);
+
+    expect(getCurrentPawprintStreak(records, "2026-05-25")).toBe(3);
+  });
+
+  test("counts the current streak through yesterday when today has no pawprint", () => {
+    const records = createRecords(["2026-05-23", "2026-05-24"]);
+
+    expect(getCurrentPawprintStreak(records, "2026-05-25")).toBe(2);
+  });
+
+  test("stops the current streak at date gaps", () => {
+    const records = createRecords(["2026-05-21", "2026-05-23", "2026-05-24"]);
+
+    expect(getCurrentPawprintStreak(records, "2026-05-25")).toBe(2);
+  });
+
+  test("unlocks the first stamp after seven unique pawprint days", () => {
+    expect(isPawprintStampUnlocked(createRecords(["2026-05-01", "2026-05-02", "2026-05-03"]))).toBe(false);
+    expect(
+      isPawprintStampUnlocked(
+        createRecords([
+          "2026-05-01",
+          "2026-05-02",
+          "2026-05-03",
+          "2026-05-04",
+          "2026-05-05",
+          "2026-05-06",
+          "2026-05-07",
+        ]),
+      ),
+    ).toBe(true);
   });
 });
