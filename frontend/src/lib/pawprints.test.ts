@@ -80,6 +80,22 @@ describe("pawprint storage", () => {
     expect(getPawprints(storage)).toEqual([first]);
   });
 
+  test("preserves the first pawprint when the same source is saved again", () => {
+    const storage = createMemoryStorage();
+    const first = createPawprintRecord(
+      createInput({ appDate: "2026-05-25", source: "receipt_saved", sourceId: "dream-1" }),
+    );
+    const duplicate = createPawprintRecord(
+      createInput({ appDate: "2026-05-26", source: "receipt_saved", sourceId: "dream-1" }),
+    );
+
+    savePawprint(storage, first);
+    const result = savePawprint(storage, duplicate);
+
+    expect(result).toMatchObject({ created: false, record: first });
+    expect(getPawprints(storage)).toEqual([first]);
+  });
+
   test("returns an empty list when stored JSON is corrupted", () => {
     const storage = createMemoryStorage({ [pawprintRecordsKey]: "{not-json" });
 

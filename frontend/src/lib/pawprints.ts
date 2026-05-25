@@ -125,7 +125,11 @@ export function getPawprintSnapshot(storage: StorageLike): PawprintRecord[] {
 
 export function savePawprint(storage: StorageLike, record: PawprintRecord): PawprintSaveResult {
   const records = getPawprints(storage);
-  const existingRecord = records.find((storedRecord) => storedRecord.appDate === record.appDate);
+  const existingRecord = records.find(
+    (storedRecord) =>
+      storedRecord.appDate === record.appDate ||
+      (storedRecord.source === record.source && storedRecord.sourceId === record.sourceId),
+  );
 
   if (existingRecord) {
     return { created: false, record: existingRecord };
