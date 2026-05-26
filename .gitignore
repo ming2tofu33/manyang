@@ -3,6 +3,8 @@ output/
 node_modules/
 ref/
 tmp/
+frontend/test-results/
+manyang-home-primary-button-smaller.png
 
 # OS/editor noise
 .DS_Store
