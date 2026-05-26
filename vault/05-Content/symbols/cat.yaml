@@ -1,0 +1,134 @@
+id: cat
+status: active
+category: animal
+safetyLevel: safe
+accessTier: free
+universalMeanings:
+  - intuition
+  - independence
+  - quiet observation
+  - distance
+tensionAxis:
+  - closeness
+  - guardedness
+relatedIds:
+  - dawn
+  - water
+  - searching
+sourceBasis:
+  - animal symbolism
+  - product identity
+  - scene function
+locales:
+  ko:
+    label: 고양이
+    aliases:
+      - 고양이
+      - 냥이
+      - 검은 고양이
+      - 길고양이
+    searchText: 고양이, 냥이, 검은 고양이, 길고양이, 직감, 독립성, 조용한 관찰, 거리감
+    coreMeanings:
+      - 직감
+      - 독립성
+      - 조용한 관찰
+      - 섬세한 거리감
+    lightReadings:
+      - 내 감각을 믿어도 되는 흐름
+      - 거리를 두고 살피는 지혜
+    shadowReadings:
+      - 마음을 쉽게 열지 않는 경계
+      - 혼자 해결하려는 습관
+    sceneModifiers:
+      approaching:
+        triggerTerms:
+          - 다가온
+          - 안긴
+          - 따라온
+        reading: 직감이나 도움을 받아들일 준비가 된 장면
+        weight: 0.75
+      watching:
+        triggerTerms:
+          - 바라본
+          - 지켜본
+          - 쳐다본
+        reading: 아직 개입하지 않고 조용히 살피는 감각
+        weight: 0.7
+      disappearing:
+        triggerTerms:
+          - 사라진
+          - 도망간
+          - 멀어진
+        reading: 붙잡기보다 거리를 두어야 하는 감각
+        weight: 0.75
+    contextQuestions:
+      - 고양이가 다가왔나요, 멀어졌나요?
+      - 고양이를 돌봤나요, 바라봤나요?
+    metaphorHooks:
+      - 조용히 이미 알고 있던 마음
+      - 가까움과 거리 사이의 발걸음
+    cardTitleSeeds:
+      - 조용히 바라보는 고양이
+      - 달빛 아래의 작은 직감
+    smallPrescriptions:
+      - 오늘은 바로 반응하지 말고 한 번 더 관찰한 뒤 답해보세요.
+    safeReading: 고양이는 직감과 독립성, 섬세한 거리감을 표현하는 상징으로 읽을 수 있어요.
+    avoidExpressions:
+      - 검은 고양이는 불길하다
+      - 누군가 배신한다
+  en:
+    label: Cat
+    aliases:
+      - cat
+      - kitten
+      - black cat
+      - stray cat
+    searchText: cat, kitten, black cat, stray cat, intuition, independence, quiet observation, distance
+    coreMeanings:
+      - intuition
+      - independence
+      - quiet observation
+      - delicate distance
+    lightReadings:
+      - trusting a quiet sense within you
+      - wisdom in observing from a little distance
+    shadowReadings:
+      - guardedness around opening up
+      - the habit of handling things alone
+    sceneModifiers:
+      approaching:
+        triggerTerms:
+          - came closer
+          - followed me
+          - curled up
+        reading: readiness to accept instinct or quiet support
+        weight: 0.75
+      watching:
+        triggerTerms:
+          - watching
+          - staring
+          - looking at me
+        reading: observing without intervening yet
+        weight: 0.7
+      disappearing:
+        triggerTerms:
+          - disappeared
+          - ran away
+          - moved away
+        reading: a feeling that may need distance rather than control
+        weight: 0.75
+    contextQuestions:
+      - Did the cat come closer or move away?
+      - Were you caring for it or simply watching it?
+    metaphorHooks:
+      - a quiet part of you that already knows
+      - a step between closeness and distance
+    cardTitleSeeds:
+      - The Quietly Watching Cat
+      - Small Intuition Under Moonlight
+    smallPrescriptions:
+      - Before responding today, observe once more than usual.
+    safeReading: A cat can point to intuition, independence, and a careful sense of distance.
+    avoidExpressions:
+      - a black cat is unlucky
+      - someone will betray you

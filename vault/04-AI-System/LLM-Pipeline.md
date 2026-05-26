@@ -94,6 +94,9 @@ source: docs/manyang-dream-project-spec-updated.md
 
 ## Related
 
+- [[Dream-Reading-Contracts]]
+- [[Dream-Reading-LLM-Logic]]
+- [[RAG-Strategy-for-Dream-Reading]]
 - [[Prompt-Guides]]
 - [[Encyclopedia-Retrieval]]
 
@@ -101,4 +104,4 @@ source: docs/manyang-dream-project-spec-updated.md
 
 - [[API-Contract]] — API 응답 계약 (02-Architecture)
 - [[Safety-&-Compliance]] — AI 표현 안전 기준 (07-Operations)
-
+- [[Dream-Reading-Quality-Safety]] — 해몽 품질 검증과 retry 기준

@@ -1,0 +1,136 @@
+id: water
+status: active
+category: nature
+safetyLevel: safe
+accessTier: free
+universalMeanings:
+  - emotion
+  - flow
+  - cleansing
+  - overwhelm
+tensionAxis:
+  - release
+  - being submerged
+relatedIds:
+  - many
+  - dawn
+  - cat
+sourceBasis:
+  - embodied metaphor
+  - natural symbolism
+  - scene function
+locales:
+  ko:
+    label: 물
+    aliases:
+      - 물
+      - 강물
+      - 물속
+      - 파도
+      - 웅덩이
+    searchText: 물, 강물, 물속, 파도, 감정 흐름, 정화, 압도감, 잠김, 흘려보냄
+    coreMeanings:
+      - 감정 흐름
+      - 정화
+      - 무의식적 감각
+      - 압도감
+    lightReadings:
+      - 감정을 흘려보내는 과정
+      - 묵은 기분이 씻기는 느낌
+    shadowReadings:
+      - 감정에 잠기는 부담
+      - 상황이 내 속도보다 크게 밀려오는 감각
+    sceneModifiers:
+      clear:
+        triggerTerms:
+          - 맑은
+          - 깨끗한
+          - 투명한
+        reading: 감정이 비교적 잘 보이고 정리되는 장면
+        weight: 0.75
+      muddy:
+        triggerTerms:
+          - 탁한
+          - 더러운
+          - 흐린
+        reading: 감정의 출처가 분명하지 않고 섞여 있는 장면
+        weight: 0.8
+      submerged:
+        triggerTerms:
+          - 물속
+          - 잠긴
+          - 빠진
+        reading: 감정의 양이 커져 몸으로 느껴지는 장면
+        weight: 0.85
+    contextQuestions:
+      - 물은 맑았나요, 탁했나요?
+      - 물가에 있었나요, 물속에 있었나요?
+    metaphorHooks:
+      - 말보다 먼저 움직이는 감정
+      - 흘러가야 하는 마음의 결
+    cardTitleSeeds:
+      - 물결에 비친 달
+      - 잠긴 마음의 가장자리
+    smallPrescriptions:
+      - 오늘은 감정을 해결하려 하기보다 이름 하나만 붙여보세요.
+    safeReading: 물은 꿈에서 감정의 양과 흐름을 보여주는 재료로 읽을 수 있어요.
+    avoidExpressions:
+      - 물꿈은 재물운이다
+      - 물에 빠지면 나쁜 일이 생긴다
+  en:
+    label: Water
+    aliases:
+      - water
+      - river
+      - underwater
+      - wave
+      - puddle
+    searchText: water, river, underwater, wave, emotion, flow, cleansing, overwhelm, submerged
+    coreMeanings:
+      - emotional flow
+      - cleansing
+      - unconscious feeling
+      - overwhelm
+    lightReadings:
+      - a process of letting feelings move
+      - an old mood being washed through
+    shadowReadings:
+      - feeling submerged by emotion
+      - something arriving faster than your pace
+    sceneModifiers:
+      clear:
+        triggerTerms:
+          - clear water
+          - clean water
+          - transparent
+        reading: feelings are visible enough to be sorted
+        weight: 0.75
+      muddy:
+        triggerTerms:
+          - muddy
+          - dirty water
+          - cloudy
+        reading: mixed feelings whose source is not clear yet
+        weight: 0.8
+      submerged:
+        triggerTerms:
+          - underwater
+          - submerged
+          - fell in
+        reading: the amount of feeling is large enough to be felt physically
+        weight: 0.85
+    contextQuestions:
+      - Was the water clear or muddy?
+      - Were you beside the water or inside it?
+    metaphorHooks:
+      - feeling moving before words
+      - the grain of emotion that needs to flow
+    cardTitleSeeds:
+      - Moon Reflected in Water
+      - Edge of the Submerged Heart
+    smallPrescriptions:
+      - Name one feeling today without trying to fix it.
+    safeReading: Water can point to the amount, movement, or clarity of feeling in a dream.
+    avoidExpressions:
+      - water dreams mean money
+      - falling into water predicts trouble

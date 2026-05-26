@@ -82,15 +82,16 @@ source: docs/manyang-dream-project-spec-updated.md
 - API 응답은 프론트 표시 구조와 DB 저장 구조를 동시에 만족해야 한다.
 - LLM 원문 응답을 그대로 클라이언트에 넘기지 않는다.
 - 분석 실패 시 사용자에게 저장 가능한 fallback 메시지를 제공한다.
+- 실제 LLM/RAG 도입 시 내부 단계별 계약은 [[Dream-Reading-Contracts]]를 따른다.
 
 ## Related
 
 - [[System-Architecture]]
 - [[Database-Schema]]
 - [[Tech-Decisions]]
+- [[Dream-Reading-Contracts]]
 
 ## See Also
 
 - [[LLM-Pipeline]] — API 내부 AI 흐름 (04-AI-System)
 - [[Checklists-&-DoD]] — API 완료 기준 (09-Implementation)
-

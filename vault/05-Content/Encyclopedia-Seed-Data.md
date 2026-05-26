@@ -61,10 +61,11 @@ export type EncyclopediaEntry = {
 
 ## Related
 
+- [[Multilingual-Symbol-Encyclopedia]]
+- [[RAG-Strategy-for-Dream-Reading]]
 - [[Cat-Reader-Voice]]
 
 ## See Also
 
 - [[Dream-Encyclopedia]] — 백과사전 화면 (03-Features)
 - [[Encyclopedia-Retrieval]] — 검색 방식 (04-AI-System)
-

@@ -35,6 +35,8 @@ source: docs/manyang-dream-project-spec-updated.md
 
 ## Related
 
+- [[RAG-Strategy-for-Dream-Reading]]
+- [[Multilingual-Symbol-Encyclopedia]]
 - [[LLM-Pipeline]]
 - [[Prompt-Guides]]
 
@@ -42,4 +44,3 @@ source: docs/manyang-dream-project-spec-updated.md
 
 - [[Dream-Encyclopedia]] — 사용자-facing 백과 기능 (03-Features)
 - [[Encyclopedia-Seed-Data]] — seed 데이터 구조 (05-Content)
-

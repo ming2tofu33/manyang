@@ -1,0 +1,149 @@
+id: snake
+status: active
+category: animal
+safetyLevel: sensitive
+accessTier: free
+universalMeanings:
+  - instinct
+  - hidden movement
+  - change
+  - life force
+tensionAxis:
+  - fascination
+  - wariness
+relatedIds:
+  - owned_land
+  - many
+  - water
+sourceBasis:
+  - everyday metaphor
+  - animal symbolism
+  - scene function
+  - product editorial rule
+cultureNotes:
+  ko:
+    weight: 0.7
+    exposeByDefault: false
+    notes:
+      - 구렁이는 터, 생명력, 재물, 태몽과 연결되어 읽히는 경우가 있음
+    safeTransform:
+      - 커진 생명력
+      - 내 영역 안에서 자라는 힘
+      - 무시하기 어려운 변화감
+locales:
+  ko:
+    label: 뱀
+    aliases:
+      - 뱀
+      - 구렁이
+      - 큰 뱀
+      - 독사
+    searchText: 뱀, 구렁이, 큰 뱀, 독사, 수십 마리, 생명력, 경계, 변화, 숨은 움직임
+    coreMeanings:
+      - 본능
+      - 경계
+      - 숨은 움직임
+      - 변화
+      - 생명력
+    lightReadings:
+      - 조용히 커지는 가능성
+      - 감각이 예민하게 깨어나는 흐름
+    shadowReadings:
+      - 압도감
+      - 어디서 움직일지 모르는 긴장
+    sceneModifiers:
+      many:
+        triggerTerms:
+          - 많이
+          - 수십 마리
+          - 가득
+        reading: 여러 갈래의 신호나 감각이 한꺼번에 올라오는 장면
+        weight: 0.85
+      large:
+        triggerTerms:
+          - 큰
+          - 거대한
+          - 구렁이
+        reading: 무시하기 어려울 만큼 커진 힘이나 변화감
+        weight: 0.8
+      presentNotAttacking:
+        triggerTerms:
+          - 그냥 있었어
+          - 나타났어
+          - 머물렀어
+        reading: 위협보다 존재감 자체가 강하게 남는 장면
+        weight: 0.65
+    contextQuestions:
+      - 뱀이 위협했나요, 그냥 있었나요?
+      - 뱀이 있던 곳은 내 공간이었나요, 낯선 곳이었나요?
+    metaphorHooks:
+      - 조용히 움직이는 힘
+      - 땅 아래에서 올라온 감각
+    cardTitleSeeds:
+      - 땅 아래 깨어난 구렁이
+      - 수십 개의 숨은 움직임
+    smallPrescriptions:
+      - 오늘은 내가 지켜야 한다고 느끼는 영역 하나를 적어보세요.
+    safeReading: 뱀은 불길함으로 단정하기보다, 본능적 감각이나 조용히 커지는 움직임으로 읽을 수 있어요.
+    avoidExpressions:
+      - 재물운이 반드시 오른다
+      - 태몽이다
+      - 위험한 일이 생긴다
+  en:
+    label: Snake
+    aliases:
+      - snake
+      - serpent
+      - large snake
+      - viper
+    searchText: snake, serpent, large snake, many snakes, instinct, alertness, hidden movement, change
+    coreMeanings:
+      - instinct
+      - alertness
+      - hidden movement
+      - change
+      - life force
+    lightReadings:
+      - a quiet force becoming visible
+      - instinctive awareness waking up
+    shadowReadings:
+      - feeling overwhelmed
+      - tension around something hard to predict
+    sceneModifiers:
+      many:
+        triggerTerms:
+          - many snakes
+          - dozens
+          - full of snakes
+        reading: many signals or instincts appearing at once
+        weight: 0.85
+      large:
+        triggerTerms:
+          - large snake
+          - huge snake
+          - serpent
+        reading: a force or change that feels hard to ignore
+        weight: 0.8
+      presentNotAttacking:
+        triggerTerms:
+          - just there
+          - appeared
+          - stayed there
+        reading: a strong presence rather than an immediate threat
+        weight: 0.65
+    contextQuestions:
+      - Was the snake threatening you, or simply present?
+      - Was it in your own space or somewhere unfamiliar?
+    metaphorHooks:
+      - a quiet force moving under the surface
+      - instinct becoming visible
+    cardTitleSeeds:
+      - The Snake Beneath the Ground
+      - Dozens of Hidden Signals
+    smallPrescriptions:
+      - Write down one area of life that feels important to protect today.
+    safeReading: A snake can point to instinctive movement or a change that feels hard to ignore.
+    avoidExpressions:
+      - money will definitely arrive
+      - this is a pregnancy dream
+      - something dangerous will happen

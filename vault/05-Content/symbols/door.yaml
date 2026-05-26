@@ -1,0 +1,136 @@
+id: door
+status: active
+category: object
+safetyLevel: safe
+accessTier: free
+universalMeanings:
+  - boundary
+  - choice
+  - transition
+  - access
+tensionAxis:
+  - wanting to enter
+  - hesitating at the edge
+relatedIds:
+  - corridor
+  - searching
+  - school
+sourceBasis:
+  - everyday metaphor
+  - spatial symbolism
+  - scene function
+locales:
+  ko:
+    label: 문
+    aliases:
+      - 문
+      - 대문
+      - 입구
+      - 문턱
+      - 문틈
+    searchText: 문, 대문, 입구, 문턱, 문이 잠김, 문이 바뀜, 선택, 경계, 전환
+    coreMeanings:
+      - 경계
+      - 선택
+      - 전환
+      - 접근
+    lightReadings:
+      - 다음 장면으로 넘어갈 준비
+      - 닫힌 것을 열어보려는 용기
+    shadowReadings:
+      - 결정 앞에서 멈추는 마음
+      - 허락이나 조건을 기다리는 긴장
+    sceneModifiers:
+      locked:
+        triggerTerms:
+          - 잠긴
+          - 안 열리는
+          - 열쇠가 없는
+        reading: 조건이나 허락을 기다리는 느낌
+        weight: 0.85
+      changing:
+        triggerTerms:
+          - 바뀌는
+          - 계속 달라지는
+          - 다른 문
+        reading: 선택지가 아니라 선택 기준이 흔들리는 감각
+        weight: 0.9
+      open:
+        triggerTerms:
+          - 열린
+          - 열려 있는
+          - 들어간
+        reading: 다음 장면이 이미 보이기 시작한 상태
+        weight: 0.7
+    contextQuestions:
+      - 문은 열려 있었나요, 닫혀 있었나요?
+      - 문 너머가 궁금했나요, 무서웠나요?
+    metaphorHooks:
+      - 문턱 앞에 선 마음
+      - 아직 이름 붙이지 못한 다음 장면
+    cardTitleSeeds:
+      - 바뀌는 문 앞의 고양이
+      - 문턱의 작은 달
+    smallPrescriptions:
+      - 오늘 결정해야 하는 일 하나에 임시 기준을 붙여보세요.
+    safeReading: 문은 다음 장면으로 넘어가기 전의 경계나 선택으로 읽을 수 있어요.
+    avoidExpressions:
+      - 반드시 기회가 온다
+      - 문이 닫혔으니 실패한다
+  en:
+    label: Door
+    aliases:
+      - door
+      - gate
+      - doorway
+      - threshold
+      - entrance
+    searchText: door, gate, doorway, threshold, locked door, changing door, boundary, choice, transition
+    coreMeanings:
+      - boundary
+      - choice
+      - transition
+      - access
+    lightReadings:
+      - readiness to move into a new scene
+      - courage to open what has been closed
+    shadowReadings:
+      - hesitation at the edge of a decision
+      - waiting for permission or the right condition
+    sceneModifiers:
+      locked:
+        triggerTerms:
+          - locked
+          - would not open
+          - no key
+        reading: waiting for a condition or permission
+        weight: 0.85
+      changing:
+        triggerTerms:
+          - changing door
+          - kept changing
+          - different door
+        reading: the standard for choosing keeps shifting
+        weight: 0.9
+      open:
+        triggerTerms:
+          - open
+          - opened
+          - went through
+        reading: the next scene is already becoming visible
+        weight: 0.7
+    contextQuestions:
+      - Was the door open, closed, locked, or hard to reach?
+      - Were you curious about what was beyond it, or afraid of it?
+    metaphorHooks:
+      - standing at a threshold
+      - the next scene that has not been named yet
+    cardTitleSeeds:
+      - The Cat Before the Changing Door
+      - Moon at the Threshold
+    smallPrescriptions:
+      - Give one decision today a temporary standard before choosing.
+    safeReading: A door can point to a threshold between where you are and what comes next.
+    avoidExpressions:
+      - a guaranteed opportunity is coming
+      - a closed door means failure

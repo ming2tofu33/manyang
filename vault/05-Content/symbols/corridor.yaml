@@ -1,0 +1,134 @@
+id: corridor
+status: active
+category: place
+safetyLevel: safe
+accessTier: free
+universalMeanings:
+  - transition
+  - in-between state
+  - movement
+  - uncertainty
+tensionAxis:
+  - moving forward
+  - not yet arrived
+relatedIds:
+  - door
+  - school
+  - searching
+sourceBasis:
+  - spatial symbolism
+  - scene function
+  - everyday metaphor
+locales:
+  ko:
+    label: 복도
+    aliases:
+      - 복도
+      - 긴 복도
+      - 회랑
+      - 통로
+    searchText: 복도, 긴 복도, 통로, 회랑, 중간 상태, 전환, 아직 도착 전, 이동
+    coreMeanings:
+      - 전환 구간
+      - 이동 중인 마음
+      - 결정 전 상태
+      - 중간에 머무는 감각
+    lightReadings:
+      - 아직 도착 전이지만 움직임은 이어지는 상태
+      - 선택지를 살피는 과정
+    shadowReadings:
+      - 목적지가 보이지 않는 답답함
+      - 어디로 가야 할지 모르는 조급함
+    sceneModifiers:
+      long:
+        triggerTerms:
+          - 긴
+          - 끝없는
+          - 길게
+        reading: 과정이 길게 느껴지고 결론이 멀어 보이는 장면
+        weight: 0.8
+      manyDoors:
+        triggerTerms:
+          - 문이 많
+          - 여러 문
+          - 방이 많
+        reading: 선택지가 많아 방향 기준을 찾는 장면
+        weight: 0.85
+      alone:
+        triggerTerms:
+          - 혼자
+          - 아무도 없
+          - 텅 빈
+        reading: 결정 전 과정을 혼자 지나가는 감각
+        weight: 0.7
+    contextQuestions:
+      - 복도 끝에 무엇이 있었나요?
+      - 혼자 걷고 있었나요, 누가 있었나요?
+    metaphorHooks:
+      - 결론보다 과정이 큰 길
+      - 아직 어느 방에도 들어가지 않은 마음
+    cardTitleSeeds:
+      - 끝나지 않은 복도
+      - 문 사이를 걷는 달
+    smallPrescriptions:
+      - 오늘은 결론보다 지금 지나고 있는 단계 이름을 하나 붙여보세요.
+    safeReading: 복도는 어느 방에도 완전히 머물지 않은 중간 상태를 보여주는 장면으로 읽을 수 있어요.
+    avoidExpressions:
+      - 길을 잃었으니 실패한다
+      - 목적지가 없다는 뜻이다
+  en:
+    label: Corridor
+    aliases:
+      - corridor
+      - hallway
+      - passage
+      - long hallway
+    searchText: corridor, hallway, passage, long hallway, transition, in-between, not arrived, moving
+    coreMeanings:
+      - transition
+      - in-between state
+      - movement
+      - uncertainty
+    lightReadings:
+      - movement continuing before arrival
+      - a process of scanning options
+    shadowReadings:
+      - frustration when the destination is unclear
+      - urgency around where to go next
+    sceneModifiers:
+      long:
+        triggerTerms:
+          - long hallway
+          - endless
+          - stretched
+        reading: the process feels long and the conclusion distant
+        weight: 0.8
+      manyDoors:
+        triggerTerms:
+          - many doors
+          - several doors
+          - rooms everywhere
+        reading: many options asking for a clearer standard
+        weight: 0.85
+      alone:
+        triggerTerms:
+          - alone
+          - empty hallway
+          - no one there
+        reading: moving through a decision process alone
+        weight: 0.7
+    contextQuestions:
+      - What was at the end of the corridor?
+      - Were you walking alone or with someone?
+    metaphorHooks:
+      - a path where the process is louder than the answer
+      - a mind not yet inside any room
+    cardTitleSeeds:
+      - The Hallway That Keeps Going
+      - Moon Between the Doors
+    smallPrescriptions:
+      - Give a name to the stage you are currently passing through.
+    safeReading: A corridor can show an in-between state before a decision, arrival, or clearer direction.
+    avoidExpressions:
+      - being lost means failure
+      - you have no destination

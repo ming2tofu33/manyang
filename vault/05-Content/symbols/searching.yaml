@@ -1,0 +1,137 @@
+id: searching
+status: active
+category: action
+safetyLevel: safe
+accessTier: free
+universalMeanings:
+  - seeking
+  - uncertainty
+  - desire for clarity
+  - missing piece
+tensionAxis:
+  - curiosity
+  - frustration
+relatedIds:
+  - door
+  - corridor
+  - school
+sourceBasis:
+  - action symbolism
+  - scene function
+  - everyday metaphor
+locales:
+  ko:
+    label: 찾기
+    aliases:
+      - 찾기
+      - 찾
+      - 찾는
+      - 못 찾는
+      - 잃어버린
+      - 헤매는
+    searchText: 찾기, 못 찾음, 잃어버림, 헤맴, 단서, 방향, 기준, 명확함을 원함
+    coreMeanings:
+      - 탐색
+      - 기준 찾기
+      - 빠진 조각
+      - 명확함에 대한 욕구
+    lightReadings:
+      - 아직 답을 찾는 중이라는 정직한 신호
+      - 필요한 단서를 모으는 흐름
+    shadowReadings:
+      - 계속 부족한 느낌
+      - 기준이 없어 조급해지는 상태
+    sceneModifiers:
+      cannotFind:
+        triggerTerms:
+          - 못 찾
+          - 안 보이
+          - 없어졌
+        reading: 원하는 답보다 기준 자체가 흐려진 장면
+        weight: 0.85
+      repeatedlySearching:
+        triggerTerms:
+          - 계속 찾
+          - 반복해서
+          - 또 찾
+        reading: 같은 질문이 마음 안에서 반복되는 흐름
+        weight: 0.8
+      findingObject:
+        triggerTerms:
+          - 찾았
+          - 발견
+          - 보였
+        reading: 단서가 완전히 사라진 것이 아니라 의식 위로 올라오는 장면
+        weight: 0.7
+    contextQuestions:
+      - 무엇을 찾고 있었나요?
+      - 찾지 못해서 초조했나요, 계속 궁금했나요?
+    metaphorHooks:
+      - 아직 이름 없는 단서를 찾는 마음
+      - 빠진 조각을 더듬는 장면
+    cardTitleSeeds:
+      - 잃어버린 단서의 달
+      - 찾는 마음의 발자국
+    smallPrescriptions:
+      - 오늘 찾고 싶은 답을 하나의 질문으로만 적어보세요.
+    safeReading: 찾는 장면은 아직 답이 없다는 뜻보다, 필요한 단서를 모으는 과정으로 읽을 수 있어요.
+    avoidExpressions:
+      - 결국 잃게 된다
+      - 원하는 것을 반드시 찾는다
+  en:
+    label: Searching
+    aliases:
+      - searching
+      - looking for
+      - cannot find
+      - lost
+      - wandering
+    searchText: searching, looking for, cannot find, lost, wandering, clue, direction, standard, clarity
+    coreMeanings:
+      - seeking
+      - looking for a standard
+      - missing piece
+      - desire for clarity
+    lightReadings:
+      - an honest sign that you are still looking
+      - gathering the clues you need
+    shadowReadings:
+      - feeling like something is always missing
+      - urgency when there is no clear standard
+    sceneModifiers:
+      cannotFind:
+        triggerTerms:
+          - cannot find
+          - could not see
+          - disappeared
+        reading: the standard itself feels unclear, not just the answer
+        weight: 0.85
+      repeatedlySearching:
+        triggerTerms:
+          - kept looking
+          - again and again
+          - still searching
+        reading: the same question repeating inside the mind
+        weight: 0.8
+      findingObject:
+        triggerTerms:
+          - found
+          - discovered
+          - saw it
+        reading: a clue becoming visible again
+        weight: 0.7
+    contextQuestions:
+      - What were you looking for?
+      - Did the search feel anxious, curious, or urgent?
+    metaphorHooks:
+      - looking for a clue that has not been named yet
+      - touching the shape of a missing piece
+    cardTitleSeeds:
+      - Moon of the Missing Clue
+      - Footprints of the Searching Mind
+    smallPrescriptions:
+      - Write the answer you want today as a single question.
+    safeReading: Searching can point to gathering clues, not simply lacking an answer.
+    avoidExpressions:
+      - you will lose what you want
+      - you will definitely find it

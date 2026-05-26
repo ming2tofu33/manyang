@@ -43,10 +43,10 @@ source: docs/manyang-dream-project-spec-updated.md
 
 ## Related
 
+- [[Dream-Reading-Quality-Safety]]
 - [[Cost-&-Deployment]]
 
 ## See Also
 
 - [[Prompt-Guides]] — 안전 표현 프롬프트 (04-AI-System)
 - [[Dream-Reading-Result]] — 고지가 필요한 결과 화면 (03-Features)
-

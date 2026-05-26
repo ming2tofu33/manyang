@@ -26,6 +26,14 @@ tags:
 
 - [[plans/ACTIVE_SPRINT]] — 현재 할 일
 - [[MVP-Scope]] — 1차 MVP 범위
+- [[Dream-Reading-Contracts]] — LLM/RAG/API 해몽 데이터 계약
+- [[Dream-Reading-LLM-Logic]] — 해몽 LLM 로직과 예시
+- [[RAG-Strategy-for-Dream-Reading]] — 꿈해몽 RAG 검색 전략
+- [[Retrieval-Scoring-Contract]] — 검색 confidence와 reranking 계약
+- [[Multilingual-Symbol-Encyclopedia]] — 다국어 상징 백과사전 설계
+- [[Symbol-Encyclopedia-Schema]] — 백과사전 YAML/DB 저장 스키마
+- [[Dream-Reading-Quality-Safety]] — 해몽 품질/안전 검증 기준
+- [[Dream-Reading-Golden-Test-Set]] — 해몽 회귀 테스트 케이스
 - [[Screen-Inventory]] — 화면 목록
 - [[Source-Documents]] — 원본 문서와 참고 이미지
 

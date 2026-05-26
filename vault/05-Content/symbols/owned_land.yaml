@@ -1,0 +1,139 @@
+id: owned_land
+status: active
+category: place
+safetyLevel: safe
+accessTier: free
+universalMeanings:
+  - foundation
+  - territory
+  - belonging
+  - stewardship
+tensionAxis:
+  - rootedness
+  - protectiveness
+relatedIds:
+  - home
+  - snake
+  - many
+sourceBasis:
+  - everyday metaphor
+  - spatial symbolism
+  - scene function
+  - product editorial rule
+locales:
+  ko:
+    label: 우리 땅
+    aliases:
+      - 우리 땅
+      - 내 땅
+      - 땅
+      - 집터
+      - 대지
+    searchText: 우리 땅, 내 땅, 집터, 대지, 기반, 생활 터전, 가족 영역, 지켜야 하는 곳
+    coreMeanings:
+      - 기반
+      - 생활 터전
+      - 소유감
+      - 가족의 영역
+    lightReadings:
+      - 내가 가꾸는 영역을 알아차리는 흐름
+      - 삶의 기반을 다시 확인하는 장면
+    shadowReadings:
+      - 지켜야 한다는 부담
+      - 내 영역에 무언가 들어온 듯한 긴장
+    sceneModifiers:
+      filledWithAnimals:
+        triggerTerms:
+          - 가득
+          - 많이
+          - 수십 마리
+        reading: 내 기반 안에서 여러 신호가 동시에 움직이는 장면
+        weight: 0.85
+      unfamiliarOnLand:
+        triggerTerms:
+          - 낯선
+          - 이상한
+          - 처음 보는
+        reading: 익숙한 영역 안에 낯선 감각이 들어온 장면
+        weight: 0.75
+      fertileGround:
+        triggerTerms:
+          - 자라
+          - 올라와
+          - 땅속
+        reading: 아직 보이지 않던 가능성이 기반에서 올라오는 장면
+        weight: 0.7
+    contextQuestions:
+      - 그 땅은 실제로 아는 곳이었나요, 꿈에서만 내 땅이었나요?
+      - 그곳을 지켜야 한다는 느낌이 있었나요?
+    metaphorHooks:
+      - 내가 딛고 있는 기반
+      - 마음이 자기 영역이라고 부르는 자리
+    cardTitleSeeds:
+      - 내 땅 위의 신호들
+      - 기반에 모인 달빛
+    smallPrescriptions:
+      - 오늘은 내가 책임지고 있다고 느끼는 영역 하나를 가볍게 정리해보세요.
+    safeReading: 우리 땅은 내가 지키고 가꾸는 기반이나 생활 영역으로 읽을 수 있어요.
+    avoidExpressions:
+      - 부동산 운이 오른다
+      - 땅과 재산이 늘어난다
+      - 가족에게 일이 생긴다
+  en:
+    label: My Land
+    aliases:
+      - my land
+      - our land
+      - property
+      - ground
+      - family land
+    searchText: my land, our land, property, ground, family land, foundation, territory, belonging
+    coreMeanings:
+      - foundation
+      - territory
+      - belonging
+      - responsibility
+    lightReadings:
+      - noticing the ground you are building on
+      - reconnecting with a sense of place
+    shadowReadings:
+      - feeling responsible for too much
+      - tension around what enters your space
+    sceneModifiers:
+      filledWithAnimals:
+        triggerTerms:
+          - full of animals
+          - many
+          - dozens
+        reading: many signals moving inside your own territory
+        weight: 0.85
+      unfamiliarOnLand:
+        triggerTerms:
+          - unfamiliar
+          - strange
+          - unknown
+        reading: something unfamiliar entering a familiar space
+        weight: 0.75
+      fertileGround:
+        triggerTerms:
+          - growing
+          - coming up
+          - from the ground
+        reading: a possibility rising from the foundation
+        weight: 0.7
+    contextQuestions:
+      - Was the land familiar in real life, or only yours in the dream?
+      - Did you feel responsible for protecting it?
+    metaphorHooks:
+      - the ground you stand on
+      - the place your mind calls its own
+    cardTitleSeeds:
+      - Signals on My Land
+      - Moonlight on the Ground
+    smallPrescriptions:
+      - Tidy or name one area of life that feels like your responsibility today.
+    safeReading: Owned land can point to your foundation, territory, or the part of life you feel responsible for tending.
+    avoidExpressions:
+      - you will gain property
+      - your family will face an event
+      - money is coming through land

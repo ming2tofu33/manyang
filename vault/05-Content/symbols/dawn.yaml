@@ -1,0 +1,134 @@
+id: dawn
+status: active
+category: time
+safetyLevel: safe
+accessTier: free
+universalMeanings:
+  - transition
+  - early awareness
+  - quiet threshold
+  - sensitivity
+tensionAxis:
+  - beginning
+  - uncertainty before clarity
+relatedIds:
+  - water
+  - searching
+  - door
+sourceBasis:
+  - time symbolism
+  - everyday rhythm
+  - scene function
+locales:
+  ko:
+    label: 새벽
+    aliases:
+      - 새벽
+      - 이른 아침
+      - 동틀 무렵
+      - 깰 무렵
+    searchText: 새벽, 이른 아침, 동틀 무렵, 깰 무렵, 전환 시간, 아직 밝기 전, 예민한 감각
+    coreMeanings:
+      - 전환 시간
+      - 이른 알아차림
+      - 아직 밝기 전의 감각
+      - 조용한 경계
+    lightReadings:
+      - 하루가 시작되기 전 먼저 올라온 신호
+      - 조용해서 더 선명해진 감각
+    shadowReadings:
+      - 아직 분명하지 않은 상태
+      - 잠과 깸 사이의 예민함
+    sceneModifiers:
+      justBeforeWaking:
+        triggerTerms:
+          - 깰 무렵
+          - 일어나기 전
+          - 잠에서 깨기 전
+        reading: 의식 위로 막 올라오는 감각이 남은 장면
+        weight: 0.75
+      darkDawn:
+        triggerTerms:
+          - 어두운 새벽
+          - 캄캄한
+          - 아직 밤
+        reading: 시작은 되었지만 아직 명확하지 않은 전환
+        weight: 0.7
+      quietDawn:
+        triggerTerms:
+          - 조용한
+          - 고요한
+          - 아무 소리 없는
+        reading: 작은 신호가 크게 들릴 만큼 조용한 상태
+        weight: 0.65
+    contextQuestions:
+      - 새벽이라는 시간이 꿈에서 중요하게 느껴졌나요?
+      - 꿈에서 깬 뒤 감각이 오래 남았나요?
+    metaphorHooks:
+      - 아직 완전히 밝아지기 전의 신호
+      - 잠과 하루 사이의 얇은 문턱
+    cardTitleSeeds:
+      - 새벽에 남은 신호
+      - 동트기 전의 달
+    smallPrescriptions:
+      - 오늘 아침에 가장 먼저 남은 감각을 한 단어로 적어보세요.
+    safeReading: 새벽은 꿈의 중심 의미라기보다, 감각이 예민해지는 전환 시간으로 낮게 반영하는 편이 좋아요.
+    avoidExpressions:
+      - 새벽꿈은 반드시 맞는다
+      - 예지몽이다
+  en:
+    label: Dawn
+    aliases:
+      - dawn
+      - early morning
+      - daybreak
+      - before waking
+    searchText: dawn, early morning, daybreak, before waking, transition time, sensitivity, before clarity
+    coreMeanings:
+      - transition
+      - early awareness
+      - before full clarity
+      - quiet threshold
+    lightReadings:
+      - a signal arriving before the day begins
+      - a quiet moment making a feeling clearer
+    shadowReadings:
+      - something not fully clear yet
+      - sensitivity between sleep and waking
+    sceneModifiers:
+      justBeforeWaking:
+        triggerTerms:
+          - before waking
+          - just woke up
+          - waking up
+        reading: a feeling just rising into awareness
+        weight: 0.75
+      darkDawn:
+        triggerTerms:
+          - dark dawn
+          - still dark
+          - before sunrise
+        reading: a beginning that is not fully clear yet
+        weight: 0.7
+      quietDawn:
+        triggerTerms:
+          - quiet
+          - silent
+          - still
+        reading: a state quiet enough for small signals to feel larger
+        weight: 0.65
+    contextQuestions:
+      - Did the time of dawn feel important in the dream?
+      - Did the feeling stay with you after waking?
+    metaphorHooks:
+      - a signal before full daylight
+      - the thin threshold between sleep and day
+    cardTitleSeeds:
+      - Signal Left at Dawn
+      - Moon Before Daybreak
+    smallPrescriptions:
+      - Write the first feeling that stayed with you this morning as one word.
+    safeReading: Dawn is usually a low-weight time modifier, pointing to transition and sensitivity.
+    avoidExpressions:
+      - dawn dreams always come true
+      - this is a prophetic dream
