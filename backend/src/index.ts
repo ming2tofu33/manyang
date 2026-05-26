@@ -1,4 +1,6 @@
 export type {
+  CatReaderAccess,
+  CatReaderResponse,
   CatReaderType,
   DreamAnalysisRequest,
   DreamAnalysisResponse,

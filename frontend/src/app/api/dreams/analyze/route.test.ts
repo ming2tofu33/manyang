@@ -19,12 +19,19 @@ describe("POST /api/dreams/analyze", () => {
         dreamText: "낡은 학교 복도에서 신발을 잃어버렸어요.",
         dreamDate: "2026-05-24",
         wakeMood: "anxious",
+        catReaderType: "white_cat",
       }),
     );
 
     expect(response.status).toBe(200);
     const body = await response.json();
 
+    expect(body.reader).toMatchObject({
+      id: "white_cat",
+      name: "하얀냥",
+      access: "free",
+    });
+    expect(body.readerNote).toContain("하얀냥");
     expect(body.symbols).toEqual(expect.arrayContaining(["학교", "복도", "신발", "잃어버림"]));
     expect(body.summary).toContain("꿈");
     expect(body.card.name).toContain("밤");

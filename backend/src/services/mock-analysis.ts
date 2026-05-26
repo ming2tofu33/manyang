@@ -1,6 +1,12 @@
 import { randomUUID } from "node:crypto";
 
-import type { DreamAnalysisRequest, DreamAnalysisResponse, EncyclopediaEntry } from "../contracts/dream";
+import type {
+  CatReaderResponse,
+  CatReaderType,
+  DreamAnalysisRequest,
+  DreamAnalysisResponse,
+  EncyclopediaEntry,
+} from "../contracts/dream";
 import { getEntryBySymbol } from "../data/encyclopedia";
 import { findMatchingSymbols } from "./symbol-matcher";
 
@@ -21,6 +27,33 @@ const moodLabels: Record<string, string> = {
 
 const fallbackSymbolNames = ["문", "물", "고양이"];
 
+const catReaderProfiles: Record<CatReaderType, CatReaderResponse & { note: string }> = {
+  black_cat: {
+    id: "black_cat",
+    name: "검은냥",
+    access: "free",
+    note: "검은냥은 꿈속 상징과 장면의 연결을 조용히 먼저 살펴봤다냥.",
+  },
+  white_cat: {
+    id: "white_cat",
+    name: "하얀냥",
+    access: "free",
+    note: "하얀냥은 이 꿈이 남긴 감정을 부드럽게 이름 붙여봤다냥.",
+  },
+  cheese_cat: {
+    id: "cheese_cat",
+    name: "치즈냥",
+    access: "free",
+    note: "치즈냥은 꿈에서 오늘 바로 해볼 작은 행동을 찾아봤다냥.",
+  },
+  gray_cat: {
+    id: "gray_cat",
+    name: "회색냥",
+    access: "annual_premium",
+    note: "회색냥의 꿈+타로 리딩은 아직 준비 중이다냥.",
+  },
+};
+
 function unique(values: string[]): string[] {
   return [...new Set(values.filter(Boolean))];
 }
@@ -29,6 +62,12 @@ function pickFallbackEntries(): EncyclopediaEntry[] {
   return fallbackSymbolNames
     .map((symbol) => getEntryBySymbol(symbol))
     .filter((entry): entry is EncyclopediaEntry => entry !== undefined);
+}
+
+function getCatReaderProfile(readerType: CatReaderType | string | undefined): CatReaderResponse & { note: string } {
+  const normalizedReaderType = readerType === "orange_cat" || readerType === "yellow_cat" ? "cheese_cat" : readerType;
+
+  return catReaderProfiles[(normalizedReaderType as CatReaderType | undefined) ?? "black_cat"] ?? catReaderProfiles.black_cat;
 }
 
 function inferEmotions(request: DreamAnalysisRequest, symbols: string[]): string[] {
@@ -169,17 +208,24 @@ export function analyzeDream(request: DreamAnalysisRequest): DreamAnalysisRespon
   const summary = buildSummary(entries, isFallback);
   const interpretation = buildInterpretation(entries, emotions, isFallback);
   const smallPrescription = buildSmallPrescription(symbols, isFallback);
+  const reader = getCatReaderProfile(request.catReaderType);
 
   return {
     dreamId: randomUUID(),
     analysisId: randomUUID(),
     cardId: randomUUID(),
+    reader: {
+      id: reader.id,
+      name: reader.name,
+      access: reader.access,
+    },
     summary,
     symbols,
     emotions,
     themes,
     interpretation,
     smallPrescription,
+    readerNote: reader.note,
     card: buildCard(entries, themes, emotions, summary),
   };
 }

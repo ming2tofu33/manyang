@@ -7,7 +7,14 @@ export type DreamSymbolCategory =
   | "emotion"
   | "person";
 
-export type CatReaderType = "black_cat";
+export type CatReaderType = "black_cat" | "white_cat" | "cheese_cat" | "gray_cat";
+export type CatReaderAccess = "free" | "annual_premium";
+
+export type CatReaderResponse = {
+  id: CatReaderType;
+  name: string;
+  access: CatReaderAccess;
+};
 
 export type EncyclopediaEntry = {
   symbol: string;
@@ -44,11 +51,13 @@ export type DreamAnalysisResponse = {
   dreamId: string;
   analysisId: string;
   cardId: string;
+  reader: CatReaderResponse;
   summary: string;
   symbols: string[];
   emotions: string[];
   themes: string[];
   interpretation: string;
   smallPrescription: string;
+  readerNote?: string;
   card: DreamCardResponse;
 };
