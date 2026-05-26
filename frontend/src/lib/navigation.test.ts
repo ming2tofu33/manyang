@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { dreamSeedRoute } from "./dream-seed-options";
 import { bottomNavItems, getActiveNavItem } from "./navigation";
 
 describe("bottom navigation", () => {
@@ -20,6 +21,6 @@ describe("bottom navigation", () => {
     expect(getActiveNavItem("/morning")?.label).toBe("오늘");
   });
   it("maps dream seed flow back to today", () => {
-    expect(getActiveNavItem("/seed")?.key).toBe("today");
+    expect(getActiveNavItem(dreamSeedRoute)?.key).toBe("today");
   });
 });

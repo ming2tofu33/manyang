@@ -24,7 +24,6 @@ export type PawprintSaveResult = {
 
 export const pawprintRecordsKey = "manyang:pawprints";
 export const pawprintChangedEvent = "manyang:pawprints-changed";
-export const pawprintStampUnlockCount = 7;
 
 const pawprintTimeZone = "Asia/Seoul";
 const pawprintDayBoundaryHours = 5;
@@ -157,10 +156,6 @@ export function getCurrentPawprintStreak(records: PawprintRecord[], todayAppDate
   }
 
   return streak;
-}
-
-export function isPawprintStampUnlocked(records: PawprintRecord[]): boolean {
-  return getUniqueAppDates(records).size >= pawprintStampUnlockCount;
 }
 
 export function subscribeToPawprints(onStoreChange: () => void): () => void {

@@ -1,0 +1,53 @@
+import type { CSSProperties } from "react";
+
+import { getHomeBackgroundEffectTargets, type HomeBackgroundEffectTarget } from "@/lib/home-background-effect-layout";
+import { cn } from "@/lib/styles";
+
+function getPositionStyle(target: HomeBackgroundEffectTarget): CSSProperties {
+  return {
+    left: `${target.x}%`,
+    top: `${target.y}%`,
+    width: `${target.size}px`,
+    height: `${target.size}px`,
+  };
+}
+
+function getAnimationStyle(target: HomeBackgroundEffectTarget): CSSProperties {
+  return {
+    animationDelay: target.delay,
+  };
+}
+
+function getEffectClassName(target: HomeBackgroundEffectTarget) {
+  return cn(
+    "home-live-effect block h-full w-full",
+    target.type === "flame" && "home-live-flame",
+    target.type === "orb" && "home-live-orb",
+    target.type === "smoke" && "home-live-smoke",
+    target.type === "twinkle" && "home-live-twinkle",
+    target.tone === "violet" && "home-live-violet",
+    target.tone === "white" && "home-live-white",
+    target.tone === "rose" && "home-live-rose",
+    target.tone === "gold" && "home-live-gold",
+    target.tone === "cool" && "home-live-cool",
+  );
+}
+
+export function HomeBackgroundEffects({ className, readerId }: { className?: string; readerId?: string }) {
+  const targets = getHomeBackgroundEffectTargets(readerId);
+
+  return (
+    <div className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)} aria-hidden="true">
+      {targets.map((target) => (
+        <span
+          key={target.name}
+          data-home-effect={target.name}
+          className="absolute -translate-x-1/2 -translate-y-1/2"
+          style={getPositionStyle(target)}
+        >
+          <span className={getEffectClassName(target)} style={getAnimationStyle(target)} />
+        </span>
+      ))}
+    </div>
+  );
+}

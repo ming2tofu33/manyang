@@ -1,14 +1,25 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import { BookOpen, Download, Share2 } from "lucide-react";
-import { useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 
+import { AssetTextButton } from "@/components/asset-primitives";
+import { getCatReaderById } from "@/lib/cat-readers";
+import {
+  getDreamSeedSnapshotFromBrowser,
+  isDreamSeedRelatedToDreamDate,
+  subscribeToDreamSeed,
+} from "@/lib/dream-seed";
 import {
   getLatestAnalysisSnapshotFromBrowser,
   type LatestAnalysisPayload,
 } from "@/lib/dream-storage";
+import { manyangAssets } from "@/lib/manyang-assets";
+import {
+  createPawprintRecord,
+  getPawprintAppDate,
+  savePawprintToBrowser,
+} from "@/lib/pawprints";
 import {
   createReceiptFileName,
   createReceiptShareText,
@@ -24,6 +35,11 @@ const fallbackPayload: LatestAnalysisPayload = {
     dreamId: "fallback-dream",
     analysisId: "fallback-analysis",
     cardId: "fallback-card",
+    reader: {
+      id: "black_cat",
+      name: "검은냥",
+      access: "free",
+    },
     summary: "맨발로 복도를 달린 꿈",
     symbols: ["학교", "복도", "신발"],
     emotions: ["불안함"],
@@ -39,6 +55,7 @@ const fallbackPayload: LatestAnalysisPayload = {
       message: "오늘은 미뤄둔 준비물 하나만 먼저 확인해보자냥.",
       theme: "장소와 전환",
     },
+    readerNote: "검은냥은 꿈속 상징과 장면의 연결을 조용히 먼저 살펴봤다냥.",
   },
 };
 
@@ -58,12 +75,16 @@ export function DreamResultReceipt() {
     getLatestAnalysisSnapshotFromBrowser,
     () => null,
   );
+  const storedSeed = useSyncExternalStore(subscribeToDreamSeed, getDreamSeedSnapshotFromBrowser, () => null);
+  const [pawprintCreated, setPawprintCreated] = useState(false);
   const hasStoredPayload = storedPayload !== null;
   const payload = storedPayload ?? fallbackPayload;
 
   const { analysis } = payload;
+  const reader = getCatReaderById(payload.catReaderType ?? analysis.reader?.id);
   const displayMood = payload.wakeMood ?? analysis.emotions[0] ?? "기록 없음";
   const primarySymbolHref = `/encyclopedia/${getPrimarySymbolSlug(analysis.symbols)}`;
+  const relatedSeed = isDreamSeedRelatedToDreamDate(storedSeed, payload.dreamDate) ? storedSeed : null;
 
   function handleDownload() {
     const svg = createReceiptSvg(payload);
@@ -75,6 +96,15 @@ export function DreamResultReceipt() {
     anchor.download = createReceiptFileName(payload);
     anchor.click();
     URL.revokeObjectURL(url);
+
+    const pawprintResult = savePawprintToBrowser(
+      createPawprintRecord({
+        appDate: getPawprintAppDate(),
+        source: "receipt_saved",
+        sourceId: analysis.dreamId,
+      }),
+    );
+    setPawprintCreated(pawprintResult?.created ?? false);
   }
 
   async function handleShare() {
@@ -92,66 +122,100 @@ export function DreamResultReceipt() {
   }
 
   return (
-    <div className="mt-5 space-y-4 pb-5">
-      <section className="relative mx-auto min-h-[890px] w-full max-w-[360px] overflow-hidden">
+    <div className="mt-2 space-y-4 pb-5">
+      <section className="animate-receipt-slide-up relative mx-auto aspect-[771/1730] w-full max-w-[360px] overflow-hidden">
         <Image
-          src="/manyang/dreamreceipt-empty.png"
+          src="/manyang/receipts/empty.png"
           alt=""
           fill
           sizes="360px"
           unoptimized
           className="object-contain drop-shadow-[0_18px_60px_rgba(0,0,0,0.38)]"
         />
-        <div className="relative z-10 mx-auto flex min-h-[890px] w-[78%] flex-col px-1 pt-[152px] text-[#2f2117]">
-          <h1 className="text-center text-2xl font-semibold leading-snug text-[#24180f]">
+        <div className="relative z-10 mx-auto flex h-full w-[78%] flex-col px-1 pt-[152px] text-[#2f2117]">
+          <h1 className="animate-ink-fade text-center text-2xl font-semibold leading-snug text-[#24180f]" style={{ animationDelay: "1.0s" }}>
             {analysis.summary}
           </h1>
-          <div className="mt-5 flex justify-center gap-2 text-sm text-[#5b4029]">
+          <div className="animate-ink-fade mt-5 flex justify-center gap-2 text-sm text-[#5b4029]" style={{ animationDelay: "1.5s" }}>
             <span>{formatDreamDate(payload.dreamDate)}</span>
             <span>|</span>
             <span>{displayMood}</span>
           </div>
-          <div className="mt-6 flex flex-wrap justify-center gap-2">
+          <p className="animate-ink-fade mt-2 text-center text-sm font-semibold text-[#6b4d36]" style={{ animationDelay: "1.7s" }}>
+            From. {reader.name}
+          </p>
+          <div className="animate-ink-fade mt-6 flex flex-wrap justify-center gap-2" style={{ animationDelay: "2.0s" }}>
             {analysis.symbols.slice(0, 5).map((symbol) => (
               <span key={symbol} className="rounded-full border border-[#7b5536]/40 px-4 py-2 text-sm text-[#4b3422]">
                 {symbol}
               </span>
             ))}
           </div>
-          <p className="mt-7 text-[15px] leading-7 text-[#2f2117]">{analysis.interpretation}</p>
-          <p className="mt-5 border-t border-[#8b6345]/30 pt-5 text-[15px] leading-7 text-[#2f2117]">
+          <p className="animate-ink-fade mt-7 text-[15px] leading-7 text-[#2f2117]" style={{ animationDelay: "2.6s" }}>{analysis.interpretation}</p>
+          {analysis.readerNote ? (
+            <p className="animate-ink-fade mt-4 rounded-[0.85rem] border border-[#8b6345]/24 bg-[#d9b984]/36 px-3 py-2 text-[14px] leading-6 text-[#3b2819]" style={{ animationDelay: "3.0s" }}>
+              {analysis.readerNote}
+            </p>
+          ) : null}
+          <p className="animate-ink-fade mt-5 border-t border-[#8b6345]/30 pt-5 text-[15px] leading-7 text-[#2f2117]" style={{ animationDelay: "3.3s" }}>
             {analysis.smallPrescription}
           </p>
         </div>
       </section>
-      <div className="grid grid-cols-2 gap-3">
-        <button
-          type="button"
+      {relatedSeed ? (
+        <section
+          className="animate-ink-fade rounded-[1.1rem] border border-[#b98255]/45 bg-[rgba(7,6,18,0.76)] px-4 py-3 text-sm leading-6 text-[#fff3d7] shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md"
+          style={{ animationDelay: "3.7s" }}
+        >
+          <p className="flex items-center gap-2 font-semibold text-[#ffd98a]">
+            <span className="relative h-5 w-5">
+              <Image src={manyangAssets.icons.star} alt="" fill sizes="20px" unoptimized className="object-contain" />
+            </span>
+            어젯밤의 꿈 씨앗
+          </p>
+          <p className="mt-1 text-[#fff3d7]/84">
+            {relatedSeed.intentLabel} · {relatedSeed.atmosphere}
+          </p>
+          {relatedSeed.note ? (
+            <p className="mt-1 rounded-[0.8rem] border border-[#7c4a38]/55 bg-[rgba(5,4,12,0.58)] px-3 py-2 text-[#d8c7bc]">
+              {relatedSeed.note}
+            </p>
+          ) : null}
+        </section>
+      ) : null}
+      <div className="animate-ink-fade grid grid-cols-2 gap-3" style={{ animationDelay: "4.0s" }}>
+        <AssetTextButton
+          frame={manyangAssets.boxes.pillWide}
+          iconSrc={manyangAssets.icons.download}
           onClick={handleDownload}
-          className="flex min-h-[3.75rem] items-center justify-center gap-2 rounded-full border border-[#b98255]/75 bg-[rgba(5,4,11,0.62)] px-4 py-3 text-lg font-bold text-[#f2c27d] shadow-[0_0_24px_rgba(0,0,0,0.32)] backdrop-blur-xl transition hover:border-[#ffd08a]/75 focus:outline-none focus:ring-2 focus:ring-[#f7d58b]"
+          contentClassName="min-h-[3.75rem] px-3 text-[15px]"
+          iconClassName="h-7 w-7"
         >
-          <Download size={22} aria-hidden="true" />
           저장하기
-        </button>
-        <button
-          type="button"
+        </AssetTextButton>
+        <AssetTextButton
+          frame={manyangAssets.boxes.pillWide}
+          iconSrc={manyangAssets.icons.share}
           onClick={() => void handleShare()}
-          className="flex min-h-[3.75rem] items-center justify-center gap-2 rounded-full border border-[#b98255]/75 bg-[rgba(5,4,11,0.62)] px-4 py-3 text-lg font-bold text-[#f2c27d] shadow-[0_0_24px_rgba(0,0,0,0.32)] backdrop-blur-xl transition hover:border-[#ffd08a]/75 focus:outline-none focus:ring-2 focus:ring-[#f7d58b]"
+          contentClassName="min-h-[3.75rem] px-3 text-[15px]"
+          iconClassName="h-7 w-7"
         >
-          <Share2 size={22} aria-hidden="true" />
           공유하기
-        </button>
+        </AssetTextButton>
       </div>
-      <Link
+      <AssetTextButton
         href={primarySymbolHref}
-        className="flex min-h-[3.75rem] w-full items-center justify-between rounded-full border border-[#b98255]/75 bg-[rgba(5,4,11,0.62)] px-6 py-3.5 text-lg font-bold text-[#f2c27d] shadow-[0_0_24px_rgba(0,0,0,0.32)] backdrop-blur-xl transition hover:border-[#ffd08a]/75 focus:outline-none focus:ring-2 focus:ring-[#f7d58b]"
+        frame={manyangAssets.boxes.pillDashedSparkles}
+        iconSrc={manyangAssets.icons.book}
+        className="animate-ink-fade"
+        contentClassName="min-h-[3.75rem] justify-start px-5 text-left text-[16px]"
+        iconClassName="h-8 w-8"
+        style={{ animationDelay: "4.3s" }}
       >
-        <span className="flex items-center gap-3">
-          <BookOpen size={23} aria-hidden="true" />
-          상징 백과에서 자세히 보기
-        </span>
+        <span className="min-w-0 flex-1">상징 백과에서 자세히 보기</span>
         <span aria-hidden="true">›</span>
-      </Link>
+      </AssetTextButton>
+      {pawprintCreated ? <p className="text-center text-sm font-semibold text-[#f0bc7d]">오늘의 발자국이 남았어요.</p> : null}
       {hasStoredPayload ? (
         <p className="text-center text-sm text-[#f0bc7d]/82">이 꿈은 기록에 자동으로 남겨졌어요.</p>
       ) : null}

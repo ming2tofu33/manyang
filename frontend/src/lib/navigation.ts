@@ -1,3 +1,5 @@
+import { dreamSeedRoute } from "./dream-seed-options";
+
 export type NavKey = "today" | "write" | "archive" | "encyclopedia";
 
 export type BottomNavItem = {
@@ -15,7 +17,7 @@ export const bottomNavItems: BottomNavItem[] = [
     href: "/",
     icon: "moon",
     match: (pathname) =>
-      pathname === "/" || pathname.startsWith("/morning") || pathname.startsWith("/seed"),
+      pathname === "/" || pathname.startsWith("/morning") || pathname.startsWith(dreamSeedRoute),
   },
   {
     key: "write",

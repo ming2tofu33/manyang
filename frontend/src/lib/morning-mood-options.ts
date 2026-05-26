@@ -1,0 +1,33 @@
+export const morningMoodCopy = {
+  pageTitle: "꿈의 발자국",
+  pageSubtitle: "꿈은 흐릿해도 괜찮다냥.\n아침에 남은 느낌만 적어보자냥.",
+  moodTitle: "아침에 일어났을 때 기분은 어땠나요?",
+  bodyTitle: "몸은 어떤 느낌인가요?",
+  thoughtTitle: "지금 떠오르는 단어 하나",
+  thoughtPlaceholder: "예: 안개, 커피, 기다림, 조용함...",
+  submit: "발자국 남기기",
+  submitAgain: "발자국 다시 남기기",
+  savedTitle: "오늘 아침의 발자국을 남겼어요.",
+  savedDescription: "꿈이 사라져도 기분은 남아 있어요. 오늘의 발자국을 잠시 보관해두었습니다.",
+  footer: "기록은 꿈 달력에 저장돼요.",
+} as const;
+
+export const morningMoodOptions = [
+  { label: "차분함", icon: "feather" },
+  { label: "불안함", icon: "crystals" },
+  { label: "찝찝함", icon: "cloud" },
+  { label: "설렘", icon: "sparkles" },
+  { label: "그리움", icon: "moon" },
+  { label: "슬픔", icon: "potion" },
+  { label: "신기함", icon: "star" },
+  { label: "멍함", icon: "crystalBall" },
+] as const;
+
+export const morningBodyFeelings = [
+  { label: "개운함", icon: "sparkles" },
+  { label: "졸림", icon: "moon" },
+  { label: "피곤함", icon: "cloud" },
+  { label: "무거움", icon: "key" },
+  { label: "긴장됨", icon: "star" },
+  { label: "편안함", icon: "paw" },
+] as const;

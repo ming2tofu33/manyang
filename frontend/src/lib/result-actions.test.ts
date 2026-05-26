@@ -12,11 +12,17 @@ function createPayload(): LatestAnalysisPayload {
   return {
     dreamText: "낡은 학교 복도에서 신발을 잃어버렸어요.",
     dreamDate: "2026-05-24",
+    catReaderType: "white_cat",
     wakeMood: "불안",
     analysis: {
       dreamId: "dream-id",
       analysisId: "analysis-id",
       cardId: "card-id",
+      reader: {
+        id: "white_cat",
+        name: "하얀냥",
+        access: "free",
+      },
       summary: "복도와 신발이 남은 꿈",
       symbols: ["복도", "신발", "학교"],
       emotions: ["불안"],
@@ -31,6 +37,7 @@ function createPayload(): LatestAnalysisPayload {
         message: "불안을 작은 단서로 데려가보자냥.",
         theme: "장소와 전환",
       },
+      readerNote: "하얀냥은 이 꿈이 남긴 감정을 부드럽게 이름 붙여봤다냥.",
     },
   };
 }
@@ -52,6 +59,7 @@ describe("result action helpers", () => {
     const text = createReceiptShareText(createPayload());
 
     expect(text).toContain("복도와 신발이 남은 꿈");
+    expect(text).toContain("From. 하얀냥");
     expect(text).toContain("복도, 신발, 학교");
     expect(text).toContain("준비물 하나만 먼저 확인해보자냥.");
   });
@@ -61,6 +69,7 @@ describe("result action helpers", () => {
 
     expect(svg).toContain("<svg");
     expect(svg).toContain("복도와 신발이 남은 꿈");
+    expect(svg).toContain("From. 하얀냥");
     expect(svg).toContain("준비물 하나만 먼저 확인해보자냥.");
   });
 });

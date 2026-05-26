@@ -1,4 +1,5 @@
 import type { LatestAnalysisPayload } from "./dream-storage";
+import { getCatReaderById } from "./cat-readers";
 
 const symbolSlugMap: Record<string, string> = {
   문: "door",
@@ -88,14 +89,18 @@ export function createReceiptFileName(payload: LatestAnalysisPayload): string {
 }
 
 export function createReceiptShareText(payload: LatestAnalysisPayload): string {
+  const reader = getCatReaderById(payload.catReaderType ?? payload.analysis.reader?.id);
+
   return [
     `오늘의 꿈 영수증: ${payload.analysis.summary}`,
+    `From. ${reader.name}`,
     `주요 상징: ${payload.analysis.symbols.join(", ")}`,
     `작은 처방: ${payload.analysis.smallPrescription}`,
   ].join("\n");
 }
 
 export function createReceiptSvg(payload: LatestAnalysisPayload): string {
+  const reader = getCatReaderById(payload.catReaderType ?? payload.analysis.reader?.id);
   const interpretationLines = wrapText(payload.analysis.interpretation, 32).slice(0, 8);
   const prescriptionLines = wrapText(payload.analysis.smallPrescription, 30).slice(0, 3);
   const symbolText = payload.analysis.symbols.slice(0, 4).join(" · ");
@@ -117,6 +122,7 @@ export function createReceiptSvg(payload: LatestAnalysisPayload): string {
   <text x="450" y="238" class="meta">DREAM RECEIPT</text>
   <text x="450" y="320" class="title">${escapeXml(payload.analysis.summary)}</text>
   <text x="450" y="380" class="meta">${escapeXml(payload.dreamDate)}  |  ${escapeXml(moodText)}</text>
+  <text x="450" y="425" class="meta">From. ${escapeXml(reader.name)}</text>
   <text x="450" y="475" class="label">주요 상징</text>
   <text x="450" y="535" class="meta">${escapeXml(symbolText)}</text>
   <text x="450" y="640" class="label">고양이 해석</text>

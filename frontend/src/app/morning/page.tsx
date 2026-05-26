@@ -1,41 +1,45 @@
-import { AppShell } from "@/components/app-shell";
-import { cn, ui } from "@/lib/styles";
+import type { Metadata } from "next";
+import Image from "next/image";
 
-const moods = ["가벼움", "흐림", "불안", "차분", "졸림"];
+import { AppShell } from "@/components/app-shell";
+import { MorningMoodForm } from "@/components/morning-mood-form";
+import { morningMoodCopy } from "@/lib/morning-mood-options";
+import { manyangAssets } from "@/lib/manyang-assets";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default function MorningPage() {
   return (
-    <AppShell background="/manyang/background-default.png" title="아침 기분" subtitle="꿈이 사라져도 기분은 남겨요" backHref="/">
-      <div className="mt-auto space-y-5 pb-5">
-        <section className={cn(ui.panel, "p-5")}>
-          <p className="text-lg leading-7 text-[#fff2d6]">
-            오늘 꿈은 발자국만 남기고 사라졌다냥. 그래도 아침의 기분은 기록해둘 수 있어요.
-          </p>
-        </section>
-        <section className={cn(ui.panel, "p-4")}>
-          <p className="text-sm text-[#f0bc7d]">지금 기분</p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {moods.map((mood) => (
-              <button key={mood} type="button" className={ui.chip}>
-                {mood}
-              </button>
-            ))}
+    <AppShell
+      background="/manyang/backgrounds/default.png"
+      backgroundOverlay={
+        <>
+          <div className="absolute inset-x-0 top-[2.25rem] h-[26rem] overflow-hidden">
+            <Image
+              src={manyangAssets.illustrations.morning}
+              alt=""
+              width={1254}
+              height={1254}
+              priority
+              sizes="430px"
+              className="absolute left-1/2 top-0 h-[25.8rem] w-[25.8rem] max-w-none -translate-x-1/2 object-contain"
+            />
           </div>
-        </section>
-        <section className={cn(ui.panel, "p-4")}>
-          <label htmlFor="thought" className="text-sm text-[#f0bc7d]">
-            가장 먼저 든 생각
-          </label>
-          <input
-            id="thought"
-            placeholder="오늘은 천천히 시작하고 싶어"
-            className={cn(ui.field, "mt-3 h-12 rounded-full px-4")}
-          />
-        </section>
-        <button type="button" className={ui.primaryAction}>
-          발자국 카드 남기기
-        </button>
-      </div>
+          <div className="absolute inset-x-0 top-[20.6rem] h-[9rem] bg-[linear-gradient(180deg,rgba(5,4,11,0.00),rgba(5,4,11,0.94)_66%,rgba(5,4,11,0.99))]" />
+        </>
+      }
+      title={morningMoodCopy.pageTitle}
+      subtitle={morningMoodCopy.pageSubtitle}
+      titleIconSrc={manyangAssets.icons.moon}
+      backHref="/"
+      rightAction="calendar"
+    >
+      <MorningMoodForm />
     </AppShell>
   );
 }

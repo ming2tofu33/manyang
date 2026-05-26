@@ -1,4 +1,5 @@
 import type { DreamAnalysisResponse } from "@manyang/backend";
+import type { CatReaderId } from "./cat-readers";
 
 export type StorageLike = {
   getItem(key: string): string | null;
@@ -9,6 +10,7 @@ export type StorageLike = {
 export type LatestAnalysisPayload = {
   dreamText: string;
   dreamDate: string;
+  catReaderType?: CatReaderId;
   wakeMood?: string;
   analysis: DreamAnalysisResponse;
 };

@@ -1,82 +1,210 @@
 "use client";
 
-import Link from "next/link";
-import { Trash2 } from "lucide-react";
+import Image from "next/image";
 import { useSyncExternalStore } from "react";
 
+import { AssetIconButton, AssetTextButton } from "@/components/asset-primitives";
+import { createArchiveTimeline, type ArchiveTimelineItem } from "@/lib/archive-records";
+import {
+  getCatReaderById,
+  getDefaultCatReaderSnapshot,
+  getSelectedCatReaderSnapshotFromBrowser,
+  subscribeToSelectedCatReader,
+  type CatReaderId,
+} from "@/lib/cat-readers";
+import {
+  getDreamSeedRecordsSnapshotFromBrowser,
+  getEmptyDreamSeedRecordsSnapshot,
+  subscribeToDreamSeed,
+} from "@/lib/dream-seed";
 import {
   deleteDreamRecordToBrowser,
   getDreamRecordsSnapshotFromBrowser,
   getEmptyDreamRecordsSnapshot,
   subscribeToDreamStorage,
-  type DreamRecord,
 } from "@/lib/dream-storage";
+import { manyangAssets } from "@/lib/manyang-assets";
+import {
+  getEmptyPawprintSnapshot,
+  getPawprintSnapshotFromBrowser,
+  subscribeToPawprints,
+} from "@/lib/pawprints";
 import { cn, ui } from "@/lib/styles";
 
-function formatDreamDate(date: string): string {
+const archiveYear = 2026;
+const archiveMonth = 5;
+
+const timelineIcons: Record<ArchiveTimelineItem["type"], string> = {
+  dream: manyangAssets.icons.moon,
+  pawprint: manyangAssets.icons.paw,
+  seed: manyangAssets.icons.sparkles,
+};
+
+function formatArchiveDate(date: string): string {
   return date.replaceAll("-", ".");
 }
 
+function getTimelineIconClassName(type: ArchiveTimelineItem["type"]): string {
+  if (type === "seed") {
+    return "hue-rotate-[58deg] saturate-[1.35]";
+  }
+
+  return "";
+}
+
+export function ArchiveCatGuide({ selectedCatReaderId }: { selectedCatReaderId: CatReaderId }) {
+  const reader = getCatReaderById(selectedCatReaderId);
+
+  return (
+    <div className="relative z-10 mt-4 flex min-h-[5.5rem] items-end justify-between border-t border-[#7c4a38]/35 pt-3">
+      <p className="pb-2 text-sm font-semibold text-[#ffd98a]">꿈은 지나가도, 기록은 남는다냥.</p>
+      <span className="relative h-24 w-24 shrink-0" title={reader.name}>
+        <Image
+          src={manyangAssets.illustrations[reader.assetKey]}
+          alt={`${reader.name} 기록 안내`}
+          fill
+          sizes="96px"
+          unoptimized
+          className="scale-110 object-contain drop-shadow-[0_0_18px_rgba(215,153,255,0.28)]"
+        />
+      </span>
+    </div>
+  );
+}
+
 export function DreamArchiveList() {
-  const records = useSyncExternalStore(
+  const dreamRecords = useSyncExternalStore(
     subscribeToDreamStorage,
     getDreamRecordsSnapshotFromBrowser,
     getEmptyDreamRecordsSnapshot,
   );
+  const pawprints = useSyncExternalStore(
+    subscribeToPawprints,
+    getPawprintSnapshotFromBrowser,
+    getEmptyPawprintSnapshot,
+  );
+  const seedRecords = useSyncExternalStore(
+    subscribeToDreamSeed,
+    getDreamSeedRecordsSnapshotFromBrowser,
+    getEmptyDreamSeedRecordsSnapshot,
+  );
+  const selectedCatReaderId = useSyncExternalStore(
+    subscribeToSelectedCatReader,
+    getSelectedCatReaderSnapshotFromBrowser,
+    getDefaultCatReaderSnapshot,
+  );
+  const timeline = createArchiveTimeline({
+    dreamRecords,
+    pawprints,
+    seedRecords,
+    year: archiveYear,
+    month: archiveMonth,
+  });
 
-  function handleDelete(record: DreamRecord) {
+  function handleDelete(item: ArchiveTimelineItem) {
+    if (!item.dreamRecordId) {
+      return;
+    }
+
     const confirmed = window.confirm(
-      `"${record.analysis.summary}" 기록을 삭제할까요?\n삭제한 기록은 다시 불러올 수 없어요.`,
+      `"${item.title}" 기록을 삭제할까요?\n삭제한 기록은 다시 불러올 수 없어요.`,
     );
 
     if (confirmed) {
-      deleteDreamRecordToBrowser(record.id);
+      deleteDreamRecordToBrowser(item.dreamRecordId);
     }
   }
 
-  if (records.length === 0) {
+  if (timeline.length === 0) {
+    const reader = getCatReaderById(selectedCatReaderId);
+
     return (
       <section className={cn(ui.panel, "space-y-4 p-5 text-center")}>
-        <p className="text-lg font-semibold text-[#ffd98a]">아직 기록된 꿈이 없어요.</p>
+        <span className="relative mx-auto block h-14 w-14">
+          <Image
+            src={manyangAssets.illustrations[reader.assetKey]}
+            alt={`${reader.name} 기록 안내`}
+            fill
+            sizes="56px"
+            unoptimized
+            className="scale-110 object-contain drop-shadow-[0_0_18px_rgba(215,153,255,0.28)]"
+          />
+        </span>
+        <p className="text-lg font-semibold text-[#ffd98a]">아직 남긴 기록이 없어요</p>
         <p className="text-sm leading-6 text-[#fff3d7]/76">
-          꿈을 쓰고 해몽을 받으면 이곳에 자동으로 남아요.
+          꿈을 적거나 아침 기분을 남기면 이곳에 차곡차곡 쌓여요.
         </p>
-        <Link href="/write" className={cn(ui.secondaryAction, "min-h-[3.25rem] text-base")}>
+        <AssetTextButton
+          href="/write"
+          frame={manyangAssets.boxes.buttonFeather}
+          className="mx-auto max-w-[13.5rem]"
+          contentClassName="min-h-[3.25rem] justify-start pl-[4.1rem] pr-4 text-base"
+        >
           꿈쓰기
-        </Link>
+        </AssetTextButton>
       </section>
     );
   }
 
   return (
-    <div className="space-y-4">
-      {records.map((record) => (
-        <section key={record.id} className={cn(ui.panel, "p-4")}>
-          <header className="flex items-start gap-3">
-            <div className="min-w-0 flex-1">
-              <p className="text-sm text-[#f0bc7d]">{formatDreamDate(record.dreamDate)}</p>
-              <h2 className="mt-2 text-2xl leading-snug text-[#ffd98a]">{record.analysis.summary}</h2>
-            </div>
-            <button
-              type="button"
-              onClick={() => handleDelete(record)}
-              aria-label={`${record.analysis.summary} 기록 삭제`}
-              title="기록 삭제"
-              className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-[#b98255]/45 bg-[#06040c]/55 text-[#ffb49f] transition hover:border-[#ffb49f]/70 hover:bg-[#2a1217]/72 focus:outline-none focus:ring-2 focus:ring-[#f7d58b]"
-            >
-              <Trash2 size={18} aria-hidden="true" />
-            </button>
-          </header>
-          <p className="mt-3 leading-7 text-[#fff3d7]/86">{record.dreamText}</p>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {record.analysis.symbols.slice(0, 5).map((symbol) => (
-              <span key={symbol} className={ui.chip}>
-                {symbol}
+    <section className={cn(ui.panel, "relative overflow-hidden p-4")}>
+      <header className="relative z-10 mb-3 flex items-center justify-between gap-3">
+        <h2 className="text-lg font-semibold text-[#ffd98a]">전체 기록</h2>
+        <span className="text-sm text-[#f0bc7d]">{timeline.length}개</span>
+      </header>
+
+      <div className="relative z-10 space-y-2.5">
+        {timeline.map((item) => (
+          <article
+            key={item.id}
+            className="flex min-h-[4.55rem] items-center gap-3 rounded-[1.05rem] border border-[#7c4a38]/42 bg-[rgba(10,8,21,0.64)] px-3 py-2.5 shadow-[inset_0_1px_0_rgba(255,226,176,0.06)]"
+          >
+            <span className="relative grid h-12 w-12 shrink-0 place-items-center rounded-full bg-[rgba(255,217,138,0.06)] ring-1 ring-[#d799ff]/12">
+              <span className="relative h-7 w-7">
+                <Image
+                  src={timelineIcons[item.type]}
+                  alt=""
+                  fill
+                  sizes="28px"
+                  unoptimized
+                  className={cn("object-contain", getTimelineIconClassName(item.type))}
+                />
               </span>
-            ))}
-          </div>
-        </section>
-      ))}
-    </div>
+            </span>
+
+            <div className="min-w-0 flex-1">
+              <time className="text-sm text-[#f0bc7d]" dateTime={item.date}>
+                {formatArchiveDate(item.date)}
+              </time>
+              <h3 className="mt-0.5 truncate text-[1.05rem] font-semibold leading-6 text-[#ffd98a]">{item.title}</h3>
+              {item.meta ? <p className="truncate text-sm leading-5 text-[#fff3d7]/72">{item.meta}</p> : null}
+            </div>
+
+            {item.dreamRecordId ? (
+              <AssetIconButton
+                src={manyangAssets.icons.trash}
+                label={`${item.title} 기록 삭제`}
+                title="기록 삭제"
+                onClick={() => handleDelete(item)}
+                className="h-9 w-9"
+              />
+            ) : (
+              <span className="relative h-7 w-7 shrink-0 opacity-72" aria-hidden="true">
+                <Image
+                  src={manyangAssets.icons.arrowRight}
+                  alt=""
+                  fill
+                  sizes="28px"
+                  unoptimized
+                  className="object-contain"
+                />
+              </span>
+            )}
+          </article>
+        ))}
+      </div>
+
+      <ArchiveCatGuide selectedCatReaderId={selectedCatReaderId} />
+    </section>
   );
 }

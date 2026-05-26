@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 
+import * as pawprints from "./pawprints";
 import {
   countMonthlyPawprints,
   createPawprintRecord,
@@ -7,7 +8,6 @@ import {
   getPawprintAppDate,
   getPawprintSnapshot,
   getPawprints,
-  isPawprintStampUnlocked,
   pawprintRecordsKey,
   savePawprint,
   type PawprintInput,
@@ -138,20 +138,21 @@ describe("pawprint storage", () => {
     expect(getCurrentPawprintStreak(records, "2026-05-25")).toBe(2);
   });
 
-  test("unlocks the first stamp after seven unique pawprint days", () => {
-    expect(isPawprintStampUnlocked(createRecords(["2026-05-01", "2026-05-02", "2026-05-03"]))).toBe(false);
-    expect(
-      isPawprintStampUnlocked(
-        createRecords([
-          "2026-05-01",
-          "2026-05-02",
-          "2026-05-03",
-          "2026-05-04",
-          "2026-05-05",
-          "2026-05-06",
-          "2026-05-07",
-        ]),
-      ),
-    ).toBe(true);
+  test("exposes only daily trace and streak helpers", () => {
+    expect(Object.keys(pawprints).sort()).toEqual([
+      "countMonthlyPawprints",
+      "createPawprintRecord",
+      "getCurrentPawprintStreak",
+      "getEmptyPawprintSnapshot",
+      "getPawprintAppDate",
+      "getPawprintSnapshot",
+      "getPawprintSnapshotFromBrowser",
+      "getPawprints",
+      "pawprintChangedEvent",
+      "pawprintRecordsKey",
+      "savePawprint",
+      "savePawprintToBrowser",
+      "subscribeToPawprints",
+    ]);
   });
 });

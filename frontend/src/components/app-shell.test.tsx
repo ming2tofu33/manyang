@@ -1,0 +1,25 @@
+import { renderToStaticMarkup } from "react-dom/server";
+import { describe, expect, test, vi } from "vitest";
+
+import { AppShell } from "./app-shell";
+
+vi.mock("next/navigation", () => ({
+  usePathname: () => "/",
+}));
+
+vi.mock("./bottom-nav", () => ({
+  BottomNav: () => null,
+}));
+
+describe("AppShell", () => {
+  test("renders background images from the public asset path instead of the Next image cache", () => {
+    const markup = renderToStaticMarkup(
+      <AppShell background="/manyang/backgrounds/home-white-cat-ref.png" showHeader={false}>
+        <div>content</div>
+      </AppShell>,
+    );
+
+    expect(markup).toContain('src="/manyang/backgrounds/home-white-cat-ref.png"');
+    expect(markup).not.toContain("/_next/image");
+  });
+});

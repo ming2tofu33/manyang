@@ -1,17 +1,17 @@
 "use client";
 
-import {
-  Check,
-  CloudMoon,
-  Heart,
-  MoonStar,
-  PencilLine,
-  Sparkles,
-  Sprout,
-  Users,
-  WandSparkles,
-} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import { FormEvent, useState, useSyncExternalStore } from "react";
+import {
+  Cloud,
+  Heart,
+  Moon,
+  MoreHorizontal,
+  UsersRound,
+  WandSparkles,
+  type LucideIcon,
+} from "lucide-react";
 
 import {
   createDreamSeedRecord,
@@ -20,16 +20,27 @@ import {
   subscribeToDreamSeed,
   type DreamSeedRecord,
 } from "@/lib/dream-seed";
+import {
+  defaultDreamSeedAtmosphere,
+  defaultDreamSeedIntent,
+  dreamSeedAtmospheres,
+  dreamSeedCopy,
+  dreamSeedIntents,
+  dreamSeedNoteMaxLength,
+  getDreamSeedIntentById,
+  type DreamSeedIntentId,
+} from "@/lib/dream-seed-options";
+import { manyangAssets } from "@/lib/manyang-assets";
 import { cn, ui } from "@/lib/styles";
 
-const intents = [
-  { id: "question", label: "지금 내 마음이 궁금해", icon: Heart },
-  { id: "project", label: "프로젝트 힌트가 필요해", icon: WandSparkles },
-  { id: "meet", label: "누군가를 다시 만나고 싶어", icon: Users },
-  { id: "strange", label: "그냥 이상한 꿈을 보고 싶어", icon: CloudMoon },
-  { id: "comfort", label: "아무것도 무섭지 않고 편안했으면", icon: MoonStar },
-  { id: "custom", label: "직접 적을래", icon: PencilLine },
-];
+const intentIcons: Record<DreamSeedIntentId, LucideIcon> = {
+  question: Heart,
+  strange: Cloud,
+  project: WandSparkles,
+  meet: UsersRound,
+  comfort: Moon,
+  custom: MoreHorizontal,
+};
 
 function getTodayDate(): string {
   const now = new Date();
@@ -40,17 +51,72 @@ function getTodayDate(): string {
   return `${year}-${month}-${day}`;
 }
 
+type SeedIntentButtonProps = {
+  intent: (typeof dreamSeedIntents)[number];
+  isSelected: boolean;
+  onClick: () => void;
+};
+
+function SeedIntentButton({ intent, isSelected, onClick }: SeedIntentButtonProps) {
+  const Icon = intentIcons[intent.id];
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={isSelected}
+      className={cn(
+        "flex min-h-[2.45rem] items-center gap-1.5 rounded-[0.78rem] border border-[#7c4a38]/70 bg-[rgba(8,6,18,0.70)] px-1.5 text-left text-[10.2px] font-semibold leading-[1.16] text-[#e8c7b8] shadow-[inset_0_0_14px_rgba(255,201,124,0.03)] transition hover:border-[#d799ff]/70 hover:text-[#fff0dc] focus:outline-none focus:ring-2 focus:ring-[#d799ff]",
+        isSelected
+          ? "border-[#e29cff] bg-[linear-gradient(135deg,rgba(87,36,118,0.88),rgba(18,11,30,0.92))] text-[#ffe7b5] shadow-[0_0_20px_rgba(199,117,255,0.28),inset_0_0_18px_rgba(255,216,138,0.08)]"
+          : "",
+      )}
+    >
+      <Icon size={17} strokeWidth={1.85} className="shrink-0 text-[#c88963]" aria-hidden="true" />
+      <span>{intent.label}</span>
+    </button>
+  );
+}
+
+type AtmosphereButtonProps = {
+  label: (typeof dreamSeedAtmospheres)[number];
+  isSelected: boolean;
+  onClick: () => void;
+};
+
+function AtmosphereButton({ label, isSelected, onClick }: AtmosphereButtonProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={isSelected}
+      className={cn(
+        "min-h-[1.95rem] rounded-full border border-[#7c4a38]/72 bg-[rgba(8,6,18,0.68)] px-1.5 text-[10.5px] font-semibold text-[#e8c7b8] transition hover:border-[#ffd98a]/75 hover:text-[#ffe7b5] focus:outline-none focus:ring-2 focus:ring-[#d799ff]",
+        isSelected
+          ? "border-[#ffd98a]/85 bg-[rgba(87,36,118,0.58)] text-[#ffe7b5] shadow-[0_0_16px_rgba(199,117,255,0.22)]"
+          : "",
+      )}
+    >
+      {label}
+    </button>
+  );
+}
+
 export function DreamSeedForm() {
   const storedSeed = useSyncExternalStore(subscribeToDreamSeed, getDreamSeedSnapshotFromBrowser, () => null);
   const [selectedIntentId, setSelectedIntentId] = useState<string | null>(null);
+  const [selectedAtmosphere, setSelectedAtmosphere] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
   const [savedSeedOverride, setSavedSeedOverride] = useState<DreamSeedRecord | null>(null);
   const todayDate = getTodayDate();
   const savedSeed = savedSeedOverride ?? storedSeed;
   const hasSavedSeedToday = savedSeed?.seedDate === todayDate;
-  const activeIntentId = selectedIntentId ?? (hasSavedSeedToday ? savedSeed.intentId : intents[0].id);
-  const selectedIntent = intents.find((intent) => intent.id === activeIntentId) ?? intents[0];
-  const displayedNote = note ?? (hasSavedSeedToday ? savedSeed.note : "");
+  const activeIntentId = selectedIntentId ?? (hasSavedSeedToday ? savedSeed.intentId : defaultDreamSeedIntent.id);
+  const selectedIntent = getDreamSeedIntentById(activeIntentId) ?? defaultDreamSeedIntent;
+  const activeAtmosphere =
+    selectedAtmosphere ?? (hasSavedSeedToday ? savedSeed.atmosphere : defaultDreamSeedAtmosphere) ?? defaultDreamSeedAtmosphere;
+  const savedNoteForActiveIntent = hasSavedSeedToday && savedSeed.intentId === selectedIntent.id ? savedSeed.note : "";
+  const displayedNote = note ?? savedNoteForActiveIntent;
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -58,6 +124,7 @@ export function DreamSeedForm() {
     const record = createDreamSeedRecord({
       intentId: selectedIntent.id,
       intentLabel: selectedIntent.label,
+      atmosphere: activeAtmosphere,
       note: displayedNote,
       seedDate: todayDate,
     });
@@ -65,98 +132,136 @@ export function DreamSeedForm() {
     saveDreamSeedToBrowser(record);
     setSavedSeedOverride(record);
     setSelectedIntentId(record.intentId);
+    setSelectedAtmosphere(record.atmosphere);
     setNote(record.note);
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-auto space-y-4 pb-5">
-      <section className="relative min-h-[19rem] overflow-hidden rounded-[1.5rem] border border-[#b98255]/35 bg-[rgba(5,4,11,0.38)] shadow-[0_18px_60px_rgba(0,0,0,0.34)]">
-        <div className="absolute inset-x-5 top-5 text-center">
-          <p className="text-sm text-[#f0bc7d]">검은냥의 작은 주문</p>
-          <p className="mt-2 text-[1.65rem] font-semibold leading-tight text-[#ffd98a]">
-            오늘 밤 꿈에게
-            <br />
-            작은 질문을 맡겨보자냥.
-          </p>
-        </div>
-        <div className="absolute bottom-5 left-5 max-w-[15rem] rounded-[1.4rem] border border-[#b98255]/45 bg-[#070612]/72 px-4 py-3 text-sm leading-6 text-[#fff3d7]/86 backdrop-blur-md">
-          기억하지 못해도 괜찮아요. 마음이 가는 씨앗 하나만 남겨두면 돼요.
+    <form onSubmit={handleSubmit} className="mt-0 space-y-1.5 pb-2">
+      <section className="relative -mt-7 h-[16rem]">
+        <div className="absolute right-7 top-[5.05rem] max-w-[8.7rem] rounded-[1rem] border border-[#8b563f]/70 bg-[rgba(7,6,17,0.72)] px-3 py-2 text-center text-[12px] font-semibold leading-[1.35] text-[#d8c7bc] shadow-[0_0_18px_rgba(0,0,0,0.34)]">
+          기억하지 못해도
+          <br />
+          괜찮다냥.
+          <span className="relative ml-1 inline-block h-4 w-4 translate-y-0.5">
+            <Image src={manyangAssets.icons.paw} alt="" fill sizes="16px" unoptimized className="object-contain opacity-80" />
+          </span>
+          <span className="absolute -bottom-2 left-5 h-4 w-4 rotate-45 border-b border-r border-[#8b563f]/70 bg-[rgba(7,6,17,0.72)]" />
         </div>
       </section>
 
-      <section className={cn(ui.panel, "space-y-4 p-4")}>
-        <div className="flex items-center gap-2 text-[#ffd98a]">
-          <Sprout size={20} aria-hidden="true" />
-          <h2 className="text-lg font-semibold">오늘 밤 꿈에게 묻고 싶은 건?</h2>
+      <section className="relative z-10 -mt-8 rounded-[1.05rem] border border-[#7c4a38]/72 bg-[rgba(5,4,12,0.78)] p-2 shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md">
+        <div className="mb-2 flex items-center gap-2 text-[#ffd98a]">
+          <span className="relative h-5 w-5">
+            <Image src={manyangAssets.icons.paw} alt="" fill sizes="20px" unoptimized className="object-contain opacity-90" />
+          </span>
+          <h2 className={cn("text-[0.96rem] font-semibold", ui.textGlow)}>{dreamSeedCopy.questionTitle}</h2>
         </div>
-        <div className="grid grid-cols-2 gap-2.5">
-          {intents.map((intent) => {
-            const Icon = intent.icon;
+        <div className="grid grid-cols-3 gap-1.5">
+          {dreamSeedIntents.map((intent) => {
             const isSelected = intent.id === activeIntentId;
 
             return (
-              <button
+              <SeedIntentButton
                 key={intent.id}
-                type="button"
+                intent={intent}
+                isSelected={isSelected}
                 onClick={() => setSelectedIntentId(intent.id)}
-                className={cn(
-                  "flex min-h-[4.6rem] items-center gap-2 rounded-[1.15rem] border px-3 py-3 text-left text-sm leading-5 transition focus:outline-none focus:ring-2 focus:ring-[#d799ff]",
-                  isSelected
-                    ? "border-[#e29cff] bg-[rgba(98,45,132,0.74)] text-[#ffe7b5] shadow-[0_0_24px_rgba(199,117,255,0.32)]"
-                    : "border-[#b98255]/45 bg-[#06040c]/58 text-[#f2c27d] hover:border-[#ffd08a]/70",
-                )}
-                aria-pressed={isSelected}
-              >
-                <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
-                <span>{intent.label}</span>
-              </button>
+              />
             );
           })}
         </div>
       </section>
 
-      <section className={cn(ui.panel, "space-y-3 p-4")}>
-        <label htmlFor="dream-seed-note" className="flex items-center gap-2 text-lg font-semibold text-[#ffd98a]">
-          <PencilLine size={20} aria-hidden="true" />
-          꿈에게 남길 말 <span className="text-sm font-normal text-[#fff3d7]/58">(선택)</span>
+      <section className="rounded-[1.05rem] border border-[#7c4a38]/72 bg-[rgba(5,4,12,0.74)] p-2 shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md">
+        <label htmlFor="dream-seed-note" className="mb-1.5 flex items-center gap-2 text-[0.96rem] font-semibold text-[#ffd98a]">
+          <span className="relative h-5 w-5">
+            <Image src={manyangAssets.icons.paw} alt="" fill sizes="28px" unoptimized className="object-contain" />
+          </span>
+          {dreamSeedCopy.noteLabel} <span className="text-sm font-normal text-[#fff3d7]/58">{dreamSeedCopy.optionalLabel}</span>
         </label>
         <div className="relative">
           <textarea
             id="dream-seed-note"
             value={displayedNote}
             onChange={(event) => setNote(event.target.value)}
-            maxLength={100}
-            rows={4}
-            placeholder="예: 요즘 내가 놓치고 있는 걸 보여줘..."
-            className={cn(ui.field, "min-h-[8.5rem] resize-none rounded-[1.25rem] p-4 pr-12 text-base leading-7")}
+            maxLength={dreamSeedNoteMaxLength}
+            rows={2}
+            placeholder={dreamSeedCopy.notePlaceholder}
+            className={cn(ui.field, "min-h-[3.85rem] resize-none rounded-[0.85rem] p-2.5 pr-10 text-[13px] leading-5")}
           />
-          <PencilLine
-            className="pointer-events-none absolute right-4 top-4 h-6 w-6 text-[#8f745f]"
-            aria-hidden="true"
-          />
-          <span className="absolute bottom-3 right-4 text-sm text-[#fff3d7]/62">{displayedNote.length}/100</span>
+          <span className="pointer-events-none absolute right-3 top-3 h-6 w-6">
+            <Image src={manyangAssets.icons.feather} alt="" fill sizes="28px" unoptimized className="object-contain opacity-50" />
+          </span>
+          <span className="absolute bottom-2.5 right-3 text-[12px] text-[#fff3d7]/62">
+            {displayedNote.length}/{dreamSeedNoteMaxLength}
+          </span>
         </div>
-        <p className="text-sm leading-6 text-[#fff3d7]/72">
-          너무 거창하지 않아도 괜찮아요. 마음이 가는 대로 남겨보세요.
-        </p>
+        <p className="mt-1.5 text-[11.5px] leading-4 text-[#fff3d7]/70">{dreamSeedCopy.noteHint}</p>
+
+        <div className="mt-2">
+          <p className="mb-1.5 flex items-center gap-2 text-[0.92rem] font-semibold text-[#ffd98a]">
+            <span className="relative h-[18px] w-[18px]">
+              <Image src={manyangAssets.icons.star} alt="" fill sizes="18px" unoptimized className="object-contain opacity-90" />
+            </span>
+            {dreamSeedCopy.atmosphereTitle}
+          </p>
+          <div className="grid grid-cols-5 gap-1.5">
+            {dreamSeedAtmospheres.map((atmosphere) => (
+              <AtmosphereButton
+                key={atmosphere}
+                label={atmosphere}
+                isSelected={atmosphere === activeAtmosphere}
+                onClick={() => setSelectedAtmosphere(atmosphere)}
+              />
+            ))}
+          </div>
+        </div>
       </section>
 
       {hasSavedSeedToday ? (
         <section className="rounded-[1.25rem] border border-[#d799ff]/35 bg-[rgba(25,11,39,0.78)] px-4 py-3 text-sm leading-6 text-[#fff3d7] shadow-[0_0_24px_rgba(164,82,255,0.24)]">
           <p className="flex items-center gap-2 font-semibold text-[#ffd98a]">
-            <Check size={18} aria-hidden="true" />
-            오늘 밤 씨앗을 심어두었어요.
+            <span className="relative h-6 w-6">
+              <Image src={manyangAssets.icons.star} alt="" fill sizes="24px" unoptimized className="object-contain" />
+            </span>
+            {dreamSeedCopy.savedTitle}
           </p>
-          <p className="mt-1 text-[#fff3d7]/78">{savedSeed.intentLabel}</p>
+          <p className="mt-1 text-[#fff3d7]/78">
+            {savedSeed.intentLabel} · {savedSeed.atmosphere ?? defaultDreamSeedAtmosphere}
+          </p>
         </section>
       ) : null}
 
-      <button type="submit" className={cn(ui.primaryAction, "gap-3")}>
-        <Sparkles size={23} aria-hidden="true" />
-        {hasSavedSeedToday ? "씨앗을 다시 심기" : "오늘 밤 씨앗 심기"}
+      <button
+        type="submit"
+        aria-label={hasSavedSeedToday ? dreamSeedCopy.submitAgain : dreamSeedCopy.submit}
+        className="relative mx-auto -mt-1 block w-[66%] px-2 py-0 transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-[#f7d58b]"
+      >
+        <Image
+          src={manyangAssets.buttons.dreamseed}
+          alt=""
+          width={852}
+          height={300}
+          sizes="340px"
+          unoptimized
+          className="manyang-button-glow h-auto w-full"
+        />
+        <span className="pointer-events-none absolute inset-0 flex items-center justify-center pb-1 text-[1.52rem] font-semibold leading-none tracking-normal text-[#ffc978] [text-shadow:0_2px_2px_rgba(34,10,20,0.88),0_0_14px_rgba(255,198,104,0.26)]">
+          {hasSavedSeedToday ? "씨앗 다시 심기" : "꿈 씨앗 심기"}
+        </span>
       </button>
 
-      <p className="text-center text-sm text-[#fff3d7]/70">내일 아침, 꿈을 기억했을 때 연결할 수 있어요.</p>
+      {hasSavedSeedToday ? (
+        <Link
+          href="/"
+          className="block text-center text-sm font-semibold text-[#f0bc7d] transition hover:text-[#ffd98a] focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
+        >
+          오늘 화면으로 돌아가기
+        </Link>
+      ) : null}
+
+      <p className="text-center text-[11.5px] text-[#fff3d7]/70">{dreamSeedCopy.footer}</p>
     </form>
   );
 }
