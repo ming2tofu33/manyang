@@ -54,6 +54,5 @@ source: docs/manyang-dream-project-spec-updated.md
 
 ## See Also
 
+- [[Cat-Reader-Access-Strategy]] — 무료/프리미엄 해몽사 접근 정책 (06-Business)
 - [[Prompt-Guides]] — 프롬프트 말투 기준 (04-AI-System)
-- [[Product-Positioning]] — 제품 인상 (01-Core)
-

@@ -21,13 +21,13 @@ Included:
 - Show pawprints on the archive calendar.
 - Show this month's pawprint count.
 - Show current consecutive pawprint streak.
-- Unlock one small stamp after 7 pawprint days.
 - Store which action created the pawprint for future analytics and UI copy.
 
 Excluded:
 
 - Point spending, shop mechanics, or paid currency.
-- Multiple rewards per day.
+- Multiple app-date increments per day.
+- Milestone mechanics or decoration inventory.
 - Full decoration inventory.
 - Server sync or accounts.
 
@@ -62,12 +62,11 @@ Archive screen:
 - Calendar days with pawprints show a small paw icon or dot.
 - Top summary shows `이번 달 발자국 N개`.
 - Nearby text shows `연속 발자국 N일째` when streak is active.
-- If total monthly pawprints reach 7, show a compact unlocked stamp state.
 
 Action feedback:
 
 - On the first qualifying action of an app day, show a short success line: `오늘의 발자국이 남았어요.`
-- On later qualifying actions that same app day, avoid reward language. Use normal feature success copy only.
+- On later qualifying actions that same app day, avoid extra achievement language. Use normal feature success copy only.
 
 ## Edge Cases
 
@@ -86,7 +85,6 @@ Add unit tests for:
 - First source preserved on duplicate appDate.
 - Monthly count.
 - Current streak.
-- 7-day stamp unlock threshold.
 - Corrupted storage fallback.
 
 Add browser verification for:

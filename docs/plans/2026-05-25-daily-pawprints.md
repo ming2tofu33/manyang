@@ -103,8 +103,6 @@ Implement pure helpers:
 
 - `countMonthlyPawprints(records, year, month)`
 - `getCurrentPawprintStreak(records, todayAppDate)`
-- `isPawprintStampUnlocked(records)`
-
 Use unique `appDate` values so duplicate data cannot inflate counts.
 
 **Step 4: Run test to verify it passes**
@@ -210,9 +208,7 @@ In the archive UI, subscribe to pawprints and render:
 
 - `이번 달 발자국 N개`
 - `연속 발자국 N일째`
-- stamp unlocked state when `isPawprintStampUnlocked(records)` is true
-
-Keep the UI compact. Do not add a separate reward page.
+Keep the UI compact. Do not add a separate progression page.
 
 **Step 4: Render calendar markers**
 
@@ -261,8 +257,7 @@ Start or reuse the local dev server. In the browser:
 - Confirm archive shows one pawprint and streak 1.
 - Save a dream receipt on the same app day.
 - Confirm archive still shows one pawprint.
-- Seed localStorage with 7 appDates.
-- Confirm unlocked stamp appears.
+- Confirm archive shows monthly pawprint count and streak.
 
 **Step 3: Commit fixes only if needed**
 
