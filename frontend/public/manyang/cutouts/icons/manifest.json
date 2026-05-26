@@ -1,0 +1,418 @@
+[
+  {
+    "name": "circle-arrow-left",
+    "file": "01-circle-arrow-left.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      68,
+      62,
+      248,
+      244
+    ],
+    "width": 169,
+    "height": 171
+  },
+  {
+    "name": "circle-arrow-right",
+    "file": "02-circle-arrow-right.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      272,
+      62,
+      452,
+      244
+    ],
+    "width": 169,
+    "height": 170
+  },
+  {
+    "name": "circle-share-nodes",
+    "file": "03-circle-share-nodes.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      466,
+      62,
+      646,
+      246
+    ],
+    "width": 169,
+    "height": 171
+  },
+  {
+    "name": "circle-bell",
+    "file": "04-circle-bell.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      656,
+      62,
+      838,
+      246
+    ],
+    "width": 168,
+    "height": 170
+  },
+  {
+    "name": "circle-settings",
+    "file": "05-circle-settings.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      850,
+      62,
+      1032,
+      246
+    ],
+    "width": 169,
+    "height": 171
+  },
+  {
+    "name": "circle-trash",
+    "file": "06-circle-trash.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      1042,
+      62,
+      1224,
+      246
+    ],
+    "width": 169,
+    "height": 171
+  },
+  {
+    "name": "circle-profile",
+    "file": "07-circle-profile.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      1228,
+      62,
+      1408,
+      246
+    ],
+    "width": 168,
+    "height": 170
+  },
+  {
+    "name": "circle-star",
+    "file": "08-circle-star.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      1424,
+      62,
+      1604,
+      246
+    ],
+    "width": 167,
+    "height": 169
+  },
+  {
+    "name": "circle-calendar-star",
+    "file": "09-circle-calendar-star.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      68,
+      274,
+      250,
+      456
+    ],
+    "width": 169,
+    "height": 171
+  },
+  {
+    "name": "circle-pencil",
+    "file": "10-circle-pencil.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      270,
+      274,
+      452,
+      458
+    ],
+    "width": 167,
+    "height": 169
+  },
+  {
+    "name": "circle-book",
+    "file": "11-circle-book.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      466,
+      274,
+      648,
+      458
+    ],
+    "width": 168,
+    "height": 170
+  },
+  {
+    "name": "circle-bookmark",
+    "file": "12-circle-bookmark.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      658,
+      274,
+      836,
+      458
+    ],
+    "width": 165,
+    "height": 168
+  },
+  {
+    "name": "circle-search-star",
+    "file": "13-circle-search-star.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      852,
+      274,
+      1032,
+      458
+    ],
+    "width": 167,
+    "height": 168
+  },
+  {
+    "name": "circle-download",
+    "file": "14-circle-download.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      1042,
+      274,
+      1222,
+      458
+    ],
+    "width": 165,
+    "height": 168
+  },
+  {
+    "name": "circle-upload",
+    "file": "15-circle-upload.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      1228,
+      274,
+      1406,
+      458
+    ],
+    "width": 165,
+    "height": 168
+  },
+  {
+    "name": "circle-more",
+    "file": "16-circle-more.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      1424,
+      274,
+      1602,
+      458
+    ],
+    "width": 164,
+    "height": 166
+  },
+  {
+    "name": "moon",
+    "file": "17-moon.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      82,
+      472,
+      238,
+      642
+    ],
+    "width": 131,
+    "height": 131
+  },
+  {
+    "name": "paw",
+    "file": "18-paw.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      282,
+      492,
+      412,
+      638
+    ],
+    "width": 119,
+    "height": 113
+  },
+  {
+    "name": "sparkles",
+    "file": "19-sparkles.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      470,
+      480,
+      636,
+      640
+    ],
+    "width": 122,
+    "height": 137
+  },
+  {
+    "name": "cloud",
+    "file": "20-cloud.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      660,
+      486,
+      840,
+      638
+    ],
+    "width": 161,
+    "height": 115
+  },
+  {
+    "name": "feather",
+    "file": "21-feather.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      878,
+      476,
+      1034,
+      646
+    ],
+    "width": 117,
+    "height": 133
+  },
+  {
+    "name": "lantern",
+    "file": "22-lantern.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      1082,
+      458,
+      1222,
+      670
+    ],
+    "width": 101,
+    "height": 188
+  },
+  {
+    "name": "potion",
+    "file": "23-potion.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      1260,
+      470,
+      1410,
+      672
+    ],
+    "width": 112,
+    "height": 176
+  },
+  {
+    "name": "key",
+    "file": "24-key.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      1428,
+      474,
+      1588,
+      660
+    ],
+    "width": 135,
+    "height": 164
+  },
+  {
+    "name": "door",
+    "file": "25-door.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      78,
+      672,
+      236,
+      880
+    ],
+    "width": 137,
+    "height": 184
+  },
+  {
+    "name": "castle",
+    "file": "26-castle.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      272,
+      666,
+      436,
+      878
+    ],
+    "width": 133,
+    "height": 186
+  },
+  {
+    "name": "crystal-ball",
+    "file": "27-crystal-ball.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      468,
+      672,
+      642,
+      880
+    ],
+    "width": 139,
+    "height": 178
+  },
+  {
+    "name": "crystals",
+    "file": "28-crystals.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      660,
+      668,
+      838,
+      872
+    ],
+    "width": 129,
+    "height": 160
+  },
+  {
+    "name": "envelope",
+    "file": "29-envelope.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      868,
+      710,
+      1036,
+      850
+    ],
+    "width": 150,
+    "height": 115
+  },
+  {
+    "name": "candle",
+    "file": "30-candle.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      1080,
+      672,
+      1230,
+      880
+    ],
+    "width": 118,
+    "height": 174
+  },
+  {
+    "name": "cup",
+    "file": "31-cup.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      1260,
+      672,
+      1420,
+      880
+    ],
+    "width": 128,
+    "height": 182
+  },
+  {
+    "name": "wizard-hat",
+    "file": "32-wizard-hat.png",
+    "source": "ref/icons.png",
+    "sourceCrop": [
+      1418,
+      680,
+      1622,
+      868
+    ],
+    "width": 183,
+    "height": 148
+  }
+]

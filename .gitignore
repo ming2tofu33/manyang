@@ -1,6 +1,7 @@
 .playwright-mcp/
 output/
 node_modules/
+ref/
 
 # OS/editor noise
 .DS_Store
