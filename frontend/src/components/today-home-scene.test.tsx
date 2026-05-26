@@ -14,4 +14,11 @@ describe("TodayHomeScene", () => {
     expect(markup).toContain("MANYANG DREAM READER");
     expect(markup).not.toContain("manyang dream reader");
   });
+
+  it("renders the home cat background transition layer", () => {
+    const markup = renderToStaticMarkup(<TodayHomeScene />);
+
+    expect(markup).toContain('data-home-cat-transition="root"');
+    expect(markup).toContain("home-cat-transition-current");
+  });
 });

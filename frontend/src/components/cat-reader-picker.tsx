@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { catReaderPickerSheetCopy, getCatReaderHomeCopy } from "@/lib/cat-reader-home-copy";
 import { catReaders, getCatReaderById, type CatReader, type CatReaderId } from "@/lib/cat-readers";
@@ -13,17 +13,70 @@ type CatReaderPickerProps = {
   onChange: (readerId: CatReaderId) => void;
   variant?: "home" | "compact";
   className?: string;
+  heading?: string;
 };
 
 function getReaderImage(reader: CatReader): string {
   return manyangAssets.illustrations[reader.assetKey];
 }
 
-export function CatReaderPicker({ value, onChange, variant = "home", className }: CatReaderPickerProps) {
+export const homeCatSelectionFeedbackMs = 220;
+export const homeCatBackgroundChangeDelayMs = 280;
+
+export function CatReaderPicker({ value, onChange, variant = "home", className, heading }: CatReaderPickerProps) {
   const selectedReader = getCatReaderById(value);
   const selectedReaderCopy = getCatReaderHomeCopy(selectedReader.id);
   const isCompact = variant === "compact";
   const [isHomeSheetOpen, setIsHomeSheetOpen] = useState(false);
+  const [pendingReaderId, setPendingReaderId] = useState<CatReaderId | null>(null);
+  const closeDelayTimeoutRef = useRef<number | null>(null);
+  const backgroundChangeTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (closeDelayTimeoutRef.current !== null) {
+        window.clearTimeout(closeDelayTimeoutRef.current);
+      }
+      if (backgroundChangeTimeoutRef.current !== null) {
+        window.clearTimeout(backgroundChangeTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  function closeHomeSheet() {
+    if (closeDelayTimeoutRef.current !== null) {
+      window.clearTimeout(closeDelayTimeoutRef.current);
+      closeDelayTimeoutRef.current = null;
+    }
+    if (backgroundChangeTimeoutRef.current !== null) {
+      window.clearTimeout(backgroundChangeTimeoutRef.current);
+      backgroundChangeTimeoutRef.current = null;
+    }
+
+    setPendingReaderId(null);
+    setIsHomeSheetOpen(false);
+  }
+
+  function selectHomeReader(readerId: CatReaderId) {
+    if (closeDelayTimeoutRef.current !== null) {
+      window.clearTimeout(closeDelayTimeoutRef.current);
+    }
+    if (backgroundChangeTimeoutRef.current !== null) {
+      window.clearTimeout(backgroundChangeTimeoutRef.current);
+    }
+
+    setPendingReaderId(readerId);
+    closeDelayTimeoutRef.current = window.setTimeout(() => {
+      setIsHomeSheetOpen(false);
+      closeDelayTimeoutRef.current = null;
+    }, homeCatSelectionFeedbackMs);
+
+    backgroundChangeTimeoutRef.current = window.setTimeout(() => {
+      onChange(readerId);
+      setPendingReaderId(null);
+      backgroundChangeTimeoutRef.current = null;
+    }, homeCatBackgroundChangeDelayMs);
+  }
 
   if (!isCompact) {
     return (
@@ -31,7 +84,7 @@ export function CatReaderPicker({ value, onChange, variant = "home", className }
         <button
           type="button"
           onClick={() => setIsHomeSheetOpen(true)}
-          className="group flex min-h-[4rem] w-full cursor-pointer items-center gap-2.5 rounded-[1.35rem] border border-[#7c4a38]/54 bg-[rgba(6,5,14,0.54)] px-2.5 py-2 text-left shadow-[0_0_18px_rgba(0,0,0,0.2)] ring-1 ring-[#d799ff]/10 backdrop-blur-md transition hover:border-[#d799ff]/58 hover:bg-[rgba(14,9,28,0.7)] focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
+          className="home-cat-picker-trigger group flex min-h-[4rem] w-full cursor-pointer items-center gap-2.5 rounded-[1.35rem] border border-[#7c4a38]/54 bg-[rgba(6,5,14,0.54)] px-2.5 py-2 text-left shadow-[0_0_18px_rgba(0,0,0,0.2)] ring-1 ring-[#d799ff]/10 backdrop-blur-md transition hover:border-[#d799ff]/58 hover:bg-[rgba(14,9,28,0.7)] focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
           aria-haspopup="dialog"
           aria-expanded={isHomeSheetOpen}
         >
@@ -75,7 +128,7 @@ export function CatReaderPicker({ value, onChange, variant = "home", className }
               type="button"
               aria-label="고양이 선택 닫기"
               className="fixed inset-0 z-40 cursor-default bg-black/38 backdrop-blur-[1px]"
-              onClick={() => setIsHomeSheetOpen(false)}
+              onClick={closeHomeSheet}
             />
             <div
               role="dialog"
@@ -93,7 +146,7 @@ export function CatReaderPicker({ value, onChange, variant = "home", className }
                 </div>
                 <button
                   type="button"
-                  onClick={() => setIsHomeSheetOpen(false)}
+                  onClick={closeHomeSheet}
                   className="rounded-full border border-[#b98255]/45 px-3 py-1.5 text-[12px] font-semibold text-[#f4b65f] transition hover:border-[#d799ff]/60 hover:text-[#ffd98a] focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
                 >
                   닫기
@@ -103,23 +156,23 @@ export function CatReaderPicker({ value, onChange, variant = "home", className }
               <div className="grid grid-cols-2 gap-2">
                 {catReaders.map((reader) => {
                   const isSelected = reader.id === value;
+                  const isPending = pendingReaderId === reader.id;
                   const readerCopy = getCatReaderHomeCopy(reader.id);
 
                   return (
                     <button
                       key={reader.id}
                       type="button"
-                      onClick={() => {
-                        onChange(reader.id);
-                        setIsHomeSheetOpen(false);
-                      }}
+                      onClick={() => selectHomeReader(reader.id)}
                       aria-pressed={isSelected}
+                      data-reader-id={reader.id}
                       title={readerCopy.sheetLine}
                       className={cn(
-                        "group flex min-w-0 cursor-pointer items-center gap-2 rounded-[1rem] border bg-[rgba(12,8,24,0.72)] p-2 text-left transition focus:outline-none focus:ring-2 focus:ring-[#d799ff]",
+                        "home-cat-reader-card group flex min-w-0 cursor-pointer items-center gap-2 rounded-[1rem] border bg-[rgba(12,8,24,0.72)] p-2 text-left transition focus:outline-none focus:ring-2 focus:ring-[#d799ff]",
                         isSelected
                           ? "border-[#f2a6ff] shadow-[0_0_20px_rgba(199,117,255,0.28)]"
                           : "border-[#71433f]/70 hover:border-[#d799ff]/70",
+                        isPending ? "home-cat-card-glimmer" : null,
                       )}
                     >
                       <span className="relative h-12 w-12 shrink-0">
@@ -138,7 +191,7 @@ export function CatReaderPicker({ value, onChange, variant = "home", className }
                           <span className="shrink-0 rounded-full border border-[#b98255]/30 bg-[#1b1028]/64 px-1.5 py-0.5 text-[8px] font-semibold text-[#f0bc7d]">
                             {readerCopy.tag}
                           </span>
-                          {isSelected ? (
+                          {isSelected || isPending ? (
                             <span className="shrink-0 rounded-full border border-[#d799ff]/34 bg-[#2a103c]/68 px-1.5 py-0.5 text-[8px] font-semibold text-[#e7b3ff]">
                               선택됨
                             </span>
@@ -184,7 +237,7 @@ export function CatReaderPicker({ value, onChange, variant = "home", className }
         </span>
         <div className="min-w-0 flex-1">
           <p className="text-[12px] font-semibold text-[#f0bc7d]">
-            {isCompact ? "이번 꿈을 읽는 고양이" : "오늘 꿈을 읽어줄 고양이"}
+            {heading ?? (isCompact ? "이번 꿈을 읽는 고양이" : "오늘 꿈을 읽어줄 고양이")}
           </p>
           <h2 className={cn("flex min-w-0 items-center gap-2 font-semibold text-[#ffd98a]", isCompact ? "text-[1rem]" : "text-[1.12rem]")}>
             <span className="truncate">{selectedReader.name}</span>

@@ -47,6 +47,21 @@ const fallbackPayload: LatestAnalysisPayload = {
     interpretation:
       "이 꿈은 목적지보다 준비 상태가 더 신경 쓰이는 마음과 연결되어 보인다냥. 복도는 과정과 이동을, 맨발은 아직 충분히 준비되지 않았다는 감각을 보여주는 듯해요.",
     smallPrescription: "오늘은 미뤄둔 준비물 하나만 먼저 확인해보자냥.",
+    symbolReadings: [
+      {
+        symbol: "복도",
+        reading: "복도는 다음 장면으로 이동하는 과정과 전환의 감각으로 읽을 수 있어요.",
+      },
+      {
+        symbol: "신발",
+        reading: "신발은 지금 필요한 준비 상태를 확인하게 하는 단서로 볼 수 있어요.",
+      },
+    ],
+    readingBasis: {
+      usedSymbols: ["학교", "복도", "신발"],
+      mainThemes: ["장소와 전환"],
+      confidence: 0.7,
+    },
     card: {
       name: "맨발로 복도를 달린 꿈",
       type: "half_moon",

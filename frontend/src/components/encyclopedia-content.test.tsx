@@ -11,7 +11,7 @@ describe("EncyclopediaContent", () => {
     );
 
     expect(markup).toContain("/manyang/references/cat-gray-profile.png");
-    expect(markup).toContain("회색냥");
+    expect(markup).toContain("잿빛냥");
     expect(markup).toContain("많이 찾는 꿈해몽");
     expect(markup).toContain("href=\"/encyclopedia/door\"");
     expect(markup).not.toContain("이번 주");

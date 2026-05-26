@@ -1,11 +1,25 @@
 import { describe, expect, test } from "vitest";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import path from "node:path";
 
 import { manyangAssets } from "./manyang-assets";
 
 const publicAssetExists = (assetPath: string) =>
   existsSync(path.join(process.cwd(), "public", assetPath.replace(/^\//, "")));
+
+function readPngSize(assetPath: string): { width: number; height: number } {
+  const png = readFileSync(path.join(process.cwd(), "public", assetPath.replace(/^\//, "")));
+
+  return {
+    width: png.readUInt32BE(16),
+    height: png.readUInt32BE(20),
+  };
+}
+
+function readSha256(filePath: string): string {
+  return createHash("sha256").update(readFileSync(filePath)).digest("hex");
+}
 
 describe("manyang assets", () => {
   test("exposes cat-specific home background and reader portrait assets", () => {
@@ -48,6 +62,44 @@ describe("manyang assets", () => {
     });
   });
 
+  test("keeps white and gray cat home backgrounds at their reference sizes", () => {
+    expect(readPngSize(manyangAssets.backgrounds.whiteCatHome)).toEqual({ width: 896, height: 1755 });
+    expect(readPngSize(manyangAssets.backgrounds.grayCatHome)).toEqual({ width: 853, height: 1844 });
+  });
+
+  test("uses the latest reference white cat home background", () => {
+    const publicWhitePath = path.join(
+      process.cwd(),
+      "public",
+      manyangAssets.backgrounds.whiteCatHome.replace(/^\//, ""),
+    );
+    const referenceWhitePath = path.join(process.cwd(), "..", "ref", "whitecat_home.png");
+
+    expect(readSha256(publicWhitePath)).toBe(readSha256(referenceWhitePath));
+  });
+
+  test("uses the latest reference cheese cat home background", () => {
+    const publicCheesePath = path.join(
+      process.cwd(),
+      "public",
+      manyangAssets.backgrounds.cheeseCatHome.replace(/^\//, ""),
+    );
+    const referenceCheesePath = path.join(process.cwd(), "..", "ref", "cheesecat_home.png");
+
+    expect(readSha256(publicCheesePath)).toBe(readSha256(referenceCheesePath));
+  });
+
+  test("uses the latest reference gray cat home background", () => {
+    const publicGrayPath = path.join(
+      process.cwd(),
+      "public",
+      manyangAssets.backgrounds.grayCatHome.replace(/^\//, ""),
+    );
+    const referenceGrayPath = path.join(process.cwd(), "..", "ref", "graycat_home.png");
+
+    expect(readSha256(publicGrayPath)).toBe(readSha256(referenceGrayPath));
+  });
+
   test("exposes the reference button image assets used by the home and write flows", () => {
     expect(manyangAssets.buttons.dreammemoryWrite).toBe("/manyang/ui/buttons/dreammemory-write-frame.png");
     expect(manyangAssets.buttons.dreammemoryForgot).toBe("/manyang/ui/buttons/dreammemory-forgot-frame.png");
@@ -67,6 +119,7 @@ describe("manyang assets", () => {
     expect(manyangAssets.footer.icons.write).toBe("/manyang/ui/footer/footer-icon-write.png");
     expect(manyangAssets.footer.icons.archive).toBe("/manyang/ui/footer/footer-icon-archive.png");
     expect(manyangAssets.footer.icons.encyclopedia).toBe("/manyang/ui/footer/footer-icon-encyclopedia.png");
+    expect(manyangAssets.footer.icons.profile).toBe("/manyang/ui/footer/footer-icon-profile.png");
 
     [
       manyangAssets.footer.frame,

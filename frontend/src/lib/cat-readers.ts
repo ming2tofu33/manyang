@@ -68,7 +68,7 @@ export const catReaders: CatReader[] = [
   },
   {
     id: "gray_cat",
-    name: "회색냥",
+    name: "잿빛냥",
     access: "annual_premium",
     role: "타로 해몽사",
     shortDescription: "타로 패턴/기록 중심",

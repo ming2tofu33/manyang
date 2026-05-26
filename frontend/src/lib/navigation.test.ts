@@ -4,12 +4,13 @@ import { dreamSeedRoute } from "./dream-seed-options";
 import { bottomNavItems, getActiveNavItem } from "./navigation";
 
 describe("bottom navigation", () => {
-  it("keeps the four MVP menu items in reference order", () => {
+  it("keeps the five main menu items in reference order", () => {
     expect(bottomNavItems.map((item) => item.label)).toEqual([
       "오늘",
       "꿈쓰기",
       "기록",
       "백과",
+      "내방",
     ]);
   });
 
@@ -22,5 +23,9 @@ describe("bottom navigation", () => {
   });
   it("maps dream seed flow back to today", () => {
     expect(getActiveNavItem(dreamSeedRoute)?.key).toBe("today");
+  });
+
+  it("marks profile pages as my room", () => {
+    expect(getActiveNavItem("/profile")?.label).toBe("내방");
   });
 });

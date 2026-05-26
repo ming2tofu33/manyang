@@ -10,6 +10,7 @@ import { BottomNav } from "./bottom-nav";
 type AppShellProps = {
   children: ReactNode;
   background?: string;
+  backgroundLayer?: ReactNode;
   backgroundOverlay?: ReactNode;
   backgroundClassName?: string;
   scrimClassName?: string;
@@ -25,6 +26,7 @@ type AppShellProps = {
 export function AppShell({
   children,
   background = "/manyang/backgrounds/home.png",
+  backgroundLayer,
   backgroundOverlay,
   backgroundClassName = "object-cover opacity-68",
   scrimClassName = "absolute inset-0 bg-[linear-gradient(180deg,rgba(5,4,11,0.10)_0%,rgba(5,4,11,0.22)_52%,rgba(5,4,11,0.95)_100%)]",
@@ -56,15 +58,17 @@ export function AppShell({
   return (
     <main className="h-[100dvh] overflow-hidden bg-[#05040b] text-[#fff3d7]">
       <section className="relative mx-auto flex h-[100dvh] w-full max-w-[430px] flex-col overflow-hidden bg-[#05040b] shadow-[0_0_90px_rgba(0,0,0,0.7)]">
-        <Image
-          src={background}
-          alt=""
-          fill
-          priority
-          sizes="430px"
-          unoptimized
-          className={backgroundClassName}
-        />
+        {backgroundLayer ?? (
+          <Image
+            src={background}
+            alt=""
+            fill
+            priority
+            sizes="430px"
+            unoptimized
+            className={backgroundClassName}
+          />
+        )}
         <div className={scrimClassName} />
         {backgroundOverlay ? <div className="pointer-events-none absolute inset-0 z-[3]">{backgroundOverlay}</div> : null}
         <div className={bottomScrimClassName} />
@@ -101,7 +105,7 @@ export function AppShell({
             </header>
           ) : null}
 
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-4">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <div className="flex min-h-full flex-col">{children}</div>
           </div>
           <BottomNav />

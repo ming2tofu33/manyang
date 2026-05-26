@@ -37,6 +37,7 @@ export const manyangAssets = {
       write: "/manyang/ui/footer/footer-icon-write.png",
       archive: "/manyang/ui/footer/footer-icon-archive.png",
       encyclopedia: "/manyang/ui/footer/footer-icon-encyclopedia.png",
+      profile: "/manyang/ui/footer/footer-icon-profile.png",
     },
   },
   boxes: {

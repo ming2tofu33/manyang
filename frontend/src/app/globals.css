@@ -283,6 +283,218 @@ button {
   filter: blur(9px) drop-shadow(0 0 28px rgba(153, 131, 202, 0.48));
 }
 
+.home-cat-transition-current {
+  z-index: 0;
+  transform-origin: 50% 56%;
+  animation: home-cat-current-reveal 1180ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: transform, opacity, filter;
+}
+
+.home-cat-transition-previous {
+  z-index: 1;
+  transform-origin: 50% 56%;
+  animation: home-cat-previous-fade 1320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: opacity, filter;
+}
+
+.home-cat-transition-mist,
+.home-cat-transition-glow {
+  position: absolute;
+  left: 50%;
+  top: 53%;
+  pointer-events: none;
+  border-radius: 999px;
+  transform: translate3d(-50%, -50%, 0);
+  will-change: transform, opacity, filter;
+}
+
+.home-cat-transition-mist {
+  z-index: 2;
+  width: 118%;
+  aspect-ratio: 1;
+  opacity: 0;
+  filter: blur(18px);
+  mix-blend-mode: screen;
+  box-shadow:
+    0 0 54px rgba(255, 255, 255, 0.12),
+    0 0 34px rgba(255, 255, 255, 0.08) inset;
+  animation: home-cat-mist-bloom 1520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.home-cat-transition-mist::before,
+.home-cat-transition-mist::after {
+  content: "";
+  position: absolute;
+  inset: 8%;
+  border-radius: inherit;
+  background:
+    radial-gradient(ellipse at 34% 54%, rgba(255, 255, 255, 0.22), transparent 42%),
+    radial-gradient(ellipse at 68% 46%, rgba(255, 214, 148, 0.18), transparent 46%),
+    radial-gradient(ellipse at 52% 66%, rgba(197, 119, 255, 0.2), transparent 48%);
+}
+
+.home-cat-transition-mist::after {
+  inset: 20%;
+  transform: rotate(17deg) scaleX(1.28);
+  opacity: 0.72;
+  filter: blur(18px);
+}
+
+.home-cat-transition-glow {
+  z-index: 3;
+  width: 72%;
+  aspect-ratio: 1;
+  opacity: 0;
+  filter: blur(24px);
+  mix-blend-mode: screen;
+  animation: home-cat-glow-pulse 1260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.home-cat-transition-mist-black {
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 224, 151, 0.58), transparent 24%),
+    radial-gradient(circle at 46% 54%, rgba(166, 82, 255, 0.64), rgba(74, 28, 117, 0.26) 42%, transparent 72%),
+    radial-gradient(circle at 54% 44%, rgba(255, 255, 255, 0.18), transparent 48%);
+}
+
+.home-cat-transition-glow-black {
+  background: radial-gradient(circle, rgba(207, 131, 255, 0.54), rgba(255, 210, 117, 0.18) 38%, transparent 70%);
+}
+
+.home-cat-transition-mist-white {
+  mix-blend-mode: multiply;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 115, 184, 0.34), transparent 25%),
+    radial-gradient(circle at 48% 52%, rgba(255, 157, 210, 0.56), rgba(255, 207, 231, 0.24) 43%, transparent 74%),
+    radial-gradient(circle at 52% 46%, rgba(132, 74, 122, 0.18), transparent 48%);
+}
+
+.home-cat-transition-glow-white {
+  background: radial-gradient(circle, rgba(255, 206, 236, 0.58), rgba(255, 255, 255, 0.2) 38%, transparent 70%);
+}
+
+.home-cat-transition-mist-cheese {
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 246, 176, 0.6), transparent 24%),
+    radial-gradient(circle at 50% 54%, rgba(255, 158, 40, 0.68), rgba(146, 72, 11, 0.28) 45%, transparent 74%),
+    radial-gradient(circle at 48% 44%, rgba(255, 255, 255, 0.16), transparent 48%);
+}
+
+.home-cat-transition-glow-cheese {
+  background: radial-gradient(circle, rgba(255, 189, 57, 0.58), rgba(255, 226, 111, 0.2) 40%, transparent 72%);
+}
+
+.home-cat-transition-mist-gray {
+  background:
+    radial-gradient(circle at 50% 50%, rgba(236, 229, 255, 0.56), transparent 24%),
+    radial-gradient(circle at 48% 52%, rgba(154, 128, 207, 0.64), rgba(92, 80, 125, 0.28) 44%, transparent 74%),
+    radial-gradient(circle at 54% 45%, rgba(255, 255, 255, 0.15), transparent 48%);
+}
+
+.home-cat-transition-glow-gray {
+  background: radial-gradient(circle, rgba(217, 207, 255, 0.5), rgba(127, 96, 190, 0.22) 40%, transparent 72%);
+}
+
+.home-cat-picker-trigger {
+  transition:
+    border-color 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.home-cat-card-glimmer {
+  animation: home-cat-card-glimmer 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes home-cat-current-reveal {
+  0% {
+    opacity: 0.06;
+    transform: scale(1.028);
+    filter: blur(5px) brightness(1.18);
+  }
+  46% {
+    opacity: 0.68;
+    transform: scale(1.014);
+    filter: blur(2px) brightness(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0) brightness(1);
+  }
+}
+
+@keyframes home-cat-previous-fade {
+  0% {
+    opacity: 1;
+    filter: blur(0) brightness(1);
+  }
+  44% {
+    opacity: 0.78;
+    filter: blur(1.5px) brightness(1.08);
+  }
+  100% {
+    opacity: 0;
+    filter: blur(10px) brightness(1.28);
+  }
+}
+
+@keyframes home-cat-mist-bloom {
+  0% {
+    opacity: 0;
+    transform: translate3d(-50%, -50%, 0) scale(0.56);
+    filter: blur(20px);
+  }
+  28% {
+    opacity: 0.42;
+  }
+  52% {
+    opacity: 0.86;
+  }
+  74% {
+    opacity: 0.36;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(-50%, -50%, 0) scale(1.34);
+    filter: blur(34px);
+  }
+}
+
+@keyframes home-cat-glow-pulse {
+  0% {
+    opacity: 0;
+    transform: translate3d(-50%, -50%, 0) scale(0.54);
+  }
+  48% {
+    opacity: 0.72;
+  }
+  72% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(-50%, -50%, 0) scale(1.22);
+  }
+}
+
+@keyframes home-cat-card-glimmer {
+  0% {
+    transform: translateZ(0) scale(1);
+    box-shadow: 0 0 0 rgba(215, 153, 255, 0);
+  }
+  46% {
+    transform: translateZ(0) scale(1.018);
+    box-shadow:
+      0 0 22px rgba(215, 153, 255, 0.34),
+      0 0 10px rgba(255, 217, 138, 0.18) inset;
+  }
+  100% {
+    transform: translateZ(0) scale(1);
+    box-shadow: 0 0 20px rgba(199, 117, 255, 0.28);
+  }
+}
+
 @keyframes home-flame-breathe {
   0% {
     transform: translateY(1px) scale(0.86, 0.94) rotate(-1.5deg);
@@ -342,6 +554,20 @@ button {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .home-cat-transition-current,
+  .home-cat-transition-previous,
+  .home-cat-transition-mist,
+  .home-cat-transition-glow,
+  .home-cat-card-glimmer {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .home-cat-transition-mist,
+  .home-cat-transition-glow {
+    opacity: 0 !important;
+  }
+
   .home-live-effect {
     animation: none !important;
   }

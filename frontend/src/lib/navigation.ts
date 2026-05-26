@@ -1,12 +1,12 @@
 import { dreamSeedRoute } from "./dream-seed-options";
 
-export type NavKey = "today" | "write" | "archive" | "encyclopedia";
+export type NavKey = "today" | "write" | "archive" | "encyclopedia" | "profile";
 
 export type BottomNavItem = {
   key: NavKey;
   label: string;
   href: string;
-  icon: "moon" | "pen" | "clipboard" | "book";
+  icon: "moon" | "pen" | "clipboard" | "book" | "profile";
   match: (pathname: string) => boolean;
 };
 
@@ -42,6 +42,13 @@ export const bottomNavItems: BottomNavItem[] = [
     href: "/encyclopedia",
     icon: "book",
     match: (pathname) => pathname.startsWith("/encyclopedia"),
+  },
+  {
+    key: "profile",
+    label: "내방",
+    href: "/profile",
+    icon: "profile",
+    match: (pathname) => pathname.startsWith("/profile"),
   },
 ];
 

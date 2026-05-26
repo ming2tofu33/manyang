@@ -29,7 +29,7 @@ describe("EncyclopediaDetailContent", () => {
     expect(markup).toContain("내 감각을 믿어도 되는 흐름");
     expect(markup).toContain("마음을 쉽게 열지 않는 경계");
     expect(markup).toContain("고양이가 다가왔나요");
-    expect(markup).toContain("회색냥 상징 힌트");
+    expect(markup).toContain("잿빛냥 상징 힌트");
     expect(markup).toContain("href=\"/write?symbol=cat\"");
     expect(markup).toContain("href=\"/encyclopedia/darkness\"");
   });

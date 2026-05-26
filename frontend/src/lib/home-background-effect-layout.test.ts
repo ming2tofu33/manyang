@@ -19,6 +19,7 @@ describe("home background effect layout", () => {
       "right-lantern",
       "right-book-candle",
       "crystal-orb",
+      "crystal-orb-core",
       "left-smoke-column",
       "orb-mist",
       "window-star",

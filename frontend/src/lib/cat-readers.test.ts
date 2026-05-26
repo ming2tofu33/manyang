@@ -27,7 +27,7 @@ function createMemoryStorage(initialEntries: Record<string, string> = {}): Stora
 describe("cat readers", () => {
   test("defines the MVP cat reader set", () => {
     expect(catReaders.map((reader) => reader.id)).toEqual(["black_cat", "white_cat", "cheese_cat", "gray_cat"]);
-    expect(catReaders.map((reader) => reader.name)).toEqual(["검은냥", "하얀냥", "치즈냥", "회색냥"]);
+    expect(catReaders.map((reader) => reader.name)).toEqual(["검은냥", "하얀냥", "치즈냥", "잿빛냥"]);
     expect(catReaders.map((reader) => reader.role)).toEqual(["기본 해몽사", "위로 해몽사", "지적 해몽사", "타로 해몽사"]);
     expect(catReaders.map((reader) => reader.shortDescription)).toEqual([
       "신비롭고 상징 중심",
@@ -99,7 +99,7 @@ describe("cat readers", () => {
     });
     expect(getCatReaderDreamReadingState("gray_cat")).toEqual({
       isAvailable: false,
-      blockedLabel: "회색냥은 Moon Pass에서 열려요",
+      blockedLabel: "잿빛냥은 Moon Pass에서 열려요",
       fallbackReaderId: "black_cat",
     });
   });

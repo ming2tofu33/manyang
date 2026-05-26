@@ -72,7 +72,7 @@ export function canRequestReading(input: ReadingGateInput): ReadingGateResult {
       allowed: false,
       reason: "detailed_locked",
       ctaLabel: "Moon Pass로 상세 해몽 열기",
-      message: "상징별 세부 해석, 감정 흐름, 회색냥 꿈+타로 리딩은 Moon Pass에서 열려요.",
+      message: "상징별 세부 해석, 감정 흐름, 잿빛냥 꿈+타로 리딩은 Moon Pass에서 열려요.",
     };
   }
 
