@@ -16,7 +16,7 @@ describe("POST /api/dreams/analyze", () => {
   test("returns a mock dream analysis response", async () => {
     const response = await POST(
       createJsonRequest({
-        dreamText: "낡은 학교 복도에서 신발을 잃어버렸어요.",
+        dreamText: "학교 복도에서 교실을 찾는데 문이 계속 바뀌었어요.",
         dreamDate: "2026-05-24",
         wakeMood: "anxious",
         catReaderType: "white_cat",
@@ -32,7 +32,8 @@ describe("POST /api/dreams/analyze", () => {
       access: "free",
     });
     expect(body.readerNote).toContain("하얀냥");
-    expect(body.symbols).toEqual(expect.arrayContaining(["학교", "복도", "신발", "잃어버림"]));
+    expect(body.symbols).toEqual(expect.arrayContaining(["학교", "복도", "문", "찾기"]));
+    expect(body.readingBasis.usedSymbols).toEqual(expect.arrayContaining(["학교", "복도", "문", "찾기"]));
     expect(body.summary).toContain("꿈");
     expect(body.card.name).toContain("밤");
   });

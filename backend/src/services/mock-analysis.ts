@@ -5,10 +5,12 @@ import type {
   CatReaderType,
   DreamAnalysisRequest,
   DreamAnalysisResponse,
-  EncyclopediaEntry,
+  DreamCardResponse,
 } from "../contracts/dream";
-import { getEntryBySymbol } from "../data/encyclopedia";
-import { findMatchingSymbols } from "./symbol-matcher";
+import type { RuntimeSymbolEntry, SupportedLocale } from "../contracts/symbol-encyclopedia";
+import { getRuntimeSymbolEntry } from "../data/symbol-encyclopedia";
+import { analyzeDreamStructure } from "./structured-dream-analysis";
+import { findRuntimeSymbolMatches, type RuntimeSymbolMatch } from "./symbol-matcher";
 
 const moodLabels: Record<string, string> = {
   anxious: "불안",
@@ -17,15 +19,17 @@ const moodLabels: Record<string, string> = {
   curious: "호기심",
   blurry: "흐릿함",
   confusing: "혼란",
+  overwhelming: "압도감",
+  heavy: "무거움",
+  sad: "슬픔",
   peaceful: "평온",
+  uneasy: "불편함",
   편안: "평온",
   불안: "불안",
   조급: "조급함",
   신기: "호기심",
   흐릿: "흐릿함",
 };
-
-const fallbackSymbolNames = ["문", "물", "고양이"];
 
 const catReaderProfiles: Record<CatReaderType, CatReaderResponse & { note: string }> = {
   black_cat: {
@@ -58,10 +62,12 @@ function unique(values: string[]): string[] {
   return [...new Set(values.filter(Boolean))];
 }
 
-function pickFallbackEntries(): EncyclopediaEntry[] {
-  return fallbackSymbolNames
-    .map((symbol) => getEntryBySymbol(symbol))
-    .filter((entry): entry is EncyclopediaEntry => entry !== undefined);
+function average(values: number[]): number {
+  if (values.length === 0) {
+    return 0.55;
+  }
+
+  return Number((values.reduce((sum, value) => sum + value, 0) / values.length).toFixed(2));
 }
 
 function getCatReaderProfile(readerType: CatReaderType | string | undefined): CatReaderResponse & { note: string } {
@@ -70,122 +76,115 @@ function getCatReaderProfile(readerType: CatReaderType | string | undefined): Ca
   return catReaderProfiles[(normalizedReaderType as CatReaderType | undefined) ?? "black_cat"] ?? catReaderProfiles.black_cat;
 }
 
-function inferEmotions(request: DreamAnalysisRequest, symbols: string[]): string[] {
-  const text = request.dreamText;
-  const moods = [request.wakeMood, request.dreamMood].flatMap((mood) => (mood ? [moodLabels[mood] ?? mood] : []));
-  const inferred: string[] = [];
-
-  if (/불안|무서|쫓|잃어|늦|어둡|깜깜/.test(text) || symbols.includes("잃어버림")) {
-    inferred.push("불안");
-  }
-
-  if (/기억|흐릿|안개|이상한/.test(text)) {
-    inferred.push("흐릿함");
-  }
-
-  if (/찾|열쇠|문|별/.test(text) || symbols.includes("찾기")) {
-    inferred.push("기대");
-  }
-
-  if (/집|고양이|편안|잔잔/.test(text)) {
-    inferred.push("안정감");
-  }
-
-  return unique([...moods, ...inferred]).slice(0, 4);
+function fallbackEntries(locale: SupportedLocale): RuntimeSymbolEntry[] {
+  return ["door", "water", "cat"].map((id) => getRuntimeSymbolEntry(id, locale));
 }
 
-function themeFor(entry: EncyclopediaEntry): string {
-  if (entry.category === "place") {
-    return "장소와 전환";
-  }
+function inferEmotions(request: DreamAnalysisRequest, inferredLabels: string[]): string[] {
+  const selected = [request.wakeMood, request.dreamMood].flatMap((mood) => (mood ? [moodLabels[mood] ?? mood] : []));
 
-  if (entry.category === "object") {
-    return "준비와 단서";
-  }
-
-  if (entry.category === "action") {
-    return "움직임과 선택";
-  }
-
-  if (entry.category === "nature") {
-    return "감정의 흐름";
-  }
-
-  if (entry.category === "animal" || entry.category === "person") {
-    return "관계와 직감";
-  }
-
-  return "감정 정리";
+  return unique([...selected, ...inferredLabels]).slice(0, 4);
 }
 
-function formatList(values: string[]): string {
-  if (values.length <= 1) {
-    return values[0] ?? "";
-  }
+function symbolReadingFor(match: RuntimeSymbolMatch): string {
+  const modifierKey = match.usedFields.find((field) => field.startsWith("sceneModifiers."))?.replace("sceneModifiers.", "");
+  const modifierReading = modifierKey ? match.evidence.sceneModifiers[modifierKey]?.reading : undefined;
+  const baseReading = modifierReading ?? match.evidence.lightReadings[0] ?? match.evidence.coreMeanings[0] ?? "마음의 단서";
 
-  return `${values.slice(0, -1).join(", ")} 그리고 ${values.at(-1)}`;
+  return `${match.label}은 ${baseReading}으로 읽을 수 있어요.`;
 }
 
-function buildSummary(entries: EncyclopediaEntry[], isFallback: boolean): string {
+function buildSymbolReadings(matches: RuntimeSymbolMatch[]): DreamAnalysisResponse["symbolReadings"] {
+  return matches.slice(0, 5).map((match) => ({
+    symbol: match.label,
+    reading: symbolReadingFor(match),
+  }));
+}
+
+function buildFallbackSymbolReadings(entries: RuntimeSymbolEntry[]): DreamAnalysisResponse["symbolReadings"] {
+  return entries.slice(0, 3).map((entry) => ({
+    symbol: entry.label,
+    reading: `${entry.label}은 ${entry.evidence.lightReadings[0] ?? entry.evidence.coreMeanings[0]}의 단서로 낮게 참고할 수 있어요.`,
+  }));
+}
+
+function buildInterpretation(matches: RuntimeSymbolMatch[], themes: string[], isFallback: boolean): string {
   if (isFallback) {
-    return "희미한 느낌이 남은 꿈";
+    return "뚜렷한 상징은 적지만, 남아 있는 느낌 자체가 오늘 마음의 온도를 보여주는 단서일 수 있어요. 꿈을 억지로 맞히기보다 흐릿한 감각을 한 문장으로 남겨보면 좋겠다냥.";
   }
 
-  return `${formatList(entries.slice(0, 3).map((entry) => entry.symbol))}이 특히 남은 꿈`;
-}
+  const symbolIds = matches.map((match) => match.entryId);
 
-function buildInterpretation(entries: EncyclopediaEntry[], emotions: string[], isFallback: boolean): string {
-  if (isFallback) {
-    return "뚜렷한 상징은 적지만, 남아 있는 느낌 자체가 오늘 마음의 온도를 보여주는 단서일 수 있어요. 꿈을 억지로 맞히기보다 흐릿한 감각을 조용히 바라보면 좋겠다냥.";
+  if (symbolIds.includes("snake") && symbolIds.includes("owned_land")) {
+    return "이 꿈은 불길함으로 몰아가기보다, 내 영역 안에서 조용히 커지고 있던 감각들이 한꺼번에 모습을 드러낸 장면으로 읽을 수 있어요. 큰 구렁이와 많은 뱀은 하나의 작은 사건보다 여러 갈래의 힘이나 가능성이 동시에 움직이는 느낌에 가깝습니다.";
   }
 
-  const [firstEntry, secondEntry, thirdEntry] = entries;
-  const emotionText = emotions.length > 0 ? `${formatList(emotions)} 같은 감정` : "잠에서 깬 뒤의 감정";
-  const firstMeaning = firstEntry?.coreMeanings.slice(0, 2).join("와 ") ?? "마음의 단서";
-  const supportingMeanings = [secondEntry, thirdEntry]
-    .filter((entry): entry is EncyclopediaEntry => entry !== undefined)
-    .map((entry) => `${entry.symbol}은 ${entry.coreMeanings[0]}`)
-    .join(", ");
+  if (symbolIds.includes("door") && symbolIds.includes("corridor")) {
+    return "이 꿈은 목적지가 없다는 뜻보다, 다음 장면으로 들어가기 전 기준을 찾는 전환 구간에 가까워 보여요. 문이나 복도는 선택 앞에서 잠시 멈춰 방향을 살피는 마음을 보여줄 수 있습니다.";
+  }
 
-  return `단정하긴 어렵지만, ${firstEntry?.symbol ?? "이 상징"}은 ${firstMeaning}와 연결되어 보여요. ${supportingMeanings ? `${supportingMeanings}의 결을 더해요. ` : ""}${emotionText}이 꿈의 장면을 통해 안전하게 rehearsing되는 중일 수 있다냥.`;
+  const [firstMatch, secondMatch] = matches;
+  const firstTheme = themes[0] ?? firstMatch?.evidence.coreMeanings[0] ?? "감정의 흐름";
+  const secondLabel = secondMatch ? ` ${secondMatch.label}의 단서가 함께 더해져,` : "";
+
+  return `단정하긴 어렵지만, ${firstMatch?.label ?? "이 장면"}은 ${firstTheme}와 연결되어 보여요.${secondLabel} 꿈이 남긴 감각을 조금 더 구체적으로 바라보게 합니다.`;
 }
 
-function buildSmallPrescription(symbols: string[], isFallback: boolean): string {
+function buildSmallPrescription(matches: RuntimeSymbolMatch[], isFallback: boolean): string {
   if (isFallback) {
     return "기억나는 감각을 한 문장으로 적어두자냥.";
   }
 
-  if (symbols.includes("신발") || symbols.includes("가방")) {
-    return "오늘 움직이기 전 준비물 하나만 먼저 확인해보자냥.";
+  const symbolIds = matches.map((match) => match.entryId);
+
+  if (symbolIds.includes("snake") && symbolIds.includes("owned_land")) {
+    return "오늘은 내가 지켜야 한다고 느끼는 영역 하나를 적고, 실제로 챙길 수 있는 작은 행동 하나만 정해보세요.";
   }
 
-  if (symbols.includes("기다림") || symbols.includes("시계")) {
-    return "기다리는 일을 하나 적고, 내가 지금 할 수 있는 작은 행동만 표시해보자냥.";
+  if (symbolIds.includes("door")) {
+    return "오늘 결정해야 하는 일 하나에 임시 기준을 붙여보자냥.";
   }
 
-  if (symbols.includes("물") || symbols.includes("비") || symbols.includes("바다")) {
-    return "물을 한 잔 마시고, 지금 남은 감정을 짧게 이름 붙여보자냥.";
-  }
-
-  if (symbols.includes("문") || symbols.includes("열쇠")) {
-    return "오늘 열어볼 수 있는 가장 작은 선택지 하나를 정해보자냥.";
+  if (symbolIds.includes("water")) {
+    return "오늘은 감정을 해결하려 하기보다 이름 하나만 붙여보자냥.";
   }
 
   return "꿈에서 가장 선명했던 장면 하나만 오늘의 메모로 남겨보자냥.";
 }
 
-function buildCard(entries: EncyclopediaEntry[], themes: string[], emotions: string[], summary: string) {
-  const primary = entries[0];
-  const secondary = entries[1];
+function buildCard(matches: RuntimeSymbolMatch[], themes: string[], emotions: string[], summary: string, isFallback: boolean): DreamCardResponse {
+  if (isFallback) {
+    return {
+      name: "흐릿한 꿈 조각",
+      type: "soft_moon",
+      keywords: ["잔상", "기록", "감각"],
+      summary,
+      message: "희미한 꿈도 오늘의 작은 단서가 될 수 있다냥.",
+      theme: "감정 정리",
+    };
+  }
+
+  const symbolIds = matches.map((match) => match.entryId);
+  const primary = matches[0];
   const keywords = unique([
-    ...(primary?.coreMeanings.slice(0, 2) ?? []),
-    secondary?.coreMeanings[0] ?? "",
-    ...themes.slice(0, 1),
+    ...themes.slice(0, 3),
+    ...(primary?.evidence.coreMeanings.slice(0, 2) ?? []),
   ]).slice(0, 4);
   const emotion = emotions[0] ?? "잔상";
 
+  if (symbolIds.includes("snake") && symbolIds.includes("owned_land")) {
+    return {
+      name: "땅 아래 깨어난 구렁이",
+      type: "earth_moon",
+      keywords: unique(["영역", "생명력", "경계", "압도감"]).slice(0, 4),
+      summary,
+      message: "한꺼번에 올라온 감각을 불길함으로 몰지 말고, 지금 내 영역에서 무엇이 커지고 있는지 살펴보자냥.",
+      theme: "영역",
+    };
+  }
+
   return {
-    name: `${primary?.symbol ?? "꿈 조각"}을 살피는 밤`,
+    name: `${primary?.label ?? "꿈 조각"}을 살피는 밤`,
     type: emotion === "불안" ? "half_moon" : "soft_moon",
     keywords,
     summary,
@@ -194,21 +193,56 @@ function buildCard(entries: EncyclopediaEntry[], themes: string[], emotions: str
   };
 }
 
+function safetyNoticeFor(request: DreamAnalysisRequest): string | undefined {
+  if (/질병|진단|disease|diagnosis|sick|illness/i.test(request.dreamText)) {
+    if (request.locale === "en") {
+      return "Manyang's reading is not a medical diagnosis. If you are worried about your health, please talk with a qualified professional.";
+    }
+
+    return "마냥의 해석은 의학적 진단을 대체하지 않습니다. 건강이 걱정된다면 전문가와 상의해 주세요.";
+  }
+
+  if (/힘들|무겁|울고|crisis|harm/i.test(request.dreamText)) {
+    return "이 해석은 자기 성찰을 돕는 감성 리딩입니다. 감정이 오래 무겁다면 믿을 수 있는 사람이나 전문가에게 도움을 요청해 주세요.";
+  }
+
+  return undefined;
+}
+
 export function analyzeDream(request: DreamAnalysisRequest): DreamAnalysisResponse {
   if (request.dreamText.trim().length === 0) {
     throw new Error("dreamText is required");
   }
 
-  const matches = findMatchingSymbols(request.dreamText, { limit: 5 });
+  const locale = request.locale ?? "ko";
+  const structuredAnalysis = analyzeDreamStructure({
+    dreamText: request.dreamText,
+    ...(request.dreamDate ? { dreamDate: request.dreamDate } : {}),
+    ...(request.wakeMood ? { wakeMood: request.wakeMood } : {}),
+    ...(request.dreamMood ? { dreamMood: request.dreamMood } : {}),
+    locale,
+  });
+  const matches = findRuntimeSymbolMatches(request.dreamText, { locale, limit: 5 });
   const isFallback = matches.length === 0;
-  const entries = isFallback ? pickFallbackEntries() : matches.map((match) => match.entry);
-  const symbols = entries.map((entry) => entry.symbol);
-  const emotions = inferEmotions(request, symbols);
-  const themes = unique(entries.map(themeFor)).slice(0, 4);
-  const summary = buildSummary(entries, isFallback);
-  const interpretation = buildInterpretation(entries, emotions, isFallback);
-  const smallPrescription = buildSmallPrescription(symbols, isFallback);
+  const fallback = isFallback ? fallbackEntries(locale) : [];
+  const symbols = isFallback ? fallback.map((entry) => entry.label) : matches.map((match) => match.label);
+  const emotions = inferEmotions(
+    request,
+    structuredAnalysis.inferredEmotions.map((emotion) => emotion.label),
+  );
+  const themes = unique([
+    ...structuredAnalysis.themes.map((theme) => theme.label),
+    ...matches.flatMap((match) => match.evidence.coreMeanings.slice(0, 1)),
+  ]).slice(0, 4);
+  const summary = isFallback
+    ? "희미한 느낌이 남은 꿈"
+    : `${symbols.slice(0, 3).join(", ")}이 특히 남은 꿈`;
+  const interpretation = buildInterpretation(matches, themes, isFallback);
+  const smallPrescription = buildSmallPrescription(matches, isFallback);
+  const symbolReadings = isFallback ? buildFallbackSymbolReadings(fallback) : buildSymbolReadings(matches);
   const reader = getCatReaderProfile(request.catReaderType);
+
+  const safetyNotice = safetyNoticeFor(request);
 
   return {
     dreamId: randomUUID(),
@@ -224,8 +258,15 @@ export function analyzeDream(request: DreamAnalysisRequest): DreamAnalysisRespon
     emotions,
     themes,
     interpretation,
+    symbolReadings,
     smallPrescription,
+    readingBasis: {
+      usedSymbols: symbols,
+      mainThemes: themes,
+      confidence: isFallback ? 0.55 : average(matches.map((match) => match.confidence)),
+    },
     readerNote: reader.note,
-    card: buildCard(entries, themes, emotions, summary),
+    ...(safetyNotice ? { safetyNotice } : {}),
+    card: buildCard(matches, themes, emotions, summary, isFallback),
   };
 }

@@ -36,6 +36,8 @@ export type DreamAnalysisRequest = {
   wakeMood?: string;
   dreamMood?: string;
   catReaderType?: CatReaderType;
+  locale?: "ko" | "en";
+  userTimeZone?: string;
 };
 
 export type DreamCardResponse = {
@@ -57,7 +59,17 @@ export type DreamAnalysisResponse = {
   emotions: string[];
   themes: string[];
   interpretation: string;
+  symbolReadings: {
+    symbol: string;
+    reading: string;
+  }[];
   smallPrescription: string;
+  readingBasis: {
+    usedSymbols: string[];
+    mainThemes: string[];
+    confidence: number;
+  };
   readerNote?: string;
+  safetyNotice?: string;
   card: DreamCardResponse;
 };
