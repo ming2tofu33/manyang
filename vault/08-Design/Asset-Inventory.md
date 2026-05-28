@@ -47,8 +47,10 @@ source: docs/manyang-dream-project-spec-updated.md
 
 ## Related
 
+- [[Frontend-Optimization-Asset-Classification-2026-05-28]]
 - [[Visual-Direction]]
 - [[Screen-Inventory]]
+- [[Layout-Contract]]
 
 ## See Also
 

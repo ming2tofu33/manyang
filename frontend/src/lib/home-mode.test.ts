@@ -35,13 +35,13 @@ describe("home mode", () => {
     });
   });
 
-  test("uses dream seed as the night primary action", () => {
+  test("keeps dream writing as the night primary action", () => {
     expect(getHomeState(new Date("2026-05-24T22:00:00"), null)).toMatchObject({
       mode: "night",
       question: "오늘 밤 꿈에게 무엇을 물어볼까요?",
-      primary: { label: "꿈 씨앗 심기", href: "/seed" },
-      secondary: { label: "오늘 기록 보기", href: "/archive" },
-      tertiary: { label: "어젯밤 꿈 들려주기", href: "/write" },
+      primary: { label: "꿈 들려주기", href: "/write" },
+      secondary: { label: "꿈 씨앗 심기", href: "/seed" },
+      tertiary: { label: "오늘 기록 보기", href: "/archive" },
     });
   });
 

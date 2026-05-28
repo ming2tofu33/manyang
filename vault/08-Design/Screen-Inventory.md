@@ -66,6 +66,7 @@ source: docs/manyang-dream-project-spec-updated.md
 
 - [[Visual-Direction]]
 - [[Asset-Inventory]]
+- [[Layout-Contract]]
 
 ## See Also
 

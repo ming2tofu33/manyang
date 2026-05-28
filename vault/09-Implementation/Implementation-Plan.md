@@ -20,6 +20,7 @@ tags:
 | [[Checklists-&-DoD]] | 완료 기준 |
 | [[plans/ACTIVE_SPRINT]] | 현재 스프린트 |
 | `vault/09-Implementation/plans/` | 개별 작업 계획 |
+| [[Frontend-Optimization-Guide]] | 프론트엔드 성능, 에셋, 애니메이션, 레이아웃 안정화 기준 |
 
 ## Hard Gates
 
@@ -62,10 +63,10 @@ LLM API key는 클라이언트에 노출하지 않는다. 모든 AI 호출은 Ne
 
 - [[Phase-Flow]]
 - [[Checklists-&-DoD]]
+- [[Frontend-Optimization-Guide]]
 - [[plans/ACTIVE_SPRINT]]
 
 ## See Also
 
 - [[MVP-Scope]] — 실행 범위의 제품 근거 (01-Core)
 - [[System-Architecture]] — 기술 구조 (02-Architecture)
-

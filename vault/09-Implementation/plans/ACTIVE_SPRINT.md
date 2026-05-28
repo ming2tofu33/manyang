@@ -103,6 +103,8 @@ status: active
 - [[../../../docs/plans/2026-05-26-seo-foundation|SEO Foundation Plan]]
 - [[../../../docs/plans/2026-05-26-ai-rag-implementation-handoff|AI RAG Implementation Handoff Plan]]
 - [[../../../docs/plans/2026-05-26-ai-rag-db-pgvector-later|AI RAG DB pgvector Later Implementation Plan]]
+- [[../../../docs/plans/2026-05-28-frontend-optimization|Frontend Optimization Implementation Plan]]
+- [[Frontend-Optimization-Guide|Frontend Optimization Guide]]
 - [[Dream-Reading-Contracts|Dream Reading Contracts]]
 - [[Dream-Reading-LLM-Logic|Dream Reading LLM Logic]]
 - [[RAG-Strategy-for-Dream-Reading|RAG Strategy for Dream Reading]]

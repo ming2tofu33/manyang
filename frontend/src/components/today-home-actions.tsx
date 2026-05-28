@@ -94,28 +94,12 @@ function NightSeedButton() {
       frame={manyangAssets.buttons.dreamseed}
       width={852}
       height={300}
-      className="mx-auto -my-2 block w-[74%] px-3 py-2"
-      imageClassName="manyang-button-glow"
-      contentClassName="pb-1 text-[1.52rem]"
+      sizes="250px"
+      className="mx-auto -my-1 block w-[60%] max-w-[240px] px-2 py-1"
+      imageClassName="manyang-button-glow-soft"
+      contentClassName="pb-0.5 text-[1.12rem]"
     >
       꿈 씨앗 심기
-    </AssetImageTextButton>
-  );
-}
-
-function NightArchiveButton() {
-  return (
-    <AssetImageTextButton
-      href="/archive"
-      frame={manyangAssets.buttons.dreamseedArchive}
-      width={808}
-      height={148}
-      sizes="302px"
-      className="mx-auto -my-1 block w-[54%] px-2 py-1"
-      imageClassName="manyang-button-glow-soft"
-      contentClassName="text-[1.03rem]"
-    >
-      오늘 기록 보기
     </AssetImageTextButton>
   );
 }
@@ -164,15 +148,11 @@ export function TodayHomeActions() {
       />
 
       <div className={cn(isNight ? nightHomeActionGroupClassName : "space-y-2")}>
-        {isNight ? (
-          <NightSeedButton />
-        ) : (
-          <PrimaryDreamButton
-            readingState={readingState}
-            onFallbackReaderClick={() => saveSelectedCatReaderIdToBrowser(readingState.fallbackReaderId ?? "black_cat")}
-          />
-        )}
-        {isNight ? <NightArchiveButton /> : <SecondaryForgotButton />}
+        <PrimaryDreamButton
+          readingState={readingState}
+          onFallbackReaderClick={() => saveSelectedCatReaderIdToBrowser(readingState.fallbackReaderId ?? "black_cat")}
+        />
+        {isNight ? <NightSeedButton /> : <SecondaryForgotButton />}
 
         <Link
           href={homeState.tertiary.href}

@@ -34,6 +34,8 @@ tags:
 - [[Symbol-Encyclopedia-Schema]] — 백과사전 YAML/DB 저장 스키마
 - [[Dream-Reading-Quality-Safety]] — 해몽 품질/안전 검증 기준
 - [[Dream-Reading-Golden-Test-Set]] — 해몽 회귀 테스트 케이스
+- [[Layout-Contract]] — 에셋 기반 모바일 UI 레이아웃 계약과 화면별 기준표
+- [[Frontend-Optimization-Guide]] — 프론트엔드 성능, 에셋, 애니메이션, 레이아웃 안정화 기준
 - [[Screen-Inventory]] — 화면 목록
 - [[Source-Documents]] — 원본 문서와 참고 이미지
 

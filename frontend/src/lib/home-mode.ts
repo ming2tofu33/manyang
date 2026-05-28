@@ -67,9 +67,9 @@ export function getHomeState(date: Date, seed: DreamSeedRecord | null): HomeStat
     return {
       mode: "night",
       question: hasTonightSeed ? "오늘 밤 씨앗을 심어두었어요" : "오늘 밤 꿈에게 무엇을 물어볼까요?",
-      primary: { label: "꿈 씨앗 심기", href: "/seed" },
-      secondary: { label: "오늘 기록 보기", href: "/archive" },
-      tertiary: { label: "어젯밤 꿈 들려주기", href: "/write" },
+      primary: { label: "꿈 들려주기", href: "/write" },
+      secondary: { label: "꿈 씨앗 심기", href: "/seed" },
+      tertiary: { label: "오늘 기록 보기", href: "/archive" },
       seedBadge: hasTonightSeed ? getSeedBadge(seed) : null,
     };
   }
