@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { ArchiveCalendar } from "@/components/archive-calendar";
 import { AppShell } from "@/components/app-shell";
 import { DreamArchiveList } from "@/components/dream-archive-list";
+import { manyangAssets } from "@/lib/manyang-assets";
 
 export const metadata: Metadata = {
   robots: {
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
 
 export default function ArchivePage() {
   return (
-    <AppShell background="/manyang/backgrounds/default.png" title="꿈 기록" subtitle="내가 꾼 꿈들을 돌아보는 시간" backHref="/">
+    <AppShell background={manyangAssets.backgrounds.default} title="꿈 기록" subtitle="내가 꾼 꿈들을 돌아보는 시간" backHref="/">
       <div className="mt-8 space-y-4 pb-5">
         <ArchiveCalendar />
         <DreamArchiveList />

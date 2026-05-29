@@ -140,7 +140,7 @@ export function DreamResultReceipt() {
     <div className="mt-2 space-y-4 pb-5">
       <section className="animate-receipt-slide-up relative mx-auto aspect-[771/1730] w-full max-w-[360px] overflow-hidden">
         <Image
-          src="/manyang/receipts/empty.png"
+          src="/manyang/receipts/empty.webp"
           alt=""
           fill
           sizes="360px"

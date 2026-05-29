@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export default function SeedPage() {
   return (
     <AppShell
-      background="/manyang/backgrounds/default.png"
+      background={manyangAssets.backgrounds.default}
       backgroundOverlay={
         <>
           <div className="absolute inset-x-0 top-8 h-[25.4rem] overflow-hidden">

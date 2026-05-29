@@ -25,7 +25,7 @@ type AppShellProps = {
 
 export function AppShell({
   children,
-  background = "/manyang/backgrounds/home.png",
+  background = manyangAssets.backgrounds.default,
   backgroundLayer,
   backgroundOverlay,
   backgroundClassName = "object-cover opacity-68",

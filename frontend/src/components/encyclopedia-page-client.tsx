@@ -10,6 +10,7 @@ import {
   getSelectedCatReaderSnapshotFromBrowser,
   subscribeToSelectedCatReader,
 } from "@/lib/cat-readers";
+import { manyangAssets } from "@/lib/manyang-assets";
 
 type EncyclopediaPageClientProps = {
   entries: Pick<EncyclopediaEntry, "symbol" | "slug" | "category">[];
@@ -24,7 +25,7 @@ export function EncyclopediaPageClient({ entries }: EncyclopediaPageClientProps)
 
   return (
     <AppShell
-      background="/manyang/backgrounds/default.png"
+      background={manyangAssets.backgrounds.default}
       title="꿈해몽 백과"
       subtitle="궁금한 꿈의 상징을 찾아보세요."
       backHref="/"

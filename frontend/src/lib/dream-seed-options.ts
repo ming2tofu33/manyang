@@ -1,5 +1,5 @@
 export const dreamSeedRoute = "/seed";
-export const dreamSeedBackground = "/manyang/backgrounds/dreamseed.png";
+export const dreamSeedBackground = "/manyang/backgrounds/dreamseed.webp";
 export const dreamSeedNoteMaxLength = 100;
 export const dreamSeedCustomIntentId = "custom";
 

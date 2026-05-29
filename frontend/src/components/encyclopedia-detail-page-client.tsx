@@ -10,6 +10,7 @@ import {
   getSelectedCatReaderSnapshotFromBrowser,
   subscribeToSelectedCatReader,
 } from "@/lib/cat-readers";
+import { manyangAssets } from "@/lib/manyang-assets";
 
 type EncyclopediaDetailPageClientProps = {
   entry: EncyclopediaEntry;
@@ -25,7 +26,7 @@ export function EncyclopediaDetailPageClient({ entry, relatedSymbols }: Encyclop
 
   return (
     <AppShell
-      background="/manyang/backgrounds/default.png"
+      background={manyangAssets.backgrounds.default}
       title={`${entry.symbol} 꿈`}
       subtitle={entry.coreMeanings.slice(0, 2).join(" · ")}
       backHref="/encyclopedia"

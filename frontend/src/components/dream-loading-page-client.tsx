@@ -34,7 +34,7 @@ export function DreamLoadingPageClient() {
     >
       <div className="flex flex-1 flex-col items-center justify-center gap-8 pb-16">
         <div className="relative h-56 w-56">
-          <Image src="/manyang/orbs/orb-transparent.png" alt="" fill sizes="224px" className="object-contain orb-pulse" />
+          <Image src={manyangAssets.orbs.base} alt="" fill sizes="224px" className="object-contain orb-pulse" />
         </div>
         <div className="w-full space-y-4">
           {steps.map((step, index) => (

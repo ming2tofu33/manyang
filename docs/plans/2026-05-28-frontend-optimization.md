@@ -223,6 +223,12 @@ npm run build
 
 Expected: tests, lint, build pass.
 
+**Progress 2026-05-29:** Home background candidates generated under `output/playwright/optimization/assets/home-backgrounds/`. WebP q84 reduces the four home backgrounds from 8.11 MiB to 0.87 MiB; AVIF q56 reduces them to 0.53 MiB. WebP q84 is now connected to the runtime home background paths and verified with tests, lint, build, and mobile screenshots. See `vault/09-Implementation/Frontend-Optimization-Image-Spike-2026-05-29.md`.
+
+**Progress 2026-05-29 follow-up:** `receipts/empty.png` and `ui/calendar.png` were converted to WebP q86 and connected to runtime components. Combined payload changed from 4.67 MiB to 0.27 MiB, a 94.2% reduction. Verification passed with component tests, full test suite, lint, build, static content-type checks, and mobile screenshots for `/archive` and `/result`.
+
+**Progress 2026-05-29 follow-up 2:** Remaining large runtime images were converted and connected as WebP: default page background, interpretation backgrounds, dream seed and morning illustrations, cat reader profile portraits, and loading orb assets. Combined payload changed from 28.66 MiB to 3.00 MiB, an 89.5% reduction. Verification passed with targeted tests, full test suite, lint, build, static content-type checks, and Playwright runtime checks across `/write`, `/loading`, `/seed`, `/morning`, `/archive`, and `/result`.
+
 ## Task 6: Home Layout Stability Spike
 
 **Files:**

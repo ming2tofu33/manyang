@@ -10,7 +10,7 @@ describe("EncyclopediaContent", () => {
       <EncyclopediaContent entries={encyclopediaEntries.slice(0, 12)} selectedCatReaderId="gray_cat" />,
     );
 
-    expect(markup).toContain("/manyang/references/cat-gray-profile.png");
+    expect(markup).toContain("/manyang/references/cat-gray-profile.webp");
     expect(markup).toContain("잿빛냥");
     expect(markup).toContain("많이 찾는 꿈해몽");
     expect(markup).toContain("href=\"/encyclopedia/door\"");

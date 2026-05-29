@@ -134,7 +134,7 @@ export function ArchiveCalendar() {
 
       <div className="relative mx-auto aspect-[962/1452] w-full max-w-[382px]">
         <Image
-          src="/manyang/ui/calendar.png"
+          src="/manyang/ui/calendar.webp"
           alt=""
           fill
           sizes="382px"

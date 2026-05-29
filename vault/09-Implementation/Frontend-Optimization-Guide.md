@@ -6,7 +6,7 @@ tags:
   - performance
   - optimization
 status: draft
-updated: 2026-05-28
+updated: 2026-05-29
 ---
 
 # Frontend Optimization Guide
@@ -237,8 +237,17 @@ rg -n "unoptimized|Image|use client|useSyncExternalStore|animation|object-cover|
 ## 관련 문서
 
 - [[Frontend-Optimization-Asset-Classification-2026-05-28]]
+- [[Frontend-Optimization-Image-Spike-2026-05-29]]
 - [[Layout-Contract]]
 - [[Visual-Direction]]
 - [[Implementation-Plan]]
 - [[Checklists-&-DoD]]
 - [[plans/ACTIVE_SPRINT]]
+
+## Runtime Image Optimization Status
+
+Updated 2026-05-29:
+
+- Home backgrounds, receipt/calendar, interpretation backgrounds, shared default background, seed/morning illustrations, cat portraits, and loading orbs now use WebP runtime assets.
+- PNG originals remain as source/reference assets and should not be deleted without separate cleanup approval.
+- See [[Frontend-Optimization-Image-Spike-2026-05-29]] for size deltas, verification commands, and screenshot evidence.

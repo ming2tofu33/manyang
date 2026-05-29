@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export default function ProfilePage() {
   return (
     <AppShell
-      background="/manyang/backgrounds/default.png"
+      background={manyangAssets.backgrounds.default}
       title="내 꿈방"
       subtitle="나와 앱 설정을 관리하는 공간"
       titleIconSrc={manyangAssets.icons.profile}

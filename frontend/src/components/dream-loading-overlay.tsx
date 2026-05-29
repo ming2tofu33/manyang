@@ -49,21 +49,21 @@ export function DreamLoadingOverlay({
       <div className="animate-fade-in-delayed relative z-10 flex h-full w-full flex-col items-center justify-center gap-16">
         <div className="animate-orb-glow-premium relative h-[250px] w-[250px] sm:h-[350px] sm:w-[350px]">
           <Image
-            src="/manyang/orbs/orb-1-transparent.png"
+            src={manyangAssets.orbs.one}
             alt="orb1"
             fill
             className="animate-orb-1 absolute object-contain drop-shadow-2xl"
             priority
           />
           <Image
-            src="/manyang/orbs/orb-2-transparent.png"
+            src={manyangAssets.orbs.two}
             alt="orb2"
             fill
             className="animate-orb-2 absolute object-contain drop-shadow-2xl"
             priority
           />
           <Image
-            src="/manyang/orbs/orb-3-transparent.png"
+            src={manyangAssets.orbs.three}
             alt="orb3"
             fill
             className="animate-orb-3 absolute object-contain drop-shadow-2xl"
