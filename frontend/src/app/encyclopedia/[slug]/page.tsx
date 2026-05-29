@@ -2,7 +2,9 @@ import { encyclopediaEntries } from "@manyang/backend";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { EncyclopediaDetailPageClient } from "@/components/encyclopedia-detail-page-client";
+import { AppShell } from "@/components/app-shell";
+import { EncyclopediaDetailContent } from "@/components/encyclopedia-detail-content";
+import { manyangAssets } from "@/lib/manyang-assets";
 import {
   createSymbolCanonicalPath,
   createSymbolSeoDescription,
@@ -79,5 +81,14 @@ export default async function EncyclopediaDetailPage({ params }: EncyclopediaDet
     notFound();
   }
 
-  return <EncyclopediaDetailPageClient entry={entry} relatedSymbols={getRelatedSymbolLinks(entry)} />;
+  return (
+    <AppShell
+      background={manyangAssets.backgrounds.default}
+      title={`${entry.symbol} 꿈`}
+      subtitle={entry.coreMeanings.slice(0, 2).join(" · ")}
+      backHref="/encyclopedia"
+    >
+      <EncyclopediaDetailContent entry={entry} relatedSymbols={getRelatedSymbolLinks(entry)} />
+    </AppShell>
+  );
 }

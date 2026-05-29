@@ -2,7 +2,7 @@ import type { EncyclopediaEntry } from "@manyang/backend";
 import Image from "next/image";
 import Link from "next/link";
 
-import { getCatReaderById, type CatReaderId } from "@/lib/cat-readers";
+import { EncyclopediaReaderGuideNote, EncyclopediaReaderIntroCard } from "@/components/encyclopedia-reader-guide-client";
 import { manyangAssets } from "@/lib/manyang-assets";
 import { cn, ui } from "@/lib/styles";
 
@@ -22,35 +22,12 @@ const categoryIconMap: Record<EncyclopediaEntry["category"], string> = {
 
 export function EncyclopediaContent({
   entries,
-  selectedCatReaderId,
 }: {
   entries: EncyclopediaListEntry[];
-  selectedCatReaderId: CatReaderId;
 }) {
-  const reader = getCatReaderById(selectedCatReaderId);
-
   return (
     <div className="mt-6 space-y-5 pb-5">
-      <section className="relative overflow-hidden rounded-[1.35rem] border border-[#7c4a38]/60 bg-[rgba(5,4,12,0.74)] px-4 py-4 shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md">
-        <div className="flex items-center gap-3">
-          <span className="relative h-16 w-16 shrink-0">
-            <Image
-              src={manyangAssets.illustrations[reader.assetKey]}
-              alt={`${reader.name} 백과 안내`}
-              fill
-              sizes="64px"
-              unoptimized
-              className="scale-110 object-contain drop-shadow-[0_0_18px_rgba(215,153,255,0.26)]"
-            />
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="text-[12px] font-semibold text-[#f0bc7d]">{reader.name} 사전 안내</p>
-            <p className="mt-1 text-[15px] leading-6 text-[#fff3d7]">
-              꿈속의 상징은 마음을 비추는 거울이라냥.
-            </p>
-          </div>
-        </div>
-      </section>
+      <EncyclopediaReaderIntroCard />
 
       <div className={cn(ui.panel, "flex items-center gap-3 px-4 py-3 text-[#caa37b]")}>
         <span className="relative h-8 w-8 shrink-0">
@@ -101,32 +78,7 @@ export function EncyclopediaContent({
         </div>
       </section>
 
-      <AssetlessGuide readerId={selectedCatReaderId} />
+      <EncyclopediaReaderGuideNote />
     </div>
-  );
-}
-
-function AssetlessGuide({ readerId }: { readerId: CatReaderId }) {
-  const reader = getCatReaderById(readerId);
-
-  return (
-    <section className="relative overflow-hidden rounded-[1.1rem] border border-[#7c4a38]/58 bg-[linear-gradient(135deg,rgba(44,22,74,0.82),rgba(8,6,18,0.82))] p-3 shadow-[0_0_24px_rgba(0,0,0,0.26)]">
-      <div className="relative z-10 flex items-center gap-3">
-        <span className="relative h-16 w-16 shrink-0">
-          <Image
-            src={manyangAssets.illustrations[reader.assetKey]}
-            alt=""
-            fill
-            sizes="64px"
-            unoptimized
-            className="scale-110 object-contain drop-shadow-[0_0_18px_rgba(215,153,255,0.28)]"
-          />
-        </span>
-        <p className="text-sm leading-6 text-[#f1c5d8]">
-          꿈은 같은 상징이라도 상황에 따라 다르게 해석될 수 있다냥. 여러 상징을 함께 보면 더 정확한 의미를 찾을 수 있다냥.
-        </p>
-      </div>
-      <span className="pointer-events-none absolute right-4 top-4 text-2xl text-[#b970ff]/60">☾</span>
-    </section>
   );
 }

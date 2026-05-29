@@ -2,7 +2,7 @@ import type { EncyclopediaEntry } from "@manyang/backend";
 import Image from "next/image";
 import Link from "next/link";
 
-import { getCatReaderById, type CatReaderId } from "@/lib/cat-readers";
+import { EncyclopediaReaderSymbolHint } from "@/components/encyclopedia-reader-guide-client";
 import { manyangAssets } from "@/lib/manyang-assets";
 import { cn, ui } from "@/lib/styles";
 
@@ -14,16 +14,12 @@ export type RelatedSymbolLink = {
 type EncyclopediaDetailContentProps = {
   entry: EncyclopediaEntry;
   relatedSymbols: RelatedSymbolLink[];
-  selectedCatReaderId: CatReaderId;
 };
 
 export function EncyclopediaDetailContent({
   entry,
   relatedSymbols,
-  selectedCatReaderId,
 }: EncyclopediaDetailContentProps) {
-  const reader = getCatReaderById(selectedCatReaderId);
-
   return (
     <div className="mt-auto space-y-4 pb-5">
       <section className={cn(ui.panel, "p-5")}>
@@ -60,22 +56,7 @@ export function EncyclopediaDetailContent({
         </ul>
       </section>
 
-      <section className={cn(ui.panel, "flex gap-4 p-5")}>
-        <span className="relative mt-1 h-16 w-16 shrink-0">
-          <Image
-            src={manyangAssets.illustrations[reader.assetKey]}
-            alt={`${reader.name} 상징 힌트`}
-            fill
-            sizes="64px"
-            unoptimized
-            className="scale-110 object-contain drop-shadow-[0_0_18px_rgba(215,153,255,0.28)]"
-          />
-        </span>
-        <div>
-          <p className="text-sm text-[#f0bc7d]">{reader.name} 상징 힌트</p>
-          <p className="mt-3 leading-7 text-[#fff3d7]/88">{entry.catInterpretationHint}</p>
-        </div>
-      </section>
+      <EncyclopediaReaderSymbolHint hint={entry.catInterpretationHint} />
 
       <section className={cn(ui.panel, "p-5")}>
         <p className="text-sm text-[#f0bc7d]">관련 상징</p>
