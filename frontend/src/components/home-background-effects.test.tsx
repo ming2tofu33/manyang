@@ -18,6 +18,12 @@ function getRenderedEffect(name: string) {
 }
 
 describe("HomeBackgroundEffects", () => {
+  it("marks the effect layer with the 390x844 home stage contract", () => {
+    const markup = renderToStaticMarkup(<HomeBackgroundEffects />);
+
+    expect(markup).toContain('data-home-effect-stage="390x844"');
+  });
+
   it("puts animation delays on the animated element instead of the position wrapper", () => {
     const { wrapperOpenTag, innerOpenTag } = getRenderedEffect("hat-brim-sparkle");
 

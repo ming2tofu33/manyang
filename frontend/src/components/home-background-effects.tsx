@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 
 import { getHomeBackgroundEffectTargets, type HomeBackgroundEffectTarget } from "@/lib/home-background-effect-layout";
+import { homeStageLayout } from "@/lib/home-action-layout";
 import { cn } from "@/lib/styles";
 
 function getPositionStyle(target: HomeBackgroundEffectTarget): CSSProperties {
@@ -35,9 +36,14 @@ function getEffectClassName(target: HomeBackgroundEffectTarget) {
 
 export function HomeBackgroundEffects({ className, readerId }: { className?: string; readerId?: string }) {
   const targets = getHomeBackgroundEffectTargets(readerId);
+  const stageLabel = `${homeStageLayout.design.width}x${homeStageLayout.design.height}`;
 
   return (
-    <div className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)} aria-hidden="true">
+    <div
+      className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)}
+      aria-hidden="true"
+      data-home-effect-stage={stageLabel}
+    >
       {targets.map((target) => (
         <span
           key={target.name}

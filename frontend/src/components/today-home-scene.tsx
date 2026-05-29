@@ -42,6 +42,7 @@ export function TodayHomeScene() {
       scrimClassName="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,4,11,0.00)_0%,rgba(5,4,11,0.03)_36%,rgba(5,4,11,0.20)_64%,rgba(5,4,11,0.90)_100%)]"
       bottomScrimClassName="absolute inset-x-0 bottom-0 h-[34%] bg-[linear-gradient(180deg,transparent,#05040b_72%)]"
       showHeader={false}
+      contentMode="fixed"
     >
       <header className="relative flex min-h-[78px] items-start justify-between">
         <AssetIconButton src={manyangAssets.icons.bell} label="알림" size="header" className="relative z-20" />

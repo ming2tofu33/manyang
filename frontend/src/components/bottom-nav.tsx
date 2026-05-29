@@ -35,7 +35,10 @@ export function BottomNav() {
               aria-current={isActive ? "page" : undefined}
             >
               {isActive ? (
-                <span className="absolute left-1/2 top-[0.45rem] h-[3.55rem] w-[4rem] -translate-x-1/2 rounded-[1.25rem] border border-[#b86cff]/55 bg-[radial-gradient(ellipse_at_center,rgba(149,66,255,0.34),rgba(52,18,83,0.30)_58%,rgba(13,7,24,0.10)_100%)] shadow-[0_0_18px_rgba(178,91,255,0.34),inset_0_0_12px_rgba(255,217,138,0.10)]" />
+                <span
+                  data-bottom-nav-active-indicator="true"
+                  className="absolute left-1/2 top-1/2 h-[3.25rem] w-[3.35rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(159,74,255,0.30),rgba(79,28,118,0.18)_48%,rgba(13,7,24,0.00)_76%)] opacity-90 shadow-[0_0_14px_rgba(178,91,255,0.24),inset_0_0_10px_rgba(255,217,138,0.08)]"
+                />
               ) : null}
               <span className="relative z-10 h-[31px] w-[31px]">
                 <Image

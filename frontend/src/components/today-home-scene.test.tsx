@@ -21,4 +21,11 @@ describe("TodayHomeScene", () => {
     expect(markup).toContain('data-home-cat-transition="root"');
     expect(markup).toContain("home-cat-transition-current");
   });
+
+  it("uses fixed stage content instead of an internal scroll container", () => {
+    const markup = renderToStaticMarkup(<TodayHomeScene />);
+
+    expect(markup).toContain('data-app-shell-content-mode="fixed"');
+    expect(markup).toContain('data-home-action-stage="root"');
+  });
 });

@@ -27,4 +27,12 @@ describe("BottomNav", () => {
     expect(markup).toContain("aria-current=\"page\"");
     expect(markup).toContain("bg-[radial-gradient");
   });
+
+  it("uses an embedded active glow without a separated border plate", () => {
+    const markup = renderToStaticMarkup(<BottomNav />);
+
+    expect(markup).toContain('data-bottom-nav-active-indicator="true"');
+    expect(markup).not.toContain("border border-[#b86cff]");
+    expect(markup).not.toContain("top-[0.45rem] h-[3.55rem] w-[4rem]");
+  });
 });

@@ -21,6 +21,7 @@ type AppShellProps = {
   backHref?: string;
   rightAction?: "settings" | "share" | "calendar" | "book";
   showHeader?: boolean;
+  contentMode?: "scroll" | "fixed";
 };
 
 export function AppShell({
@@ -37,6 +38,7 @@ export function AppShell({
   backHref,
   rightAction = "settings",
   showHeader = true,
+  contentMode = "scroll",
 }: AppShellProps) {
   const rightIcon =
     rightAction === "share"
@@ -105,7 +107,15 @@ export function AppShell({
             </header>
           ) : null}
 
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div
+            className={cn(
+              "min-h-0 flex-1",
+              contentMode === "fixed"
+                ? "overflow-hidden pb-0"
+                : "overflow-y-auto overscroll-contain pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+            )}
+            data-app-shell-content-mode={contentMode}
+          >
             <div className="flex min-h-full flex-col">{children}</div>
           </div>
           <BottomNav />

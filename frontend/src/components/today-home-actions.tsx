@@ -14,7 +14,11 @@ import {
   type CatReaderDreamReadingState,
 } from "@/lib/cat-readers";
 import { getDreamSeedSnapshotFromBrowser, subscribeToDreamSeed } from "@/lib/dream-seed";
-import { nightHomeActionGroupClassName } from "@/lib/home-action-layout";
+import {
+  homeActionGroupClassName,
+  homeActionRootClassName,
+  nightHomeActionGroupClassName,
+} from "@/lib/home-action-layout";
 import { getHomeState } from "@/lib/home-mode";
 import { manyangAssets } from "@/lib/manyang-assets";
 import { cn } from "@/lib/styles";
@@ -124,7 +128,7 @@ export function TodayHomeActions() {
   const readingState = getCatReaderDreamReadingState(selectedCatReaderId);
 
   return (
-    <div className={cn("mt-auto", isNight ? "pb-0" : "space-y-2 pb-1")}>
+    <div data-home-action-stage="root" className={homeActionRootClassName}>
       <div className="px-3 pb-1 text-center">
         <p
           className={cn(
@@ -147,7 +151,7 @@ export function TodayHomeActions() {
         className="mx-auto w-[82%] max-w-[330px]"
       />
 
-      <div className={cn(isNight ? nightHomeActionGroupClassName : "space-y-2")}>
+      <div className={cn(isNight ? nightHomeActionGroupClassName : homeActionGroupClassName)}>
         <PrimaryDreamButton
           readingState={readingState}
           onFallbackReaderClick={() => saveSelectedCatReaderIdToBrowser(readingState.fallbackReaderId ?? "black_cat")}
