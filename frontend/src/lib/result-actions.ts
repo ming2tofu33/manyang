@@ -78,10 +78,30 @@ function renderSvgLines(lines: string[], x: number, y: number, lineHeight: numbe
     .join("");
 }
 
+export function getSymbolSlug(symbol: string): string {
+  return symbolSlugMap[symbol] ?? encodeURIComponent(symbol);
+}
+
 export function getPrimarySymbolSlug(symbols: string[]): string {
   const primarySymbol = symbols[0] ?? "복도";
 
-  return symbolSlugMap[primarySymbol] ?? encodeURIComponent(primarySymbol);
+  return getSymbolSlug(primarySymbol);
+}
+
+export function getPrimaryResultSymbolSlug(
+  analysis: Pick<LatestAnalysisPayload["analysis"], "symbolReadings" | "readingBasis" | "symbols">,
+): string {
+  const primarySymbol =
+    analysis.symbolReadings[0]?.symbol ??
+    analysis.readingBasis.usedSymbols[0] ??
+    analysis.symbols[0] ??
+    "복도";
+
+  return getSymbolSlug(primarySymbol);
+}
+
+export function createResultEncyclopediaHref(symbol: string): string {
+  return `/encyclopedia/${getSymbolSlug(symbol)}?from=result`;
 }
 
 export function createReceiptFileName(payload: LatestAnalysisPayload): string {

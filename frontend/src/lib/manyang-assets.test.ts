@@ -269,4 +269,35 @@ describe("manyang assets", () => {
       expect(publicAssetExists(assetPath)).toBe(true);
     });
   });
+
+  test("exposes separated action glyph assets for CSS circle icon buttons", () => {
+    expect(manyangAssets.actionIcons.arrowLeft).toBe("/manyang/ui/action-icons/action-arrow-left.png");
+    expect(manyangAssets.actionIcons.bell).toBe("/manyang/ui/action-icons/action-bell.png");
+    expect(manyangAssets.actionIcons.settings).toBe("/manyang/ui/action-icons/action-settings.png");
+    expect(manyangAssets.actionIcons.book).toBe("/manyang/ui/action-icons/action-book.png");
+    expect(manyangAssets.actionIcons.trash).toBe("/manyang/ui/action-icons/action-trash.png");
+
+    Object.values(manyangAssets.actionIcons).forEach((assetPath) => {
+      expect(publicAssetExists(assetPath)).toBe(true);
+    });
+  });
+
+  test("exposes separated semantic symbol assets for chips, cards, and calendar markers", () => {
+    expect(manyangAssets.semanticIcons.moon).toBe("/manyang/ui/semantic-icons/semantic-moon.png");
+    expect(manyangAssets.semanticIcons.paw).toBe("/manyang/ui/semantic-icons/semantic-paw.png");
+    expect(manyangAssets.semanticIcons.sparkles).toBe("/manyang/ui/semantic-icons/semantic-sparkles.png");
+    expect(manyangAssets.semanticIcons.cloud).toBe("/manyang/ui/semantic-icons/semantic-cloud.png");
+    expect(manyangAssets.semanticIcons.feather).toBe("/manyang/ui/semantic-icons/semantic-feather.png");
+    expect(manyangAssets.semanticIcons.lantern).toBe("/manyang/ui/semantic-icons/semantic-lantern.png");
+    expect(manyangAssets.semanticIcons.potion).toBe("/manyang/ui/semantic-icons/semantic-potion.png");
+    expect(manyangAssets.semanticIcons.key).toBe("/manyang/ui/semantic-icons/semantic-key.png");
+    expect(manyangAssets.semanticIcons.door).toBe("/manyang/ui/semantic-icons/semantic-door.png");
+    expect(manyangAssets.semanticIcons.crystalBall).toBe("/manyang/ui/semantic-icons/semantic-crystal-ball.png");
+    expect(manyangAssets.semanticIcons.crystals).toBe("/manyang/ui/semantic-icons/semantic-crystals.png");
+    expect(manyangAssets.semanticIcons.star).toBe("/manyang/ui/semantic-icons/semantic-star.png");
+
+    Object.values(manyangAssets.semanticIcons).forEach((assetPath) => {
+      expect(publicAssetExists(assetPath)).toBe(true);
+    });
+  });
 });

@@ -1,10 +1,12 @@
 import { describe, expect, test } from "vitest";
 
 import {
+  createResultEncyclopediaHref,
   createReceiptFileName,
   createReceiptShareText,
   createReceiptSvg,
   getPrimarySymbolSlug,
+  getPrimaryResultSymbolSlug,
 } from "./result-actions";
 import type { LatestAnalysisPayload } from "./dream-storage";
 
@@ -45,6 +47,28 @@ function createPayload(): LatestAnalysisPayload {
 describe("result action helpers", () => {
   test("maps the primary known symbol to an encyclopedia slug", () => {
     expect(getPrimarySymbolSlug(["복도", "신발"])).toBe("corridor");
+  });
+
+  test("prioritizes symbol readings when choosing the result encyclopedia symbol", () => {
+    const payload = createPayload();
+    payload.analysis.symbols = ["학교", "복도", "신발"];
+    payload.analysis.readingBasis = {
+      usedSymbols: ["학교", "복도", "신발"],
+      mainThemes: ["장소와 전환"],
+      confidence: 0.7,
+    };
+    payload.analysis.symbolReadings = [
+      {
+        symbol: "복도",
+        reading: "복도는 다음 장면으로 이동하는 과정으로 읽을 수 있어요.",
+      },
+    ];
+
+    expect(getPrimaryResultSymbolSlug(payload.analysis)).toBe("corridor");
+  });
+
+  test("creates result-context encyclopedia links", () => {
+    expect(createResultEncyclopediaHref("신발")).toBe("/encyclopedia/shoes?from=result");
   });
 
   test("falls back to an encoded unknown symbol slug", () => {

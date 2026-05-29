@@ -28,21 +28,27 @@ export function AssetIconButton({
   type = "button",
 }: AssetIconButtonProps) {
   const sizeClassName = size === "header" ? "h-11 w-11" : "h-[3.25rem] w-[3.25rem]";
+  const iconSizeClassName = size === "header" ? "h-[2.05rem] w-[2.05rem]" : "h-[2.2rem] w-[2.2rem]";
   const content = (
     <>
-      <Image
-        src={src}
-        alt=""
-        fill
-        sizes="52px"
-        unoptimized
-        className={cn("object-contain transition duration-200 group-hover:brightness-110", imageClassName)}
-      />
+      <span className={cn("relative z-10 block", iconSizeClassName)}>
+        <Image
+          src={src}
+          alt=""
+          fill
+          sizes={size === "header" ? "33px" : "35px"}
+          unoptimized
+          className={cn(
+            "object-contain drop-shadow-[0_0_8px_rgba(255,210,124,0.36)] transition duration-200 group-hover:brightness-125",
+            imageClassName,
+          )}
+        />
+      </span>
       <span className="sr-only">{label}</span>
     </>
   );
   const classes = cn(
-    "group relative grid shrink-0 place-items-center rounded-full transition focus:outline-none focus:ring-2 focus:ring-[#d799ff]",
+    "group relative grid shrink-0 place-items-center rounded-full transition hover:scale-[1.04] active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#d799ff]/80",
     sizeClassName,
     className,
   );
