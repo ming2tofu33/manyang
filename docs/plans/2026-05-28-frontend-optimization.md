@@ -271,6 +271,8 @@ npx playwright screenshot --viewport-size=430,932 --wait-for-timeout=1800 "http:
 
 Expected: no horizontal scroll, no internal home scroll, CTA and nav do not overlap.
 
+**Progress 2026-05-29:** Home layout stability contract started. The home screen now declares a `390x844` stage contract in `homeStageLayout`, uses a fixed `AppShell` content mode for `/`, exposes `data-home-action-stage="root"`, and marks the live effect layer with `data-home-effect-stage="390x844"`. Verification passed with targeted tests, full test suite, lint, build, and Playwright checks at `375x667`, `390x844`, and `430x932`; each viewport had no horizontal scroll, no page vertical scroll, and a 12px action-to-nav gap.
+
 ## Task 7: Animation Cost Review
 
 **Files:**
@@ -310,6 +312,8 @@ npm run build
 ```
 
 Expected: reduced-motion coverage remains intact.
+
+**Progress 2026-05-29:** Home animation cost review started. Persistent home animations are `home-flame-breathe`, `home-orb-bloom`, `home-smoke-drift`, and `home-twinkle-glint`; cat background switching uses temporary mist/glow transition animations. The home animation layers no longer pre-promote `filter` through `will-change`, and `prefers-reduced-motion` now removes home animation filters and layer hints. Result receipt animations were intentionally left unchanged for a separate pass.
 
 ## Task 8: Client Boundary Review
 
@@ -351,6 +355,8 @@ npm run build
 ```
 
 Expected: no behavior regression.
+
+**Progress 2026-05-29:** Client boundary review completed for current high-confidence scope. Encyclopedia list/detail routes now render `AppShell` and static encyclopedia content as Server Components, while selected-cat guide UI moved into the small `encyclopedia-reader-guide-client.tsx` island. Inventory and deferred candidates are documented in `vault/09-Implementation/Frontend-Optimization-Client-Boundary-Review-2026-05-29.md`.
 
 ## Task 9: Final Report
 
@@ -397,6 +403,8 @@ npm run build
 ```
 
 Expected: all pass.
+
+**Progress 2026-05-29:** Final optimization evidence was consolidated in `vault/09-Implementation/Frontend-Optimization-Evidence-2026-05-29.md`. The tracked large runtime image set now documents a reduction from 41.44 MiB to 4.15 MiB, with links to screenshot evidence, layout/animation/client-boundary decisions, deferred Lighthouse metrics, and final verification commands.
 
 ---
 

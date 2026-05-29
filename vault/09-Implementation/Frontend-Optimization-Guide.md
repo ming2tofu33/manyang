@@ -238,6 +238,8 @@ rg -n "unoptimized|Image|use client|useSyncExternalStore|animation|object-cover|
 
 - [[Frontend-Optimization-Asset-Classification-2026-05-28]]
 - [[Frontend-Optimization-Image-Spike-2026-05-29]]
+- [[Frontend-Optimization-Client-Boundary-Review-2026-05-29]]
+- [[Frontend-Optimization-Evidence-2026-05-29]]
 - [[Layout-Contract]]
 - [[Visual-Direction]]
 - [[Implementation-Plan]]
@@ -249,5 +251,6 @@ rg -n "unoptimized|Image|use client|useSyncExternalStore|animation|object-cover|
 Updated 2026-05-29:
 
 - Home backgrounds, receipt/calendar, interpretation backgrounds, shared default background, seed/morning illustrations, cat portraits, and loading orbs now use WebP runtime assets.
+- The tracked large runtime image set changed from 41.44 MiB to 4.15 MiB.
 - PNG originals remain as source/reference assets and should not be deleted without separate cleanup approval.
-- See [[Frontend-Optimization-Image-Spike-2026-05-29]] for size deltas, verification commands, and screenshot evidence.
+- See [[Frontend-Optimization-Evidence-2026-05-29]] for the final pass summary, size deltas, verification commands, and screenshot evidence.
