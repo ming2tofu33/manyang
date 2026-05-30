@@ -74,6 +74,8 @@ const acceptedSymbolIds = [
   "mountain",
   "tree",
   "flower",
+  "pig",
+  "feces",
 ];
 
 const phase2BatchSymbolIds = [

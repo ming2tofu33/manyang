@@ -3,8 +3,16 @@ import type { DreamAnalysisRequest, DreamAnalysisResponse } from "../contracts/d
 export type DreamSafetyRiskType = "medical" | "pregnancy" | "financial" | "crisis" | "deathOrViolence";
 export type DreamSafetySeverity = "low" | "medium" | "high";
 
+// 점괘가 이 주제를 어떻게 다뤄도 되는지의 모드.
+// playful: 대담·단정 OK(재미) / tradition: 설화 프레임만 / caution: 예측 차단·헤지 / crisis: 하드 스톱
+export type DreamReadingClaimMode = "playful" | "tradition" | "caution" | "crisis";
+
+// 기본 허용되는 재미용 점괘 주제. caution/crisis가 잡히면 전부 끈다.
+export const DEFAULT_PLAYFUL_CLAIMS = ["wealth", "luck", "love"] as const;
+
 export type DreamSafetyRisk = {
   type: DreamSafetyRiskType;
+  claimMode: DreamReadingClaimMode;
   severity: DreamSafetySeverity;
   evidenceTerms: string[];
   reason: string;
@@ -17,10 +25,13 @@ export type DreamSafetyPolicyResult = {
   userFacingNotice?: string;
   promptDirectives: string[];
   blockedClaims: string[];
+  /** 재미용으로 대담하게 말해도 되는 점괘 주제(wealth/luck/love). caution·crisis 시 빈 배열. */
+  allowedPlayfulClaims: string[];
 };
 
 type SafetyRule = {
   type: DreamSafetyRiskType;
+  claimMode: DreamReadingClaimMode;
   severity: DreamSafetySeverity;
   terms: string[];
   reason: string;
@@ -32,6 +43,10 @@ type SafetyRule = {
   };
 };
 
+function isSeriousMode(mode: DreamReadingClaimMode): boolean {
+  return mode === "caution" || mode === "crisis";
+}
+
 const severityRank: Record<DreamSafetySeverity | "none", number> = {
   none: 0,
   low: 1,
@@ -42,6 +57,7 @@ const severityRank: Record<DreamSafetySeverity | "none", number> = {
 const safetyRules: SafetyRule[] = [
   {
     type: "crisis",
+    claimMode: "crisis",
     severity: "high",
     terms: [
       "suicide",
@@ -70,6 +86,7 @@ const safetyRules: SafetyRule[] = [
   },
   {
     type: "medical",
+    claimMode: "caution",
     severity: "medium",
     terms: [
       "disease",
@@ -104,8 +121,10 @@ const safetyRules: SafetyRule[] = [
     },
   },
   {
+    // 태몽은 한국 꿈문화의 핵심 재미 → 차단이 아니라 '전통 설화' 프레임으로 허용(단정만 금지).
     type: "pregnancy",
-    severity: "medium",
+    claimMode: "tradition",
+    severity: "low",
     terms: [
       "pregnancy dream",
       "pregnant",
@@ -117,50 +136,19 @@ const safetyRules: SafetyRule[] = [
       "출산",
       "아이를 낳",
     ],
-    reason: "The user may want a pregnancy confirmation or childbirth prediction.",
-    blockedClaims: ["pregnancy confirmation or childbirth prediction"],
+    reason: "The dream touches pregnancy or 태몽 folklore.",
+    blockedClaims: [],
     promptDirectives: [
-      "Do not predict pregnancy, childbirth, fetal sex, or family events.",
-      "Frame pregnancy-related symbols only as emotional or relational themes when evidence supports it.",
+      "Treat pregnancy only as playful folk 태몽 tradition (e.g., '전통적으로 태몽으로 보기도 한다'); you may mention it boldly as lore, but never assert an actual pregnancy, fetal sex, or timing as fact.",
     ],
     notices: {
-      ko: "이 해석은 임신 여부나 출산을 확인하거나 예측하지 않습니다. 관련 걱정이 있다면 의료 전문가와 상담해 주세요.",
-      en: "This reading cannot confirm pregnancy or predict childbirth. If this is a real concern, talk with a qualified medical professional.",
-    },
-  },
-  {
-    type: "financial",
-    severity: "medium",
-    terms: [
-      "money",
-      "lottery",
-      "stock",
-      "investment",
-      "profit",
-      "windfall",
-      "rich",
-      "돈",
-      "재물",
-      "금전",
-      "복권",
-      "주식",
-      "투자",
-      "횡재",
-      "부자",
-    ],
-    reason: "The user may want a money, investment, or luck guarantee.",
-    blockedClaims: ["financial advice or money prediction"],
-    promptDirectives: [
-      "Do not predict money, lottery, investment, or business outcomes.",
-      "Do not provide financial advice.",
-    ],
-    notices: {
-      ko: "이 해석은 재정 조언이나 금전 결과 예측이 아닙니다. 돈과 관련된 결정은 현실의 정보와 전문가 조언을 기준으로 판단해 주세요.",
-      en: "This reading is not financial advice or a money prediction. Make money-related decisions with real-world information and qualified advice.",
+      ko: "",
+      en: "",
     },
   },
   {
     type: "deathOrViolence",
+    claimMode: "caution",
     severity: "medium",
     terms: [
       "death",
@@ -365,11 +353,14 @@ export function analyzeDreamSafetyPolicy(
 
   const risks = matchedRules.map<DreamSafetyRisk>(({ rule, evidenceTerms }) => ({
     type: rule.type,
+    claimMode: rule.claimMode,
     severity: rule.severity,
     evidenceTerms,
     reason: rule.reason,
   }));
-  const userFacingNotice = unique(matchedRules.map(({ rule }) => rule.notices[locale])).join(" ");
+  // 진지 모드(caution/crisis)만 사용자 고지·차단을 만들고, playful 허용을 전부 끈다.
+  const seriousRules = matchedRules.filter(({ rule }) => isSeriousMode(rule.claimMode));
+  const userFacingNotice = unique(seriousRules.map(({ rule }) => rule.notices[locale]).filter(Boolean)).join(" ");
 
   return {
     risks,
@@ -377,7 +368,8 @@ export function analyzeDreamSafetyPolicy(
     highestSeverity: highestSeverityFor(risks),
     ...(userFacingNotice ? { userFacingNotice } : {}),
     promptDirectives: unique(matchedRules.flatMap(({ rule }) => rule.promptDirectives)),
-    blockedClaims: unique(matchedRules.flatMap(({ rule }) => rule.blockedClaims)),
+    blockedClaims: unique(seriousRules.flatMap(({ rule }) => rule.blockedClaims)),
+    allowedPlayfulClaims: seriousRules.length > 0 ? [] : [...DEFAULT_PLAYFUL_CLAIMS],
   };
 }
 

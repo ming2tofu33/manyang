@@ -21,7 +21,7 @@ describe("analyzeDreamSafetyPolicy", () => {
     expect(policy.blockedClaims).toContain("medical diagnosis or health prediction");
   });
 
-  test("flags pregnancy, financial, crisis, and death prediction requests", () => {
+  test("flags pregnancy (as tradition), crisis, and death while crisis dominates", () => {
     const policy = analyzeDreamSafetyPolicy({
       dreamText:
         "Is this a pregnancy dream, will I win the lottery, and does a death dream mean someone will die? I do not want to live.",
@@ -29,11 +29,14 @@ describe("analyzeDreamSafetyPolicy", () => {
     });
 
     expect(policy.risks.map((risk) => risk.type)).toEqual(
-      expect.arrayContaining(["pregnancy", "financial", "crisis", "deathOrViolence"]),
+      expect.arrayContaining(["pregnancy", "crisis", "deathOrViolence"]),
     );
+    expect(policy.risks.find((risk) => risk.type === "pregnancy")?.claimMode).toBe("tradition");
     expect(policy.highestSeverity).toBe("high");
     expect(policy.promptDirectives.join(" ")).toContain("Do not predict");
     expect(policy.userFacingNotice).toContain("local emergency services");
+    // 위기/의료 등 진지 주제가 있으면 재미용 점괘는 전부 꺼진다.
+    expect(policy.allowedPlayfulClaims).toEqual([]);
   });
 
   test("returns Korean notices for Korean diagnostic requests", () => {
@@ -64,12 +67,14 @@ describe("analyzeDreamSafetyPolicy", () => {
     });
 
     expect(policy.risks.map((risk) => risk.type)).toEqual(
-      expect.arrayContaining(["medical", "financial", "crisis"]),
+      expect.arrayContaining(["medical", "crisis"]),
     );
     expect(policy.highestSeverity).toBe("high");
     expect(policy.risks.flatMap((risk) => risk.evidenceTerms)).toEqual(
-      expect.arrayContaining(["피", "암", "돈", "복권", "죽고 싶"]),
+      expect.arrayContaining(["피", "암", "죽고 싶"]),
     );
+    // 돈·복권은 더 이상 위험으로 차단하지 않지만, 의료·위기가 있어 재미용 점괘는 꺼진다.
+    expect(policy.allowedPlayfulClaims).toEqual([]);
   });
 
   test("does not flag unrelated English substrings inside longer words", () => {
@@ -88,8 +93,45 @@ describe("analyzeDreamSafetyPolicy", () => {
     });
 
     expect(policy.risks.map((risk) => risk.type)).toEqual(
-      expect.arrayContaining(["medical", "pregnancy", "financial", "deathOrViolence", "crisis"]),
+      expect.arrayContaining(["medical", "pregnancy", "deathOrViolence", "crisis"]),
     );
     expect(policy.highestSeverity).toBe("high");
+  });
+
+  test("allows playful wealth/luck/love fortune by default for an ordinary dream", () => {
+    const policy = analyzeDreamSafetyPolicy({
+      dreamText: "돼지가 나와서 나를 따라다녔어. 기분이 좋았어.",
+      locale: "ko",
+    });
+
+    expect(policy.risks).toEqual([]);
+    expect(policy.allowedPlayfulClaims).toEqual(["wealth", "luck", "love"]);
+    expect(policy.userFacingNotice).toBeUndefined();
+    expect(policy.blockedClaims).toEqual([]);
+  });
+
+  test("treats a money dream as playful, not a blocked financial risk", () => {
+    const policy = analyzeDreamSafetyPolicy({
+      dreamText: "복권에 당첨돼서 돈을 잔뜩 줍는 꿈을 꿨어.",
+      locale: "ko",
+    });
+
+    expect(policy.risks).toEqual([]);
+    expect(policy.allowedPlayfulClaims).toEqual(["wealth", "luck", "love"]);
+    expect(policy.userFacingNotice).toBeUndefined();
+  });
+
+  test("treats a pregnancy dream as tradition lore without a scary notice", () => {
+    const policy = analyzeDreamSafetyPolicy({
+      dreamText: "구렁이가 나오는 태몽 같은 꿈을 꿨어.",
+      locale: "ko",
+    });
+
+    const pregnancy = policy.risks.find((risk) => risk.type === "pregnancy");
+    expect(pregnancy?.claimMode).toBe("tradition");
+    expect(policy.userFacingNotice).toBeUndefined();
+    expect(policy.blockedClaims).toEqual([]);
+    // 태몽(설화)은 재미용 점괘를 끄지 않는다.
+    expect(policy.allowedPlayfulClaims).toEqual(["wealth", "luck", "love"]);
   });
 });

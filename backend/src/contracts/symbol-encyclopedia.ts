@@ -83,6 +83,8 @@ export type LocalizedSymbolEntry = {
   smallPrescriptions: string[];
   safeReading: string;
   avoidExpressions: string[];
+  /** 전통·민속 점괘 의미(재물·태몽 등). playful 허용 시 대담하게 인용 가능, 절대 단정은 금지. */
+  traditionalReading?: string;
 };
 
 export type SymbolEntry = {
@@ -124,5 +126,6 @@ export type RuntimeSymbolEntry = {
     sceneModifiers: Record<string, SceneModifier>;
     metaphorHooks: string[];
     avoidExpressions: string[];
+    traditionalReading?: string;
   };
 };

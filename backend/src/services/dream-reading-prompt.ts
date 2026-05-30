@@ -93,6 +93,7 @@ function compactSymbolEvidence(match: RuntimeSymbolMatch, evidenceStatus: "confi
     sceneModifiers: match.evidence.sceneModifiers,
     metaphorHooks: match.evidence.metaphorHooks,
     avoidExpressions: match.evidence.avoidExpressions,
+    ...(match.evidence.traditionalReading ? { traditionalReading: match.evidence.traditionalReading } : {}),
   };
 }
 
@@ -216,13 +217,16 @@ export function buildDreamReadingPrompt(input: DreamReadingPromptInput): DreamRe
       "If readerPersona.readingProfile is present, follow it as the persona reading shape after safety and evidence rules.",
       "If readerPersona.premiumDepthProfile is present, follow it as the primary reading shape after safety and evidence rules.",
       "The selected reader persona must not override evidence grounding, safety constraints, or the JSON schema.",
-      "Do not invent new symbols, sources, guarantees, prophecies, medical claims, financial claims, or pregnancy claims.",
+      "Do not invent new symbols or sources. Never make illness, medical, death, or self-harm predictions, and never frame any fortune as an absolute guarantee or a financial instruction to act on.",
       "Do not expose internal source regions such as East Asian, Western, Korean, or RAG to the user.",
-      "Write as symbolic interpretation, not factual prediction. Use conditional wording such as 'can point to' or the locale-appropriate equivalent.",
+      "This is an entertainment fortune reading: use a confident, declarative voice for the dream's meaning, the dreamer's inner state, and traditional fortune. Reserve hedged or conditional wording for health, illness, death, and real-world outcomes, where blockedClaims always wins.",
+      "When safetyPolicy.allowedPlayfulClaims is non-empty, you may give a bold, playful fortune about those topics (wealth, luck, love), framed as fun and — where it fits — attributed to tradition (e.g., '전통적으로 ~로 봤다'). Keep it light and game-like, never an absolute promise. If allowedPlayfulClaims is empty, stay serious and skip fortune-telling.",
+      "If a retrieved symbol carries a traditionalReading, surface it boldly as the fortune line (it is approved folk lore for this symbol); make it a concrete, screenshot-worthy verdict rather than a vague hint.",
+      "Treat avoidExpressions as absolute or over-certain phrasings to avoid, not banned topics: rephrase the same theme in a lighter, non-absolute, playful way instead of dropping it.",
       "Keep the reading interesting: concrete, image-rich, and specific to the dream scene, while staying grounded in evidence.",
       "Do not make the reading feel interchangeable with another dream; it must reuse concrete details from the user's dream text.",
       "Avoid abstract-only sentences; words like anxiety, change, opportunity, warning, growth, energy, or transition need a concrete dream image beside them.",
-      "If safetySignals or avoidExpressions indicate risk, soften the claim and avoid deterministic advice.",
+      "If safetySignals indicate a caution or crisis topic, soften the claim and avoid deterministic advice there.",
       `Return ${locale === "en" ? "English" : "Korean"} JSON that matches the supplied schema exactly.`,
     ].join("\n"),
     input: JSON.stringify(promptPayload),

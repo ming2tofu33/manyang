@@ -26,6 +26,7 @@ function localized(input: {
   smallPrescriptions: string[];
   safeReading: string;
   avoidExpressions: string[];
+  traditionalReading?: string;
 }): LocalizedSymbolEntry {
   return input;
 }
@@ -152,6 +153,7 @@ export const symbolEntries: SymbolEntry[] = [
         smallPrescriptions: ["오늘은 내가 지켜야 한다고 느끼는 영역 하나를 적어보세요."],
         safeReading: "뱀은 불길함으로 단정하기보다, 본능적 감각이나 조용히 커지는 움직임으로 읽을 수 있어요.",
         avoidExpressions: ["재물운이 반드시 오른다", "태몽이다", "위험한 일이 생긴다"],
+        traditionalReading: "예부터 집이나 내 땅에 들어온 큰 구렁이는 재물이 깃들거나 태몽으로도 읽혀온 대표적인 길몽이다냥.",
       }),
       en: localized({
         label: "Snake",
@@ -2388,8 +2390,8 @@ export const symbolEntries: SymbolEntry[] = [
     },
     ko: localized({
       label: "화장실 변기",
-      aliases: ["변기", "화장실", "소변", "대변", "볼일 보는 꿈"],
-      searchText: "변기, 화장실, 소변, 대변, 볼일, 배출, 해소, 사생활, 부끄러움, 숨기고 싶은 감정",
+      aliases: ["변기", "화장실", "소변", "볼일 보는 꿈"],
+      searchText: "변기, 화장실, 소변, 볼일, 배출, 해소, 사생활, 부끄러움, 숨기고 싶은 감정",
       coreMeanings: ["배출", "해소", "사생활", "노출 불안"],
       lightReadings: ["쌓인 것을 내보내고 싶어 하는 마음", "혼자 정리할 공간을 찾는 장면"],
       shadowReadings: ["보이고 싶지 않은 부분이 드러날까 봐 느끼는 불안", "해소가 막힌 답답함"],
@@ -2407,8 +2409,8 @@ export const symbolEntries: SymbolEntry[] = [
     }),
     en: localized({
       label: "Toilet",
-      aliases: ["toilet", "restroom", "pee", "poop", "using the toilet"],
-      searchText: "toilet, restroom, pee, poop, release, relief, privacy, embarrassment, bodily boundary",
+      aliases: ["toilet", "restroom", "pee", "using the toilet"],
+      searchText: "toilet, restroom, pee, release, relief, privacy, embarrassment, bodily boundary",
       coreMeanings: ["release", "relief", "privacy", "fear of exposure"],
       lightReadings: ["wanting to let out what has built up", "looking for a private space to process"],
       shadowReadings: ["fear that a private matter will be exposed", "frustration when release is blocked"],
@@ -4110,6 +4112,122 @@ export const symbolEntries: SymbolEntry[] = [
       avoidExpressions: ["romance is coming", "good luck is guaranteed"],
     }),
   }),
+  activeSymbol({
+    id: "pig",
+    category: "living_being",
+    subcategory: "animal",
+    facets: ["abundance", "fortune", "nurture", "luck"],
+    symbolRole: ["primary_candidate"],
+    universalMeanings: ["abundance", "nourishment", "good fortune"],
+    tensionAxis: ["abundance", "excess"],
+    relatedIds: ["money", "owned_land", "home"],
+    sourceBasis: ["east_asian_symbolism", "folk fortune tradition", "product editorial rule"],
+    lens: {
+      coreMeanings: ["abundance", "fortune", "nourishment"],
+      universal: ["풍요와 보살핌의 감각", "들어오는 좋은 기운"],
+      eastAsian: ["전통적으로 재물과 복이 들어오는 길몽으로 봤다", "집에 들어온 돼지는 재물이 깃드는 장면"],
+      western: ["abundance and good-natured fortune", "nurture and plenty"],
+      avoidClaims: ["반드시 부자가 된다", "복권에 당첨된다"],
+    },
+    ko: localized({
+      label: "돼지",
+      aliases: ["돼지", "새끼 돼지", "흑돼지", "돼지 떼"],
+      searchText: "돼지, 새끼 돼지, 흑돼지, 돼지 떼, 재물, 복, 풍요, 길몽",
+      coreMeanings: ["풍요", "재물", "복", "보살핌"],
+      lightReadings: ["좋은 기운이 들어오는 흐름", "넉넉함과 보살핌의 감각"],
+      shadowReadings: ["과한 욕심에 대한 부담", "감당해야 할 풍요"],
+      sceneModifiers: {
+        enteringHome: modifier("복과 재물이 내 영역으로 들어오는 장면", ["집에 들어", "따라", "안겨"], 0.85),
+        many: modifier("좋은 기운이 한꺼번에 불어나는 장면", ["여러 마리", "떼", "가득"], 0.8),
+        fat: modifier("크고 통통할수록 더 큰 복으로 본 장면", ["통통", "살찐", "큼직"], 0.75),
+      },
+      contextQuestions: ["돼지가 집 안으로 들어왔나요?", "돼지를 보고 기분이 좋았나요?"],
+      metaphorHooks: ["품으로 들어온 복덩이", "통통하게 차오르는 기운"],
+      cardTitleSeeds: ["집으로 들어온 복돼지", "재물을 몰고 온 밤"],
+      smallPrescriptions: ["오늘은 들어온 좋은 기운을 작은 행운 하나로 가볍게 누려보자냥."],
+      safeReading: "돼지는 풍요와 복의 상징으로, 좋은 기운이 들어오는 장면으로 즐겁게 읽을 수 있어요.",
+      avoidExpressions: ["반드시 부자가 된다", "복권에 당첨된다"],
+      traditionalReading: "예부터 돼지꿈, 특히 집으로 들어오거나 품에 안기는 돼지는 재물과 복이 굴러든다는 대표적인 길몽으로 봤다냥. 🐷",
+    }),
+    en: localized({
+      label: "Pig",
+      aliases: ["pig", "piglet", "pigs", "hog"],
+      searchText: "pig, piglet, pigs, hog, abundance, fortune, luck, good omen",
+      coreMeanings: ["abundance", "fortune", "luck", "nurture"],
+      lightReadings: ["good energy coming in", "a sense of plenty and care"],
+      shadowReadings: ["pressure of too much", "abundance to handle"],
+      sceneModifiers: {
+        enteringHome: modifier("fortune entering your own space", ["into the house", "followed", "held"], 0.85),
+        many: modifier("good luck multiplying at once", ["many pigs", "herd", "full of"], 0.8),
+        fat: modifier("a bigger, fatter pig read as bigger fortune", ["fat pig", "huge pig", "plump"], 0.75),
+      },
+      contextQuestions: ["Did the pig come into your home?", "Did seeing it feel good?"],
+      metaphorHooks: ["a lucky bundle in your arms", "fortune fattening up"],
+      cardTitleSeeds: ["The Lucky Pig Comes Home", "A Night Fortune Walked In"],
+      smallPrescriptions: ["Enjoy the good energy today with one small treat or lucky pick."],
+      safeReading: "A pig is a symbol of abundance and fortune — read it playfully as good energy coming in.",
+      avoidExpressions: ["you will definitely get rich", "you will win the lottery"],
+      traditionalReading: "In Korean tradition a pig dream — especially a pig coming into your home or into your arms — is the classic good-luck omen of wealth and fortune rolling in. 🐷",
+    }),
+  }),
+  activeSymbol({
+    id: "feces",
+    category: "object",
+    subcategory: "body_product",
+    facets: ["fortune", "release", "abundance"],
+    symbolRole: ["primary_candidate"],
+    universalMeanings: ["release", "fortune", "letting go"],
+    tensionAxis: ["fortune", "aversion"],
+    relatedIds: ["money", "toilet"],
+    sourceBasis: ["east_asian_symbolism", "folk fortune tradition", "product editorial rule"],
+    lens: {
+      coreMeanings: ["fortune", "release", "relief"],
+      universal: ["묵은 것을 비워내는 장면", "뜻밖의 행운 감각"],
+      eastAsian: ["전통적으로 똥꿈은 재물이 들어오는 대표 길몽", "더러움보다 풍요로 읽는다"],
+      western: ["release and letting go", "unexpected gain"],
+      avoidClaims: ["반드시 돈이 생긴다", "복권을 사면 당첨된다"],
+    },
+    ko: localized({
+      label: "똥",
+      aliases: ["똥", "대변", "변", "똥을 밟는 꿈"],
+      searchText: "똥, 대변, 변, 똥을 밟는 꿈, 재물, 행운, 비움, 길몽",
+      coreMeanings: ["재물", "행운", "비움", "해소"],
+      lightReadings: ["뜻밖의 좋은 기운", "묵은 것을 비워내는 후련함"],
+      shadowReadings: ["지저분함에 대한 거부감", "감당하기 애매한 상황"],
+      sceneModifiers: {
+        stepping: modifier("뜻밖의 행운이 들러붙는 장면", ["밟", "묻", "뒤집어"], 0.85),
+        plenty: modifier("행운이 크게 불어나는 장면", ["많이", "가득", "큰"], 0.8),
+        carrying: modifier("똥을 손에 들거나 담아 복을 챙기는 장면", ["들고", "담", "퍼"], 0.72),
+      },
+      contextQuestions: ["똥을 밟거나 만졌나요?", "꿈에서 기분이 나빴나요, 의외였나요?"],
+      metaphorHooks: ["발에 들러붙은 뜻밖의 복", "비워내자 들어온 자리"],
+      cardTitleSeeds: ["행운을 밟은 밤", "비움 뒤의 재물"],
+      smallPrescriptions: ["오늘은 묵혀둔 것 하나를 가볍게 비워보자냥."],
+      safeReading: "똥은 더러움보다, 비움과 뜻밖의 행운으로 읽는 재미있는 상징이에요.",
+      avoidExpressions: ["반드시 돈이 생긴다", "복권을 사면 당첨된다"],
+      traditionalReading: "예부터 똥꿈은 재물이 들어오는 대표적인 길몽으로, 특히 똥을 밟거나 몸에 묻으면 뜻밖의 행운과 돈이 들러붙는다고 봤다냥. 💰",
+    }),
+    en: localized({
+      label: "Feces",
+      aliases: ["feces", "poop", "stool", "stepping in poop"],
+      searchText: "feces, poop, stool, stepping in poop, fortune, luck, release, good omen",
+      coreMeanings: ["fortune", "luck", "release", "relief"],
+      lightReadings: ["unexpected good energy", "the relief of clearing something out"],
+      shadowReadings: ["disgust or aversion", "an awkward situation to handle"],
+      sceneModifiers: {
+        stepping: modifier("unexpected luck sticking to you", ["stepped in", "smeared", "covered"], 0.85),
+        plenty: modifier("luck growing large", ["a lot", "full of", "huge"], 0.8),
+        carrying: modifier("carrying or scooping it, gathering the luck", ["carrying", "scooping", "holding"], 0.72),
+      },
+      contextQuestions: ["Did you step in or touch it?", "Did it feel bad, or oddly surprising?"],
+      metaphorHooks: ["unexpected luck stuck to your shoe", "space opened up after release"],
+      cardTitleSeeds: ["The Night You Stepped in Luck", "Fortune After the Flush"],
+      smallPrescriptions: ["Clear out one lingering thing lightly today."],
+      safeReading: "Feces reads less as filth and more as release and unexpected good luck — a fun omen.",
+      avoidExpressions: ["you will definitely get money", "buy a lottery ticket and win"],
+      traditionalReading: "In Korean tradition a feces dream is a classic omen of incoming wealth — stepping in it or getting it on you meant unexpected luck and money sticking to you. 💰",
+    }),
+  }),
 ];
 
 export function getRuntimeSymbolEntry(id: string, locale: SupportedLocale): RuntimeSymbolEntry {
@@ -4140,6 +4258,7 @@ export function getRuntimeSymbolEntry(id: string, locale: SupportedLocale): Runt
       sceneModifiers: localizedEntry.sceneModifiers,
       metaphorHooks: localizedEntry.metaphorHooks,
       avoidExpressions: localizedEntry.avoidExpressions,
+      ...(localizedEntry.traditionalReading ? { traditionalReading: localizedEntry.traditionalReading } : {}),
     },
   };
 }
