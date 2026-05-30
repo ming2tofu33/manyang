@@ -26,6 +26,10 @@ type HomeCatTransitionStyle = CSSProperties & {
 };
 
 export const homeCatTransitionDurationMs = 2400;
+export const homeCatTransitionCloudAssets = [
+  manyangAssets.transitions.catMagicCloudLeft,
+  manyangAssets.transitions.catMagicCloudRight,
+];
 
 export function HomeCatBackgroundTransition({
   background,
@@ -41,6 +45,22 @@ export function HomeCatBackgroundTransition({
     "--home-cat-transition-left-image": `url(${manyangAssets.transitions.catMagicCloudLeft})`,
     "--home-cat-transition-right-image": `url(${manyangAssets.transitions.catMagicCloudRight})`,
   };
+
+  useEffect(() => {
+    const decodedImages = homeCatTransitionCloudAssets.map((src) => {
+      const image = new window.Image();
+      image.decoding = "async";
+      image.src = src;
+      void image.decode?.().catch(() => undefined);
+      return image;
+    });
+
+    return () => {
+      decodedImages.forEach((image) => {
+        image.src = "";
+      });
+    };
+  }, []);
 
   useEffect(() => {
     if (lastBackgroundRef.current === background) {
@@ -70,6 +90,21 @@ export function HomeCatBackgroundTransition({
       data-home-cat-transition="root"
       style={transitionStyle}
     >
+      {homeCatTransitionCloudAssets.map((src, index) => (
+        <Image
+          key={src}
+          src={src}
+          alt=""
+          aria-hidden="true"
+          width={1}
+          height={1}
+          priority
+          unoptimized
+          className="pointer-events-none absolute h-px w-px opacity-0"
+          data-home-cat-transition={index === 0 ? "preload-left" : "preload-right"}
+        />
+      ))}
+
       <Image
         key={background}
         src={background}

@@ -31,6 +31,7 @@ function createRawRequest(body: string): Request {
 describe("POST /api/dreams/analyze", () => {
   const originalMode = process.env.MANYANG_ANALYSIS_MODE;
   const originalApiKey = process.env.OPENAI_API_KEY;
+  const originalBaseUrl = process.env.OPENAI_BASE_URL;
   const originalLlmTimeoutMs = process.env.MANYANG_LLM_TIMEOUT_MS;
 
   afterEach(() => {
@@ -44,6 +45,12 @@ describe("POST /api/dreams/analyze", () => {
       delete process.env.OPENAI_API_KEY;
     } else {
       process.env.OPENAI_API_KEY = originalApiKey;
+    }
+
+    if (originalBaseUrl === undefined) {
+      delete process.env.OPENAI_BASE_URL;
+    } else {
+      process.env.OPENAI_BASE_URL = originalBaseUrl;
     }
 
     if (originalLlmTimeoutMs === undefined) {
@@ -159,6 +166,40 @@ describe("POST /api/dreams/analyze", () => {
     });
   });
 
+  test("accepts and dedupes selected atmosphere and sensation id arrays", () => {
+    const result = validateDreamAnalyzeRequestBody({
+      dreamText: "A dream.",
+      dreamAtmospheres: ["anxious", "anxious", "wistful"],
+      dreamSensations: ["falling", "chased"],
+    });
+
+    expect(result).toEqual({
+      ok: true,
+      value: {
+        dreamText: "A dream.",
+        dreamAtmospheres: ["anxious", "wistful"],
+        dreamSensations: ["falling", "chased"],
+      },
+    });
+  });
+
+  test("rejects malformed selected feeling arrays", () => {
+    expect(validateDreamAnalyzeRequestBody({ dreamText: "A dream.", dreamAtmospheres: "anxious" }).ok).toBe(false);
+    expect(validateDreamAnalyzeRequestBody({ dreamText: "A dream.", dreamSensations: [1, 2] }).ok).toBe(false);
+    expect(
+      validateDreamAnalyzeRequestBody({ dreamText: "A dream.", dreamAtmospheres: ["a", "b", "c", "d", "e"] }).ok,
+    ).toBe(false);
+  });
+
+  test("accepts a short free-text sensation and rejects an overlong one", () => {
+    const ok = validateDreamAnalyzeRequestBody({ dreamText: "A dream.", dreamSensationOther: "  축축한 느낌  " });
+    expect(ok).toEqual({ ok: true, value: { dreamText: "A dream.", dreamSensationOther: "축축한 느낌" } });
+
+    expect(
+      validateDreamAnalyzeRequestBody({ dreamText: "A dream.", dreamSensationOther: "가".repeat(31) }).ok,
+    ).toBe(false);
+  });
+
   test("returns 503 when LLM mode is enabled without a server API key", async () => {
     process.env.MANYANG_ANALYSIS_MODE = "llm";
     delete process.env.OPENAI_API_KEY;
@@ -172,7 +213,31 @@ describe("POST /api/dreams/analyze", () => {
 
     expect(response.status).toBe(503);
     await expect(response.json()).resolves.toEqual({
-      error: "llm provider is not configured",
+      status: "unavailable",
+      error: "dream reading is unavailable",
+      reason: "provider_missing",
+      retryable: false,
+    });
+  });
+
+  test("returns 503 unavailable when the configured LLM provider request fails", async () => {
+    process.env.MANYANG_ANALYSIS_MODE = "llm";
+    process.env.OPENAI_API_KEY = "test-key";
+    process.env.OPENAI_BASE_URL = "http://127.0.0.1:9";
+
+    const response = await POST(
+      createJsonRequest({
+        dreamText: "I dreamed that a snake appeared in my room.",
+        locale: "en",
+      }),
+    );
+
+    expect(response.status).toBe(503);
+    await expect(response.json()).resolves.toMatchObject({
+      status: "unavailable",
+      error: "dream reading is unavailable",
+      reason: "provider_error",
+      retryable: true,
     });
   });
 

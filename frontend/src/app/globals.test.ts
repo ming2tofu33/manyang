@@ -53,6 +53,8 @@ describe("global animation styles", () => {
     expect(globalsCss).toContain("background-size: 112% auto;");
     expect(globalsCss).toContain("top: 48%;");
     expect(getRuleBody(".home-cat-transition-mist-right::before")).not.toContain("scaleX");
+    expect(globalsCss).not.toContain(".home-cat-transition-mist-left::after");
+    expect(globalsCss).not.toContain("--home-cat-transition-cloud-filter");
   });
 
   test("keeps home animation layers from pre-promoting filter changes", () => {
@@ -69,6 +71,11 @@ describe("global animation styles", () => {
       "will-change: transform, opacity;",
     );
     expect(getRuleBody(".home-cat-transition-mist-left,\n.home-cat-transition-mist-right,\n.home-cat-transition-glow")).not.toContain("filter");
+
+    const magicCloudRule = getRuleBody(".home-cat-transition-mist-left,\n.home-cat-transition-mist-right {");
+    expect(magicCloudRule).toContain("isolation: isolate;");
+    expect(magicCloudRule).not.toContain("filter");
+    expect(magicCloudRule).not.toContain("mix-blend-mode");
   });
 
   test("removes home animation filters and layer hints in reduced motion", () => {

@@ -92,8 +92,8 @@ export const manyangAssets = {
   },
   transitions: {
     catMist: "/manyang/ui/transitions/cat-transition-mist.png",
-    catMagicCloudLeft: "/manyang/ui/transitions/cat-transition-magic-cloud-left.png",
-    catMagicCloudRight: "/manyang/ui/transitions/cat-transition-magic-cloud-right.png",
+    catMagicCloudLeft: "/manyang/ui/transitions/cat-transition-magic-cloud-left.webp",
+    catMagicCloudRight: "/manyang/ui/transitions/cat-transition-magic-cloud-right.webp",
   },
   boxes: {
     decorativePanelWide: "/manyang/cutouts/boxes/01-decorative-panel-wide.png",

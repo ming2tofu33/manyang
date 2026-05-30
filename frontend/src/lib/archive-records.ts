@@ -54,6 +54,10 @@ export function countMonthlyDreamSymbols(records: DreamRecord[], year: number, m
       continue;
     }
 
+    if (record.status === "unavailable") {
+      continue;
+    }
+
     for (const symbol of record.analysis.symbols) {
       symbols.add(symbol);
     }
@@ -75,8 +79,8 @@ export function createArchiveTimeline(input: {
       id: `dream-${record.id}`,
       type: "dream",
       date: record.dreamDate,
-      title: record.analysis.summary,
-      meta: joinMeta(record.analysis.symbols.slice(0, 3)),
+      title: record.status === "unavailable" ? "읽지 못한 꿈" : record.analysis.summary,
+      meta: record.status === "unavailable" ? "다시 불러볼 수 있어요" : joinMeta(record.analysis.symbols.slice(0, 3)),
       sortAt: record.savedAt,
       dreamRecordId: record.id,
     }));

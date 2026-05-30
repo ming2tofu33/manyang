@@ -1,4 +1,4 @@
-import type { DreamAnalysisResponse } from "@manyang/backend";
+import type { DreamAnalysisResponse, DreamReadingUnavailableReason } from "@manyang/backend";
 import type { CatReaderId } from "./cat-readers";
 
 export type StorageLike = {
@@ -7,7 +7,15 @@ export type StorageLike = {
   removeItem(key: string): void;
 };
 
-export type LatestAnalysisPayload = {
+/** 재분석(retry) 시 동일 입력을 재전송하기 위한 구조화된 감정/감각 신호. */
+export type DreamFeelingSignals = {
+  dreamAtmospheres?: string[];
+  dreamSensations?: string[];
+  dreamSensationOther?: string;
+};
+
+export type DreamCompletedPayload = DreamFeelingSignals & {
+  status?: "completed";
   dreamText: string;
   dreamDate: string;
   catReaderType?: CatReaderId;
@@ -15,13 +23,34 @@ export type LatestAnalysisPayload = {
   analysis: DreamAnalysisResponse;
 };
 
+export type DreamUnavailablePayload = DreamFeelingSignals & {
+  status: "unavailable";
+  dreamText: string;
+  dreamDate: string;
+  catReaderType?: CatReaderId;
+  wakeMood?: string;
+  reason: DreamReadingUnavailableReason;
+  retryable: boolean;
+  safetyNotice?: string;
+  failedAt: string;
+};
+
+export type LatestAnalysisPayload = DreamCompletedPayload | DreamUnavailablePayload;
+
 export type DreamRecord = LatestAnalysisPayload & {
   id: string;
   savedAt: string;
 };
 
+export type DreamDraftPayload = {
+  dreamText?: string;
+  catReaderType?: CatReaderId;
+  wakeMood?: string;
+};
+
 export const latestAnalysisKey = "manyang:latest-analysis";
 export const dreamRecordsKey = "manyang:dreams";
+export const dreamDraftKey = "manyang:dream-draft";
 export const dreamStorageChangedEvent = "manyang:dream-storage-changed";
 
 const emptyDreamRecords: DreamRecord[] = [];
@@ -131,6 +160,31 @@ export function saveDreamRecord(storage: StorageLike, record: DreamRecord): void
   storage.setItem(dreamRecordsKey, JSON.stringify([record, ...records]));
 }
 
+function createLatestAnalysisPayloadFromRecord(record: DreamRecord): LatestAnalysisPayload {
+  if (record.status === "unavailable") {
+    return {
+      status: "unavailable",
+      dreamText: record.dreamText,
+      dreamDate: record.dreamDate,
+      ...(record.catReaderType !== undefined ? { catReaderType: record.catReaderType } : {}),
+      ...(record.wakeMood !== undefined ? { wakeMood: record.wakeMood } : {}),
+      reason: record.reason,
+      retryable: record.retryable,
+      ...(record.safetyNotice ? { safetyNotice: record.safetyNotice } : {}),
+      failedAt: record.failedAt,
+    };
+  }
+
+  return {
+    ...(record.status ? { status: record.status } : {}),
+    dreamText: record.dreamText,
+    dreamDate: record.dreamDate,
+    ...(record.catReaderType !== undefined ? { catReaderType: record.catReaderType } : {}),
+    ...(record.wakeMood !== undefined ? { wakeMood: record.wakeMood } : {}),
+    analysis: record.analysis,
+  };
+}
+
 export function restoreDreamRecordAsLatestAnalysis(storage: StorageLike, recordId: string): LatestAnalysisPayload | null {
   const record = getDreamRecords(storage).find((storedRecord) => storedRecord.id === recordId);
 
@@ -138,13 +192,7 @@ export function restoreDreamRecordAsLatestAnalysis(storage: StorageLike, recordI
     return null;
   }
 
-  const payload: LatestAnalysisPayload = {
-    dreamText: record.dreamText,
-    dreamDate: record.dreamDate,
-    analysis: record.analysis,
-    ...(record.catReaderType !== undefined ? { catReaderType: record.catReaderType } : {}),
-    ...(record.wakeMood !== undefined ? { wakeMood: record.wakeMood } : {}),
-  };
+  const payload = createLatestAnalysisPayloadFromRecord(record);
 
   saveLatestAnalysis(storage, payload);
 
@@ -155,6 +203,18 @@ export function deleteDreamRecord(storage: StorageLike, recordId: string): void 
   const records = getDreamRecords(storage).filter((storedRecord) => storedRecord.id !== recordId);
 
   storage.setItem(dreamRecordsKey, JSON.stringify(records));
+}
+
+export function getDreamDraft(storage: StorageLike): DreamDraftPayload | null {
+  return parseJson<DreamDraftPayload | null>(storage.getItem(dreamDraftKey), null);
+}
+
+export function saveDreamDraft(storage: StorageLike, payload: DreamDraftPayload): void {
+  storage.setItem(dreamDraftKey, JSON.stringify(payload));
+}
+
+export function clearDreamDraft(storage: StorageLike): void {
+  storage.removeItem(dreamDraftKey);
 }
 
 export function getLatestAnalysisFromBrowser(): LatestAnalysisPayload | null {
@@ -183,6 +243,30 @@ export function clearLatestAnalysisFromBrowser(): void {
 
   if (storage) {
     clearLatestAnalysis(storage);
+    notifyDreamStorageChanged();
+  }
+}
+
+export function getDreamDraftFromBrowser(): DreamDraftPayload | null {
+  const storage = getBrowserStorage();
+
+  return storage ? getDreamDraft(storage) : null;
+}
+
+export function saveDreamDraftToBrowser(payload: DreamDraftPayload): void {
+  const storage = getBrowserStorage();
+
+  if (storage) {
+    saveDreamDraft(storage, payload);
+    notifyDreamStorageChanged();
+  }
+}
+
+export function clearDreamDraftFromBrowser(): void {
+  const storage = getBrowserStorage();
+
+  if (storage) {
+    clearDreamDraft(storage);
     notifyDreamStorageChanged();
   }
 }

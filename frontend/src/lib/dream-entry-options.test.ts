@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 
 import {
   createDreamMoodLabel,
+  dreamAtmosphereMaxSelection,
   dreamAtmosphereOptions,
   dreamEntryMaxLength,
   dreamSensationMaxSelection,
@@ -15,14 +16,18 @@ describe("dream entry options", () => {
 
   test("defines the final dream atmosphere options in display order", () => {
     expect(dreamAtmosphereOptions.map((option) => option.label)).toEqual([
-      "어두움",
+      "평온함",
       "따뜻함",
-      "조용함",
+      "설렘",
+      "그리움",
+      "불안함",
       "두려움",
-      "낯섦",
-      "복잡함",
-      "흐릿함",
-      "몽환적",
+      "슬픔",
+      "분노",
+      "부끄러움",
+      "답답함",
+      "혼란스러움",
+      "묘함",
     ]);
   });
 
@@ -31,22 +36,24 @@ describe("dream entry options", () => {
       "선명함",
       "흐릿함",
       "무거움",
-      "가벼움",
+      "갇힌 느낌",
+      "떨어지는 느낌",
+      "떠다니는 느낌",
+      "쫓기는 느낌",
       "차가움",
       "온기",
-      "소리",
-      "움직임",
     ]);
   });
 
-  test("limits dream sensations to two choices", () => {
+  test("limits dream atmospheres and sensations to two choices each", () => {
+    expect(dreamAtmosphereMaxSelection).toBe(2);
     expect(dreamSensationMaxSelection).toBe(2);
   });
 
   test("combines optional dream atmosphere and sensations into the existing wakeMood field", () => {
-    expect(createDreamMoodLabel("어두움", ["선명함", "움직임"])).toBe(
-      "분위기: 어두움 / 감각: 선명함, 움직임",
+    expect(createDreamMoodLabel(["슬픔", "평온함"], ["선명함", "갇힌 느낌"])).toBe(
+      "분위기: 슬픔, 평온함 / 감각: 선명함, 갇힌 느낌",
     );
-    expect(createDreamMoodLabel(null, [])).toBeUndefined();
+    expect(createDreamMoodLabel([], [])).toBeUndefined();
   });
 });

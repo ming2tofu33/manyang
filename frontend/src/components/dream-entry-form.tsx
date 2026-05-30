@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState, useSyncExternalStore } from "react";
-import type { DreamAnalysisResponse } from "@manyang/backend";
+import type { DreamAnalysisResponse, DreamReadingUnavailableReason } from "@manyang/backend";
 
 import { CatReaderPicker } from "./cat-reader-picker";
 import { DreamLoadingOverlay } from "./dream-loading-overlay";
@@ -17,13 +17,22 @@ import {
 } from "@/lib/cat-readers";
 import {
   createDreamMoodLabel,
+  dreamAtmosphereMaxSelection,
   dreamAtmosphereOptions,
   dreamEntryMaxLength,
   dreamSensationMaxSelection,
   dreamSensationOptions,
+  dreamSensationOtherMaxLength,
   type DreamEntryOption,
 } from "@/lib/dream-entry-options";
-import { saveDreamRecordToBrowser, saveLatestAnalysisToBrowser } from "@/lib/dream-storage";
+import {
+  clearDreamDraftFromBrowser,
+  getDreamDraftFromBrowser,
+  saveDreamDraftToBrowser,
+  saveDreamRecordToBrowser,
+  saveLatestAnalysisToBrowser,
+  type DreamUnavailablePayload,
+} from "@/lib/dream-storage";
 import { DREAM_LOADING_MINIMUM_MS } from "@/lib/dream-loading-sequence";
 import { manyangAssets } from "@/lib/manyang-assets";
 import { cn, ui } from "@/lib/styles";
@@ -44,6 +53,28 @@ type OptionButtonProps = {
   disabled?: boolean;
   iconSize?: "default" | "large";
 };
+
+type DreamUnavailableApiResponse = {
+  status: "unavailable";
+  error: string;
+  reason: DreamReadingUnavailableReason;
+  retryable: boolean;
+  safetyNotice?: string;
+};
+
+function createFallbackRecordId(prefix: string): string {
+  return globalThis.crypto?.randomUUID?.() ?? `${prefix}-${Date.now()}`;
+}
+
+function isDreamUnavailableApiResponse(value: unknown): value is DreamUnavailableApiResponse {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    (value as DreamUnavailableApiResponse).status === "unavailable" &&
+    typeof (value as DreamUnavailableApiResponse).reason === "string" &&
+    typeof (value as DreamUnavailableApiResponse).retryable === "boolean"
+  );
+}
 
 function OptionButton({ option, isSelected, onClick, disabled = false, iconSize = "default" }: OptionButtonProps) {
   return (
@@ -81,20 +112,36 @@ function OptionButton({ option, isSelected, onClick, disabled = false, iconSize 
 
 export function DreamEntryForm() {
   const router = useRouter();
+  const [initialDraft] = useState(() => getDreamDraftFromBrowser());
   const storedCatReaderId = useSyncExternalStore(
     subscribeToSelectedCatReader,
     getSelectedCatReaderSnapshotFromBrowser,
     getDefaultCatReaderSnapshot,
   );
-  const [dreamText, setDreamText] = useState("");
-  const [dreamAtmosphere, setDreamAtmosphere] = useState<string | null>(null);
+  const [dreamText, setDreamText] = useState(initialDraft?.dreamText ?? "");
+  const [dreamAtmospheres, setDreamAtmospheres] = useState<string[]>([]);
   const [dreamSensations, setDreamSensations] = useState<string[]>([]);
-  const [draftCatReaderId, setDraftCatReaderId] = useState<CatReaderId | null>(null);
+  const [otherSensation, setOtherSensation] = useState("");
+  const [draftCatReaderId, setDraftCatReaderId] = useState<CatReaderId | null>(initialDraft?.catReaderType ?? null);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const selectedCatReaderId = draftCatReaderId ?? storedCatReaderId;
   const selectedCatReader = getCatReaderById(selectedCatReaderId);
   const readingState = getCatReaderDreamReadingState(selectedCatReaderId);
+
+  function toggleDreamAtmosphere(label: string): void {
+    setDreamAtmospheres((currentAtmospheres) => {
+      if (currentAtmospheres.includes(label)) {
+        return currentAtmospheres.filter((atmosphere) => atmosphere !== label);
+      }
+
+      if (currentAtmospheres.length >= dreamAtmosphereMaxSelection) {
+        return currentAtmospheres;
+      }
+
+      return [...currentAtmospheres, label];
+    });
+  }
 
   function toggleDreamSensation(label: string): void {
     setDreamSensations((currentSensations) => {
@@ -130,7 +177,23 @@ export function DreamEntryForm() {
 
     try {
       const dreamDate = getTodayDate();
-      const wakeMood = createDreamMoodLabel(dreamAtmosphere, dreamSensations);
+      const trimmedOtherSensation = otherSensation.trim();
+      const sensations = trimmedOtherSensation
+        ? [...dreamSensations, trimmedOtherSensation]
+        : dreamSensations;
+      const wakeMood = createDreamMoodLabel(dreamAtmospheres, sensations);
+      const atmosphereIds = dreamAtmosphereOptions
+        .filter((option) => dreamAtmospheres.includes(option.label))
+        .map((option) => option.id);
+      const sensationIds = dreamSensationOptions
+        .filter((option) => dreamSensations.includes(option.label))
+        .map((option) => option.id);
+      // 요청·저장에 공통으로 쓰는 구조화 감정/감각 신호(재분석 대비).
+      const selectedSignals = {
+        ...(atmosphereIds.length > 0 ? { dreamAtmospheres: atmosphereIds } : {}),
+        ...(sensationIds.length > 0 ? { dreamSensations: sensationIds } : {}),
+        ...(trimmedOtherSensation ? { dreamSensationOther: trimmedOtherSensation } : {}),
+      };
 
       const minDelay = new Promise((resolve) => setTimeout(resolve, DREAM_LOADING_MINIMUM_MS));
 
@@ -143,26 +206,59 @@ export function DreamEntryForm() {
           dreamText: trimmedDreamText,
           dreamDate,
           ...(wakeMood ? { wakeMood } : {}),
+          ...selectedSignals,
           catReaderType: selectedCatReaderId,
         }),
       });
 
       const [response] = await Promise.all([fetchPromise, minDelay]);
+      const responseBody = (await response.json()) as unknown;
 
       if (!response.ok) {
+        if (response.status === 503 && isDreamUnavailableApiResponse(responseBody)) {
+          const unavailablePayload: DreamUnavailablePayload = {
+            status: "unavailable",
+            dreamText: trimmedDreamText,
+            dreamDate,
+            catReaderType: selectedCatReaderId,
+            ...(wakeMood ? { wakeMood } : {}),
+            ...selectedSignals,
+            reason: responseBody.reason,
+            retryable: responseBody.retryable,
+            ...(responseBody.safetyNotice ? { safetyNotice: responseBody.safetyNotice } : {}),
+            failedAt: new Date().toISOString(),
+          };
+
+          saveLatestAnalysisToBrowser(unavailablePayload);
+          saveDreamDraftToBrowser({
+            dreamText: trimmedDreamText,
+            catReaderType: selectedCatReaderId,
+            ...(wakeMood ? { wakeMood } : {}),
+          });
+          saveDreamRecordToBrowser({
+            ...unavailablePayload,
+            id: createFallbackRecordId("unavailable-dream"),
+            savedAt: new Date().toISOString(),
+          });
+          router.push("/result");
+          return;
+        }
+
         throw new Error("analysis failed");
       }
 
-      const analysis = (await response.json()) as DreamAnalysisResponse;
+      const analysis = responseBody as DreamAnalysisResponse;
       const payload = {
         dreamText: trimmedDreamText,
         dreamDate,
         catReaderType: selectedCatReaderId,
         ...(wakeMood ? { wakeMood } : {}),
+        ...selectedSignals,
         analysis,
       };
 
       saveLatestAnalysisToBrowser(payload);
+      clearDreamDraftFromBrowser();
       saveDreamRecordToBrowser({
         ...payload,
         id: analysis.dreamId,
@@ -260,23 +356,29 @@ export function DreamEntryForm() {
         </section>
 
         <section className="space-y-2.5">
-          <h2 className={cn("text-[1.08rem] font-semibold text-[#ffd98a]", ui.textGlow)}>
-            꿈의 분위기는 어땠나요?
-          </h2>
+          <div className="space-y-1">
+            <h2 className={cn("text-[1.08rem] font-semibold text-[#ffd98a]", ui.textGlow)}>
+              꿈의 분위기는 어땠나요?
+            </h2>
+            <p className="text-[0.78rem] font-medium text-[#d9b5a4]/78">
+              선택하지 않아도 괜찮고, 최대 {dreamAtmosphereMaxSelection}개까지 고를 수 있어요.
+            </p>
+          </div>
           <div className="grid grid-cols-4 gap-2">
-            {dreamAtmosphereOptions.map((option) => (
-              <OptionButton
-                key={option.id}
-                option={option}
-                isSelected={dreamAtmosphere === option.label}
-                iconSize="large"
-                onClick={() =>
-                  setDreamAtmosphere((currentAtmosphere) =>
-                    currentAtmosphere === option.label ? null : option.label,
-                  )
-                }
-              />
-            ))}
+            {dreamAtmosphereOptions.map((option) => {
+              const isSelected = dreamAtmospheres.includes(option.label);
+
+              return (
+                <OptionButton
+                  key={option.id}
+                  option={option}
+                  isSelected={isSelected}
+                  iconSize="large"
+                  disabled={!isSelected && dreamAtmospheres.length >= dreamAtmosphereMaxSelection}
+                  onClick={() => toggleDreamAtmosphere(option.label)}
+                />
+              );
+            })}
           </div>
         </section>
 
@@ -305,6 +407,18 @@ export function DreamEntryForm() {
               );
             })}
           </div>
+          <label htmlFor="dream-sensation-other" className="sr-only">
+            그 외 감각 직접 입력
+          </label>
+          <input
+            id="dream-sensation-other"
+            type="text"
+            value={otherSensation}
+            maxLength={dreamSensationOtherMaxLength}
+            onChange={(event) => setOtherSensation(event.target.value)}
+            placeholder="그 외 감각이 있다면 직접 적어주세요"
+            className="min-h-[2.45rem] w-full rounded-[0.85rem] border border-[#71433f]/75 bg-[rgba(12,8,24,0.72)] px-3 text-[0.82rem] font-semibold text-[#f0c7b9] placeholder:text-[#9d7f9b] focus:border-[#d799ff]/70 focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
+          />
         </section>
 
         {error ? <p className="px-2 text-sm text-[#ffd98a]">{error}</p> : null}
@@ -319,7 +433,7 @@ export function DreamEntryForm() {
                 ? "고양이가 꿈을 읽는 중"
                 : "해몽 받기"
           }
-          className="relative mx-auto -my-2 mt-0 block w-full px-3 py-2 transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-[#f7d58b] disabled:cursor-not-allowed disabled:opacity-70"
+          className="relative mx-auto -my-2 mt-0 block w-full px-3 py-0 transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-[#f7d58b] disabled:cursor-not-allowed disabled:opacity-70"
         >
           <Image
             src={manyangAssets.buttons.dreammemorySubmit}

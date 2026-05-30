@@ -1,15 +1,17 @@
 import {
   analyzeDream,
-  analyzeDreamWithLlm,
   createOpenAIEmbeddingsProviderFromEnv,
   createOpenAIResponsesProviderFromEnv,
   DEFAULT_LLM_PROVIDER_TIMEOUT_MS,
   EmbeddingProviderConfigurationError,
+  generateDreamReadingForUser,
   loadCachedDreamVectorIndex,
   LlmProviderConfigurationError,
   type AnalyzeDreamWithLlmOptions,
   type CatReaderType,
   type DreamAnalysisRequest,
+  type DreamReadingResult,
+  type DreamReadingUnavailableReason,
 } from "@manyang/backend";
 
 type EnvLike = Record<string, string | undefined>;
@@ -18,6 +20,9 @@ const MAX_LLM_TIMEOUT_MS = 60_000;
 export const DREAM_ANALYZE_MAX_DREAM_TEXT_LENGTH = 1000;
 const OPTIONAL_TEXT_MAX_LENGTH = 160;
 const TIME_ZONE_MAX_LENGTH = 80;
+const FEELING_IDS_MAX_ITEMS = 4;
+const FEELING_ID_MAX_LENGTH = 32;
+const FEELING_OTHER_MAX_LENGTH = 30;
 const validLocales = new Set(["ko", "en"]);
 const validCatReaderTypes = new Set(["black_cat", "white_cat", "cheese_cat", "gray_cat"]);
 
@@ -35,9 +40,46 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+function optionalIdArrayField(
+  body: Record<string, unknown>,
+  fieldName: "dreamAtmospheres" | "dreamSensations",
+): { ok: true; value?: string[] } | { ok: false; error: string } {
+  const value = body[fieldName];
+
+  if (value === undefined) {
+    return { ok: true };
+  }
+
+  if (!Array.isArray(value)) {
+    return { ok: false, error: `${fieldName} must be an array of strings` };
+  }
+
+  if (value.length > FEELING_IDS_MAX_ITEMS) {
+    return { ok: false, error: `${fieldName} must have ${FEELING_IDS_MAX_ITEMS} items or fewer` };
+  }
+
+  const ids: string[] = [];
+  for (const item of value) {
+    if (typeof item !== "string") {
+      return { ok: false, error: `${fieldName} must be an array of strings` };
+    }
+
+    const trimmed = item.trim();
+    if (trimmed.length === 0 || trimmed.length > FEELING_ID_MAX_LENGTH) {
+      return { ok: false, error: `${fieldName} entries must be 1 to ${FEELING_ID_MAX_LENGTH} characters` };
+    }
+
+    if (!ids.includes(trimmed)) {
+      ids.push(trimmed);
+    }
+  }
+
+  return ids.length > 0 ? { ok: true, value: ids } : { ok: true };
+}
+
 function optionalStringField(
   body: Record<string, unknown>,
-  fieldName: "dreamDate" | "wakeMood" | "dreamMood" | "userTimeZone",
+  fieldName: "dreamDate" | "wakeMood" | "dreamMood" | "userTimeZone" | "dreamSensationOther",
   maxLength: number,
 ): { ok: true; value?: string } | { ok: false; error: string } {
   const value = body[fieldName];
@@ -117,6 +159,21 @@ export function validateDreamAnalyzeRequestBody(body: unknown): DreamAnalyzeVali
     return userTimeZone;
   }
 
+  const dreamAtmospheres = optionalIdArrayField(body, "dreamAtmospheres");
+  if (!dreamAtmospheres.ok) {
+    return dreamAtmospheres;
+  }
+
+  const dreamSensations = optionalIdArrayField(body, "dreamSensations");
+  if (!dreamSensations.ok) {
+    return dreamSensations;
+  }
+
+  const dreamSensationOther = optionalStringField(body, "dreamSensationOther", FEELING_OTHER_MAX_LENGTH);
+  if (!dreamSensationOther.ok) {
+    return dreamSensationOther;
+  }
+
   return {
     ok: true,
     value: {
@@ -124,6 +181,9 @@ export function validateDreamAnalyzeRequestBody(body: unknown): DreamAnalyzeVali
       ...(dreamDate.value ? { dreamDate: dreamDate.value } : {}),
       ...(wakeMood.value ? { wakeMood: wakeMood.value } : {}),
       ...(dreamMood.value ? { dreamMood: dreamMood.value } : {}),
+      ...(dreamAtmospheres.value ? { dreamAtmospheres: dreamAtmospheres.value } : {}),
+      ...(dreamSensations.value ? { dreamSensations: dreamSensations.value } : {}),
+      ...(dreamSensationOther.value ? { dreamSensationOther: dreamSensationOther.value } : {}),
       ...(body.catReaderType ? { catReaderType: body.catReaderType as CatReaderType } : {}),
       ...(body.locale ? { locale: body.locale as "ko" | "en" } : {}),
       ...(userTimeZone.value ? { userTimeZone: userTimeZone.value } : {}),
@@ -169,6 +229,20 @@ async function createVectorAnalysisOptions(
   };
 }
 
+function createUnavailablePayload(
+  reason: DreamReadingUnavailableReason,
+  retryable: boolean,
+  safetyNotice?: string,
+): Extract<DreamReadingResult, { status: "unavailable" }> & { error: string } {
+  return {
+    status: "unavailable",
+    error: "dream reading is unavailable",
+    reason,
+    retryable,
+    ...(safetyNotice ? { safetyNotice } : {}),
+  };
+}
+
 export async function POST(request: Request): Promise<Response> {
   try {
     let body: unknown;
@@ -185,20 +259,39 @@ export async function POST(request: Request): Promise<Response> {
       return Response.json({ error: validatedBody.error }, { status: 400 });
     }
 
-    const provider = createOpenAIResponsesProviderFromEnv(process.env);
-    const vectorOptions = provider ? await createVectorAnalysisOptions(validatedBody.value.locale) : {};
-    const analysis = provider
-      ? await analyzeDreamWithLlm(validatedBody.value, {
-          provider,
-          providerTimeoutMs: resolveDreamLlmTimeoutMs(),
-          ...vectorOptions,
-        })
-      : analyzeDream(validatedBody.value);
+    let provider: ReturnType<typeof createOpenAIResponsesProviderFromEnv>;
 
-    return Response.json(analysis);
+    try {
+      provider = createOpenAIResponsesProviderFromEnv(process.env);
+    } catch (error) {
+      if (error instanceof LlmProviderConfigurationError) {
+        const safetyNotice = analyzeDream(validatedBody.value).safetyNotice;
+
+        return Response.json(createUnavailablePayload("provider_missing", false, safetyNotice), { status: 503 });
+      }
+
+      throw error;
+    }
+
+    const vectorOptions = provider ? await createVectorAnalysisOptions(validatedBody.value.locale) : {};
+    if (provider) {
+      const result = await generateDreamReadingForUser(validatedBody.value, {
+        provider,
+        providerTimeoutMs: resolveDreamLlmTimeoutMs(),
+        ...vectorOptions,
+      });
+
+      if (result.status === "unavailable") {
+        return Response.json(createUnavailablePayload(result.reason, result.retryable, result.safetyNotice), { status: 503 });
+      }
+
+      return Response.json(result.response);
+    }
+
+    return Response.json(analyzeDream(validatedBody.value));
   } catch (error) {
     if (error instanceof LlmProviderConfigurationError || error instanceof EmbeddingProviderConfigurationError) {
-      return Response.json({ error: "llm provider is not configured" }, { status: 503 });
+      return Response.json(createUnavailablePayload("provider_missing", false), { status: 503 });
     }
 
     if (error instanceof Error && error.message === "dreamText is required") {

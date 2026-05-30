@@ -19,7 +19,7 @@ type AppShellProps = {
   subtitle?: string;
   titleIconSrc?: string;
   backHref?: string;
-  rightAction?: "settings" | "share" | "calendar" | "book";
+  rightAction?: "settings" | "share" | "calendar" | "book" | "none";
   showHeader?: boolean;
   showBottomNav?: boolean;
   contentMode?: "scroll" | "fixed";
@@ -42,6 +42,7 @@ export function AppShell({
   showBottomNav = true,
   contentMode = "scroll",
 }: AppShellProps) {
+  const showRightAction = rightAction !== "none";
   const rightIcon =
     rightAction === "share"
       ? manyangAssets.actionIcons.share
@@ -105,7 +106,11 @@ export function AppShell({
                 </div>
               ) : null}
 
-              <AssetIconButton src={rightIcon} label={rightLabel} size="header" />
+              {showRightAction ? (
+                <AssetIconButton src={rightIcon} label={rightLabel} size="header" />
+              ) : (
+                <span className="h-11 w-11 shrink-0" aria-hidden="true" />
+              )}
             </header>
           ) : null}
 

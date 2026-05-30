@@ -322,17 +322,18 @@ describe("manyang assets", () => {
     });
   });
 
-  test("exposes the home cat transition magic cloud assets", () => {
+  test("exposes optimized home cat transition magic cloud assets", () => {
     expect(manyangAssets.transitions.catMagicCloudLeft).toBe(
-      "/manyang/ui/transitions/cat-transition-magic-cloud-left.png",
+      "/manyang/ui/transitions/cat-transition-magic-cloud-left.webp",
     );
     expect(manyangAssets.transitions.catMagicCloudRight).toBe(
-      "/manyang/ui/transitions/cat-transition-magic-cloud-right.png",
+      "/manyang/ui/transitions/cat-transition-magic-cloud-right.webp",
     );
 
     [manyangAssets.transitions.catMagicCloudLeft, manyangAssets.transitions.catMagicCloudRight].forEach((assetPath) => {
       expect(publicAssetExists(assetPath)).toBe(true);
       expect(readImageSize(assetPath)).toEqual({ width: 1200, height: 900 });
+      expect(statSync(publicAssetPath(assetPath)).size).toBeLessThan(460_000);
     });
   });
 });

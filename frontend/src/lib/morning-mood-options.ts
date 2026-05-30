@@ -12,22 +12,33 @@ export const morningMoodCopy = {
   footer: "기록은 꿈 달력에 저장돼요.",
 } as const;
 
+// 아침 기분: 깨어난 후 '지금 내 정서'(꿈 분위기와 역할이 다름). 긍정→양가→부정→중립 순.
 export const morningMoodOptions = [
-  { label: "차분함", icon: "feather" },
-  { label: "불안함", icon: "crystals" },
-  { label: "찝찝함", icon: "cloud" },
-  { label: "설렘", icon: "sparkles" },
-  { label: "그리움", icon: "moon" },
-  { label: "슬픔", icon: "potion" },
-  { label: "신기함", icon: "star" },
-  { label: "멍함", icon: "crystalBall" },
+  { id: "calm", label: "차분함", icon: "feather" },
+  { id: "excited", label: "설렘", icon: "sparkles" },
+  { id: "curious", label: "신기함", icon: "star" },
+  { id: "relieved", label: "후련함", icon: "paw" },
+  { id: "wistful", label: "그리움", icon: "moon" },
+  { id: "anxious", label: "불안함", icon: "crystals" },
+  { id: "scared", label: "무서움", icon: "lantern" },
+  { id: "sad", label: "슬픔", icon: "potion" },
+  { id: "irritated", label: "짜증남", icon: "key" },
+  { id: "unsettled", label: "찝찝함", icon: "cloud" },
+  { id: "empty", label: "허전함", icon: "crystalBall" },
+  { id: "dazed", label: "멍함", icon: "crystalBall" },
 ] as const;
 
+// 몸의 감각: 기상 직후 신체 상태. 활력/이완/무게/각성 + 뻐근함·식은땀(고신호).
+// 두근거림·식은땀은 악몽·불안 꿈의 신체 마커로, 꿈 감각의 갇힘·쫓김과 연결된다.
 export const morningBodyFeelings = [
-  { label: "개운함", icon: "sparkles" },
-  { label: "졸림", icon: "moon" },
-  { label: "피곤함", icon: "cloud" },
-  { label: "무거움", icon: "key" },
-  { label: "긴장됨", icon: "star" },
-  { label: "편안함", icon: "paw" },
+  { id: "refreshed", label: "개운함", icon: "sparkles" },
+  { id: "light", label: "가뿐함", icon: "feather" },
+  { id: "relaxed", label: "편안함", icon: "paw" },
+  { id: "drowsy", label: "졸림", icon: "moon" },
+  { id: "tired", label: "피곤함", icon: "cloud" },
+  { id: "heavy", label: "무거움", icon: "key" },
+  { id: "tense", label: "긴장됨", icon: "star" },
+  { id: "racing", label: "두근거림", icon: "crystals" },
+  { id: "stiff", label: "뻐근함", icon: "lantern" },
+  { id: "coldSweat", label: "식은땀", icon: "crystalBall" },
 ] as const;

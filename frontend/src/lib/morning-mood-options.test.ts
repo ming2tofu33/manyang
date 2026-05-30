@@ -14,12 +14,16 @@ describe("morning mood options", () => {
   test("defines the reference morning mood options in display order", () => {
     expect(morningMoodOptions.map((option) => option.label)).toEqual([
       "차분함",
-      "불안함",
-      "찝찝함",
       "설렘",
-      "그리움",
-      "슬픔",
       "신기함",
+      "후련함",
+      "그리움",
+      "불안함",
+      "무서움",
+      "슬픔",
+      "짜증남",
+      "찝찝함",
+      "허전함",
       "멍함",
     ]);
   });
@@ -32,11 +36,15 @@ describe("morning mood options", () => {
   test("defines the reference body feelings", () => {
     expect(morningBodyFeelings.map((feeling) => feeling.label)).toEqual([
       "개운함",
+      "가뿐함",
+      "편안함",
       "졸림",
       "피곤함",
       "무거움",
       "긴장됨",
-      "편안함",
+      "두근거림",
+      "뻐근함",
+      "식은땀",
     ]);
   });
 });

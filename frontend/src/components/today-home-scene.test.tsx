@@ -20,6 +20,9 @@ describe("TodayHomeScene", () => {
 
     expect(markup).toContain('data-home-cat-transition="root"');
     expect(markup).toContain("home-cat-transition-current");
+    expect(markup).not.toContain("brightness-[");
+    expect(markup).not.toContain("contrast-[");
+    expect(markup).not.toContain("saturate-[");
   });
 
   it("uses fixed stage content instead of an internal scroll container", () => {

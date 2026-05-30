@@ -26,12 +26,26 @@ function createDreamRecord(input: {
       dreamId: input.id,
       analysisId: `${input.id}-analysis`,
       cardId: `${input.id}-card`,
+      reader: {
+        id: "black_cat",
+        name: "Black Cat",
+        access: "free",
+      },
       summary: input.summary ?? `${input.id} summary`,
       symbols: input.symbols ?? [],
       emotions: [],
       themes: [],
       interpretation: "",
       smallPrescription: "",
+      symbolReadings: (input.symbols ?? []).map((symbol) => ({
+        symbol,
+        reading: `${symbol} reading`,
+      })),
+      readingBasis: {
+        usedSymbols: input.symbols ?? [],
+        mainThemes: [],
+        confidence: 0.7,
+      },
       card: {
         name: "",
         type: "",

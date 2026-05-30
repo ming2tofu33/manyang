@@ -14,7 +14,7 @@ import {
 } from "@/lib/dream-seed";
 import {
   getLatestAnalysisSnapshotFromBrowser,
-  type LatestAnalysisPayload,
+  type DreamCompletedPayload,
 } from "@/lib/dream-storage";
 import { manyangAssets } from "@/lib/manyang-assets";
 import {
@@ -29,7 +29,7 @@ import {
   createReceiptSvg,
 } from "@/lib/result-actions";
 
-const fallbackPayload: LatestAnalysisPayload = {
+const fallbackPayload: DreamCompletedPayload = {
   dreamText: "복도를 맨발로 빠르게 달렸어요. 누군가 뒤에서 부르는 것 같았지만 멈추지 않았어요.",
   dreamDate: "2026-05-24",
   wakeMood: "불안함",
@@ -146,7 +146,7 @@ type SymbolBasisItem = {
   reading: string;
 };
 
-function getSymbolBasisItems(analysis: LatestAnalysisPayload["analysis"]): SymbolBasisItem[] {
+function getSymbolBasisItems(analysis: DreamCompletedPayload["analysis"]): SymbolBasisItem[] {
   const readings = analysis.symbolReadings ?? [];
   const readingBySymbol = new Map(readings.map((reading) => [reading.symbol, reading.reading]));
   const orderedSymbols = [
@@ -310,7 +310,7 @@ function ReceiptStreamingText({
 }
 
 type DreamResultReceiptProps = {
-  payloadOverride?: LatestAnalysisPayload;
+  payloadOverride?: DreamCompletedPayload;
 };
 
 export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps = {}) {
@@ -322,8 +322,9 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
   const storedSeed = useSyncExternalStore(subscribeToDreamSeed, getDreamSeedSnapshotFromBrowser, () => null);
   const [pawprintCreated, setPawprintCreated] = useState(false);
   const [expandedReceiptTextLabels, setExpandedReceiptTextLabels] = useState<Record<string, boolean>>({});
-  const hasStoredPayload = storedPayload !== null;
-  const payload = payloadOverride ?? storedPayload ?? fallbackPayload;
+  const completedStoredPayload = storedPayload?.status === "unavailable" ? null : storedPayload;
+  const hasStoredPayload = completedStoredPayload !== null;
+  const payload = payloadOverride ?? completedStoredPayload ?? fallbackPayload;
 
   const { analysis } = payload;
   const reader = getCatReaderById(payload.catReaderType ?? analysis.reader?.id);

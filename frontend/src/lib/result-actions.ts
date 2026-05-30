@@ -1,4 +1,4 @@
-import type { LatestAnalysisPayload } from "./dream-storage";
+import type { DreamCompletedPayload } from "./dream-storage";
 import { getCatReaderById } from "./cat-readers";
 
 const symbolSlugMap: Record<string, string> = {
@@ -89,7 +89,7 @@ export function getPrimarySymbolSlug(symbols: string[]): string {
 }
 
 export function getPrimaryResultSymbolSlug(
-  analysis: Pick<LatestAnalysisPayload["analysis"], "symbolReadings" | "readingBasis" | "symbols">,
+  analysis: Pick<DreamCompletedPayload["analysis"], "symbolReadings" | "readingBasis" | "symbols">,
 ): string {
   const primarySymbol =
     analysis.symbolReadings[0]?.symbol ??
@@ -104,11 +104,11 @@ export function createResultEncyclopediaHref(symbol: string): string {
   return `/encyclopedia/${getSymbolSlug(symbol)}?from=result`;
 }
 
-export function createReceiptFileName(payload: LatestAnalysisPayload): string {
+export function createReceiptFileName(payload: DreamCompletedPayload): string {
   return `manyang-receipt-${payload.dreamDate}-${payload.analysis.dreamId}.svg`;
 }
 
-export function createReceiptShareText(payload: LatestAnalysisPayload): string {
+export function createReceiptShareText(payload: DreamCompletedPayload): string {
   const reader = getCatReaderById(payload.catReaderType ?? payload.analysis.reader?.id);
 
   return [
@@ -119,7 +119,7 @@ export function createReceiptShareText(payload: LatestAnalysisPayload): string {
   ].join("\n");
 }
 
-export function createReceiptSvg(payload: LatestAnalysisPayload): string {
+export function createReceiptSvg(payload: DreamCompletedPayload): string {
   const reader = getCatReaderById(payload.catReaderType ?? payload.analysis.reader?.id);
   const interpretationLines = wrapText(payload.analysis.interpretation, 32).slice(0, 8);
   const prescriptionLines = wrapText(payload.analysis.smallPrescription, 30).slice(0, 3);

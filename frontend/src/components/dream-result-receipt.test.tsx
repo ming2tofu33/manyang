@@ -1,10 +1,10 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import type { LatestAnalysisPayload } from "@/lib/dream-storage";
+import type { DreamCompletedPayload } from "@/lib/dream-storage";
 
 import { DreamResultReceipt } from "./dream-result-receipt";
 
-function createLongReceiptPayload(): LatestAnalysisPayload {
+function createLongReceiptPayload(): DreamCompletedPayload {
   const longInterpretation = Array.from(
     { length: 40 },
     (_, index) => `긴 해석 문장 ${index + 1}은 영수증 안에서 전부 보존되지만 표시 높이는 보호되어야 합니다.`,
@@ -54,7 +54,7 @@ function createLongReceiptPayload(): LatestAnalysisPayload {
   };
 }
 
-function createSafetyNoticeReceiptPayload(): LatestAnalysisPayload {
+function createSafetyNoticeReceiptPayload(): DreamCompletedPayload {
   const payload = createLongReceiptPayload();
 
   return {

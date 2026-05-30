@@ -48,4 +48,16 @@ describe("AppShell", () => {
     expect(markup).toContain("focused task");
     expect(markup).not.toContain('data-testid="bottom-nav"');
   });
+
+  test("can reserve header space without rendering a right action", () => {
+    const markup = renderToStaticMarkup(
+      <AppShell title="Result" rightAction="none" showBottomNav={false}>
+        <div>content</div>
+      </AppShell>,
+    );
+
+    expect(markup).toContain("Result");
+    expect(markup).not.toContain("settings");
+    expect(markup).not.toContain("share");
+  });
 });

@@ -41,7 +41,7 @@ function PrimaryDreamButton({ readingState, onFallbackReaderClick }: PrimaryDrea
           height={375}
           disabled
           ariaLabel={readingState.blockedLabel ?? "Moon Pass에서 열려요"}
-          className="mx-auto -my-1.5 block w-[82%] max-w-[310px] px-3 py-2 disabled:cursor-not-allowed"
+          className="mx-auto -my-1.5 block w-[76%] max-w-[288px] px-2 py-0.5 disabled:cursor-not-allowed"
           imageClassName="manyang-button-glow opacity-75 grayscale-[0.28]"
           contentClassName="pb-0.5 text-[0.98rem] leading-tight"
         >
@@ -64,9 +64,9 @@ function PrimaryDreamButton({ readingState, onFallbackReaderClick }: PrimaryDrea
       frame={manyangAssets.buttons.dreammemoryWrite}
       width={860}
       height={375}
-      className="mx-auto -my-1.5 block w-[82%] max-w-[310px] px-3 py-2"
+      className="mx-auto -my-1.5 block w-[76%] max-w-[288px] px-2 py-0.5"
       imageClassName="manyang-button-glow"
-      contentClassName="pb-0.5 text-[1.72rem]"
+      contentClassName="pb-0.5 text-[1.5rem]"
     >
       꿈 들려주기
     </AssetImageTextButton>
@@ -98,7 +98,7 @@ function NightSeedButton() {
       width={852}
       height={300}
       sizes="250px"
-      className="mx-auto -my-1 block w-[60%] max-w-[240px] px-2 py-1"
+      className="mx-auto -my-1 block w-[60%] max-w-[240px] px-2 py-0"
       imageClassName="manyang-button-glow-soft"
       contentClassName="pb-0.5 text-[1.12rem]"
     >

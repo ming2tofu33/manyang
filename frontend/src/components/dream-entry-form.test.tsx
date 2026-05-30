@@ -22,4 +22,11 @@ describe("DreamEntryForm", () => {
     expect(largeIconMatches).toHaveLength(dreamAtmosphereOptions.length + dreamSensationOptions.length);
     expect(markup).not.toContain("h-[0.95rem] w-[0.95rem]");
   });
+
+  it("renders the submit button without extra vertical frame padding", () => {
+    const markup = renderToStaticMarkup(<DreamEntryForm />);
+
+    expect(markup).toContain("relative mx-auto -my-2 mt-0 block w-full px-3 py-0");
+    expect(markup).not.toContain("relative mx-auto -my-2 mt-0 block w-full px-3 py-2");
+  });
 });

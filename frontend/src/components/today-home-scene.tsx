@@ -25,7 +25,7 @@ export function TodayHomeScene() {
   const selectedReader = getCatReaderById(selectedCatReaderId);
   const titleTheme = getHomeTitleTheme(selectedReader.id);
   const selectedBackground = manyangAssets.backgrounds[selectedReader.homeBackgroundKey];
-  const selectedBackgroundClassName = "object-cover opacity-100 brightness-[1.06] contrast-[1.08] saturate-[1.08]";
+  const selectedBackgroundClassName = "object-cover opacity-100";
 
   return (
     <AppShell

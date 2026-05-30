@@ -8,9 +8,9 @@ import {
   getPrimarySymbolSlug,
   getPrimaryResultSymbolSlug,
 } from "./result-actions";
-import type { LatestAnalysisPayload } from "./dream-storage";
+import type { DreamCompletedPayload } from "./dream-storage";
 
-function createPayload(): LatestAnalysisPayload {
+function createPayload(): DreamCompletedPayload {
   return {
     dreamText: "낡은 학교 복도에서 신발을 잃어버렸어요.",
     dreamDate: "2026-05-24",
@@ -31,6 +31,17 @@ function createPayload(): LatestAnalysisPayload {
       themes: ["장소와 전환"],
       interpretation: "단정하긴 어렵지만, 복도는 전환 구간과 연결되어 보여요.",
       smallPrescription: "준비물 하나만 먼저 확인해보자냥.",
+      symbolReadings: [
+        {
+          symbol: "복도",
+          reading: "복도는 다음 장면으로 이동하는 과정으로 읽을 수 있어요.",
+        },
+      ],
+      readingBasis: {
+        usedSymbols: ["복도", "신발"],
+        mainThemes: ["장소와 전환"],
+        confidence: 0.7,
+      },
       card: {
         name: "복도를 살피는 밤",
         type: "half_moon",

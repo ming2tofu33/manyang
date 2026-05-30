@@ -64,8 +64,8 @@ const whiteCatTargets: HomeBackgroundEffectTarget[] = [
 
 const cheeseCatTargets: HomeBackgroundEffectTarget[] = [
   // 1. Solar Crystal Glow
-  { name: "cheese-orb-glow", type: "orb", x: 48.4, y: 53.2, size: 160, tone: "gold" },
-  { name: "cheese-orb-glow-core", type: "orb", x: 48.4, y: 53.2, size: 80, delay: "0.8s", tone: "amber" },
+  { name: "cheese-orb-glow", type: "orb", x: 48.4, y: 51.2, size: 160, tone: "gold" },
+  { name: "cheese-orb-glow-core", type: "orb", x: 48.4, y: 51.2, size: 80, delay: "0.8s", tone: "amber" },
 
   // 2. Incense Smoke Drift
   { name: "cheese-incense-smoke", type: "smoke", x: 18.0, y: 42.0, size: 110, delay: "0.5s", tone: "gold" },
