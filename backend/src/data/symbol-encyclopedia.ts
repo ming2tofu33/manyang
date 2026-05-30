@@ -1,15 +1,22 @@
 import type {
   EmbeddingProfile,
+  FortuneValence,
   InterpretationLensMap,
   LocalizedSymbolEntry,
   RuntimeSymbolEntry,
   SceneModifier,
   SupportedLocale,
   SymbolEntry,
+  SymbolFortune,
 } from "../contracts/symbol-encyclopedia";
 
-function modifier(reading: string, triggerTerms: string[], weight = 0.75): SceneModifier {
-  return { reading, triggerTerms, weight };
+function modifier(
+  reading: string,
+  triggerTerms: string[],
+  weight = 0.75,
+  fortuneValence?: FortuneValence,
+): SceneModifier {
+  return { reading, triggerTerms, weight, ...(fortuneValence ? { fortuneValence } : {}) };
 }
 
 function localized(input: {
@@ -26,7 +33,7 @@ function localized(input: {
   smallPrescriptions: string[];
   safeReading: string;
   avoidExpressions: string[];
-  traditionalReading?: string;
+  fortune?: SymbolFortune;
 }): LocalizedSymbolEntry {
   return input;
 }
@@ -153,7 +160,11 @@ export const symbolEntries: SymbolEntry[] = [
         smallPrescriptions: ["오늘은 내가 지켜야 한다고 느끼는 영역 하나를 적어보세요."],
         safeReading: "뱀은 불길함으로 단정하기보다, 본능적 감각이나 조용히 커지는 움직임으로 읽을 수 있어요.",
         avoidExpressions: ["재물운이 반드시 오른다", "태몽이다", "위험한 일이 생긴다"],
-        traditionalReading: "예부터 집이나 내 땅에 들어온 큰 구렁이는 재물이 깃들거나 태몽으로도 읽혀온 대표적인 길몽이다냥.",
+        fortune: {
+          valence: "conditional",
+          auspicious: "예부터 집이나 내 땅에 들어온 큰 구렁이는 재물이 깃들거나 태몽으로도 읽혀온 대표적인 길몽이다냥.",
+          cautious: "다만 뱀이 위협적으로 달려들거나 물려는 장면이면, 잠시 경계할 일을 살피라는 옛 환기로 봤다냥.",
+        },
       }),
       en: localized({
         label: "Snake",
@@ -173,6 +184,11 @@ export const symbolEntries: SymbolEntry[] = [
         smallPrescriptions: ["Write down one area of life that feels important to protect today."],
         safeReading: "A snake can point to instinctive movement or a change that feels hard to ignore.",
         avoidExpressions: ["money will definitely arrive", "this is a pregnancy dream", "something dangerous will happen"],
+        fortune: {
+          valence: "conditional",
+          auspicious: "In Korean tradition, a large snake entering your home or land was read as wealth settling in, or even a 태몽 (conception dream).",
+          cautious: "If the snake lunges or tries to bite, tradition treated it as a gentle nudge to watch for something that needs caution.",
+        },
       }),
     },
   },
@@ -648,9 +664,9 @@ export const symbolEntries: SymbolEntry[] = [
         lightReadings: ["감정을 흘려보내는 과정", "묵은 기분이 씻기는 느낌"],
         shadowReadings: ["감정에 잠기는 부담", "상황이 내 속도보다 크게 밀려오는 감각"],
         sceneModifiers: {
-          clear: modifier("감정이 비교적 잘 보이고 정리되는 장면", ["맑은", "깨끗한", "투명한"], 0.75),
-          muddy: modifier("감정의 출처가 분명하지 않고 섞여 있는 장면", ["탁한", "더러운", "흐린"], 0.8),
-          submerged: modifier("감정의 양이 커져 몸으로 느껴지는 장면", ["물속", "잠긴", "빠진"], 0.85),
+          clear: modifier("감정이 비교적 잘 보이고 정리되는 장면", ["맑은", "깨끗한", "투명한"], 0.75, "auspicious"),
+          muddy: modifier("감정의 출처가 분명하지 않고 섞여 있는 장면", ["탁한", "더러운", "흐린"], 0.8, "cautious"),
+          submerged: modifier("감정의 양이 커져 몸으로 느껴지는 장면", ["물속", "잠긴", "빠진"], 0.85, "cautious"),
         },
         contextQuestions: ["물은 맑았나요, 탁했나요?", "물가에 있었나요, 물속에 있었나요?"],
         metaphorHooks: ["말보다 먼저 움직이는 감정", "흘러가야 하는 마음의 결"],
@@ -658,6 +674,11 @@ export const symbolEntries: SymbolEntry[] = [
         smallPrescriptions: ["오늘은 감정을 해결하려 하기보다 이름 하나만 붙여보세요."],
         safeReading: "물은 꿈에서 감정의 양과 흐름을 보여주는 재료로 읽을 수 있어요.",
         avoidExpressions: ["물꿈은 재물운이다", "물에 빠지면 나쁜 일이 생긴다"],
+        fortune: {
+          valence: "conditional",
+          auspicious: "전통적으로 맑은 물은 재물과 행운이 들어오는 길조로 봤다냥. ✨",
+          cautious: "흐리거나 잠긴 물은 잠시 구설이나 감정 과부하를 살피라는 옛 환기로 봤다냥.",
+        },
       }),
       en: localized({
         label: "Water",
@@ -667,9 +688,9 @@ export const symbolEntries: SymbolEntry[] = [
         lightReadings: ["a process of letting feelings move", "an old mood being washed through"],
         shadowReadings: ["feeling submerged by emotion", "something arriving faster than your pace"],
         sceneModifiers: {
-          clear: modifier("feelings are visible enough to be sorted", ["clear water", "clean water", "transparent"], 0.75),
-          muddy: modifier("mixed feelings whose source is not clear yet", ["muddy", "dirty water", "cloudy"], 0.8),
-          submerged: modifier("the amount of feeling is large enough to be felt physically", ["underwater", "submerged", "fell in"], 0.85),
+          clear: modifier("feelings are visible enough to be sorted", ["clear water", "clean water", "transparent"], 0.75, "auspicious"),
+          muddy: modifier("mixed feelings whose source is not clear yet", ["muddy", "dirty water", "cloudy"], 0.8, "cautious"),
+          submerged: modifier("the amount of feeling is large enough to be felt physically", ["underwater", "submerged", "fell in"], 0.85, "cautious"),
         },
         contextQuestions: ["Was the water clear or muddy?", "Were you beside the water or inside it?"],
         metaphorHooks: ["feeling moving before words", "the grain of emotion that needs to flow"],
@@ -677,6 +698,11 @@ export const symbolEntries: SymbolEntry[] = [
         smallPrescriptions: ["Name one feeling today without trying to fix it."],
         safeReading: "Water can point to the amount, movement, or clarity of feeling in a dream.",
         avoidExpressions: ["water dreams mean money", "falling into water predicts trouble"],
+        fortune: {
+          valence: "conditional",
+          auspicious: "In Korean tradition, clear water was read as wealth and good fortune flowing in. ✨",
+          cautious: "Muddy or submerging water was a gentle nudge to watch for gossip or emotional overload — never a prediction of misfortune.",
+        },
       }),
     },
   },
@@ -1384,9 +1410,9 @@ export const symbolEntries: SymbolEntry[] = [
       lightReadings: ["정체된 것을 태워 새롭게 하려는 흐름", "강한 의욕이 올라오는 장면"],
       shadowReadings: ["감정이 번지는 부담", "통제하기 어려운 변화"],
       sceneModifiers: {
-        houseFire: modifier("내 생활 영역 안에서 감정이 과열된 장면", ["집에 불", "집이 타", "방에 불"], 0.86),
+        houseFire: modifier("내 생활 영역 안에서 감정이 과열된 장면", ["집에 불", "집이 타", "방에 불"], 0.86, "cautious"),
         smallFlame: modifier("아직 작지만 살아 있는 에너지", ["작은 불", "촛불", "불씨"], 0.72),
-        spreading: modifier("감정이나 일이 빠르게 커지는 장면", ["번져", "커져", "활활"], 0.84),
+        spreading: modifier("감정이나 일이 빠르게 커지는 장면", ["번져", "커져", "활활"], 0.84, "auspicious"),
       },
       contextQuestions: ["불은 따뜻했나요, 무서웠나요?", "불을 끄고 있었나요, 바라보고 있었나요?"],
       metaphorHooks: ["번지기 시작한 마음의 불씨", "따뜻함과 위험 사이의 빛"],
@@ -1394,6 +1420,11 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["오늘 강한 감정을 바로 행동으로 옮기기 전에 이름을 붙여보세요."],
       safeReading: "불은 강한 에너지, 분노, 정화 욕구가 함께 올라오는 장면으로 읽을 수 있어요.",
       avoidExpressions: ["화재가 난다", "재물운이 오른다"],
+      fortune: {
+        valence: "conditional",
+        auspicious: "전통적으로 크게 일어나 활활 번지는 불은 재물·번성이 이는 길몽으로 봤다냥. 🔥",
+        cautious: "집이 타거나 끄지 못하는 불은 과열된 마음을 잠시 식히라는 옛 환기로 봤다냥.",
+      },
     }),
     en: localized({
       label: "Fire",
@@ -1403,9 +1434,9 @@ export const symbolEntries: SymbolEntry[] = [
       lightReadings: ["energy strong enough to transform something", "the wish to clear what is stale"],
       shadowReadings: ["emotion spreading too quickly", "change that feels hard to control"],
       sceneModifiers: {
-        houseFire: modifier("emotion overheating inside your private space", ["house fire", "home burning", "room on fire"], 0.86),
+        houseFire: modifier("emotion overheating inside your private space", ["house fire", "home burning", "room on fire"], 0.86, "cautious"),
         smallFlame: modifier("small but living energy", ["small flame", "candle", "spark"], 0.72),
-        spreading: modifier("a feeling or event growing quickly", ["spreading", "getting bigger", "blazing"], 0.84),
+        spreading: modifier("a feeling or event growing quickly", ["spreading", "getting bigger", "blazing"], 0.84, "auspicious"),
       },
       contextQuestions: ["Did the fire feel warm or frightening?", "Were you putting it out or watching it?"],
       metaphorHooks: ["a spark in the mind beginning to spread", "light between warmth and danger"],
@@ -1413,6 +1444,11 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["Name a strong feeling before turning it into action today."],
       safeReading: "Fire can point to strong energy, anger, cleansing, and change that needs care.",
       avoidExpressions: ["there will be a fire", "money luck is coming"],
+      fortune: {
+        valence: "conditional",
+        auspicious: "In Korean tradition, a fire blazing up and spreading wide was read as rising wealth and flourishing. 🔥",
+        cautious: "A house burning or a fire you cannot put out was a gentle nudge to cool an overheated feeling — never a prediction of disaster.",
+      },
     }),
   }),
   activeSymbol({
@@ -1731,6 +1767,10 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["오늘 내가 지키고 싶은 관계의 경계를 한 문장으로 정리해보세요."],
       safeReading: "개는 신뢰, 보호 본능, 관계 속 경계감으로 읽을 수 있어요.",
       avoidExpressions: ["충성스러운 사람이 나타난다", "사고를 막아준다"],
+      fortune: {
+        valence: "auspicious",
+        auspicious: "반기거나 따르는 개는 전통적으로 도움을 주는 귀인·좋은 인연으로 봤다냥. 🐶",
+      },
     }),
     en: localized({
       label: "Dog",
@@ -1750,6 +1790,10 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["Write one boundary you want to protect in a relationship today."],
       safeReading: "A dog can point to trust, protection, instinct, and relational boundaries.",
       avoidExpressions: ["a loyal person will appear", "it will prevent an accident"],
+      fortune: {
+        valence: "auspicious",
+        auspicious: "A dog that greets or follows you was traditionally read as a helpful person or good connection coming your way. 🐶",
+      },
     }),
   }),
   activeSymbol({
@@ -1787,6 +1831,10 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["오늘 너무 가까이 붙어 있는 문제를 조금 멀리서 바라보세요."],
       safeReading: "새는 자유, 소식, 거리감, 시야 확장과 연결해 읽을 수 있어요.",
       avoidExpressions: ["좋은 소식이 반드시 온다", "떠나게 된다"],
+      fortune: {
+        valence: "auspicious",
+        auspicious: "새는 전통적으로 반가운 소식을 물어오는 길조로 봤다냥(까치처럼). 🐦",
+      },
     }),
     en: localized({
       label: "Bird",
@@ -1806,6 +1854,10 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["Look at one close problem from farther away today."],
       safeReading: "A bird can point to freedom, message, distance, and a wider perspective.",
       avoidExpressions: ["good news is guaranteed", "you will leave"],
+      fortune: {
+        valence: "auspicious",
+        auspicious: "A bird was traditionally an omen of welcome news arriving (like a magpie). 🐦",
+      },
     }),
   }),
   activeSymbol({
@@ -1843,6 +1895,10 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["오늘 잡히지 않는 생각을 억지로 결론 내리지 말고 흐름만 적어보세요."],
       safeReading: "물고기는 감정의 흐름 안에서 움직이는 생명력이나 잡히지 않는 생각으로 읽을 수 있어요.",
       avoidExpressions: ["재물운이 오른다", "임신을 뜻한다"],
+      fortune: {
+        valence: "auspicious",
+        auspicious: "예부터 물고기를 잡거나 큰 물고기는 재물이 들어오는 길몽, 태몽으로도 봤다냥. 🐟",
+      },
     }),
     en: localized({
       label: "Fish",
@@ -1862,6 +1918,10 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["Write the flow of one elusive thought without forcing a conclusion."],
       safeReading: "A fish can point to life moving inside emotion, flow, and thoughts that are hard to catch.",
       avoidExpressions: ["money luck is coming", "this means pregnancy"],
+      fortune: {
+        valence: "auspicious",
+        auspicious: "In Korean tradition, catching a fish or seeing a big one was read as wealth coming in, sometimes even a 태몽 (conception dream). 🐟",
+      },
     }),
   }),
   activeSymbol({
@@ -3248,6 +3308,10 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["오늘 나에게 부족한 에너지나 돌봄이 무엇인지 적어보세요."],
       safeReading: "음식은 재물운보다 필요, 욕구, 영양, 나눔의 감각을 비추는 상징일 수 있어요.",
       avoidExpressions: ["재물이 들어온다", "살이 찐다"],
+      fortune: {
+        valence: "auspicious",
+        auspicious: "음식이 푸짐하게 차려진 꿈은 전통적으로 재물과 복이 넉넉해지는 길조로 봤다냥.",
+      },
     }),
     en: localized({
       label: "Food",
@@ -3267,6 +3331,10 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["Write what kind of energy or care you are missing today."],
       safeReading: "Food can symbolize need, desire, nourishment, and sharing rather than fortune.",
       avoidExpressions: ["wealth will arrive", "you will gain weight"],
+      fortune: {
+        valence: "auspicious",
+        auspicious: "A table full of food was traditionally read as an omen of growing wealth and plenty.",
+      },
     }),
   }),
   activeSymbol({
@@ -4091,6 +4159,10 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["작게 피어난 성과 하나를 스스로 인정해보세요."],
       safeReading: "꽃은 연애나 행운 예고보다 피어남, 인정 욕구, 섬세한 성장을 비추는 상징일 수 있어요.",
       avoidExpressions: ["연애운이 온다", "행운이 확정된다"],
+      fortune: {
+        valence: "auspicious",
+        auspicious: "활짝 핀 꽃은 전통적으로 경사·명예가 따르는 길조로 봤다냥. 🌸",
+      },
     }),
     en: localized({
       label: "Flower",
@@ -4110,6 +4182,10 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["Recognize one small result that has begun to bloom."],
       safeReading: "A flower can symbolize blooming, recognition, beauty, and fragile growth rather than romance or luck prediction.",
       avoidExpressions: ["romance is coming", "good luck is guaranteed"],
+      fortune: {
+        valence: "auspicious",
+        auspicious: "A flower in full bloom was traditionally read as an omen of celebration and recognition. 🌸",
+      },
     }),
   }),
   activeSymbol({
@@ -4147,7 +4223,10 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["오늘은 들어온 좋은 기운을 작은 행운 하나로 가볍게 누려보자냥."],
       safeReading: "돼지는 풍요와 복의 상징으로, 좋은 기운이 들어오는 장면으로 즐겁게 읽을 수 있어요.",
       avoidExpressions: ["반드시 부자가 된다", "복권에 당첨된다"],
-      traditionalReading: "예부터 돼지꿈, 특히 집으로 들어오거나 품에 안기는 돼지는 재물과 복이 굴러든다는 대표적인 길몽으로 봤다냥. 🐷",
+      fortune: {
+        valence: "auspicious",
+        auspicious: "예부터 돼지꿈, 특히 집으로 들어오거나 품에 안기는 돼지는 재물과 복이 굴러든다는 대표적인 길몽으로 봤다냥. 🐷",
+      },
     }),
     en: localized({
       label: "Pig",
@@ -4167,7 +4246,10 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["Enjoy the good energy today with one small treat or lucky pick."],
       safeReading: "A pig is a symbol of abundance and fortune — read it playfully as good energy coming in.",
       avoidExpressions: ["you will definitely get rich", "you will win the lottery"],
-      traditionalReading: "In Korean tradition a pig dream — especially a pig coming into your home or into your arms — is the classic good-luck omen of wealth and fortune rolling in. 🐷",
+      fortune: {
+        valence: "auspicious",
+        auspicious: "In Korean tradition a pig dream — especially a pig coming into your home or into your arms — is the classic good-luck omen of wealth and fortune rolling in. 🐷",
+      },
     }),
   }),
   activeSymbol({
@@ -4205,7 +4287,10 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["오늘은 묵혀둔 것 하나를 가볍게 비워보자냥."],
       safeReading: "똥은 더러움보다, 비움과 뜻밖의 행운으로 읽는 재미있는 상징이에요.",
       avoidExpressions: ["반드시 돈이 생긴다", "복권을 사면 당첨된다"],
-      traditionalReading: "예부터 똥꿈은 재물이 들어오는 대표적인 길몽으로, 특히 똥을 밟거나 몸에 묻으면 뜻밖의 행운과 돈이 들러붙는다고 봤다냥. 💰",
+      fortune: {
+        valence: "auspicious",
+        auspicious: "예부터 똥꿈은 재물이 들어오는 대표적인 길몽으로, 특히 똥을 밟거나 몸에 묻으면 뜻밖의 행운과 돈이 들러붙는다고 봤다냥. 💰",
+      },
     }),
     en: localized({
       label: "Feces",
@@ -4225,7 +4310,10 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["Clear out one lingering thing lightly today."],
       safeReading: "Feces reads less as filth and more as release and unexpected good luck — a fun omen.",
       avoidExpressions: ["you will definitely get money", "buy a lottery ticket and win"],
-      traditionalReading: "In Korean tradition a feces dream is a classic omen of incoming wealth — stepping in it or getting it on you meant unexpected luck and money sticking to you. 💰",
+      fortune: {
+        valence: "auspicious",
+        auspicious: "In Korean tradition a feces dream is a classic omen of incoming wealth — stepping in it or getting it on you meant unexpected luck and money sticking to you. 💰",
+      },
     }),
   }),
 ];
@@ -4258,7 +4346,7 @@ export function getRuntimeSymbolEntry(id: string, locale: SupportedLocale): Runt
       sceneModifiers: localizedEntry.sceneModifiers,
       metaphorHooks: localizedEntry.metaphorHooks,
       avoidExpressions: localizedEntry.avoidExpressions,
-      ...(localizedEntry.traditionalReading ? { traditionalReading: localizedEntry.traditionalReading } : {}),
+      ...(localizedEntry.fortune ? { fortune: localizedEntry.fortune } : {}),
     },
   };
 }

@@ -93,7 +93,7 @@ function compactSymbolEvidence(match: RuntimeSymbolMatch, evidenceStatus: "confi
     sceneModifiers: match.evidence.sceneModifiers,
     metaphorHooks: match.evidence.metaphorHooks,
     avoidExpressions: match.evidence.avoidExpressions,
-    ...(match.evidence.traditionalReading ? { traditionalReading: match.evidence.traditionalReading } : {}),
+    ...(match.evidence.fortune ? { fortune: match.evidence.fortune } : {}),
   };
 }
 
@@ -152,6 +152,9 @@ export function buildDreamReadingPrompt(input: DreamReadingPromptInput): DreamRe
       atmospheres: input.structuredAnalysis.selectedAtmosphereLabels,
       sensations: input.structuredAnalysis.selectedSensationLabels,
     },
+    fortuneReadings: input.structuredAnalysis.fortuneReadings,
+    readingTone: input.structuredAnalysis.readingTone,
+    readingCertainty: input.structuredAnalysis.readingCertainty,
     retrievedSymbolEvidence: input.matches.map((match) => compactSymbolEvidence(match, "confirmed")),
     candidateSymbolEvidence: (input.candidateMatches ?? []).map((match) => compactSymbolEvidence(match, "candidate")),
     retrievalPolicy: input.retrievalPolicy,
@@ -221,8 +224,10 @@ export function buildDreamReadingPrompt(input: DreamReadingPromptInput): DreamRe
       "Do not expose internal source regions such as East Asian, Western, Korean, or RAG to the user.",
       "This is an entertainment fortune reading: use a confident, declarative voice for the dream's meaning, the dreamer's inner state, and traditional fortune. Reserve hedged or conditional wording for health, illness, death, and real-world outcomes, where blockedClaims always wins.",
       "When safetyPolicy.allowedPlayfulClaims is non-empty, lean into the fun: this is an entertainment fortune, so be bold and concrete about luck, wealth, and love. If allowedPlayfulClaims is empty, stay serious and skip fortune-telling.",
-      "If any retrieved symbol carries a traditionalReading and allowedPlayfulClaims is non-empty, you MUST include exactly one concrete, screenshot-worthy fortune line that draws on that traditionalReading (it is approved folk lore for this symbol), even when another symbol leads the interpretation. Never water it down into a vague hint, and never turn it into an absolute guarantee or a financial instruction.",
-      "Deliver that fortune line in the voice described by readerPersona.fortuneStyle, matching the selected persona's boldness.",
+      "structuredAnalysis.fortuneReadings lists folk fortunes for matched symbols, each with a resolved lean. When allowedPlayfulClaims is non-empty, include one concrete, screenshot-worthy fortune line per important fortuneReading, following its lean: 'auspicious' → state the auspicious reading boldly; 'cautious' → give only the gentle cautious nudge, never a misfortune prediction; 'both' → present both sides ('좋게 보면 ~ / 조심해서 보면 ~') and invite which one fits.",
+      "The good/bad direction (lean) is already decided from the dream's own scene — never flip it based on feelings. Use readingTone (warm/heavy/neutral) only to color the delivery: honor a heavy tone even on an auspicious omen (e.g., '본디 길조지만, 네가 느낀 무거움을 보면 ~ 살펴봐').",
+      "If readingCertainty is 'low', do not commit to one verdict — lean toward presenting both sides with softer wording, even for a symbol that has a lean.",
+      "Deliver every fortune line in the voice of readerPersona.fortuneStyle, matching the persona's boldness.",
       "Treat avoidExpressions as absolute or over-certain phrasings to avoid, not banned topics: rephrase the same theme in a lighter, non-absolute, playful way instead of dropping it.",
       "Keep the reading interesting: concrete, image-rich, and specific to the dream scene, while staying grounded in evidence.",
       "Do not make the reading feel interchangeable with another dream; it must reuse concrete details from the user's dream text.",

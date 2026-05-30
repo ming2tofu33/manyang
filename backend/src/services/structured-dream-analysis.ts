@@ -65,7 +65,21 @@ export type StructuredDreamAnalysis = {
   inferredEmotions: EmotionSignal[];
   themes: ThemeSignal[];
   safetySignals: SafetySignal[];
+  /** 심볼별 길흉 판정. lean=both면 양면 제시, cautious면 부드러운 환기만. */
+  fortuneReadings: FortuneReading[];
+  /** 전달 톤(분위기+감각 valence). omen은 안 바꾸고 색만 입힌다. */
+  readingTone: "warm" | "heavy" | "neutral";
+  /** 확신도(vivid/hazy 등). low면 단정 말고 양면으로 기운다. */
+  readingCertainty: "high" | "normal" | "low";
   language: SupportedLocale;
+};
+
+export type FortuneReading = {
+  symbolId: string;
+  label: string;
+  lean: "auspicious" | "cautious" | "both";
+  auspicious: string;
+  cautious?: string;
 };
 
 // 분위기 옵션 id → 정서 라벨(현지화). frontend/src/lib/dream-entry-options.ts와 동기화.
@@ -103,6 +117,103 @@ function localizedLabelsFor(
   locale: SupportedLocale,
 ): string[] {
   return unique((ids ?? []).flatMap((id) => (table[id] ? [table[id][locale]] : [])));
+}
+
+// 톤(전달 분위기)용 valence. omen은 안 바꾸고 색만 입힌다.
+const ATMOSPHERE_TONE: Record<string, "positive" | "negative"> = {
+  calm: "positive",
+  warm: "positive",
+  excited: "positive",
+  anxious: "negative",
+  fearful: "negative",
+  sad: "negative",
+  angry: "negative",
+  ashamed: "negative",
+  stifling: "negative",
+};
+const SENSATION_TONE: Record<string, "positive" | "negative"> = {
+  warmth: "positive",
+  floating: "positive",
+  heavy: "negative",
+  stuck: "negative",
+  chased: "negative",
+  cold: "negative",
+  falling: "negative",
+};
+// 확신도를 낮추는(양면으로 끄는) 신호.
+const LOW_CERTAINTY_ATMOSPHERES = new Set(["confused", "eerie"]);
+
+function countToneSignals(
+  atmosphereIds: string[] | undefined,
+  sensationIds: string[] | undefined,
+): { positive: number; negative: number } {
+  let positive = 0;
+  let negative = 0;
+  for (const id of atmosphereIds ?? []) {
+    if (ATMOSPHERE_TONE[id] === "positive") positive += 1;
+    if (ATMOSPHERE_TONE[id] === "negative") negative += 1;
+  }
+  for (const id of sensationIds ?? []) {
+    if (SENSATION_TONE[id] === "positive") positive += 1;
+    if (SENSATION_TONE[id] === "negative") negative += 1;
+  }
+  return { positive, negative };
+}
+
+function resolveReadingTone(
+  atmosphereIds: string[] | undefined,
+  sensationIds: string[] | undefined,
+): "warm" | "heavy" | "neutral" {
+  const { positive, negative } = countToneSignals(atmosphereIds, sensationIds);
+  if (negative > positive) return "heavy";
+  if (positive > negative) return "warm";
+  return "neutral";
+}
+
+function resolveReadingCertainty(
+  atmosphereIds: string[] | undefined,
+  sensationIds: string[] | undefined,
+): "high" | "normal" | "low" {
+  const sensations = sensationIds ?? [];
+  const lowFromAtmosphere = (atmosphereIds ?? []).some((id) => LOW_CERTAINTY_ATMOSPHERES.has(id));
+  if (sensations.includes("hazy") || lowFromAtmosphere) return "low";
+  if (sensations.includes("vivid")) return "high";
+  return "normal";
+}
+
+// (A) 원칙: omen은 오직 장면 단서(scene modifier valence)로만 정한다. 단서 없으면 양면.
+function resolveSymbolLean(match: MatchedSymbol): "auspicious" | "cautious" | "both" {
+  const fortune = match.entry.evidence.fortune;
+  if (fortune?.valence === "auspicious") {
+    return "auspicious";
+  }
+  const valences = match.matchedModifiers.flatMap((modifier) => {
+    const valence = match.entry.evidence.sceneModifiers[modifier.key]?.fortuneValence;
+    return valence ? [valence] : [];
+  });
+  const hasAuspicious = valences.includes("auspicious");
+  const hasCautious = valences.includes("cautious");
+  if (hasAuspicious && !hasCautious) return "auspicious";
+  if (hasCautious && !hasAuspicious) return "cautious";
+  return "both";
+}
+
+function resolveFortuneReadings(matchedSymbols: MatchedSymbol[]): FortuneReading[] {
+  return matchedSymbols.flatMap((match) => {
+    const fortune = match.entry.evidence.fortune;
+    if (!fortune) {
+      return [];
+    }
+    return [
+      {
+        symbolId: match.entry.id,
+        label: match.entry.label,
+        lean: resolveSymbolLean(match),
+        auspicious: fortune.auspicious,
+        ...(fortune.cautious ? { cautious: fortune.cautious } : {}),
+      },
+    ];
+  });
 }
 
 type MatchedModifier = {
@@ -642,6 +753,9 @@ export function analyzeDreamStructure(request: StructuredDreamAnalysisRequest): 
     inferredEmotions,
     themes: buildThemes(matchedSymbols, language, isAmbiguousSearching),
     safetySignals: safetySignalsFromText(lowerText, language),
+    fortuneReadings: resolveFortuneReadings(matchedSymbols),
+    readingTone: resolveReadingTone(request.dreamAtmospheres, request.dreamSensations),
+    readingCertainty: resolveReadingCertainty(request.dreamAtmospheres, request.dreamSensations),
     language,
   };
 }

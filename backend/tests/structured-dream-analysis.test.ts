@@ -205,4 +205,52 @@ describe("analyzeDreamStructure", () => {
     );
     expect(analysis.literalQueries).toEqual(expect.arrayContaining(["flying"]));
   });
+
+  test("resolves an auspicious lean for an unconditional luck symbol", () => {
+    const analysis = analyzeDreamStructure({ dreamText: "돼지가 집에 들어왔어.", locale: "ko" });
+    const pig = analysis.fortuneReadings.find((reading) => reading.symbolId === "pig");
+
+    expect(pig?.lean).toBe("auspicious");
+    expect(pig?.auspicious).toContain("재물");
+  });
+
+  test("reads a conditional symbol's lean from the scene cue, not feelings", () => {
+    const clear = analyzeDreamStructure({ dreamText: "맑은 물에서 헤엄쳤어.", locale: "ko" });
+    expect(clear.fortuneReadings.find((reading) => reading.symbolId === "water")?.lean).toBe("auspicious");
+
+    const muddy = analyzeDreamStructure({ dreamText: "탁한 물에 빠졌어.", locale: "ko" });
+    expect(muddy.fortuneReadings.find((reading) => reading.symbolId === "water")?.lean).toBe("cautious");
+
+    // 장면 단서가 길조여도 분위기(두려움)는 omen을 못 바꾼다 — 톤만 무거워진다.
+    const clearButScared = analyzeDreamStructure({
+      dreamText: "맑은 물에서 헤엄쳤어.",
+      locale: "ko",
+      dreamAtmospheres: ["fearful"],
+      dreamSensations: ["heavy"],
+    });
+    expect(clearButScared.fortuneReadings.find((reading) => reading.symbolId === "water")?.lean).toBe("auspicious");
+    expect(clearButScared.readingTone).toBe("heavy");
+  });
+
+  test("presents both sides when a conditional symbol has no scene cue", () => {
+    const analysis = analyzeDreamStructure({ dreamText: "물이 있었어.", locale: "ko" });
+    expect(analysis.fortuneReadings.find((reading) => reading.symbolId === "water")?.lean).toBe("both");
+  });
+
+  test("derives reading tone and certainty from selected feelings", () => {
+    const warm = analyzeDreamStructure({
+      dreamText: "물.",
+      locale: "ko",
+      dreamAtmospheres: ["calm"],
+      dreamSensations: ["warmth"],
+    });
+    expect(warm.readingTone).toBe("warm");
+
+    expect(
+      analyzeDreamStructure({ dreamText: "물.", locale: "ko", dreamSensations: ["hazy"] }).readingCertainty,
+    ).toBe("low");
+    expect(
+      analyzeDreamStructure({ dreamText: "물.", locale: "ko", dreamSensations: ["vivid"] }).readingCertainty,
+    ).toBe("high");
+  });
 });

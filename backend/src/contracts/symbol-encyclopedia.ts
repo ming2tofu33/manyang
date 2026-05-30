@@ -49,10 +49,22 @@ export type CultureNote = {
   safeTransform: string[];
 };
 
+export type FortuneValence = "auspicious" | "cautious";
+
 export type SceneModifier = {
   triggerTerms: string[];
   reading: string;
   weight: number;
+  /** 이 장면이 길조/흉조 중 어느 쪽을 가리키는지(조건부 심볼의 omen 판정용). */
+  fortuneValence?: FortuneValence;
+};
+
+// 전통 점괘 의미. auspicious=무조건 길몽, conditional=장면 단서로 길/흉이 갈림.
+export type SymbolFortune = {
+  valence: "auspicious" | "conditional";
+  auspicious: string;
+  /** conditional일 때 흉으로 기운 장면의 '부드러운 환기'(불행 예측 금지). */
+  cautious?: string;
 };
 
 export type InterpretationLens = {
@@ -83,8 +95,8 @@ export type LocalizedSymbolEntry = {
   smallPrescriptions: string[];
   safeReading: string;
   avoidExpressions: string[];
-  /** 전통·민속 점괘 의미(재물·태몽 등). playful 허용 시 대담하게 인용 가능, 절대 단정은 금지. */
-  traditionalReading?: string;
+  /** 전통 점괘 의미. playful 허용 + lean에 따라 인용, 절대 단정은 금지. */
+  fortune?: SymbolFortune;
 };
 
 export type SymbolEntry = {
@@ -126,6 +138,6 @@ export type RuntimeSymbolEntry = {
     sceneModifiers: Record<string, SceneModifier>;
     metaphorHooks: string[];
     avoidExpressions: string[];
-    traditionalReading?: string;
+    fortune?: SymbolFortune;
   };
 };
