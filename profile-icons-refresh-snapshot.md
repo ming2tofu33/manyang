@@ -1,0 +1,9 @@
+- generic [active] [ref=e1] [box=0,0,390,844]:
+  - main [ref=e2] [box=0,0,390,844]:
+    - generic [ref=e6] [box=0,0,390,844]:
+      - generic [ref=e7] [box=24,32,342,106]
+      - generic [ref=e21] [box=24,154,342,841]
+      - navigation "하단 메뉴" [ref=e95] [box=0,742,390,96]
+  - button "Open Next.js Dev Tools" [ref=e118] [cursor=pointer] [box=22,790,32,32]:
+    - img [ref=e119] [box=22,786,40,40]
+  - alert [ref=e122] [box=-1,843,1,1]

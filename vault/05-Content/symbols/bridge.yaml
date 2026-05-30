@@ -1,0 +1,54 @@
+id: bridge
+status: active
+editorialStatus: approved
+category: place
+subcategory: threshold_route
+facets: [transition, connection, risk, crossing]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [spatial_symbolism, threshold_metaphor, scene_function], coreMeanings: [transition, connection, risk, crossing], safeTransform: ["a crossing between two states", "connection that asks for courage"], avoidClaims: ["you will definitely move", "crossing means success is guaranteed"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["다리는 이쪽과 저쪽을 잇는 전환의 상징", "건너는 과정의 조심스러움"], avoidClaims: ["반드시 성공한다", "이사를 간다"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["bridge as transition, connection, and liminal crossing", "a threshold stretched over uncertainty"], avoidClaims: ["you will definitely move", "crossing means success is guaranteed"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [transition, connection, risk, crossing]
+tensionAxis: [connection, fear_of_crossing]
+relatedIds: [road, water, door]
+sourceBasis: [spatial symbolism, threshold metaphor, scene function]
+locales:
+  ko:
+    label: "다리"
+    aliases: ["다리", "다리를 건너는 꿈", "다리 위", "무너진 다리", "육교"]
+    searchText: "다리, 다리를 건너는 꿈, 다리 위, 무너진 다리, 육교, 전환, 연결, 건너감, 위험감"
+    coreMeanings: ["전환", "연결", "건너감", "위험감"]
+    lightReadings: ["다음 단계로 넘어가려는 마음", "떨어진 두 영역을 이어보려는 장면"]
+    shadowReadings: ["건너기 전의 불안", "연결이 끊길까 봐 느끼는 긴장"]
+    sceneModifiers:
+      crossing: { triggerTerms: ["건너", "지나", "넘어"], reading: "한 상태에서 다른 상태로 넘어가는 과정이 선명한 장면", weight: 0.82 }
+      broken: { triggerTerms: ["무너", "끊어", "부서"], reading: "이어져야 할 흐름이 불안정하게 느껴지는 장면", weight: 0.88 }
+      high: { triggerTerms: ["높은", "아래", "아찔"], reading: "전환의 위험감이나 긴장이 커진 장면", weight: 0.78 }
+    contextQuestions: ["다리를 건너고 있었나요, 바라보고만 있었나요?", "다리는 튼튼했나요, 불안정했나요?"]
+    metaphorHooks: ["두 세계 사이에 놓인 길", "건너야 하지만 흔들리는 연결"]
+    cardTitleSeeds: ["다리 위의 밤", "무너진 연결"]
+    smallPrescriptions: ["지금 연결해야 할 사람이나 일 하나를 떠올려보세요."]
+    safeReading: "다리는 다음 단계로 건너가는 전환, 연결, 불안을 비추는 상징일 수 있어요."
+    avoidExpressions: ["반드시 성공한다", "이사를 간다", "관계가 끊어진다"]
+  en:
+    label: Bridge
+    aliases: [bridge, crossing a bridge, broken bridge, on a bridge, overpass]
+    searchText: "bridge, crossing a bridge, broken bridge, overpass, transition, connection, crossing, risk"
+    coreMeanings: [transition, connection, crossing, risk]
+    lightReadings: ["moving from one state to another", "trying to connect separated areas"]
+    shadowReadings: ["anxiety before crossing", "fear that a connection may not hold"]
+    sceneModifiers:
+      crossing: { triggerTerms: [crossing, walked across, across, went over], reading: "moving clearly between two states", weight: 0.82 }
+      broken: { triggerTerms: [broken bridge, collapsed, cracked], reading: "a connection feeling unstable", weight: 0.88 }
+      high: { triggerTerms: [high bridge, looking down, dizzy], reading: "the risk of transition feeling larger", weight: 0.78 }
+    contextQuestions: ["Were you crossing or only looking at it?", "Did the bridge feel stable?"]
+    metaphorHooks: ["a road between two worlds", "a connection that shakes while being crossed"]
+    cardTitleSeeds: ["Night on the Bridge", "Broken Connection"]
+    smallPrescriptions: ["Name one connection or transition that needs careful attention."]
+    safeReading: "A bridge can symbolize transition, connection, and the anxiety of crossing."
+    avoidExpressions: ["success is guaranteed", "you will move", "the relationship will end"]

@@ -17,7 +17,7 @@ import { cn, ui } from "@/lib/styles";
 type ProfileSetting = {
   title: string;
   description: string;
-  icon: keyof typeof manyangAssets.icons;
+  icon: keyof typeof manyangAssets.profileIcons;
   value?: string;
 };
 
@@ -25,34 +25,34 @@ const profileSettings: ProfileSetting[] = [
   {
     title: "알림 설정",
     description: "아침 기록, 밤 씨앗, 주간 리포트 알림",
-    icon: "bell",
+    icon: "notifications",
   },
   {
     title: "잠금과 프라이버시",
     description: "앱 잠금, 기록 숨기기, 공유 설정",
-    icon: "key",
+    icon: "privacy",
   },
   {
     title: "화면 테마",
     description: "앱 테마와 색상 선택",
-    icon: "potion",
+    icon: "theme",
     value: "마녀의 밤",
   },
   {
     title: "Moon Pass",
     description: "프리미엄 해몽사와 확장 기능",
-    icon: "star",
+    icon: "moonPass",
     value: "Guest",
   },
   {
     title: "서비스 안내",
     description: "해몽 결과 안내, 이용약관, 문의하기",
-    icon: "help",
+    icon: "service",
   },
   {
     title: "계정 관리",
     description: "계정 정보, 로그아웃, 계정 삭제",
-    icon: "profile",
+    icon: "account",
   },
 ];
 
@@ -112,14 +112,14 @@ export function ProfileRoom() {
               index > 0 && "border-t border-[#7c4a38]/38",
             )}
           >
-            <span className="relative h-10 w-10 shrink-0 rounded-[0.8rem] border border-[#7c4a38]/42 bg-[#241036]/62 p-2">
+            <span className="relative h-[3.25rem] w-[3.25rem] shrink-0">
               <Image
-                src={manyangAssets.icons[item.icon]}
+                src={manyangAssets.profileIcons[item.icon]}
                 alt=""
                 fill
-                sizes="40px"
+                sizes="52px"
                 unoptimized
-                className="object-contain p-2"
+                className="object-contain p-0"
               />
             </span>
             <span className="min-w-0 flex-1">

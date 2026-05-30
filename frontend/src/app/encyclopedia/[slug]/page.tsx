@@ -87,6 +87,7 @@ export default async function EncyclopediaDetailPage({ params }: EncyclopediaDet
       title={`${entry.symbol} 꿈`}
       subtitle={entry.coreMeanings.slice(0, 2).join(" · ")}
       backHref="/encyclopedia"
+      showBottomNav={false}
     >
       <EncyclopediaDetailContent entry={entry} relatedSymbols={getRelatedSymbolLinks(entry)} />
     </AppShell>

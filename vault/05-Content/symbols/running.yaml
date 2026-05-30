@@ -1,0 +1,54 @@
+id: running
+status: active
+editorialStatus: approved
+category: action
+subcategory: movement
+facets: [urgency, escape, momentum, pursuit]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [embodied_metaphor, action_symbolism, scene_function], coreMeanings: [urgency, escape, momentum, pursuit], safeTransform: [몸이 먼저 아는 긴급함, 피하거나 따라잡으려는 에너지], avoidClaims: [반드시 도망쳐야 한다, 반드시 성공한다] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: [급히 움직여야 한다는 생활의 압박, 달리고 달리는 마음의 긴장], avoidClaims: [반드시 도망쳐야 한다, 반드시 성공한다] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: [fight-or-flight movement, momentum around pursuit or avoidance], avoidClaims: [반드시 도망쳐야 한다, 반드시 성공한다] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [urgency, escape, momentum, pursuit]
+tensionAxis: [drive, avoidance]
+relatedIds: [shoes, corridor, stranger]
+sourceBasis: [embodied metaphor, action symbolism, scene function]
+locales:
+  ko:
+    label: 달리기
+    aliases: [달리기, 뛰기, 뛰었, 달려, 도망]
+    searchText: 달리기, 뛰기, 도망, 추격, 급함, 추진력, 회피, 따라잡기
+    coreMeanings: [회피, 추진력, 긴급함, 따라잡기]
+    lightReadings: [몸이 먼저 움직일 만큼 에너지가 올라온 상태, 미뤄진 일을 따라잡으려는 마음]
+    shadowReadings: [피하고 싶은 압박, 멈추면 안 될 것 같은 불안]
+    sceneModifiers:
+      chased: { triggerTerms: [쫓김, 도망, 따라왔], reading: 압박이나 두려움에서 벗어나려는 장면, weight: 0.86 }
+      unableToRun: { triggerTerms: [못 뛰, 느려, 발이 안], reading: 움직이고 싶은데 몸이 따라주지 않는 장면, weight: 0.82 }
+      fast: { triggerTerms: [빨리, 전력, 엄청 뛰], reading: 에너지와 긴급함이 커진 장면, weight: 0.76 }
+    contextQuestions: [무엇을 향해 뛰었나요, 어디로 가고 있었나요?, 쫓겼나요, 몸이 무겁지는 않았나요?]
+    metaphorHooks: [몸이 먼저 아는 급함, 따라잡으려는 숨]
+    cardTitleSeeds: [달리는 밤의 달, 숨찬 발걸음]
+    smallPrescriptions: [오늘 급하다고 느끼는 일 하나를 실제 마감과 감정 마감으로 나눠보세요.]
+    safeReading: 달리기는 회피와 추진력, 긴급함이 몸으로 표현된 장면으로 읽을 수 있어요.
+    avoidExpressions: [반드시 도망쳐야 한다, 반드시 성공한다]
+  en:
+    label: Running
+    aliases: [running, ran, run, escaping]
+    searchText: running, ran, escaping, urgency, momentum, avoidance, pursuit
+    coreMeanings: [avoidance, momentum, urgency, pursuit]
+    lightReadings: [energy rising enough to move, trying to catch up with something delayed]
+    shadowReadings: [pressure you want to escape, fear that you cannot stop]
+    sceneModifiers:
+      chased: { triggerTerms: [chased, running away, following me], reading: trying to get away from pressure or fear, weight: 0.86 }
+      unableToRun: { triggerTerms: [could not run, too slow, feet stuck], reading: wanting to move but feeling blocked, weight: 0.82 }
+      fast: { triggerTerms: [fast, sprinting, ran hard], reading: energy and urgency increasing, weight: 0.76 }
+    contextQuestions: [Were you running from something or toward something?, Could you run well, or did your body feel heavy?]
+    metaphorHooks: [urgency the body knows first, breath trying to catch up]
+    cardTitleSeeds: [Moon of the Running Night, Breath Between Steps]
+    smallPrescriptions: [Separate a real deadline from an emotional deadline today.]
+    safeReading: Running can show urgency, momentum, avoidance, or the wish to catch up.
+    avoidExpressions: [you will need to run away, you will definitely succeed]

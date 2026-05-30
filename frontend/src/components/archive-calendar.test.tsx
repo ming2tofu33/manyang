@@ -11,4 +11,13 @@ describe("ArchiveCalendar", () => {
     expect(markup).not.toContain('src="/manyang/ui/calendar.png"');
     expect(markup).not.toContain("/_next/image");
   });
+
+  it("uses separated semantic symbols for summary cards and date markers", () => {
+    const markup = renderToStaticMarkup(<ArchiveCalendar />);
+
+    expect(markup).toContain("/manyang/ui/semantic-icons/semantic-moon.png");
+    expect(markup).toContain("/manyang/ui/semantic-icons/semantic-paw.png");
+    expect(markup).toContain("/manyang/ui/semantic-icons/semantic-sparkles.png");
+    expect(markup).toContain("/manyang/ui/semantic-icons/semantic-crystal-ball.png");
+  });
 });

@@ -1,0 +1,54 @@
+id: bag
+status: active
+editorialStatus: approved
+category: object
+subcategory: container
+facets: [burden, responsibility, memory, carried_items]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [scene_function, everyday_metaphor], coreMeanings: [burden, responsibility, memory, preparedness], safeTransform: [들고 다니는 책임과 기억, 필요한 것을 챙기려는 마음], avoidClaims: [돈이 들어온다, 큰 짐이 생긴다] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: [짐과 준비물로 드러나는 생활의 부담, 내가 맡고 있는 것들을 담은 장면], avoidClaims: [돈이 들어온다, 큰 짐이 생긴다] }
+  western: { sourceBasis: [western_psychological, mythic_association, product_editorial_rule], safeTransform: [what the self carries, preparedness and accumulated memory], avoidClaims: [돈이 들어온다, 큰 짐이 생긴다] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [burden, responsibility, memory, preparedness]
+tensionAxis: [prepared, weighed down]
+relatedIds: [lost_item, key, shoes]
+sourceBasis: [object symbolism, everyday metaphor, scene function]
+locales:
+  ko:
+    label: 가방
+    aliases: [가방, 배낭, 짐, 캐리어, 봉투]
+    searchText: 가방, 배낭, 짐, 캐리어, 들고 다니는 기억, 책임, 준비물, 부담
+    coreMeanings: [짐, 책임, 들고 다니는 기억, 준비 상태]
+    lightReadings: [필요한 것을 챙기려는 흐름, 내가 가진 자원을 확인하는 장면]
+    shadowReadings: [무겁게 느껴지는 책임, 무엇을 버려야 할지 모르는 부담]
+    sceneModifiers:
+      heavy: { triggerTerms: [무거운, 너무 무거, 들기 힘든], reading: 책임이 무겁게 느껴지는 장면, weight: 0.82 }
+      lost: { triggerTerms: [잃어버, 없어, 두고 온], reading: 챙겨야 할 것을 놓친 듯한 불안, weight: 0.8 }
+      full: { triggerTerms: [가득, 꽉 찬, 많이 든], reading: 생각이나 일이 많이 담긴 상태, weight: 0.75 }
+    contextQuestions: [가방 안에는 무엇이 있었나요?, 가방은 무거웠나요, 잃어버렸나요?]
+    metaphorHooks: [어깨에 멘 기억, 오늘도 들고 다니는 작은 짐]
+    cardTitleSeeds: [가방 속의 달, 무거운 배낭의 밤]
+    smallPrescriptions: [오늘 꼭 들고 갈 것과 내려놓을 것 하나씩 적어보세요.]
+    safeReading: 가방은 내가 들고 다니는 책임, 기억, 준비 상태로 읽을 수 있어요.
+    avoidExpressions: [돈이 들어온다, 큰 짐이 생긴다]
+  en:
+    label: Bag
+    aliases: [bag, backpack, luggage, suitcase, purse]
+    searchText: bag, backpack, luggage, suitcase, burden, responsibility, memory, prepared items
+    coreMeanings: [burden, responsibility, carried memory, preparedness]
+    lightReadings: [checking what you need to carry, noticing the resources you already have]
+    shadowReadings: [responsibility feeling heavy, not knowing what to put down]
+    sceneModifiers:
+      heavy: { triggerTerms: [heavy bag, too heavy, hard to carry], reading: responsibility feeling heavy, weight: 0.82 }
+      lost: { triggerTerms: [lost bag, missing bag, left behind], reading: anxiety around missing what you needed, weight: 0.8 }
+      full: { triggerTerms: [full bag, packed, overstuffed], reading: many thoughts or duties being carried, weight: 0.75 }
+    contextQuestions: [What was inside the bag?, Was it heavy, missing, or full?]
+    metaphorHooks: [memory carried on the shoulder, the small weight you bring along]
+    cardTitleSeeds: [Moon Inside the Bag, Night of the Heavy Backpack]
+    smallPrescriptions: [Name one thing to carry today and one thing to set down.]
+    safeReading: A bag can point to what you carry, responsibility, memory, and preparedness.
+    avoidExpressions: [money will come in, a big burden will appear]

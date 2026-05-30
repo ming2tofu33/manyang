@@ -1,0 +1,54 @@
+id: workplace
+status: active
+editorialStatus: approved
+category: place
+subcategory: duty_space
+facets: [role, performance, evaluation, routine]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [institutional_symbolism, role_metaphor, scene_function], coreMeanings: [role, performance, evaluation, routine], safeTransform: ["the self inside responsibility and evaluation", "work identity appearing as a place"], avoidClaims: ["you will be promoted", "you will lose your job"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["role duty and social evaluation can gather in workplace scenes", "performance pressure should be softened into current burden"], avoidClaims: ["you will be promoted", "you will lose your job"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["workplace as role competence pressure and routine", "the professional self staged in a familiar setting"], avoidClaims: ["you will be promoted", "you will lose your job"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [role, performance, evaluation, routine]
+tensionAxis: [competence, pressure]
+relatedIds: [school, bag, father]
+sourceBasis: [institutional symbolism, role metaphor, scene function]
+locales:
+  ko:
+    label: "직장"
+    aliases: ["직장", "회사", "사무실", "일터", "출근"]
+    searchText: "직장, 회사, 사무실, 일터, 출근, 역할, 성과, 평가, 책임, 반복되는 업무, 압박감"
+    coreMeanings: ["역할", "성과", "평가", "반복되는 책임"]
+    lightReadings: ["내 역할을 더 분명히 하려는 마음", "능력을 인정받고 싶은 장면"]
+    shadowReadings: ["성과 압박이나 평가 불안", "쉬어도 일에서 벗어나지 못하는 느낌"]
+    sceneModifiers:
+      late: { triggerTerms: ["지각", "늦", "출근 못"], reading: "기대에 늦거나 따라가지 못할까 봐 느끼는 불안", weight: 0.82 }
+      meeting: { triggerTerms: ["회의", "발표", "보고"], reading: "평가받거나 의견을 내야 하는 긴장이 드러난 장면", weight: 0.78 }
+      messyDesk: { triggerTerms: ["책상", "서류", "어질", "쌓"], reading: "업무나 책임이 정리되지 않은 상태로 느껴지는 장면", weight: 0.78 }
+    contextQuestions: ["직장에서 무엇을 하고 있었나요?", "그 장면은 능력을 보여주는 쪽이었나요, 압박을 받는 쪽이었나요?"]
+    metaphorHooks: ["내 역할이 놓인 책상", "평가받는 마음의 사무실"]
+    cardTitleSeeds: ["사무실의 밤", "출근하지 못한 마음"]
+    smallPrescriptions: ["오늘 업무에서 반드시 할 일 하나와 내려놓을 일 하나를 구분해보세요."]
+    safeReading: "직장은 역할, 성과, 평가, 반복되는 책임을 비추는 상징일 수 있어요."
+    avoidExpressions: ["승진한다", "해고된다", "회사에 일이 생긴다"]
+  en:
+    label: Workplace
+    aliases: [workplace, office, work, company, going to work]
+    searchText: "workplace, office, company, work, role, performance, evaluation, responsibility, routine, pressure"
+    coreMeanings: [role, performance, evaluation, repeated responsibility]
+    lightReadings: ["wanting a clearer role", "desire for competence to be recognized"]
+    shadowReadings: ["performance pressure or fear of evaluation", "not being able to leave work behind"]
+    sceneModifiers:
+      late: { triggerTerms: ["late", "missed work", "could not get to work"], reading: "anxiety about falling behind expectations", weight: 0.82 }
+      meeting: { triggerTerms: ["meeting", "presentation", "report"], reading: "tension around being evaluated or speaking up", weight: 0.78 }
+      messyDesk: { triggerTerms: ["desk", "papers", "messy", "piled"], reading: "responsibilities feeling disorganized or piled up", weight: 0.78 }
+    contextQuestions: ["What were you doing at work?", "Did it feel competent or pressured?"]
+    metaphorHooks: ["a desk where your role is placed", "the office of being evaluated"]
+    cardTitleSeeds: ["Office at Night", "Mind Late for Work"]
+    smallPrescriptions: ["Choose one must-do work item and one item you can release today."]
+    safeReading: "A workplace can symbolize role, performance, evaluation, routine, and responsibility."
+    avoidExpressions: ["you will be promoted", "you will lose your job", "something will happen at work"]

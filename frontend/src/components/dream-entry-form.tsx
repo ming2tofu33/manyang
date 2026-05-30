@@ -24,6 +24,7 @@ import {
   type DreamEntryOption,
 } from "@/lib/dream-entry-options";
 import { saveDreamRecordToBrowser, saveLatestAnalysisToBrowser } from "@/lib/dream-storage";
+import { DREAM_LOADING_MINIMUM_MS } from "@/lib/dream-loading-sequence";
 import { manyangAssets } from "@/lib/manyang-assets";
 import { cn, ui } from "@/lib/styles";
 
@@ -41,9 +42,10 @@ type OptionButtonProps = {
   isSelected: boolean;
   onClick: () => void;
   disabled?: boolean;
+  iconSize?: "default" | "large";
 };
 
-function OptionButton({ option, isSelected, onClick, disabled = false }: OptionButtonProps) {
+function OptionButton({ option, isSelected, onClick, disabled = false, iconSize = "default" }: OptionButtonProps) {
   return (
     <button
       type="button"
@@ -57,12 +59,17 @@ function OptionButton({ option, isSelected, onClick, disabled = false }: OptionB
           : "",
       )}
     >
-      <span className="relative h-[0.95rem] w-[0.95rem] shrink-0 opacity-86 transition group-hover:brightness-125">
+      <span
+        className={cn(
+          "relative shrink-0 opacity-86 transition group-hover:brightness-125",
+          iconSize === "large" ? "h-[1.25rem] w-[1.25rem]" : "h-[0.95rem] w-[0.95rem]",
+        )}
+      >
         <Image
-          src={manyangAssets.icons[option.icon]}
+          src={manyangAssets.semanticIcons[option.icon]}
           alt=""
           fill
-          sizes="22px"
+          sizes={iconSize === "large" ? "28px" : "22px"}
           unoptimized
           className="object-contain"
         />
@@ -125,7 +132,7 @@ export function DreamEntryForm() {
       const dreamDate = getTodayDate();
       const wakeMood = createDreamMoodLabel(dreamAtmosphere, dreamSensations);
 
-      const minDelay = new Promise((resolve) => setTimeout(resolve, 10000));
+      const minDelay = new Promise((resolve) => setTimeout(resolve, DREAM_LOADING_MINIMUM_MS));
 
       const fetchPromise = fetch("/api/dreams/analyze", {
         method: "POST",
@@ -173,8 +180,10 @@ export function DreamEntryForm() {
   return (
     <>
       <DreamLoadingOverlay
+        key={isSubmitting ? `reading-${selectedCatReaderId}` : "idle-reading"}
         isActive={isSubmitting}
         background={manyangAssets.backgrounds[selectedCatReader.interpretationBackgroundKey]}
+        catImage={manyangAssets.illustrations[selectedCatReader.assetKey]}
       />
       <form onSubmit={handleSubmit} className="mt-1 space-y-4 pb-4">
         <section className="flex items-center gap-3">
@@ -194,7 +203,7 @@ export function DreamEntryForm() {
               짧아도 괜찮고,{"\n"}뒤죽박죽이어도 괜찮다냥.
             </p>
             <span className="absolute bottom-3 right-4 h-5 w-5">
-              <Image src={manyangAssets.icons.paw} alt="" fill sizes="20px" unoptimized className="object-contain opacity-78" />
+              <Image src={manyangAssets.semanticIcons.paw} alt="" fill sizes="20px" unoptimized className="object-contain opacity-78" />
             </span>
           </div>
         </section>
@@ -243,7 +252,7 @@ export function DreamEntryForm() {
             )}
           />
           <span className="pointer-events-none absolute bottom-8 right-12 h-9 w-9 rotate-[12deg]">
-            <Image src={manyangAssets.icons.feather} alt="" fill sizes="48px" unoptimized className="object-contain opacity-70" />
+            <Image src={manyangAssets.semanticIcons.feather} alt="" fill sizes="48px" unoptimized className="object-contain opacity-70" />
           </span>
           <span className="absolute bottom-6 right-5 text-[0.85rem] font-semibold text-[#c6a3a4]">
             {dreamText.length} / {dreamEntryMaxLength}
@@ -260,6 +269,7 @@ export function DreamEntryForm() {
                 key={option.id}
                 option={option}
                 isSelected={dreamAtmosphere === option.label}
+                iconSize="large"
                 onClick={() =>
                   setDreamAtmosphere((currentAtmosphere) =>
                     currentAtmosphere === option.label ? null : option.label,
@@ -288,6 +298,7 @@ export function DreamEntryForm() {
                   key={option.id}
                   option={option}
                   isSelected={isSelected}
+                  iconSize="large"
                   disabled={!isSelected && dreamSensations.length >= dreamSensationMaxSelection}
                   onClick={() => toggleDreamSensation(option.label)}
                 />

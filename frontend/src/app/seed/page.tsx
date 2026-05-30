@@ -35,9 +35,10 @@ export default function SeedPage() {
       }
       title="✧ 꿈 씨앗 심기 ✧"
       subtitle={dreamSeedCopy.pageSubtitle}
-      titleIconSrc={manyangAssets.icons.moon}
+      titleIconSrc={manyangAssets.semanticIcons.moon}
       backHref="/"
       rightAction="calendar"
+      showBottomNav={false}
     >
       <DreamSeedForm />
     </AppShell>

@@ -1,8 +1,60 @@
 id: many
 status: active
+editorialStatus: approved
 category: quantity
+subcategory: intensity
+facets:
+  - intensity
+  - accumulation
+  - overwhelm
+  - repeated_signal
+symbolRole:
+  - modifier
 safetyLevel: safe
 accessTier: free
+interpretationLenses:
+  universal:
+    sourceBasis:
+      - scene_function
+      - everyday_metaphor
+    coreMeanings:
+      - intensity
+      - accumulation
+      - overwhelm
+      - repeated signal
+    safeTransform:
+      - 한꺼번에 켜진 신호들
+      - 감각의 강도와 누적이 커진 장면
+    avoidClaims:
+      - 많은 만큼 큰돈이 온다
+      - 수가 많으니 나쁜 일이 크다
+  east_asian:
+    sourceBasis:
+      - east_asian_symbolism
+      - product_editorial_rule
+    safeTransform:
+      - 많음이 풍요와 부담 사이에서 흔들리는 장면
+      - 수량이 감정의 강도를 키우는 흐름
+    avoidClaims:
+      - 많은 만큼 큰돈이 온다
+      - 수가 많으니 나쁜 일이 크다
+  western:
+    sourceBasis:
+      - western_psychological
+      - mythic_association
+      - product_editorial_rule
+    safeTransform:
+      - amplification of a motif
+      - repeated signals becoming hard to ignore
+    avoidClaims:
+      - 많은 만큼 큰돈이 온다
+      - 수가 많으니 나쁜 일이 크다
+embeddingProfile:
+  chunkTypes:
+    - searchText
+    - sceneModifier
+    - safeReading
+    - metaphorHook
 universalMeanings:
   - intensity
   - accumulation

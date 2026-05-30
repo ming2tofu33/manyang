@@ -1,0 +1,54 @@
+id: flower
+status: active
+editorialStatus: approved
+category: nature
+subcategory: plant
+facets: [beauty, blooming, recognition, fragility]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [natural_symbolism, bloom_metaphor, scene_function], coreMeanings: [beauty, blooming, recognition, fragility], safeTransform: ["something ready to be seen or appreciated", "beauty and fragility held together"], avoidClaims: ["romance will happen", "good luck is guaranteed"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["꽃은 좋은 징조 단정보다 피어나는 시기와 섬세함으로 해석", "보여지는 아름다움과 시듦의 긴장"], avoidClaims: ["연애운이 온다", "행운이 확정된다"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["flower as blooming, beauty, recognition, and fragility", "a visible moment of growth"], avoidClaims: ["romance will happen", "good luck is guaranteed"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [beauty, blooming, recognition, fragility]
+tensionAxis: [blooming, withering]
+relatedIds: [tree, rain, wedding]
+sourceBasis: [natural symbolism, bloom metaphor, scene function]
+locales:
+  ko:
+    label: "꽃"
+    aliases: ["꽃", "꽃다발", "꽃이 피는 꿈", "시든 꽃", "화분"]
+    searchText: "꽃, 꽃다발, 꽃이 피는 꿈, 시든 꽃, 화분, 피어남, 아름다움, 인정, 섬세함, 시기"
+    coreMeanings: ["피어남", "아름다움", "인정", "섬세함"]
+    lightReadings: ["보여지고 인정받고 싶은 마음이 피어나는 장면", "작은 성장이 눈에 보이기 시작한 장면"]
+    shadowReadings: ["시들까 봐 조심스러운 불안", "겉으로 보기 좋은 모습에만 묶이는 느낌"]
+    sceneModifiers:
+      blooming: { triggerTerms: ["피", "활짝", "만개"], reading: "가능성이나 감정이 겉으로 드러나기 시작한 장면", weight: 0.78 }
+      withered: { triggerTerms: ["시든", "마른", "떨어"], reading: "돌봄이 부족하거나 시기를 놓친 느낌", weight: 0.84 }
+      bouquet: { triggerTerms: ["꽃다발", "받", "선물"], reading: "인정받거나 누군가에게 전하고 싶은 마음", weight: 0.76 }
+    contextQuestions: ["꽃은 피어 있었나요, 시들어 있었나요?", "꽃을 받았나요, 바라보기만 했나요?"]
+    metaphorHooks: ["보이기 시작한 작은 성장", "시들까 봐 조심스러운 아름다움"]
+    cardTitleSeeds: ["꽃이 핀 밤", "시든 꽃다발"]
+    smallPrescriptions: ["작게 피어난 성과 하나를 스스로 인정해보세요."]
+    safeReading: "꽃은 연애나 행운 예고보다 피어남, 인정 욕구, 섬세한 성장을 비추는 상징일 수 있어요."
+    avoidExpressions: ["연애운이 온다", "행운이 확정된다"]
+  en:
+    label: Flower
+    aliases: [flower, flowers, bouquet, blooming flower, withered flower]
+    searchText: "flower, bouquet, blooming flower, withered flower, beauty, blooming, recognition, fragility"
+    coreMeanings: [blooming, beauty, recognition, fragility]
+    lightReadings: ["a wish to be seen or appreciated blooming", "small growth becoming visible"]
+    shadowReadings: ["fear that something delicate will wither", "being trapped in looking good"]
+    sceneModifiers:
+      blooming: { triggerTerms: [blooming, in bloom, opened], reading: "possibility or feeling becoming visible", weight: 0.78 }
+      withered: { triggerTerms: [withered, dry, falling petals], reading: "care feeling insufficient or timing missed", weight: 0.84 }
+      bouquet: { triggerTerms: [bouquet, received flowers, gift], reading: "recognition or a feeling meant to be given", weight: 0.76 }
+    contextQuestions: ["Were the flowers blooming or withered?", "Did you receive them or only see them?"]
+    metaphorHooks: ["small growth becoming visible", "beauty careful not to wither"]
+    cardTitleSeeds: ["Night of Blooming", "Withered Bouquet"]
+    smallPrescriptions: ["Recognize one small result that has begun to bloom."]
+    safeReading: "A flower can symbolize blooming, recognition, beauty, and fragile growth rather than romance or luck prediction."
+    avoidExpressions: ["romance is coming", "good luck is guaranteed"]

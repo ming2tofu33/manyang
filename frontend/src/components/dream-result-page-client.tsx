@@ -27,6 +27,7 @@ export function DreamResultPageClient() {
       title="오늘의 꿈 영수증"
       backHref="/write"
       rightAction="share"
+      showBottomNav={false}
     >
       <DreamResultReceipt />
     </AppShell>

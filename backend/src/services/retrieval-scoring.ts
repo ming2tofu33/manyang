@@ -44,11 +44,11 @@ function capByMatchType(confidence: number, input: RetrievalScoreInput): number 
   const { matchType } = input;
 
   if (matchType === "exact") {
-    return confidence;
+    return Math.min(confidence, input.hasSceneModifier ? 0.98 : 0.96);
   }
 
   if (matchType === "alias") {
-    return input.hasSceneModifier ? confidence : Math.min(confidence, 0.99);
+    return Math.min(confidence, input.hasSceneModifier ? 0.94 : 0.9);
   }
 
   if (matchType === "keyword") {

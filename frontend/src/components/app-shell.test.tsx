@@ -8,7 +8,7 @@ vi.mock("next/navigation", () => ({
 }));
 
 vi.mock("./bottom-nav", () => ({
-  BottomNav: () => null,
+  BottomNav: () => <nav data-testid="bottom-nav" />,
 }));
 
 describe("AppShell", () => {
@@ -36,5 +36,16 @@ describe("AppShell", () => {
 
     expect(markup).toContain('data-testid="custom-background-layer"');
     expect(markup).not.toContain('src="/manyang/backgrounds/home-white-cat-ref.png"');
+  });
+
+  test("can hide the bottom navigation on focused task pages", () => {
+    const markup = renderToStaticMarkup(
+      <AppShell showHeader={false} showBottomNav={false}>
+        <div>focused task</div>
+      </AppShell>,
+    );
+
+    expect(markup).toContain("focused task");
+    expect(markup).not.toContain('data-testid="bottom-nav"');
   });
 });

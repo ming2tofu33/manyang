@@ -1,0 +1,54 @@
+id: money
+status: active
+editorialStatus: approved
+category: object
+subcategory: resource
+facets: [resource, value, security, exchange]
+symbolRole: [primary_candidate]
+safetyLevel: sensitive
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [resource_symbolism, value_metaphor, product_safety_rule], coreMeanings: [resource, value, security, exchange], safeTransform: ["a symbol of available resource and self-value", "security and scarcity appearing through exchange"], avoidClaims: ["money will come", "investment luck is good"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["money luck traditions should be transformed into resource awareness", "avoid direct fortune prediction"], avoidClaims: ["money will come", "investment luck is good"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["money as value exchange security or self-worth", "resource anxiety and agency around exchange"], avoidClaims: ["money will come", "investment luck is good"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [resource, value, security, exchange]
+tensionAxis: [security, scarcity]
+relatedIds: [bag, lost_item, workplace]
+sourceBasis: [resource symbolism, value metaphor, product safety rule]
+locales:
+  ko:
+    label: "돈"
+    aliases: ["돈", "현금", "지폐", "동전", "돈을 받는 꿈"]
+    searchText: "돈, 현금, 지폐, 동전, 돈을 받는 꿈, 자원, 가치, 안정감, 교환, 부족함, 금전 불안"
+    coreMeanings: ["자원", "가치", "안정감", "교환"]
+    lightReadings: ["내가 가진 자원과 가치를 확인하는 장면", "필요한 것을 주고받는 감각"]
+    shadowReadings: ["부족할까 봐 느끼는 불안", "가치가 숫자로 평가되는 느낌"]
+    sceneModifiers:
+      receiving: { triggerTerms: ["받", "줬", "입금"], reading: "필요한 자원이나 인정이 들어오길 바라는 마음", weight: 0.78 }
+      losing: { triggerTerms: ["잃", "도둑", "없어"], reading: "안정감이나 가치가 사라질까 봐 느끼는 불안", weight: 0.86 }
+      counting: { triggerTerms: ["세", "계산", "확인"], reading: "가치와 부족함을 꼼꼼히 확인하려는 마음", weight: 0.76 }
+    contextQuestions: ["돈을 받았나요, 잃어버렸나요?", "꿈속 돈은 안심을 줬나요, 불안을 키웠나요?"]
+    metaphorHooks: ["마음이 세어보는 가치", "부족함과 안정감 사이의 지폐"]
+    cardTitleSeeds: ["돈을 세는 밤", "사라진 지갑"]
+    smallPrescriptions: ["실제 금전 판단은 꿈이 아니라 숫자와 계획으로 확인하세요."]
+    safeReading: "돈은 실제 재물운 예언이 아니라 자원, 가치감, 안정감, 부족 불안을 비추는 상징으로 읽는 편이 안전해요."
+    avoidExpressions: ["돈이 들어온다", "투자하면 좋다", "횡재한다"]
+  en:
+    label: Money
+    aliases: [money, cash, coins, bills, receiving money]
+    searchText: "money, cash, coins, bills, receiving money, resources, value, security, exchange, scarcity anxiety"
+    coreMeanings: [resource, value, security, exchange]
+    lightReadings: ["checking what resources and value you have", "sensing what needs to be exchanged"]
+    shadowReadings: ["fear of not having enough", "feeling valued only by numbers"]
+    sceneModifiers:
+      receiving: { triggerTerms: ["received money", "paid", "deposit"], reading: "wanting support resource or recognition to come in", weight: 0.78 }
+      losing: { triggerTerms: ["lost money", "stolen", "gone"], reading: "fear of losing security or value", weight: 0.86 }
+      counting: { triggerTerms: ["counting", "calculating", "checking"], reading: "carefully checking value and scarcity", weight: 0.76 }
+    contextQuestions: ["Were you receiving or losing money?", "Did the money create relief or anxiety?"]
+    metaphorHooks: ["value the mind keeps counting", "a bill between scarcity and security"]
+    cardTitleSeeds: ["Night Counting Money", "The Missing Wallet"]
+    smallPrescriptions: ["Use real numbers and plans for financial decisions and keep the dream symbolic."]
+    safeReading: "Money can symbolize resource, value, security, exchange, and scarcity anxiety, not a financial prediction."
+    avoidExpressions: ["money will arrive", "invest now", "you will have a windfall"]

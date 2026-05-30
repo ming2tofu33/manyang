@@ -1,0 +1,54 @@
+id: child
+status: active
+editorialStatus: approved
+category: relationship
+subcategory: family
+facets: [vulnerability, new_beginning, care, inner_child]
+symbolRole: [primary_candidate]
+safetyLevel: sensitive
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [relationship_symbolism, psychological_metaphor, scene_function], coreMeanings: [vulnerability, new_beginning, care, innocent_need], safeTransform: [돌봄이 필요한 작고 새로운 마음, 아직 자라는 중인 시작], avoidClaims: [태몽이다, 아이에게 일이 생긴다] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: [가족과 돌봄의 책임으로 드러난 작은 생명감, 새롭게 시작하는 일을 보살피려는 마음], avoidClaims: [태몽이다, 아이에게 일이 생긴다] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: [inner child vulnerability and new beginning, a tender part needing care], avoidClaims: [태몽이다, 아이에게 일이 생긴다] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [vulnerability, new beginning, care, innocent need]
+tensionAxis: [tenderness, responsibility]
+relatedIds: [hospital, home, cat]
+sourceBasis: [relationship symbolism, psychological metaphor, scene function]
+locales:
+  ko:
+    label: 아이
+    aliases: [아이, 아기, 어린아이, 꼬마, 내 아이]
+    searchText: 아이, 아기, 어린아이, 취약함, 시작, 돌봄, 순수한 욕구, 내면아이
+    coreMeanings: [취약한 시작, 돌봄, 순수한 욕구, 자라는 마음]
+    lightReadings: [새로운 시작을 조심스럽게 돌보는 마음, 솔직한 욕구를 알아차리는 장면]
+    shadowReadings: [책임이 커지는 부담, 보호받고 싶은 마음]
+    sceneModifiers:
+      crying: { triggerTerms: [울, 울고, 울음], reading: 돌봄을 요청하는 감정이 커진 장면, weight: 0.82 }
+      lostChild: { triggerTerms: [잃어버, 없어, 찾], reading: 작은 시작이나 욕구를 놓친 듯한 불안, weight: 0.84 }
+      holding: { triggerTerms: [안고, 업고, 돌본], reading: 취약한 부분을 안아보려는 장면, weight: 0.76 }
+    contextQuestions: [그 아이를 돌보고 있었나요, 찾고 있었나요?, 아이를 보며 어떤 감정이 들었나요?]
+    metaphorHooks: [아직 자라는 마음, 품에 안긴 작은 시작]
+    cardTitleSeeds: [아이를 안은 달, 작은 시작의 밤]
+    smallPrescriptions: [오늘 새롭게 시작한 일 하나를 너무 크게 키우지 말고 작게 챙겨보세요.]
+    safeReading: 아이는 태몽 확정보다, 돌봄이 필요한 시작이나 취약한 욕구로 읽을 수 있어요.
+    avoidExpressions: [태몽이다, 아이에게 일이 생긴다]
+  en:
+    label: Child
+    aliases: [child, baby, kid, little child, my child]
+    searchText: child, baby, kid, vulnerability, new beginning, care, innocent need, inner child
+    coreMeanings: [vulnerable beginning, care, innocent need, growing part]
+    lightReadings: [caring for a delicate new beginning, noticing a direct need]
+    shadowReadings: [pressure from responsibility, a wish to be protected]
+    sceneModifiers:
+      crying: { triggerTerms: [crying child, baby crying, crying], reading: a feeling asking for care, weight: 0.82 }
+      lostChild: { triggerTerms: [lost child, missing child, searching], reading: anxiety around a small need being missed, weight: 0.84 }
+      holding: { triggerTerms: [holding, carrying, taking care], reading: holding a vulnerable part with care, weight: 0.76 }
+    contextQuestions: [Were you caring for the child or looking for them?, What feeling came up around the child?]
+    metaphorHooks: [a part of the heart still growing, a small beginning in your arms]
+    cardTitleSeeds: [Moon Holding the Child, Night of the Small Beginning]
+    smallPrescriptions: [Care for one small beginning today without making it too large.]
+    safeReading: A child can point to vulnerability, care, and a new beginning rather than a literal prediction.
+    avoidExpressions: [this is a pregnancy dream, something will happen to a child]

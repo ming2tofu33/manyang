@@ -1,8 +1,60 @@
 id: water
 status: active
+editorialStatus: approved
 category: nature
+subcategory: water
+facets:
+  - emotion
+  - flow
+  - cleansing
+  - overwhelm
+symbolRole:
+  - primary_candidate
 safetyLevel: safe
 accessTier: free
+interpretationLenses:
+  universal:
+    sourceBasis:
+      - scene_function
+      - everyday_metaphor
+    coreMeanings:
+      - emotion
+      - flow
+      - cleansing
+      - overwhelm
+    safeTransform:
+      - 말보다 먼저 움직이는 감정
+      - 흘러가야 하는 마음의 결
+    avoidClaims:
+      - 물꿈은 재물운이다
+      - 물에 빠지면 나쁜 일이 생긴다
+  east_asian:
+    sourceBasis:
+      - east_asian_symbolism
+      - product_editorial_rule
+    safeTransform:
+      - 물의 흐름이 보여주는 감정과 기운의 움직임
+      - 맑음과 탁함으로 드러나는 마음 상태
+    avoidClaims:
+      - 물꿈은 재물운이다
+      - 물에 빠지면 나쁜 일이 생긴다
+  western:
+    sourceBasis:
+      - western_psychological
+      - mythic_association
+      - product_editorial_rule
+    safeTransform:
+      - unconscious feeling and emotional flow
+      - being carried by something larger than the self
+    avoidClaims:
+      - 물꿈은 재물운이다
+      - 물에 빠지면 나쁜 일이 생긴다
+embeddingProfile:
+  chunkTypes:
+    - searchText
+    - sceneModifier
+    - safeReading
+    - metaphorHook
 universalMeanings:
   - emotion
   - flow

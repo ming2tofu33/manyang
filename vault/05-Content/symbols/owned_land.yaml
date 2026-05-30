@@ -1,8 +1,63 @@
 id: owned_land
 status: active
+editorialStatus: approved
 category: place
+subcategory: personal_territory
+facets:
+  - foundation
+  - territory
+  - belonging
+  - responsibility
+symbolRole:
+  - primary_candidate
 safetyLevel: safe
 accessTier: free
+interpretationLenses:
+  universal:
+    sourceBasis:
+      - scene_function
+      - everyday_metaphor
+    coreMeanings:
+      - foundation
+      - territory
+      - belonging
+      - stewardship
+    safeTransform:
+      - 내가 딛고 있는 기반을 확인하는 장면
+      - 책임지고 있는 영역을 알아차리는 흐름
+    avoidClaims:
+      - 부동산 운이 오른다
+      - 땅과 재산이 늘어난다
+      - 가족에게 일이 생긴다
+  east_asian:
+    sourceBasis:
+      - east_asian_symbolism
+      - product_editorial_rule
+    safeTransform:
+      - 터와 생활 기반을 돌보는 감각
+      - 가족이나 생활권에 대한 보호감
+    avoidClaims:
+      - 부동산 운이 오른다
+      - 땅과 재산이 늘어난다
+      - 가족에게 일이 생긴다
+  western:
+    sourceBasis:
+      - western_psychological
+      - mythic_association
+      - product_editorial_rule
+    safeTransform:
+      - personal territory와 boundary를 의식하는 장면
+      - 내가 속한 ground를 다시 확인하는 흐름
+    avoidClaims:
+      - 부동산 운이 오른다
+      - 땅과 재산이 늘어난다
+      - 가족에게 일이 생긴다
+embeddingProfile:
+  chunkTypes:
+    - searchText
+    - sceneModifier
+    - safeReading
+    - metaphorHook
 universalMeanings:
   - foundation
   - territory

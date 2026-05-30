@@ -1,0 +1,54 @@
+id: bathroom
+status: active
+editorialStatus: approved
+category: place
+subcategory: cleansing_space
+facets: [cleansing, privacy, reset, vulnerability]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [everyday_place_symbolism, cleansing_metaphor, scene_function], coreMeanings: [cleansing, privacy, reset, vulnerability], safeTransform: ["a private place for reset and cleaning", "vulnerability around being seen while unfinished"], avoidClaims: ["you need purification", "you are unclean"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["washing and private cleansing can mark emotional refresh", "privacy is central to safe reading"], avoidClaims: ["you need purification", "you are unclean"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["bathroom as cleansing exposure and self maintenance", "a place to reset before returning to the world"], avoidClaims: ["you need purification", "you are unclean"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [cleansing, privacy, reset, vulnerability]
+tensionAxis: [renewal, exposure]
+relatedIds: [toilet, water, mirror]
+sourceBasis: [everyday place symbolism, cleansing metaphor, scene function]
+locales:
+  ko:
+    label: "욕실"
+    aliases: ["욕실", "화장실", "샤워실", "목욕탕", "씻는 꿈"]
+    searchText: "욕실, 샤워실, 목욕탕, 씻는 꿈, 정화, 재정비, 사생활, 취약함, 몸과 마음의 리셋"
+    coreMeanings: ["정화", "재정비", "사생활", "취약함"]
+    lightReadings: ["마음을 씻고 다시 정리하려는 장면", "혼자 회복할 공간을 찾는 마음"]
+    shadowReadings: ["준비되지 않은 모습이 보일까 봐 느끼는 불안", "계속 씻어도 개운하지 않은 느낌"]
+    sceneModifiers:
+      showering: { triggerTerms: ["샤워", "씻", "물로"], reading: "감정이나 피로를 씻어내고 싶은 마음이 드러난 장면", weight: 0.78 }
+      dirtyBathroom: { triggerTerms: ["더럽", "곰팡", "냄새"], reading: "정리하고 싶은 마음과 지저분하게 남은 감정이 부딪히는 장면", weight: 0.82 }
+      noDoor: { triggerTerms: ["문이 없", "열려", "보여"], reading: "사적인 회복 과정이 노출될까 봐 불안한 장면", weight: 0.86 }
+    contextQuestions: ["욕실은 깨끗했나요, 불편할 만큼 지저분했나요?", "요즘 혼자 회복할 시간이 부족했나요?"]
+    metaphorHooks: ["마음이 씻겨 나가길 바라는 방", "다시 나가기 전의 사적인 리셋"]
+    cardTitleSeeds: ["씻겨 내려가는 밤", "문 열린 욕실"]
+    smallPrescriptions: ["하루 중 10분이라도 방해받지 않는 시간을 확보해보세요."]
+    safeReading: "욕실은 정화, 재정비, 사생활, 취약함을 상징할 수 있어요."
+    avoidExpressions: ["부정 탄다", "정화가 필요하다", "수치스러운 일이 생긴다"]
+  en:
+    label: Bathroom
+    aliases: [bathroom, shower, bath, washing, washroom]
+    searchText: "bathroom, shower, bath, washing, cleansing, reset, privacy, vulnerability, emotional maintenance"
+    coreMeanings: [cleansing, reset, privacy, vulnerability]
+    lightReadings: ["wanting to wash off emotional residue", "looking for private recovery"]
+    shadowReadings: ["fear of being seen before feeling ready", "not feeling clean no matter how much you wash"]
+    sceneModifiers:
+      showering: { triggerTerms: ["showering", "washing", "water"], reading: "wanting to rinse away stress or emotion", weight: 0.78 }
+      dirtyBathroom: { triggerTerms: ["dirty", "mold", "smell"], reading: "a wish to reset meeting unresolved residue", weight: 0.82 }
+      noDoor: { triggerTerms: ["no door", "open door", "people watching"], reading: "private recovery feeling exposed", weight: 0.86 }
+    contextQuestions: ["Was the bathroom clean or uncomfortable?", "Have you lacked private time to recover?"]
+    metaphorHooks: ["a room where the mind wants to rinse itself", "private reset before returning outside"]
+    cardTitleSeeds: ["Night Washing Down", "Bathroom With an Open Door"]
+    smallPrescriptions: ["Protect ten undisturbed minutes for yourself today."]
+    safeReading: "A bathroom can symbolize cleansing, reset, privacy, and vulnerability."
+    avoidExpressions: ["you are unclean", "you need purification", "something shameful will happen"]

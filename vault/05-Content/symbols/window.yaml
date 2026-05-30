@@ -1,0 +1,54 @@
+id: window
+status: active
+editorialStatus: approved
+category: object
+subcategory: threshold_item
+facets: [perspective, distance, possibility, outside_world]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [scene_function, everyday_metaphor], coreMeanings: [perspective, possibility, distance, outside world], safeTransform: [밖을 보되 아직 나가지 않은 마음, 가능성을 거리를 두고 살피는 장면], avoidClaims: [새 기회가 반드시 온다, 누군가 찾아온다] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: [안과 밖 사이에 놓인 시야, 기운이나 소식이 들어오는 얇은 경계], avoidClaims: [새 기회가 반드시 온다, 누군가 찾아온다] }
+  western: { sourceBasis: [western_psychological, mythic_association, product_editorial_rule], safeTransform: [a frame of perspective, seeing possibility from a protected distance], avoidClaims: [새 기회가 반드시 온다, 누군가 찾아온다] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [perspective, possibility, distance, outside world]
+tensionAxis: [openness, separation]
+relatedIds: [room, home, door]
+sourceBasis: [spatial symbolism, everyday metaphor, scene function]
+locales:
+  ko:
+    label: 창문
+    aliases: [창문, 창가, 유리창, 창, 창밖]
+    searchText: 창문, 창가, 유리창, 창밖, 바깥을 보는 시선, 가능성, 거리 두기
+    coreMeanings: [바깥을 보는 시선, 가능성, 거리 두기, 관찰]
+    lightReadings: [새 관점을 얻는 흐름, 안전한 거리에서 가능성을 살피는 장면]
+    shadowReadings: [바깥과 분리된 느낌, 보고만 있고 움직이지 못하는 답답함]
+    sceneModifiers:
+      open: { triggerTerms: [열린, 열려, 활짝], reading: 새 공기나 관점이 들어오는 장면, weight: 0.74 }
+      closed: { triggerTerms: [닫힌, 닫혀, 잠긴], reading: 가능성은 보이지만 아직 거리가 있는 장면, weight: 0.76 }
+      broken: { triggerTerms: [깨진, 금 간, 부서진], reading: 시야나 경계가 흔들리는 장면, weight: 0.82 }
+    contextQuestions: [창밖에는 무엇이 보였나요?, 창문은 열려 있었나요, 닫혀 있었나요?]
+    metaphorHooks: [나가지 않고 바라본 가능성, 유리 너머의 다음 장면]
+    cardTitleSeeds: [창밖을 보는 달, 유리창의 작은 빛]
+    smallPrescriptions: [오늘 당장 움직이지 않아도 되는 가능성 하나를 적어보세요.]
+    safeReading: 창문은 바깥 세계를 바라보는 시선과 아직 유지되는 거리감으로 읽을 수 있어요.
+    avoidExpressions: [새 기회가 반드시 온다, 누군가 찾아온다]
+  en:
+    label: Window
+    aliases: [window, windowsill, glass window, through the window, outside]
+    searchText: window, glass, outside, perspective, possibility, distance, watching from inside
+    coreMeanings: [perspective, possibility, distance, observation]
+    lightReadings: [seeing from a new angle, watching a possibility from a safe distance]
+    shadowReadings: [feeling separated from what you see, frustration around only watching]
+    sceneModifiers:
+      open: { triggerTerms: [open window, opened, wide open], reading: new air or perspective entering, weight: 0.74 }
+      closed: { triggerTerms: [closed window, shut, locked], reading: a possibility visible but still distant, weight: 0.76 }
+      broken: { triggerTerms: [broken window, cracked glass, shattered], reading: a boundary or perspective feeling unstable, weight: 0.82 }
+    contextQuestions: [What could you see outside the window?, Was the window open, closed, or broken?]
+    metaphorHooks: [possibility seen without stepping out, the next scene beyond glass]
+    cardTitleSeeds: [Moon Beyond the Window, Light on the Glass]
+    smallPrescriptions: [Name one possibility you can observe without acting on today.]
+    safeReading: A window can point to perspective, possibility, and the distance you still keep.
+    avoidExpressions: [a new opportunity is guaranteed, someone will visit you]

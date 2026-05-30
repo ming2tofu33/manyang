@@ -19,6 +19,7 @@ export default function WritePage() {
       title="✧ 꿈 들려주기 ✧"
       backHref="/"
       rightAction="book"
+      showBottomNav={false}
     >
       <DreamEntryForm />
     </AppShell>

@@ -26,6 +26,8 @@ describe("BottomNav", () => {
     expect(markup).toContain("내방");
     expect(markup).toContain("aria-current=\"page\"");
     expect(markup).toContain("bg-[radial-gradient");
+    expect(markup).toContain("rgba(255,185,92");
+    expect(markup).not.toContain("rgba(159,74,255,0.30)");
   });
 
   it("uses an embedded active glow without a separated border plate", () => {
@@ -34,5 +36,16 @@ describe("BottomNav", () => {
     expect(markup).toContain('data-bottom-nav-active-indicator="true"');
     expect(markup).not.toContain("border border-[#b86cff]");
     expect(markup).not.toContain("top-[0.45rem] h-[3.55rem] w-[4rem]");
+  });
+
+  it("keeps menu items inside the footer frame corners", () => {
+    const markup = renderToStaticMarkup(<BottomNav />);
+
+    expect(markup).toContain("-mx-6");
+    expect(markup).toContain("w-[calc(100%+3rem)]");
+    expect(markup).toContain("h-[96px]");
+    expect(markup).toContain("inset-x-[8%]");
+    expect(markup).toContain("top-[0.7rem]");
+    expect(markup).toContain("bottom-[1.25rem]");
   });
 });

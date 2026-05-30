@@ -3,9 +3,15 @@ import { describe, expect, expectTypeOf, test } from "vitest";
 import {
   SYMBOL_ACCESS_TIERS,
   SYMBOL_CATEGORIES,
+  SYMBOL_EMBEDDING_CHUNK_TYPES,
+  SYMBOL_EDITORIAL_STATUSES,
+  SYMBOL_INTERPRETATION_LENSES,
+  SYMBOL_ROLES,
   SYMBOL_SAFETY_LEVELS,
   SYMBOL_STATUSES,
   SUPPORTED_LOCALES,
+  type EmbeddingProfile,
+  type InterpretationLensMap,
   type LocalizedSymbolEntry,
   type SceneModifier,
   type SymbolEntry,
@@ -19,18 +25,55 @@ describe("symbol encyclopedia contract", () => {
   test("defines the categories and metadata enums required by retrieval", () => {
     expect(SYMBOL_CATEGORIES).toEqual([
       "place",
+      "living_being",
       "object",
+      "body",
       "action",
+      "event",
       "nature",
-      "animal",
-      "person",
+      "food",
       "emotion",
+      "social",
+      "relationship",
+      "state",
       "quantity",
       "time",
+      "abstract",
     ]);
     expect(SYMBOL_STATUSES).toEqual(["draft", "active", "deprecated"]);
     expect(SYMBOL_SAFETY_LEVELS).toEqual(["safe", "sensitive"]);
     expect(SYMBOL_ACCESS_TIERS).toEqual(["free", "premium"]);
+    expect(SYMBOL_EDITORIAL_STATUSES).toEqual(["needs_review", "approved"]);
+    expect(SYMBOL_ROLES).toEqual(["primary_candidate", "modifier", "context_signal"]);
+    expect(SYMBOL_INTERPRETATION_LENSES).toEqual(["universal", "east_asian", "western"]);
+    expect(SYMBOL_EMBEDDING_CHUNK_TYPES).toEqual(["searchText", "sceneModifier", "safeReading", "metaphorHook"]);
+  });
+
+  test("defines interpretation lenses and embedding profile for controlled RAG retrieval", () => {
+    const lenses: InterpretationLensMap = {
+      universal: {
+        sourceBasis: ["scene_function"],
+        coreMeanings: ["instinct", "hidden movement"],
+        safeTransform: ["본능적 감각", "조용히 드러나는 변화"],
+        avoidClaims: ["반드시 좋은 일이 생긴다"],
+      },
+      east_asian: {
+        sourceBasis: ["korean_folk"],
+        safeTransform: ["내 영역 안에서 커지는 생명력"],
+        avoidClaims: ["태몽이다"],
+      },
+      western: {
+        sourceBasis: ["western_psychological"],
+        safeTransform: ["무의식적으로 감지한 긴장"],
+        avoidClaims: ["this proves hidden trauma"],
+      },
+    };
+    const embeddingProfile: EmbeddingProfile = {
+      chunkTypes: ["searchText", "sceneModifier", "safeReading", "metaphorHook"],
+    };
+
+    expect(lenses.universal.safeTransform).toContain("본능적 감각");
+    expect(embeddingProfile.chunkTypes).toContain("sceneModifier");
   });
 
   test("requires localized entries to carry search, scene, generation, and safety fields", () => {
@@ -65,9 +108,34 @@ describe("symbol encyclopedia contract", () => {
     const entry: SymbolEntry = {
       id: "snake",
       status: "active",
-      category: "animal",
+      editorialStatus: "approved",
+      category: "living_being",
+      subcategory: "animal",
+      facets: ["reptile", "instinct", "hidden_movement"],
+      symbolRole: ["primary_candidate"],
       safetyLevel: "sensitive",
       accessTier: "free",
+      interpretationLenses: {
+        universal: {
+          sourceBasis: ["scene_function"],
+          coreMeanings: ["instinct", "hidden movement", "change"],
+          safeTransform: ["본능적 감각", "조용히 드러나는 변화"],
+          avoidClaims: ["위험한 일이 생긴다"],
+        },
+        east_asian: {
+          sourceBasis: ["korean_folk"],
+          safeTransform: ["내 영역 안에서 커지는 생명력"],
+          avoidClaims: ["태몽이다"],
+        },
+        western: {
+          sourceBasis: ["western_psychological"],
+          safeTransform: ["무의식적으로 감지한 긴장"],
+          avoidClaims: ["this predicts danger"],
+        },
+      },
+      embeddingProfile: {
+        chunkTypes: ["searchText", "sceneModifier", "safeReading", "metaphorHook"],
+      },
       universalMeanings: ["instinct", "hidden movement", "change"],
       tensionAxis: ["fascination", "wariness"],
       relatedIds: ["owned_land", "many"],
@@ -108,5 +176,8 @@ describe("symbol encyclopedia contract", () => {
 
     expect(entry.locales.ko.label).toBe("뱀");
     expect(entry.locales.en.label).toBe("Snake");
+    expect(entry.subcategory).toBe("animal");
+    expect(entry.facets).toContain("hidden_movement");
+    expect(entry.interpretationLenses.western.sourceBasis).toContain("western_psychological");
   });
 });

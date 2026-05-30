@@ -1,0 +1,54 @@
+id: sea
+status: active
+editorialStatus: approved
+category: nature
+subcategory: water
+facets: [vast_emotion, unconscious, possibility, overwhelm]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [natural_symbolism, psychological_metaphor, scene_function], coreMeanings: [vast_emotion, unconscious, possibility, overwhelm], safeTransform: [개인 감정보다 더 넓은 흐름, 깊고 넓은 가능성 앞의 감각], avoidClaims: [큰돈이 들어온다, 위험한 일이 생긴다] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: [큰물이 보여주는 흐름과 기운의 규모, 감당하기 큰 정서의 바다], avoidClaims: [큰돈이 들어온다, 위험한 일이 생긴다] }
+  western: { sourceBasis: [western_psychological, mythic_association, product_editorial_rule], safeTransform: [the vast unconscious and emotional depth, standing before a large unknown], avoidClaims: [큰돈이 들어온다, 위험한 일이 생긴다] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [vast emotion, unconscious, possibility, overwhelm]
+tensionAxis: [openness, depth]
+relatedIds: [water, fish, rain]
+sourceBasis: [natural symbolism, psychological metaphor, scene function]
+locales:
+  ko:
+    label: 바다
+    aliases: [바다, 해변, 파도, 해안, 바닷물]
+    searchText: 바다, 해변, 파도, 해안, 바닷물, 큰 감정, 무의식, 압도감, 가능성
+    coreMeanings: [큰 감정, 무의식, 압도적 가능성, 깊이]
+    lightReadings: [넓은 가능성을 바라보는 마음, 감정의 깊이를 인정하는 장면]
+    shadowReadings: [감정의 규모에 압도되는 상태, 어디까지 깊은지 모르는 불안]
+    sceneModifiers:
+      calmSea: { triggerTerms: [잔잔한, 고요한, 평온한], reading: 큰 감정이 조용히 펼쳐진 장면, weight: 0.72 }
+      roughSea: { triggerTerms: [거친, 폭풍, 높은 파도], reading: 감정의 규모와 변동이 커진 장면, weight: 0.84 }
+      shore: { triggerTerms: [해변, 해안, 모래사장], reading: 큰 감정 앞에서 아직 경계에 머무는 장면, weight: 0.72 }
+    contextQuestions: [바다는 잔잔했나요, 거칠었나요?, 바다에 들어갔나요, 해안에서 바라봤나요?]
+    metaphorHooks: [끝이 보이지 않는 마음의 수평선, 큰 감정 앞의 작은 발자국]
+    cardTitleSeeds: [바다 위의 달, 해변에 남은 꿈]
+    smallPrescriptions: [오늘 감당하기 큰 감정에 작게 이름을 붙여보세요.]
+    safeReading: 바다는 개인 감정보다 넓은 흐름, 무의식적 감각, 넓은 가능성으로 읽을 수 있어요.
+    avoidExpressions: [큰돈이 들어온다, 위험한 일이 생긴다]
+  en:
+    label: Sea
+    aliases: [sea, ocean, beach, waves, shore]
+    searchText: sea, ocean, beach, waves, shore, vast emotion, unconscious, depth, overwhelming possibility
+    coreMeanings: [vast emotion, unconscious, overwhelming possibility, depth]
+    lightReadings: [facing a wide field of possibility, honoring emotional depth]
+    shadowReadings: [feeling overwhelmed by emotional scale, anxiety around depth you cannot measure]
+    sceneModifiers:
+      calmSea: { triggerTerms: [calm sea, peaceful ocean, still water], reading: large emotion spread quietly, weight: 0.72 }
+      roughSea: { triggerTerms: [rough sea, stormy ocean, huge waves], reading: emotional scale and change increasing, weight: 0.84 }
+      shore: { triggerTerms: [beach, shore, sand], reading: staying at the edge of a large feeling, weight: 0.72 }
+    contextQuestions: [Was the sea calm or rough?, Were you in the water or watching from the shore?]
+    metaphorHooks: [the horizon of a feeling with no visible end, small footprints before a large emotion]
+    cardTitleSeeds: [Moon Over the Sea, Dream Left on the Shore]
+    smallPrescriptions: [Give a large feeling a small name today.]
+    safeReading: The sea can point to vast feeling, the unconscious, and possibility that feels larger than you.
+    avoidExpressions: [a lot of money is coming, something dangerous will happen]

@@ -1,0 +1,54 @@
+id: body
+status: active
+editorialStatus: approved
+category: body
+subcategory: whole_body
+facets: [embodiment, condition, boundary, self_awareness]
+symbolRole: [primary_candidate]
+safetyLevel: sensitive
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [body_symbolism, self_awareness_metaphor, product_safety_rule], coreMeanings: [embodiment, condition, boundary, self_awareness], safeTransform: ["the self felt through bodily condition", "attention returning to limits and needs"], avoidClaims: ["you have a disease", "your body is warning you of illness"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["몸은 기운보다 실제 상태 확인과 감각으로 안전하게 다룸", "몸의 부담을 알아차리는 장면"], avoidClaims: ["병이 있다", "건강이 나빠진다"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["body as embodiment, boundary, and self-awareness", "where emotion becomes physical image"], avoidClaims: ["you have a disease", "your body is warning you of illness"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [embodiment, condition, boundary, self awareness]
+tensionAxis: [awareness, anxiety]
+relatedIds: [blood, teeth, hair]
+sourceBasis: [body symbolism, self-awareness metaphor, product safety rule]
+locales:
+  ko:
+    label: "몸"
+    aliases: ["몸", "신체", "몸이 아픈 꿈", "몸 상태", "몸이 이상한 꿈"]
+    searchText: "몸, 신체, 몸이 아픈 꿈, 몸 상태, 몸이 이상한 꿈, 감각, 경계, 피로, 자기 인식"
+    coreMeanings: ["몸의 감각", "경계", "피로", "자기 인식"]
+    lightReadings: ["내 상태를 더 정확히 알아차리려는 마음", "몸과 마음의 필요를 확인하는 장면"]
+    shadowReadings: ["건강이나 상태에 대한 불안", "몸의 경계가 흔들리는 느낌"]
+    sceneModifiers:
+      pain: { triggerTerms: ["아프", "통증", "쑤시"], reading: "무리하거나 부담스러운 지점이 몸 이미지로 드러난 장면", weight: 0.86 }
+      strangeBody: { triggerTerms: ["이상", "변해", "낯설"], reading: "내 상태가 낯설게 느껴지는 장면", weight: 0.82 }
+      tired: { triggerTerms: ["피곤", "무거", "힘이 없"], reading: "회복이 필요한 피로감이 강한 장면", weight: 0.78 }
+    contextQuestions: ["꿈속 몸의 어느 부분이 가장 신경 쓰였나요?", "깨어난 뒤에도 실제 걱정이 남았나요?"]
+    metaphorHooks: ["마음이 몸으로 말하는 자리", "경계가 느껴지는 몸"]
+    cardTitleSeeds: ["몸이 말한 밤", "낯선 신체"]
+    smallPrescriptions: ["실제 몸 걱정이 남는다면 해몽보다 컨디션 확인을 우선하세요."]
+    safeReading: "몸은 질병 예언이 아니라 피로, 경계, 자기 인식, 실제 상태 확인의 필요를 비추는 상징일 수 있어요."
+    avoidExpressions: ["병이 있다", "건강이 나빠진다"]
+  en:
+    label: Body
+    aliases: [body, physical body, sick body, body condition, strange body]
+    searchText: "body, physical body, sick body, body condition, strange body, sensation, boundary, fatigue, self awareness"
+    coreMeanings: [bodily sensation, boundary, fatigue, self awareness]
+    lightReadings: ["noticing your condition more clearly", "checking what body and mind need"]
+    shadowReadings: ["anxiety about health or condition", "feeling that body boundaries are unsettled"]
+    sceneModifiers:
+      pain: { triggerTerms: [pain, hurt, aching], reading: "strain or burden appearing through body image", weight: 0.86 }
+      strangeBody: { triggerTerms: [strange body, changed body, weird], reading: "your condition feeling unfamiliar", weight: 0.82 }
+      tired: { triggerTerms: [tired, heavy body, weak], reading: "fatigue asking for recovery", weight: 0.78 }
+    contextQuestions: ["Which part of the body stood out most?", "Did real worry remain after waking?"]
+    metaphorHooks: ["where the mind speaks as body", "a boundary felt through sensation"]
+    cardTitleSeeds: ["Night the Body Spoke", "Unfamiliar Body"]
+    smallPrescriptions: ["If real body worry remains, prioritize checking your condition over interpretation."]
+    safeReading: "The body can symbolize fatigue, boundary, self-awareness, and the need to check real condition, not a diagnosis."
+    avoidExpressions: ["you have a disease", "your health will decline"]

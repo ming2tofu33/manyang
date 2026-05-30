@@ -1,0 +1,54 @@
+id: key
+status: active
+editorialStatus: approved
+category: object
+subcategory: key_item
+facets: [access, solution, permission, condition]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [scene_function, everyday_metaphor], coreMeanings: [access, solution, permission, condition], safeTransform: [닫힌 것을 열기 위한 조건, 해결 실마리를 찾는 흐름], avoidClaims: [문제가 반드시 해결된다, 큰 기회가 열린다] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: [문턱을 넘기 위한 허락과 준비, 문제의 실마리가 손에 잡히는 장면], avoidClaims: [문제가 반드시 해결된다, 큰 기회가 열린다] }
+  western: { sourceBasis: [western_psychological, mythic_association, product_editorial_rule], safeTransform: [a symbol of access and permission, the condition that lets a transition open], avoidClaims: [문제가 반드시 해결된다, 큰 기회가 열린다] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [access, solution, permission, condition]
+tensionAxis: [unlocking, withholding]
+relatedIds: [door, bag, searching]
+sourceBasis: [everyday metaphor, object symbolism, scene function]
+locales:
+  ko:
+    label: 열쇠
+    aliases: [열쇠, 키, 자물쇠, 잠금, 열쇠꾸러미]
+    searchText: 열쇠, 키, 자물쇠, 잠금, 문을 여는 조건, 해결 실마리, 접근 권한
+    coreMeanings: [접근 권한, 해결 실마리, 조건, 허락]
+    lightReadings: [닫힌 문제를 다르게 열어볼 가능성, 필요한 조건을 알아차리는 흐름]
+    shadowReadings: [아직 허락되지 않은 느낌, 실마리를 잃어버린 답답함]
+    sceneModifiers:
+      lost: { triggerTerms: [잃어버, 없어, 못 찾], reading: 필요한 조건을 아직 찾지 못한 장면, weight: 0.82 }
+      found: { triggerTerms: [찾았, 발견, 주웠], reading: 실마리가 의식 위로 올라온 장면, weight: 0.76 }
+      wrongKey: { triggerTerms: [안 맞, 다른 키, 열리지 않], reading: 조건이 맞지 않아 다시 확인해야 하는 장면, weight: 0.8 }
+    contextQuestions: [열쇠로 무엇을 열려고 했나요?, 열쇠를 잃어버렸나요, 찾았나요?]
+    metaphorHooks: [닫힌 장면을 여는 작은 조건, 손안에 들어온 실마리]
+    cardTitleSeeds: [작은 열쇠의 달, 잠긴 문 앞의 실마리]
+    smallPrescriptions: [막힌 일 하나에 필요한 조건을 하나만 적어보세요.]
+    safeReading: 열쇠는 닫힌 장면을 여는 조건이나 해결 실마리로 읽을 수 있어요.
+    avoidExpressions: [문제가 반드시 해결된다, 큰 기회가 열린다]
+  en:
+    label: Key
+    aliases: [key, keys, lock, locked, keyring]
+    searchText: key, lock, locked, access, solution, permission, condition, unlocking
+    coreMeanings: [access, solution, permission, condition]
+    lightReadings: [noticing a condition that can open something, a clue becoming usable]
+    shadowReadings: [feeling denied access, frustration around a missing clue]
+    sceneModifiers:
+      lost: { triggerTerms: [lost key, missing key, could not find], reading: the needed condition has not been found yet, weight: 0.82 }
+      found: { triggerTerms: [found the key, picked up, discovered], reading: a clue rising into awareness, weight: 0.76 }
+      wrongKey: { triggerTerms: [wrong key, would not open, did not fit], reading: the current condition does not fit, weight: 0.8 }
+    contextQuestions: [What were you trying to unlock?, Did you lose the key or find it?]
+    metaphorHooks: [a small condition that opens a closed scene, a clue in the palm]
+    cardTitleSeeds: [Moon of the Small Key, Clue Before the Locked Door]
+    smallPrescriptions: [Write one condition needed for something that feels blocked.]
+    safeReading: A key can point to access, permission, or a condition that makes movement possible.
+    avoidExpressions: [your problem will definitely be solved, a huge opportunity will open]

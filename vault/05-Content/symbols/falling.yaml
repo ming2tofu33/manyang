@@ -1,0 +1,54 @@
+id: falling
+status: active
+editorialStatus: approved
+category: action
+subcategory: loss_of_support
+facets: [loss_of_control, instability, fear, surrender]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [action_symbolism, body_metaphor, scene_function], coreMeanings: [loss_of_control, instability, fear, surrender], safeTransform: ["support dropping away beneath the self", "fear of losing grip on a situation"], avoidClaims: ["you will fail", "an accident will happen"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["떨어지는 장면은 운세보다 지지 기반의 불안으로 읽음", "중심을 다시 잡으려는 신호"], avoidClaims: ["실패한다", "사고가 난다"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["falling as loss of control, anxiety, or surrender", "a classic bodily image of instability"], avoidClaims: ["you will fail", "an accident will happen"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [loss of control, instability, fear, surrender]
+tensionAxis: [release, loss_of_support]
+relatedIds: [airplane, stairs, mountain]
+sourceBasis: [action symbolism, body metaphor, scene function]
+locales:
+  ko:
+    label: "떨어짐"
+    aliases: ["떨어짐", "떨어지는 꿈", "추락", "낙하", "넘어지는 꿈"]
+    searchText: "떨어짐, 떨어지는 꿈, 추락, 낙하, 넘어지는 꿈, 통제감 상실, 불안정, 두려움, 중심 잃음"
+    coreMeanings: ["통제감 상실", "불안정", "두려움", "중심 잃음"]
+    lightReadings: ["잡고 있던 것을 내려놓아야 하는 감각", "중심을 다시 잡으려는 신호"]
+    shadowReadings: ["상황이 내 손을 벗어나는 불안", "지지 기반이 사라지는 느낌"]
+    sceneModifiers:
+      fromHeight: { triggerTerms: ["높은", "절벽", "옥상"], reading: "높은 기대나 위치에서 흔들리는 불안이 큰 장면", weight: 0.86 }
+      endless: { triggerTerms: ["끝없이", "계속", "바닥이 없"], reading: "불안이 끝나지 않는 것처럼 느껴지는 장면", weight: 0.84 }
+      landingSafe: { triggerTerms: ["착지", "괜찮", "살았"], reading: "불안 속에서도 다시 안정될 가능성이 보이는 장면", weight: 0.72 }
+    contextQuestions: ["어디에서 떨어졌나요?", "떨어진 뒤 다쳤나요, 멀쩡했나요?"]
+    metaphorHooks: ["발밑이 사라지는 순간", "중심을 다시 찾는 낙하"]
+    cardTitleSeeds: ["추락하는 밤", "바닥 없는 꿈"]
+    smallPrescriptions: ["요즘 통제하려다 더 불안해진 일이 있는지 적어보세요."]
+    safeReading: "떨어지는 꿈은 실패 예고보다 통제감, 지지 기반, 불안정함을 보여주는 상징일 수 있어요."
+    avoidExpressions: ["실패한다", "사고가 난다"]
+  en:
+    label: Falling
+    aliases: [falling, fall, falling down, plummeting, tripping]
+    searchText: "falling, falling down, plummeting, tripping, loss of control, instability, fear, loss of support"
+    coreMeanings: [loss of control, instability, fear, loss of support]
+    lightReadings: ["recognizing what cannot be held tightly", "a signal to regain center"]
+    shadowReadings: ["anxiety that a situation is slipping away", "support disappearing beneath you"]
+    sceneModifiers:
+      fromHeight: { triggerTerms: [from height, cliff, roof], reading: "anxiety around high expectations or position", weight: 0.86 }
+      endless: { triggerTerms: [endless fall, kept falling, no bottom], reading: "fear feeling like it has no landing point", weight: 0.84 }
+      landingSafe: { triggerTerms: [landed safely, was okay, survived], reading: "possibility of stabilizing despite fear", weight: 0.72 }
+    contextQuestions: ["Where did you fall from?", "Were you hurt after landing?"]
+    metaphorHooks: ["the moment ground disappears", "falling while searching for center"]
+    cardTitleSeeds: ["Night of Falling", "Dream Without a Floor"]
+    smallPrescriptions: ["Write one situation where trying to control everything increases anxiety."]
+    safeReading: "Falling can symbolize instability, loss of control, and fear rather than failure prediction."
+    avoidExpressions: ["you will fail", "an accident will happen"]

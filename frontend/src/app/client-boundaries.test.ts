@@ -22,10 +22,12 @@ describe("client component boundaries", () => {
       'import { EncyclopediaDetailContent } from "@/components/encyclopedia-detail-content";',
     );
     expect(encyclopediaDetailPage).not.toContain("EncyclopediaDetailPageClient");
+    expect(encyclopediaDetailPage).not.toContain("searchParams");
 
     expect(existsSync(guideClientPath)).toBe(true);
     const readerGuideClient = readFileSync(guideClientPath, "utf8");
     expect(readerGuideClient).toContain('"use client";');
     expect(readerGuideClient).toContain("useSyncExternalStore");
+    expect(readerGuideClient).toContain("new URLSearchParams(window.location.search)");
   });
 });

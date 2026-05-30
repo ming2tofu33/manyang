@@ -5,6 +5,20 @@ import { describe, expect, it } from "vitest";
 import { EncyclopediaContent } from "./encyclopedia-content";
 
 describe("EncyclopediaContent", () => {
+  it("shows the main category label on each encyclopedia card", () => {
+    const markup = renderToStaticMarkup(
+      <EncyclopediaContent
+        entries={[
+          { symbol: "문", slug: "door", category: "place" },
+          { symbol: "열쇠", slug: "key", category: "object" },
+        ]}
+      />,
+    );
+
+    expect(markup).toContain('aria-label="상위 분류: 장소"');
+    expect(markup).toContain('aria-label="상위 분류: 사물"');
+  });
+
   it("keeps static encyclopedia content server-renderable while reader guide hydrates separately", () => {
     const markup = renderToStaticMarkup(<EncyclopediaContent entries={encyclopediaEntries.slice(0, 12)} />);
 

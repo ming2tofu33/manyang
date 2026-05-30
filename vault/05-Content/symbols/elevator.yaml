@@ -1,0 +1,54 @@
+id: elevator
+status: active
+editorialStatus: approved
+category: place
+subcategory: transit_space
+facets: [rapid_change, control, ascent_descent, enclosed_movement]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [scene_function, everyday_metaphor], coreMeanings: [rapid change, vertical movement, control, transition], safeTransform: [빠르게 층이 바뀌는 변화, 내가 직접 걷지 않는 이동의 감각], avoidClaims: [급격히 성공한다, 추락을 예고한다] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: [층과 위치가 빠르게 바뀌는 생활 장면, 통제감과 맡김 사이의 긴장], avoidClaims: [급격히 성공한다, 추락을 예고한다] }
+  western: { sourceBasis: [western_psychological, mythic_association, product_editorial_rule], safeTransform: [rapid movement between levels, transition with limited personal control], avoidClaims: [급격히 성공한다, 추락을 예고한다] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [rapid change, vertical movement, control, transition]
+tensionAxis: [ease, loss of control]
+relatedIds: [stairs, building, door]
+sourceBasis: [modern object symbolism, scene function, everyday metaphor]
+locales:
+  ko:
+    label: 엘리베이터
+    aliases: [엘리베이터, 승강기, 리프트]
+    searchText: 엘리베이터, 승강기, 리프트, 올라감, 내려감, 빠른 변화, 통제감, 갇힘
+    coreMeanings: [빠른 변화, 통제감, 상승과 하강, 밀폐된 이동]
+    lightReadings: [변화가 빠르게 진행되는 흐름, 직접 걷지 않아도 움직이는 상황]
+    shadowReadings: [내가 조절하지 못하는 느낌, 갇힌 채 이동하는 불안]
+    sceneModifiers:
+      stuck: { triggerTerms: [멈춘, 갇힌, 안 움직], reading: 변화가 멈춘 듯한 답답함, weight: 0.84 }
+      falling: { triggerTerms: [떨어, 추락, 급히 내려], reading: 통제감이 약해지는 급격한 변화감, weight: 0.85 }
+      goingUp: { triggerTerms: [올라, 위로, 상승], reading: 빠르게 다음 단계로 올라가는 장면, weight: 0.76 }
+    contextQuestions: [엘리베이터는 올라갔나요, 내려갔나요?, 안에 갇힌 느낌이 있었나요?]
+    metaphorHooks: [버튼 하나로 바뀌는 층, 움직이지만 걷지 않는 마음]
+    cardTitleSeeds: [승강기의 달, 멈춘 층의 신호]
+    smallPrescriptions: [지금 내가 직접 조절할 수 있는 것과 맡겨야 할 것을 나눠보세요.]
+    safeReading: 엘리베이터는 빠른 변화와 통제감의 정도를 보여주는 이동 장면으로 읽을 수 있어요.
+    avoidExpressions: [급격히 성공한다, 추락을 예고한다]
+  en:
+    label: Elevator
+    aliases: [elevator, lift, elevator door, going up]
+    searchText: elevator, lift, going up, going down, rapid change, control, stuck, enclosed movement
+    coreMeanings: [rapid change, control, ascent and descent, enclosed movement]
+    lightReadings: [change moving faster than usual, movement happening without every step being manual]
+    shadowReadings: [limited control, anxiety while being enclosed and moved]
+    sceneModifiers:
+      stuck: { triggerTerms: [stuck elevator, trapped, would not move], reading: change feeling stalled or trapped, weight: 0.84 }
+      falling: { triggerTerms: [falling elevator, dropped, plunging], reading: a sudden drop in control, weight: 0.85 }
+      goingUp: { triggerTerms: [going up, rising, upward], reading: rapid movement toward a next level, weight: 0.76 }
+    contextQuestions: [Was the elevator going up or down?, Did you feel trapped inside it?]
+    metaphorHooks: [a floor changing with one button, moving without walking]
+    cardTitleSeeds: [Moon in the Elevator, Signal Between Floors]
+    smallPrescriptions: [Separate what you can control today from what must simply move.]
+    safeReading: An elevator can point to rapid transition and how much control you feel during change.
+    avoidExpressions: [you will suddenly succeed, this predicts a fall]

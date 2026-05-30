@@ -1,0 +1,54 @@
+id: mirror
+status: active
+editorialStatus: approved
+category: object
+subcategory: reflective_item
+facets: [self_image, reflection, identity, other_gaze]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [scene_function, everyday_metaphor], coreMeanings: [self-image, reflection, identity, perception], safeTransform: [나를 어떻게 보고 있는지 비추는 장면, 겉모습과 내면 감각 사이의 거리], avoidClaims: [배신자가 나타난다, 외모가 나빠진다] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: [비친 모습으로 스스로를 점검하는 장면, 타인의 시선과 체면을 의식하는 흐름], avoidClaims: [배신자가 나타난다, 외모가 나빠진다] }
+  western: { sourceBasis: [western_psychological, mythic_association, product_editorial_rule], safeTransform: [self-reflection and identity image, a meeting with the observed self], avoidClaims: [배신자가 나타난다, 외모가 나빠진다] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [self-image, reflection, identity, perception]
+tensionAxis: [recognition, distortion]
+relatedIds: [room, window, stranger]
+sourceBasis: [object symbolism, psychological metaphor, scene function]
+locales:
+  ko:
+    label: 거울
+    aliases: [거울, 비친, 반사, 거울 속, 내 모습]
+    searchText: 거울, 비친 모습, 반사, 내 모습, 자기 인식, 타인의 시선, 정체성
+    coreMeanings: [자기 인식, 타인의 시선, 비친 모습, 정체성]
+    lightReadings: [나를 더 정확히 보려는 흐름, 겉으로 보이는 모습과 마음을 맞춰보는 장면]
+    shadowReadings: [왜곡된 자기 평가, 남의 시선에 묶이는 부담]
+    sceneModifiers:
+      distorted: { triggerTerms: [이상하게, 일그러, 다르게], reading: 자기 평가가 왜곡되어 느껴지는 장면, weight: 0.82 }
+      noReflection: { triggerTerms: [안 비, 없었, 보이지], reading: 나를 확인하기 어려운 감각, weight: 0.78 }
+      broken: { triggerTerms: [깨진, 금 간, 부서진], reading: 자기 이미지가 흔들리는 장면, weight: 0.8 }
+    contextQuestions: [거울 속 모습이 실제와 같았나요?, 거울을 보고 어떤 감정이 들었나요?]
+    metaphorHooks: [나를 바라보는 또 다른 눈, 반사된 마음의 윤곽]
+    cardTitleSeeds: [거울 속의 달, 비친 마음의 밤]
+    smallPrescriptions: [오늘 나를 평가하지 않고 관찰하는 문장 하나를 써보세요.]
+    safeReading: 거울은 자기 인식과 타인의 시선, 내가 보는 나의 모습을 비추는 상징으로 읽을 수 있어요.
+    avoidExpressions: [배신자가 나타난다, 외모가 나빠진다]
+  en:
+    label: Mirror
+    aliases: [mirror, reflection, reflected, in the mirror, my face]
+    searchText: mirror, reflection, self-image, identity, perception, other gaze, distorted reflection
+    coreMeanings: [self-awareness, other gaze, reflection, identity]
+    lightReadings: [trying to see yourself more clearly, aligning outer image with inner feeling]
+    shadowReadings: [distorted self-evaluation, pressure from being seen]
+    sceneModifiers:
+      distorted: { triggerTerms: [distorted, strange reflection, looked different], reading: self-perception feeling distorted, weight: 0.82 }
+      noReflection: { triggerTerms: [no reflection, could not see myself, nothing appeared], reading: difficulty recognizing yourself, weight: 0.78 }
+      broken: { triggerTerms: [broken mirror, cracked, shattered], reading: self-image feeling unstable, weight: 0.8 }
+    contextQuestions: [Did your reflection look like you?, How did you feel while looking?]
+    metaphorHooks: [another eye looking back, the outline of a reflected self]
+    cardTitleSeeds: [Moon in the Mirror, The Reflected Night]
+    smallPrescriptions: [Write one sentence observing yourself without judging today.]
+    safeReading: A mirror can point to self-image, identity, and the way you feel seen.
+    avoidExpressions: [someone will betray you, your appearance will get worse]

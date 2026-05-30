@@ -1,0 +1,54 @@
+id: fire
+status: active
+editorialStatus: approved
+category: nature
+subcategory: fire
+facets: [energy, anger, cleansing, uncontrolled_change]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [natural_symbolism, embodied_metaphor, scene_function], coreMeanings: [energy, anger, cleansing, danger], safeTransform: [강한 에너지와 감정의 빠른 변화, 정리와 파괴 사이의 뜨거운 전환], avoidClaims: [화재가 난다, 무조건 돈이 오른다] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: [기운의 과열과 정화가 겹친 장면, 생활권 안에서 커진 감정의 불빛], avoidClaims: [화재가 난다, 무조건 돈이 오른다] }
+  western: { sourceBasis: [western_psychological, mythic_association, product_editorial_rule], safeTransform: [transforming fire and volatile emotion, warmth and destruction in the same image], avoidClaims: [화재가 난다, 무조건 돈이 오른다] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [energy, anger, cleansing, danger]
+tensionAxis: [warmth, destruction]
+relatedIds: [home, water, rain]
+sourceBasis: [natural symbolism, embodied metaphor, scene function]
+locales:
+  ko:
+    label: 불
+    aliases: [불, 불꽃, 화재, 불길, 타오름]
+    searchText: 불, 불꽃, 화재, 불길, 타오름, 에너지, 분노, 정화, 통제 어려움
+    coreMeanings: [에너지, 분노, 정화, 통제 어려움]
+    lightReadings: [정체된 것을 태워 새롭게 하려는 마음, 강한 의욕이 올라오는 장면]
+    shadowReadings: [감정이 번지는 부담, 통제하기 어려운 변화]
+    sceneModifiers:
+      houseFire: { triggerTerms: [집에 불, 집이 타, 방에 불], reading: 생활 영역 안에서 감정이 과열된 장면, weight: 0.86 }
+      smallFlame: { triggerTerms: [작은 불, 촛불, 불씨], reading: 아직 작지만 살아 있는 에너지, weight: 0.72 }
+      spreading: { triggerTerms: [번져, 커져, 활활], reading: 감정이나 일이 빠르게 커지는 장면, weight: 0.84 }
+    contextQuestions: [불은 따뜻했나요, 무서웠나요?, 불을 끄고 있었나요, 바라보고 있었나요?]
+    metaphorHooks: [번지기 시작한 마음의 불씨, 따뜻함과 위험 사이의 빛]
+    cardTitleSeeds: [불씨의 달, 타오르는 밤]
+    smallPrescriptions: [오늘 강한 감정은 바로 행동으로 옮기기 전에 이름을 붙여보세요.]
+    safeReading: 불은 강한 에너지, 분노, 정화 욕구가 함께 올라오는 장면으로 읽을 수 있어요.
+    avoidExpressions: [화재가 난다, 무조건 돈이 오른다]
+  en:
+    label: Fire
+    aliases: [fire, flame, fireplace, burning, wildfire]
+    searchText: fire, flame, burning, energy, anger, cleansing, heat, uncontrolled change
+    coreMeanings: [energy, anger, cleansing, loss of control]
+    lightReadings: [energy strong enough to transform something, the wish to clear what is stale]
+    shadowReadings: [emotion spreading too quickly, change that feels hard to control]
+    sceneModifiers:
+      houseFire: { triggerTerms: [house fire, home burning, room on fire], reading: emotion overheating inside your private space, weight: 0.86 }
+      smallFlame: { triggerTerms: [small flame, candle, spark], reading: small but living energy, weight: 0.72 }
+      spreading: { triggerTerms: [spreading, getting bigger, blazing], reading: a feeling or event growing quickly, weight: 0.84 }
+    contextQuestions: [Did the fire feel warm or frightening?, Were you putting it out or watching it?]
+    metaphorHooks: [a spark in the mind beginning to spread, light between warmth and danger]
+    cardTitleSeeds: [Moon of the Spark, The Burning Night]
+    smallPrescriptions: [Name a strong feeling before turning it into action today.]
+    safeReading: Fire can point to strong energy, anger, cleansing, and change that needs care.
+    avoidExpressions: [there will be a fire, money luck is coming]

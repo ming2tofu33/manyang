@@ -47,6 +47,55 @@ describe("analyzeDreamStructure", () => {
     expect(analysis.themes.map((theme) => theme.label)).toContain("단서 부족");
   });
 
+  test("extracts newer coverage symbols from encyclopedia aliases and scene modifiers", () => {
+    const analysis = analyzeDreamStructure({
+      dreamText: "차를 운전하다가 무너진 다리를 건너는데 누군가에게 쫓기다가 피를 봤어.",
+      dreamMood: "urgent",
+      locale: "ko",
+    });
+
+    expect(analysis.symbolCandidates.map((candidate) => candidate.candidateId)).toEqual(
+      expect.arrayContaining(["car", "bridge", "being_chased", "blood"]),
+    );
+    expect(analysis.literalQueries).toEqual(expect.arrayContaining(["차", "운전", "다리", "쫓기다가", "피"]));
+    expect(analysis.modifierQueries).toEqual(
+      expect.arrayContaining(["driving", "broken", "crossing", "unknownChaser"]),
+    );
+    expect(analysis.sceneFacts).toEqual(expect.arrayContaining([expect.stringContaining("자동차")]));
+  });
+
+  test("extracts English aliases and modifiers from the runtime encyclopedia", () => {
+    const analysis = analyzeDreamStructure({
+      dreamText: "I was driving a car across a broken bridge while being chased and bleeding.",
+      dreamMood: "urgent",
+      locale: "en",
+    });
+
+    expect(analysis.symbolCandidates.map((candidate) => candidate.candidateId)).toEqual(
+      expect.arrayContaining(["car", "bridge", "being_chased", "blood"]),
+    );
+    expect(analysis.literalQueries).toEqual(expect.arrayContaining(["car", "driving", "bridge", "being chased", "bleeding"]));
+    expect(analysis.modifierQueries).toEqual(expect.arrayContaining(["driving", "broken", "crossing", "bleeding"]));
+  });
+
+  test("keeps unmatched noun-like details as low-confidence scene-only candidates", () => {
+    const analysis = analyzeDreamStructure({
+      dreamText: "I saw a glowing robot beside a bridge.",
+      locale: "en",
+    });
+    const robot = analysis.symbolCandidates.find((candidate) => candidate.text === "robot");
+
+    expect(robot).toEqual(
+      expect.objectContaining({
+        text: "robot",
+        source: "inferred",
+        confidence: expect.any(Number),
+      }),
+    );
+    expect(robot?.candidateId).toBeUndefined();
+    expect(robot?.confidence).toBeLessThan(0.4);
+  });
+
   test("adds distress safety signals without forcing a symbolic diagnosis", () => {
     const analysis = analyzeDreamStructure({
       dreamText: "꿈에서 계속 울고 있었고, 깨고 나서도 마음이 너무 무겁고 힘들었어.",
@@ -80,5 +129,32 @@ describe("analyzeDreamStructure", () => {
         }),
       ]),
     );
+  });
+
+  test("extracts real UTF-8 Korean snake, owned-land, and quantity symbols", () => {
+    const analysis = analyzeDreamStructure({
+      dreamText: "내 땅에 큰 구렁이와 뱀이 수십 마리 나왔어.",
+      locale: "ko",
+      wakeMood: "surprised",
+    });
+
+    expect(analysis.symbolCandidates.map((candidate) => candidate.candidateId)).toEqual(
+      expect.arrayContaining(["snake", "owned_land", "many"]),
+    );
+    expect(analysis.literalQueries).toEqual(expect.arrayContaining(["내 땅", "구렁이", "뱀", "수십"]));
+    expect(analysis.modifierQueries).toEqual(expect.arrayContaining(["largeSnake", "manySnakes", "ownedLand"]));
+  });
+
+  test("extracts real UTF-8 Korean elevator and sea symbols", () => {
+    const analysis = analyzeDreamStructure({
+      dreamText: "엘리베이터에 갇혔고 바다를 봤어.",
+      locale: "ko",
+      wakeMood: "anxious",
+    });
+
+    expect(analysis.symbolCandidates.map((candidate) => candidate.candidateId)).toEqual(
+      expect.arrayContaining(["elevator", "sea"]),
+    );
+    expect(analysis.literalQueries).toEqual(expect.arrayContaining(["엘리베이터", "바다"]));
   });
 });

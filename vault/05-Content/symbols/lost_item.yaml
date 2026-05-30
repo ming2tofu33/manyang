@@ -1,0 +1,54 @@
+id: lost_item
+status: active
+editorialStatus: approved
+category: action
+subcategory: losing
+facets: [loss_anxiety, value_check, memory, attention]
+symbolRole: [primary_candidate, modifier]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [scene_function, everyday_metaphor], coreMeanings: [loss, attention, value, memory], safeTransform: [중요한 것을 다시 확인하려는 마음, 놓친 감각을 되짚는 과정], avoidClaims: [실제로 잃어버린다, 관계가 끝난다] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: [잃어버림으로 드러난 확인 욕구, 내가 소중히 여기는 것의 자리], avoidClaims: [실제로 잃어버린다, 관계가 끝난다] }
+  western: { sourceBasis: [western_psychological, mythic_association, product_editorial_rule], safeTransform: [anxiety around value and attention, a missing piece asking to be named], avoidClaims: [실제로 잃어버린다, 관계가 끝난다] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [loss, attention, value, memory]
+tensionAxis: [release, anxiety]
+relatedIds: [searching, bag, key, shoes]
+sourceBasis: [action symbolism, everyday metaphor, scene function]
+locales:
+  ko:
+    label: 잃어버림
+    aliases: [잃어버림, 잃어버린, 잃어버렸, 잃어버렸어, 분실]
+    searchText: 잃어버림, 잃어버린 물건, 분실, 놓친 것, 불안, 다시 확인해야 할 가치
+    coreMeanings: [놓친 것, 불안, 가치 확인, 기억]
+    lightReadings: [무엇이 중요한지 다시 확인하는 과정, 놓친 것을 찾기 위한 정리]
+    shadowReadings: [소중한 것을 잃을까 봐 불안한 마음, 주의가 흩어진 상태]
+    sceneModifiers:
+      importantObject: { triggerTerms: [소중한, 중요한, 아끼는], reading: 중요하게 여기는 가치가 흔들리는 장면, weight: 0.82 }
+      cannotFind: { triggerTerms: [못 찾, 안 보여, 사라져], reading: 답보다 기준이 흐려진 장면, weight: 0.78 }
+      foundAgain: { triggerTerms: [다시 찾, 찾았, 발견], reading: 놓친 감각이 다시 의식 위로 올라오는 장면, weight: 0.74 }
+    contextQuestions: [무엇을 잃어버렸나요?, 찾으려고 했나요, 포기했나요?]
+    metaphorHooks: [놓친 줄 알았던 작은 가치, 기억의 주머니에서 사라진 것]
+    cardTitleSeeds: [잃어버린 물건의 달, 다시 찾는 밤]
+    smallPrescriptions: [오늘 잊지 말아야 할 것 하나를 눈에 보이는 곳에 적어두세요.]
+    safeReading: 잃어버리는 장면은 실제 분실 예고보다, 중요한 것을 다시 확인하려는 마음으로 읽을 수 있어요.
+    avoidExpressions: [실제로 잃어버린다, 관계가 끝난다]
+  en:
+    label: Lost Item
+    aliases: [lost item, lost, missing, misplaced, lost something]
+    searchText: lost item, missing object, misplaced, loss anxiety, value, memory, attention
+    coreMeanings: [missed thing, anxiety, value check, memory]
+    lightReadings: [checking what matters again, organizing around something that felt missed]
+    shadowReadings: [fear of losing something valuable, attention feeling scattered]
+    sceneModifiers:
+      importantObject: { triggerTerms: [important object, precious, valuable], reading: a valued thing feeling unstable, weight: 0.82 }
+      cannotFind: { triggerTerms: [cannot find, could not see, disappeared], reading: the standard itself feeling unclear, weight: 0.78 }
+      foundAgain: { triggerTerms: [found it again, found, discovered], reading: a missed feeling returning to awareness, weight: 0.74 }
+    contextQuestions: [What did you lose?, Were you searching for it or giving up?]
+    metaphorHooks: [a small value you thought was missing, something gone from the pocket of memory]
+    cardTitleSeeds: [Moon of the Lost Object, The Night of Finding Again]
+    smallPrescriptions: [Put one important thing where you can see it today.]
+    safeReading: Losing something in a dream can point to attention, value, and what you want to remember.
+    avoidExpressions: [you will actually lose it, a relationship will end]

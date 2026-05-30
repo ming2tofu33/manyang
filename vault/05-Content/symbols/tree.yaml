@@ -1,0 +1,54 @@
+id: tree
+status: active
+editorialStatus: approved
+category: nature
+subcategory: plant
+facets: [growth, root, stability, season]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [natural_symbolism, growth_metaphor, scene_function], coreMeanings: [growth, root, stability, season], safeTransform: ["growth that takes time and roots", "the self as something seasonal and living"], avoidClaims: ["family fortune will rise", "wealth will grow"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["나무는 뿌리와 성장, 집안 기반을 안전하게 전환", "운세보다 돌봄과 시간의 상징"], avoidClaims: ["재물이 자란다", "가문 운이 오른다"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["tree as growth, rootedness, life cycle, and stability", "a living structure of the self"], avoidClaims: ["family fortune will rise", "wealth will grow"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [growth, root, stability, season]
+tensionAxis: [growth, stagnation]
+relatedIds: [owned_land, flower, rain]
+sourceBasis: [natural symbolism, growth metaphor, scene function]
+locales:
+  ko:
+    label: "나무"
+    aliases: ["나무", "큰 나무", "나무가 자라는 꿈", "마른 나무", "숲"]
+    searchText: "나무, 큰 나무, 나무가 자라는 꿈, 마른 나무, 숲, 성장, 뿌리, 안정감, 시간, 계절"
+    coreMeanings: ["성장", "뿌리", "안정감", "시간"]
+    lightReadings: ["천천히 자라는 힘을 확인하는 장면", "기반을 더 깊게 내리려는 마음"]
+    shadowReadings: ["성장이 멈춘 듯한 답답함", "뿌리가 약하다고 느끼는 불안"]
+    sceneModifiers:
+      growing: { triggerTerms: ["자라", "새싹", "커"], reading: "시간이 걸리지만 자라고 있는 가능성", weight: 0.78 }
+      dryTree: { triggerTerms: ["마른", "죽은", "시든"], reading: "돌봄이나 생기가 부족하다고 느끼는 장면", weight: 0.84 }
+      bigTree: { triggerTerms: ["큰 나무", "거목", "오래된"], reading: "오래된 기반이나 큰 지지감이 드러난 장면", weight: 0.76 }
+    contextQuestions: ["나무는 싱싱했나요, 말라 있었나요?", "나무는 어디에 뿌리내리고 있었나요?"]
+    metaphorHooks: ["천천히 자라는 마음", "뿌리를 내리는 시간"]
+    cardTitleSeeds: ["나무의 밤", "마른 가지 아래"]
+    smallPrescriptions: ["빨리 결과를 내기보다 오래 돌볼 일 하나를 정해보세요."]
+    safeReading: "나무는 성장, 뿌리, 안정감, 시간이 필요한 변화를 보여주는 상징일 수 있어요."
+    avoidExpressions: ["재물이 자란다", "가문 운이 오른다"]
+  en:
+    label: Tree
+    aliases: [tree, big tree, growing tree, dry tree, forest]
+    searchText: "tree, big tree, growing tree, dry tree, forest, growth, roots, stability, season, time"
+    coreMeanings: [growth, roots, stability, time]
+    lightReadings: ["recognizing slow growth", "wanting deeper roots"]
+    shadowReadings: ["feeling growth has stalled", "anxiety that roots are weak"]
+    sceneModifiers:
+      growing: { triggerTerms: [growing, sprout, getting bigger], reading: "possibility growing over time", weight: 0.78 }
+      dryTree: { triggerTerms: [dry tree, dead tree, withered], reading: "life or care feeling insufficient", weight: 0.84 }
+      bigTree: { triggerTerms: [big tree, ancient tree, huge tree], reading: "old support or strong foundation appearing", weight: 0.76 }
+    contextQuestions: ["Was the tree alive or dry?", "Where was it rooted?"]
+    metaphorHooks: ["a mind growing slowly", "time taking root"]
+    cardTitleSeeds: ["Night of the Tree", "Under Dry Branches"]
+    smallPrescriptions: ["Choose one thing worth caring for slowly rather than rushing."]
+    safeReading: "A tree can symbolize growth, roots, stability, and changes that need time."
+    avoidExpressions: ["wealth will grow", "family fortune will rise"]

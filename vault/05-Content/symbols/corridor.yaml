@@ -1,8 +1,60 @@
 id: corridor
 status: active
+editorialStatus: approved
 category: place
+subcategory: liminal_place
+facets:
+  - transition
+  - in_between
+  - movement
+  - uncertainty
+symbolRole:
+  - primary_candidate
 safetyLevel: safe
 accessTier: free
+interpretationLenses:
+  universal:
+    sourceBasis:
+      - scene_function
+      - everyday_metaphor
+    coreMeanings:
+      - transition
+      - in-between state
+      - movement
+      - uncertainty
+    safeTransform:
+      - 결론보다 과정이 크게 느껴지는 길
+      - 아직 어느 방에도 들어가지 않은 마음
+    avoidClaims:
+      - 길을 잃었으니 실패한다
+      - 목적지가 없다는 뜻이다
+  east_asian:
+    sourceBasis:
+      - east_asian_symbolism
+      - product_editorial_rule
+    safeTransform:
+      - 길과 통로가 보여주는 이동 중인 상태
+      - 방향을 정하기 전 머무는 구간
+    avoidClaims:
+      - 길을 잃었으니 실패한다
+      - 목적지가 없다는 뜻이다
+  western:
+    sourceBasis:
+      - western_psychological
+      - mythic_association
+      - product_editorial_rule
+    safeTransform:
+      - liminal passage between states
+      - a threshold space before decision
+    avoidClaims:
+      - 길을 잃었으니 실패한다
+      - 목적지가 없다는 뜻이다
+embeddingProfile:
+  chunkTypes:
+    - searchText
+    - sceneModifier
+    - safeReading
+    - metaphorHook
 universalMeanings:
   - transition
   - in-between state

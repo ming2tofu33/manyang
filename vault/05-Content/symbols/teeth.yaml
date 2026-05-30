@@ -1,0 +1,54 @@
+id: teeth
+status: active
+editorialStatus: approved
+category: body
+subcategory: mouth
+facets: [appearance, speech, confidence, loss_anxiety]
+symbolRole: [primary_candidate]
+safetyLevel: sensitive
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [body_symbolism, speech_metaphor, product_safety_rule], coreMeanings: [appearance, speech, confidence, loss_anxiety], safeTransform: ["confidence and vulnerability appearing through the mouth", "fear of losing control over image or words"], avoidClaims: ["someone will die", "you will get sick"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["tooth loss omen traditions should be transformed into anxiety and vulnerability reading", "avoid death or family claims"], avoidClaims: ["someone will die", "you will get sick"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["teeth as confidence appearance speech aging or loss anxiety", "a classic image of fragility and exposure"], avoidClaims: ["someone will die", "you will get sick"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [appearance, speech, confidence, loss anxiety]
+tensionAxis: [confidence, fragility]
+relatedIds: [body, mirror, hospital]
+sourceBasis: [body symbolism, speech metaphor, product safety rule]
+locales:
+  ko:
+    label: "치아"
+    aliases: ["치아", "이빨", "이가 빠지는 꿈", "앞니", "어금니"]
+    searchText: "치아, 이빨, 이가 빠지는 꿈, 앞니, 어금니, 말, 자신감, 외모, 손실 불안, 취약함"
+    coreMeanings: ["자신감", "말", "외모", "손실 불안"]
+    lightReadings: ["말이나 표현을 더 조심스럽게 다루려는 마음", "겉으로 보이는 자신감을 점검하는 장면"]
+    shadowReadings: ["무언가 잃을까 봐 느끼는 강한 불안", "보이고 싶지 않은 취약함이 드러나는 느낌"]
+    sceneModifiers:
+      fallingOut: { triggerTerms: ["빠", "떨어", "우수수"], reading: "상실감이나 통제력 약화에 대한 불안이 강한 장면", weight: 0.9 }
+      broken: { triggerTerms: ["깨", "부러", "금"], reading: "자신감이나 표현력이 손상된 느낌이 드러난 장면", weight: 0.84 }
+      bleeding: { triggerTerms: ["피", "피가", "출혈"], reading: "말이나 이미지의 취약함이 더 생생하게 느껴지는 장면", weight: 0.88 }
+    contextQuestions: ["이가 빠질 때 아팠나요, 그냥 빠졌나요?", "요즘 말실수나 이미지에 대한 걱정이 있었나요?"]
+    metaphorHooks: ["입 안에서 흔들리는 자신감", "말하기 전 무너지는 단단함"]
+    cardTitleSeeds: ["흔들리는 치아", "입 안의 불안"]
+    smallPrescriptions: ["치아나 건강 걱정이 현실로 남는다면 실제 검진을 우선하고, 꿈은 상징으로만 보세요."]
+    safeReading: "치아 꿈은 사망이나 질병 예고가 아니라 자신감, 말, 외모, 손실 불안을 비추는 상징으로 다루는 것이 안전해요."
+    avoidExpressions: ["누가 죽는다", "가족에게 일이 생긴다", "병이 생긴다"]
+  en:
+    label: Teeth
+    aliases: [teeth, tooth, teeth falling out, broken tooth, front teeth]
+    searchText: "teeth, tooth, teeth falling out, broken tooth, mouth, speech, confidence, appearance, loss anxiety"
+    coreMeanings: [confidence, speech, appearance, loss anxiety]
+    lightReadings: ["becoming more careful with speech or expression", "checking visible confidence"]
+    shadowReadings: ["strong fear of losing something", "vulnerability becoming visible"]
+    sceneModifiers:
+      fallingOut: { triggerTerms: ["teeth falling out", "fell out", "loose teeth"], reading: "anxiety around loss or weakening control", weight: 0.9 }
+      broken: { triggerTerms: ["broken tooth", "cracked", "chipped"], reading: "confidence or expression feeling damaged", weight: 0.84 }
+      bleeding: { triggerTerms: ["blood", "bleeding", "bloody"], reading: "vulnerability around speech or image feeling vivid", weight: 0.88 }
+    contextQuestions: ["Did the tooth fall out painfully or simply loosen?", "Have you worried about words, image, or loss lately?"]
+    metaphorHooks: ["confidence loosening inside the mouth", "hardness breaking before speech"]
+    cardTitleSeeds: ["Loose Teeth", "Anxiety in the Mouth"]
+    smallPrescriptions: ["If dental or health worry remains after waking, prioritize a real check and keep interpretation symbolic."]
+    safeReading: "Teeth dreams should not be read as death or illness omens; they can symbolize confidence, speech, appearance, or loss anxiety."
+    avoidExpressions: ["someone will die", "your family is in danger", "you are sick"]

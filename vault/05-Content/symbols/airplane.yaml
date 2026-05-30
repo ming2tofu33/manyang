@@ -1,0 +1,54 @@
+id: airplane
+status: active
+editorialStatus: approved
+category: object
+subcategory: vehicle
+facets: [distance, ambition, departure, risk]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [vehicle_metaphor, height_symbolism, scene_function], coreMeanings: [distance, ambition, departure, risk], safeTransform: ["rising above ordinary ground into a larger move", "ambition and instability held together"], avoidClaims: ["a flight accident will happen", "you must leave"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["long-distance movement and departure can mark expansion", "risk should be kept symbolic not predictive"], avoidClaims: ["a flight accident will happen", "you must leave"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["airplane as ambition travel perspective and anxiety of takeoff", "leaving one ground for another"], avoidClaims: ["a flight accident will happen", "you must leave"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [distance, ambition, departure, risk]
+tensionAxis: [ascent, instability]
+relatedIds: [bird, train, window]
+sourceBasis: [vehicle metaphor, height symbolism, scene function]
+locales:
+  ko:
+    label: "비행기"
+    aliases: ["비행기", "항공기", "비행", "공항", "이륙"]
+    searchText: "비행기, 항공기, 비행, 공항, 이륙, 높은 목표, 멀리 이동, 출발, 불안정, 확장"
+    coreMeanings: ["먼 이동", "높은 목표", "출발", "불안정"]
+    lightReadings: ["더 넓은 시야나 큰 이동을 꿈꾸는 장면", "새로운 단계로 떠오르려는 마음"]
+    shadowReadings: ["높이 올라갈수록 커지는 불안", "출발 전 긴장과 통제 불가능감"]
+    sceneModifiers:
+      takeoff: { triggerTerms: ["이륙", "뜨", "출발"], reading: "새로운 단계가 시작되려는 긴장이 큰 장면", weight: 0.8 }
+      turbulence: { triggerTerms: ["흔들", "난기류", "추락할"], reading: "높은 목표와 불안정함이 함께 나타나는 장면", weight: 0.86 }
+      airport: { triggerTerms: ["공항", "탑승구", "수속"], reading: "떠나기 전 준비와 선택이 길어지는 장면", weight: 0.76 }
+    contextQuestions: ["비행기는 이륙 중이었나요, 흔들리고 있었나요?", "요즘 더 큰 단계로 넘어가고 싶은 일이 있나요?"]
+    metaphorHooks: ["땅을 떠나는 마음", "높이 올라갈수록 얇아지는 안정감"]
+    cardTitleSeeds: ["이륙 전 밤", "공항의 마음"]
+    smallPrescriptions: ["큰 목표를 오늘 할 수 있는 준비 한 가지로 낮춰 적어보세요."]
+    safeReading: "비행기는 실제 사고 예고가 아니라 먼 이동, 확장, 높은 목표, 출발의 긴장을 보여줄 수 있어요."
+    avoidExpressions: ["추락한다", "사고가 난다", "떠나야 한다"]
+  en:
+    label: Airplane
+    aliases: [airplane, plane, flight, airport, takeoff]
+    searchText: "airplane, plane, flight, airport, takeoff, distance, ambition, departure, instability, expansion"
+    coreMeanings: [distance, ambition, departure, instability]
+    lightReadings: ["wanting a wider view or larger move", "rising into a new stage"]
+    shadowReadings: ["anxiety increasing with height", "tension before departure and loss of control"]
+    sceneModifiers:
+      takeoff: { triggerTerms: ["takeoff", "taking off", "departing"], reading: "the tension of a new stage beginning", weight: 0.8 }
+      turbulence: { triggerTerms: ["turbulence", "shaking", "crashing"], reading: "ambition and instability appearing together", weight: 0.86 }
+      airport: { triggerTerms: ["airport", "gate", "boarding"], reading: "preparation and choice before departure", weight: 0.76 }
+    contextQuestions: ["Was the plane taking off or shaking?", "What bigger stage do you want to enter?"]
+    metaphorHooks: ["the mind leaving the ground", "stability thinning as altitude rises"]
+    cardTitleSeeds: ["Night Before Takeoff", "Mind at the Airport"]
+    smallPrescriptions: ["Turn one large ambition into one concrete preparation step today."]
+    safeReading: "An airplane can symbolize distance, ambition, departure, and the tension of rising into a larger move."
+    avoidExpressions: ["the plane will crash", "an accident will happen", "you must leave"]

@@ -1,0 +1,54 @@
+id: train
+status: active
+editorialStatus: approved
+category: object
+subcategory: vehicle
+facets: [fixed_path, momentum, schedule, transition]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [vehicle_metaphor, transition_symbolism, scene_function], coreMeanings: [fixed_path, momentum, schedule, transition], safeTransform: ["a strong track already carrying movement", "transition that follows rails and timing"], avoidClaims: ["your future is fixed", "you cannot change direction"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["life schedule and social route can appear through trains", "momentum should be framed as current flow not fate"], avoidClaims: ["your future is fixed", "you cannot change direction"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["train as momentum fixed track collective journey and transition", "being carried by a route"], avoidClaims: ["your future is fixed", "you cannot change direction"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [fixed path, momentum, schedule, transition]
+tensionAxis: [momentum, rigidity]
+relatedIds: [bus, airplane, door]
+sourceBasis: [vehicle metaphor, transition symbolism, scene function]
+locales:
+  ko:
+    label: "기차"
+    aliases: ["기차", "열차", "지하철", "기차역", "철도"]
+    searchText: "기차, 열차, 지하철, 기차역, 철도, 정해진 길, 추진력, 일정, 전환, 이동"
+    coreMeanings: ["정해진 길", "추진력", "일정", "전환"]
+    lightReadings: ["이미 움직이기 시작한 흐름을 타는 장면", "목적지를 향해 꾸준히 가는 마음"]
+    shadowReadings: ["방향을 바꾸기 어렵다는 답답함", "일정에 끌려가는 느낌"]
+    sceneModifiers:
+      missing: { triggerTerms: ["놓", "늦", "출발", "못 탔"], reading: "정해진 시점이나 흐름을 놓칠까 봐 불안한 장면", weight: 0.84 }
+      fast: { triggerTerms: ["빠르", "고속", "질주"], reading: "상황이 빠르게 진행되어 따라가기 벅찬 장면", weight: 0.8 }
+      station: { triggerTerms: ["역", "플랫폼", "승강장"], reading: "다음 단계로 넘어가기 전 대기와 선택의 장면", weight: 0.76 }
+    contextQuestions: ["기차를 타고 있었나요, 역에서 기다리고 있었나요?", "목적지는 분명했나요?"]
+    metaphorHooks: ["레일 위에 오른 흐름", "멈추기 어려운 추진력"]
+    cardTitleSeeds: ["기차역의 밤", "레일 위의 마음"]
+    smallPrescriptions: ["이미 출발한 일과 아직 조정할 수 있는 일을 나눠보세요."]
+    safeReading: "기차는 정해진 흐름, 추진력, 일정, 전환을 보여주는 상징일 수 있어요."
+    avoidExpressions: ["미래가 정해졌다", "방향을 바꿀 수 없다", "기회를 놓친다"]
+  en:
+    label: Train
+    aliases: [train, railway, subway, train station, platform]
+    searchText: "train, railway, subway, station, platform, fixed path, momentum, schedule, transition"
+    coreMeanings: [fixed path, momentum, schedule, transition]
+    lightReadings: ["riding a flow already in motion", "steady movement toward a destination"]
+    shadowReadings: ["feeling unable to change direction", "being pulled by timing or schedule"]
+    sceneModifiers:
+      missing: { triggerTerms: ["missed train", "late", "departed", "could not board"], reading: "anxiety about missing a timed flow", weight: 0.84 }
+      fast: { triggerTerms: ["fast train", "speeding", "high-speed"], reading: "a situation moving faster than you can process", weight: 0.8 }
+      station: { triggerTerms: ["station", "platform", "track"], reading: "waiting before the next transition", weight: 0.76 }
+    contextQuestions: ["Were you on the train or waiting at the station?", "Was the destination clear?"]
+    metaphorHooks: ["a flow already on rails", "momentum difficult to stop"]
+    cardTitleSeeds: ["Night at the Station", "Mind on the Rails"]
+    smallPrescriptions: ["Separate what has already started from what you can still adjust."]
+    safeReading: "A train can symbolize momentum, schedule, transition, and a route that feels already set."
+    avoidExpressions: ["your future is fixed", "you cannot change direction", "you missed your chance"]

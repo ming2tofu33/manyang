@@ -12,8 +12,7 @@ export type DreamEntryOption = {
     | "paw"
     | "potion"
     | "sparkles"
-    | "star"
-    | "wizardHat";
+    | "star";
 };
 
 export const dreamEntryMaxLength = 1000;
@@ -36,7 +35,7 @@ export const dreamSensationOptions: DreamEntryOption[] = [
   { id: "heavy", label: "무거움", icon: "key" },
   { id: "light", label: "가벼움", icon: "feather" },
   { id: "cold", label: "차가움", icon: "crystals" },
-  { id: "warm", label: "따뜻함", icon: "sparkles" },
+  { id: "warm", label: "온기", icon: "sparkles" },
   { id: "sound", label: "소리", icon: "potion" },
   { id: "movement", label: "움직임", icon: "paw" },
 ];

@@ -1,0 +1,54 @@
+id: ex_partner
+status: active
+editorialStatus: approved
+category: relationship
+subcategory: past_intimate
+facets: [unfinished_feeling, memory, comparison, closure]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [relationship_symbolism, memory_metaphor, scene_function], coreMeanings: [unfinished_feeling, memory, comparison, closure], safeTransform: ["a past bond returning as emotional material", "the mind revisiting what has not been fully placed"], avoidClaims: ["they will come back", "you must reconnect"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["past relationship and emotional duty can appear as a familiar figure", "old attachment becomes a review point"], avoidClaims: ["they will come back", "you must reconnect"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["ex partner as memory shadow comparison or unfinished attachment", "closure and longing held together"], avoidClaims: ["they will come back", "you must reconnect"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [unfinished feeling, memory, comparison, closure]
+tensionAxis: [longing, release]
+relatedIds: [partner, phone, door]
+sourceBasis: [relationship symbolism, memory metaphor, scene function]
+locales:
+  ko:
+    label: "전 연인"
+    aliases: ["전 연인", "전남친", "전여친", "옛 애인", "헤어진 사람"]
+    searchText: "전 연인, 전남친, 전여친, 옛 애인, 헤어진 사람, 미완의 감정, 기억, 비교, 정리, 과거 관계"
+    coreMeanings: ["미완의 감정", "기억", "비교", "정리"]
+    lightReadings: ["과거 감정을 지금의 언어로 다시 정리하려는 장면", "끝난 관계에서 배운 것을 확인하는 마음"]
+    shadowReadings: ["미련이나 반복되는 비교", "끝났지만 아직 마음에 남은 장면"]
+    sceneModifiers:
+      returning: { triggerTerms: ["돌아", "다시", "찾아", "연락"], reading: "과거의 감정이 다시 떠올라 확인을 요구하는 장면", weight: 0.82 }
+      ignoring: { triggerTerms: ["무시", "차갑", "답장", "외면"], reading: "말하지 못한 감정이나 거절감이 남은 장면", weight: 0.8 }
+      peaceful: { triggerTerms: ["평온", "웃", "괜찮", "편안"], reading: "관계를 현재의 기억으로 정리하려는 마음이 보이는 장면", weight: 0.74 }
+    contextQuestions: ["꿈에서 전 연인을 보고 마음이 편했나요, 흔들렸나요?", "그 관계가 지금의 선택에 어떤 비교 기준으로 남아 있나요?"]
+    metaphorHooks: ["닫았지만 다시 보게 되는 서랍", "과거가 현재에게 묻는 질문"]
+    cardTitleSeeds: ["전 연인의 서랍", "다시 열린 기억"]
+    smallPrescriptions: ["그 사람 자체보다 그 시절의 내가 무엇을 원했는지 적어보세요."]
+    safeReading: "전 연인은 재회 예고보다 과거 감정, 비교, 정리되지 않은 마음을 비추는 상징일 수 있어요."
+    avoidExpressions: ["재회한다", "상대가 아직 좋아한다", "다시 연락해야 한다"]
+  en:
+    label: Ex-Partner
+    aliases: [ex, ex partner, former lover, old boyfriend, old girlfriend]
+    searchText: "ex partner, former lover, old boyfriend, old girlfriend, unfinished feeling, memory, comparison, closure"
+    coreMeanings: [unfinished feeling, memory, comparison, closure]
+    lightReadings: ["reframing an old feeling in present language", "recognizing what a past bond taught you"]
+    shadowReadings: ["longing or repeated comparison", "something ended but not fully placed"]
+    sceneModifiers:
+      returning: { triggerTerms: ["came back", "returned", "called", "texted"], reading: "old emotion asking to be noticed again", weight: 0.82 }
+      ignoring: { triggerTerms: ["ignored", "cold", "no reply", "turned away"], reading: "rejection or unspoken feeling still carrying charge", weight: 0.8 }
+      peaceful: { triggerTerms: ["peaceful", "smiled", "okay", "calm"], reading: "the mind making peace with a memory", weight: 0.74 }
+    contextQuestions: ["Did seeing them feel peaceful or unsettling?", "What comparison from that relationship still appears now?"]
+    metaphorHooks: ["a drawer closed but looked into again", "the past asking a present question"]
+    cardTitleSeeds: ["Drawer of the Ex", "Memory Reopened"]
+    smallPrescriptions: ["Write what your past self wanted then, separate from what you want now."]
+    safeReading: "An ex-partner can point to memory, comparison, unfinished feeling, or a need for closure."
+    avoidExpressions: ["they will return", "they still love you", "you should contact them"]

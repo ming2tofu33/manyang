@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { FormEvent, useState, useSyncExternalStore } from "react";
 import {
   Cloud,
@@ -13,6 +12,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+import { AssetTextButton } from "@/components/asset-primitives";
 import {
   createDreamSeedRecord,
   getDreamSeedSnapshotFromBrowser,
@@ -144,7 +144,7 @@ export function DreamSeedForm() {
           <br />
           괜찮다냥.
           <span className="relative ml-1 inline-block h-4 w-4 translate-y-0.5">
-            <Image src={manyangAssets.icons.paw} alt="" fill sizes="16px" unoptimized className="object-contain opacity-80" />
+            <Image src={manyangAssets.semanticIcons.paw} alt="" fill sizes="16px" unoptimized className="object-contain opacity-80" />
           </span>
           <span className="absolute -bottom-2 left-5 h-4 w-4 rotate-45 border-b border-r border-[#8b563f]/70 bg-[rgba(7,6,17,0.72)]" />
         </div>
@@ -153,7 +153,7 @@ export function DreamSeedForm() {
       <section className="relative z-10 -mt-8 rounded-[1.05rem] border border-[#7c4a38]/72 bg-[rgba(5,4,12,0.78)] p-2 shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md">
         <div className="mb-2 flex items-center gap-2 text-[#ffd98a]">
           <span className="relative h-5 w-5">
-            <Image src={manyangAssets.icons.paw} alt="" fill sizes="20px" unoptimized className="object-contain opacity-90" />
+            <Image src={manyangAssets.semanticIcons.paw} alt="" fill sizes="20px" unoptimized className="object-contain opacity-90" />
           </span>
           <h2 className={cn("text-[0.96rem] font-semibold", ui.textGlow)}>{dreamSeedCopy.questionTitle}</h2>
         </div>
@@ -176,7 +176,7 @@ export function DreamSeedForm() {
       <section className="rounded-[1.05rem] border border-[#7c4a38]/72 bg-[rgba(5,4,12,0.74)] p-2 shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md">
         <label htmlFor="dream-seed-note" className="mb-1.5 flex items-center gap-2 text-[0.96rem] font-semibold text-[#ffd98a]">
           <span className="relative h-5 w-5">
-            <Image src={manyangAssets.icons.paw} alt="" fill sizes="28px" unoptimized className="object-contain" />
+            <Image src={manyangAssets.semanticIcons.paw} alt="" fill sizes="28px" unoptimized className="object-contain" />
           </span>
           {dreamSeedCopy.noteLabel} <span className="text-sm font-normal text-[#fff3d7]/58">{dreamSeedCopy.optionalLabel}</span>
         </label>
@@ -191,7 +191,7 @@ export function DreamSeedForm() {
             className={cn(ui.field, "min-h-[3.85rem] resize-none rounded-[0.85rem] p-2.5 pr-10 text-[13px] leading-5")}
           />
           <span className="pointer-events-none absolute right-3 top-3 h-6 w-6">
-            <Image src={manyangAssets.icons.feather} alt="" fill sizes="28px" unoptimized className="object-contain opacity-50" />
+            <Image src={manyangAssets.semanticIcons.feather} alt="" fill sizes="28px" unoptimized className="object-contain opacity-50" />
           </span>
           <span className="absolute bottom-2.5 right-3 text-[12px] text-[#fff3d7]/62">
             {displayedNote.length}/{dreamSeedNoteMaxLength}
@@ -202,7 +202,7 @@ export function DreamSeedForm() {
         <div className="mt-2">
           <p className="mb-1.5 flex items-center gap-2 text-[0.92rem] font-semibold text-[#ffd98a]">
             <span className="relative h-[18px] w-[18px]">
-              <Image src={manyangAssets.icons.star} alt="" fill sizes="18px" unoptimized className="object-contain opacity-90" />
+              <Image src={manyangAssets.semanticIcons.star} alt="" fill sizes="18px" unoptimized className="object-contain opacity-90" />
             </span>
             {dreamSeedCopy.atmosphereTitle}
           </p>
@@ -223,7 +223,7 @@ export function DreamSeedForm() {
         <section className="rounded-[1.25rem] border border-[#d799ff]/35 bg-[rgba(25,11,39,0.78)] px-4 py-3 text-sm leading-6 text-[#fff3d7] shadow-[0_0_24px_rgba(164,82,255,0.24)]">
           <p className="flex items-center gap-2 font-semibold text-[#ffd98a]">
             <span className="relative h-6 w-6">
-              <Image src={manyangAssets.icons.star} alt="" fill sizes="24px" unoptimized className="object-contain" />
+              <Image src={manyangAssets.semanticIcons.star} alt="" fill sizes="24px" unoptimized className="object-contain" />
             </span>
             {dreamSeedCopy.savedTitle}
           </p>
@@ -253,12 +253,16 @@ export function DreamSeedForm() {
       </button>
 
       {hasSavedSeedToday ? (
-        <Link
+        <AssetTextButton
           href="/"
-          className="block text-center text-sm font-semibold text-[#f0bc7d] transition hover:text-[#ffd98a] focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
+          frame={manyangAssets.buttons.mediumSecondary}
+          iconSrc={manyangAssets.actionIcons.arrowLeft}
+          className="mx-auto max-w-[15rem]"
+          contentClassName="min-h-[3.05rem] px-4 text-sm"
+          iconClassName="h-6 w-6"
         >
           오늘 화면으로 돌아가기
-        </Link>
+        </AssetTextButton>
       ) : null}
 
       <p className="text-center text-[11.5px] text-[#fff3d7]/70">{dreamSeedCopy.footer}</p>

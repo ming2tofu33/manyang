@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useSyncExternalStore } from "react";
 
+import { AssetTextButton } from "@/components/asset-primitives";
 import {
   getCatReaderById,
   getDefaultCatReaderSnapshot,
@@ -11,6 +12,30 @@ import {
 } from "@/lib/cat-readers";
 import { manyangAssets } from "@/lib/manyang-assets";
 import { cn, ui } from "@/lib/styles";
+
+function subscribeToLocationChange(onStoreChange: () => void): () => void {
+  window.addEventListener("popstate", onStoreChange);
+
+  return () => window.removeEventListener("popstate", onStoreChange);
+}
+
+function getResultSourceSnapshotFromBrowser() {
+  return new URLSearchParams(window.location.search).get("from") === "result";
+}
+
+function getResultSourceSnapshotFromServer() {
+  return false;
+}
+
+function useIsResultSource(source: "default" | "result" = "default") {
+  const isResultSourceFromQuery = useSyncExternalStore(
+    subscribeToLocationChange,
+    getResultSourceSnapshotFromBrowser,
+    getResultSourceSnapshotFromServer,
+  );
+
+  return source === "result" || isResultSourceFromQuery;
+}
 
 function useSelectedCatReader() {
   const selectedCatReaderId = useSyncExternalStore(
@@ -95,4 +120,96 @@ export function EncyclopediaReaderSymbolHint({ hint }: { hint: string }) {
       </div>
     </section>
   );
+}
+
+export function EncyclopediaResultContextClient({ source = "default" }: { source?: "default" | "result" }) {
+  const isResultSource = useIsResultSource(source);
+
+  if (!isResultSource) {
+    return null;
+  }
+
+  return <ResultContextPanel />;
+}
+
+export function ResultContextPanel() {
+  return (
+    <section
+      className="rounded-[1.15rem] border border-[#b98255]/52 bg-[rgba(7,6,18,0.78)] p-4 shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md"
+      data-result-encyclopedia-context="true"
+    >
+      <p className="text-sm font-semibold text-[#ffd98a]">영수증에 담긴 상징 메모</p>
+      <p className="mt-2 text-[15px] leading-6 text-[#fff3d7]/84">
+        방금 받은 꿈 영수증에서 이어서 살펴보는 상징이에요.
+      </p>
+    </section>
+  );
+}
+
+export function EncyclopediaDetailActionClient({
+  symbol,
+  slug,
+  source = "default",
+}: {
+  symbol: string;
+  slug: string;
+  source?: "default" | "result";
+}) {
+  const isResultSource = useIsResultSource(source);
+
+  return (
+    <section className={cn(ui.panel, "p-5")}>
+      <p className="text-lg font-semibold leading-7 text-[#ffd98a]">
+        {isResultSource ? `${symbol} 상징을 더 살펴봤어요` : `내 꿈에도 ${symbol}${getSubjectParticle(symbol)} 나왔나요?`}
+      </p>
+      <p className="mt-2 text-[15px] leading-6 text-[#fff3d7]/82">
+        {isResultSource
+          ? "영수증으로 돌아가 다른 상징과 함께 보면 꿈의 흐름이 더 선명해져요."
+          : "상징만으로 단정하기보다 꿈의 장면과 기분을 함께 넣으면 더 자연스럽게 읽을 수 있어요."}
+      </p>
+      <AssetTextButton
+        href={isResultSource ? "/result" : `/write?symbol=${slug}`}
+        frame={isResultSource ? manyangAssets.buttons.mediumPrimary : manyangAssets.buttons.dreammemorySubmit}
+        iconSrc={isResultSource ? manyangAssets.actionIcons.arrowLeft : manyangAssets.actionIcons.pencil}
+        className="mt-4"
+        contentClassName="min-h-[3.35rem] text-base"
+        iconClassName="h-7 w-7"
+      >
+        {isResultSource ? "영수증으로 돌아가기" : "오늘의 꿈 영수증 받기"}
+      </AssetTextButton>
+      {isResultSource ? (
+        <AssetTextButton
+          href="/encyclopedia"
+          frame={manyangAssets.buttons.mediumSecondary}
+          iconSrc={manyangAssets.actionIcons.book}
+          className="mt-3"
+          contentClassName="min-h-[3.25rem] text-base"
+          iconClassName="h-7 w-7"
+        >
+          다른 상징도 보기
+        </AssetTextButton>
+      ) : null}
+      <p className="mt-3 text-xs leading-5 text-[#caa37b]">
+        마냥 꿈해몽은 오락과 자기 성찰을 위한 해석을 제공하며, 의학적·법적·심리 진단을 대신하지 않아요.
+      </p>
+    </section>
+  );
+}
+
+function getSubjectParticle(value: string): "이" | "가" {
+  const lastChar = value.at(-1);
+
+  if (!lastChar) {
+    return "이";
+  }
+
+  const code = lastChar.charCodeAt(0);
+  const hangulStart = 0xac00;
+  const hangulEnd = 0xd7a3;
+
+  if (code < hangulStart || code > hangulEnd) {
+    return "이";
+  }
+
+  return (code - hangulStart) % 28 === 0 ? "가" : "이";
 }

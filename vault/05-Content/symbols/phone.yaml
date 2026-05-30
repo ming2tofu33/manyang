@@ -1,0 +1,54 @@
+id: phone
+status: active
+editorialStatus: approved
+category: object
+subcategory: communication_device
+facets: [communication, connection, notification, distance]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [modern_object_symbolism, communication_metaphor, scene_function], coreMeanings: [communication, connection, notification, distance], safeTransform: ["a wish for contact or a signal", "connection and silence made visible through a device"], avoidClaims: ["someone will contact you", "a message is guaranteed"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["social ties and delayed response can appear through phone scenes", "communication anxiety should be kept non predictive"], avoidClaims: ["someone will contact you", "a message is guaranteed"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["phone as communication access interruption and distance", "the device that carries wanted or feared messages"], avoidClaims: ["someone will contact you", "a message is guaranteed"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [communication, connection, notification, distance]
+tensionAxis: [contact, silence]
+relatedIds: [friend, partner, ex_partner]
+sourceBasis: [modern object symbolism, communication metaphor, scene function]
+locales:
+  ko:
+    label: "휴대폰"
+    aliases: ["휴대폰", "핸드폰", "전화", "문자", "카톡"]
+    searchText: "휴대폰, 핸드폰, 전화, 문자, 카톡, 연락, 연결, 알림, 답장, 거리감, 소통 불안"
+    coreMeanings: ["소통", "연결", "알림", "거리감"]
+    lightReadings: ["누군가와 연결되고 싶은 마음", "말로 확인하고 싶은 감정이 떠오른 장면"]
+    shadowReadings: ["답이 오지 않을까 봐 느끼는 불안", "계속 울리는 알림에 지친 마음"]
+    sceneModifiers:
+      missedCall: { triggerTerms: ["부재중", "못 받", "놓친 전화"], reading: "확인받고 싶은 연락이나 기회를 놓친 느낌", weight: 0.8 }
+      brokenPhone: { triggerTerms: ["고장", "깨", "안 켜", "먹통"], reading: "말하고 싶지만 전달되지 않는 답답함", weight: 0.84 }
+      noReply: { triggerTerms: ["답장", "읽씹", "연락 안", "기다"], reading: "기다림과 침묵 사이의 긴장이 드러난 장면", weight: 0.86 }
+    contextQuestions: ["휴대폰으로 연락을 받았나요, 기다렸나요?", "말하고 싶은데 아직 못 한 말이 있나요?"]
+    metaphorHooks: ["손 안의 거리감", "울리지 않는 알림의 밤"]
+    cardTitleSeeds: ["부재중 전화", "깨진 휴대폰"]
+    smallPrescriptions: ["연락 운을 점치기보다, 내가 할 수 있는 분명한 말 하나를 정리해보세요."]
+    safeReading: "휴대폰은 실제 연락 예고보다 소통 욕구, 연결감, 기다림, 거리감을 보여주는 상징일 수 있어요."
+    avoidExpressions: ["연락이 온다", "상대가 답장한다", "좋은 소식이 온다"]
+  en:
+    label: Phone
+    aliases: [phone, cell phone, mobile phone, text message, call]
+    searchText: "phone, mobile phone, text, call, missed call, notification, communication, connection, waiting for reply"
+    coreMeanings: [communication, connection, notification, distance]
+    lightReadings: ["wanting connection or confirmation", "a feeling that wants words"]
+    shadowReadings: ["anxiety around silence or no reply", "fatigue from constant notifications"]
+    sceneModifiers:
+      missedCall: { triggerTerms: ["missed call", "did not answer", "missed the call"], reading: "feeling you missed contact or confirmation", weight: 0.8 }
+      brokenPhone: { triggerTerms: ["broken phone", "cracked", "would not turn on"], reading: "wanting to communicate but feeling unable to get through", weight: 0.84 }
+      noReply: { triggerTerms: ["no reply", "left on read", "waiting for text"], reading: "tension between waiting and silence", weight: 0.86 }
+    contextQuestions: ["Were you receiving contact or waiting for it?", "What message do you want to say clearly?"]
+    metaphorHooks: ["distance held in the hand", "a night of silent notifications"]
+    cardTitleSeeds: ["Missed Call", "Broken Phone"]
+    smallPrescriptions: ["Do not treat it as contact fortune; clarify one sentence you can actually say."]
+    safeReading: "A phone can symbolize communication, connection, waiting, and distance, not a guaranteed message."
+    avoidExpressions: ["they will contact you", "a message is coming", "good news is guaranteed"]

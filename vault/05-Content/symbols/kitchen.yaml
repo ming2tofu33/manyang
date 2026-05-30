@@ -1,0 +1,54 @@
+id: kitchen
+status: active
+editorialStatus: approved
+category: place
+subcategory: home_function
+facets: [nourishment, preparation, care_work, domestic_rhythm]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [place_symbolism, care_metaphor, scene_function], coreMeanings: [nourishment, preparation, care_work, domestic_rhythm], safeTransform: ["the place where care becomes practical", "preparing what will sustain the self"], avoidClaims: ["family fortune will change", "food luck is guaranteed"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["집안의 돌봄과 생활 리듬이 모이는 공간", "먹이고 준비하는 일의 상징"], avoidClaims: ["가족 운이 바뀐다", "먹을 복이 들어온다"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["kitchen as nourishment, domestic labor, and preparation", "where raw material becomes usable"], avoidClaims: ["family fortune will change", "food luck is guaranteed"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [nourishment, preparation, care work, domestic rhythm]
+tensionAxis: [nourishment, labor]
+relatedIds: [home, food, mother]
+sourceBasis: [place symbolism, care metaphor, scene function]
+locales:
+  ko:
+    label: "부엌"
+    aliases: ["부엌", "주방", "싱크대", "요리하는 꿈", "음식을 만드는 꿈"]
+    searchText: "부엌, 주방, 싱크대, 요리하는 꿈, 음식 준비, 돌봄, 생활 리듬, 먹이고 준비하는 마음"
+    coreMeanings: ["돌봄", "준비", "생활 리듬", "실질적 보살핌"]
+    lightReadings: ["나를 먹이고 유지하는 방식을 정리하는 장면", "필요한 것을 준비하려는 마음"]
+    shadowReadings: ["돌봄이 노동처럼 느껴지는 부담", "집안일이나 책임이 쌓인 느낌"]
+    sceneModifiers:
+      cooking: { triggerTerms: ["요리", "만들", "끓"], reading: "무언가를 준비하고 익혀가는 과정이 드러난 장면", weight: 0.78 }
+      dirtySink: { triggerTerms: ["설거지", "더럽", "싱크대"], reading: "생활의 잔여물이나 밀린 책임이 보이는 장면", weight: 0.82 }
+      emptyKitchen: { triggerTerms: ["비어", "없", "텅"], reading: "필요한 돌봄이나 자원이 비어 있다고 느끼는 장면", weight: 0.76 }
+    contextQuestions: ["부엌에서 요리하고 있었나요, 치우고 있었나요?", "그 공간은 따뜻했나요, 부담스러웠나요?"]
+    metaphorHooks: ["마음을 먹이는 부엌", "익어가는 준비의 냄새"]
+    cardTitleSeeds: ["부엌의 밤", "비어 있는 싱크대"]
+    smallPrescriptions: ["오늘 나를 실제로 먹이고 돌보는 일을 하나 챙겨보세요."]
+    safeReading: "부엌은 돌봄, 준비, 생활 리듬, 실질적인 보살핌을 비추는 공간일 수 있어요."
+    avoidExpressions: ["가족 운이 바뀐다", "먹을 복이 들어온다"]
+  en:
+    label: Kitchen
+    aliases: [kitchen, cooking, sink, making food, stove]
+    searchText: "kitchen, cooking, sink, making food, nourishment, preparation, care work, domestic rhythm"
+    coreMeanings: [care, preparation, domestic rhythm, practical nourishment]
+    lightReadings: ["organizing what sustains you", "preparing something that will be useful"]
+    shadowReadings: ["care feeling like labor", "responsibilities piling up at home"]
+    sceneModifiers:
+      cooking: { triggerTerms: [cooking, making food, boiling], reading: "something being prepared and transformed", weight: 0.78 }
+      dirtySink: { triggerTerms: [dirty sink, dishes, messy sink], reading: "leftover responsibility or domestic residue", weight: 0.82 }
+      emptyKitchen: { triggerTerms: [empty kitchen, nothing there, no food], reading: "care or resources feeling absent", weight: 0.76 }
+    contextQuestions: ["Were you cooking or cleaning?", "Did the kitchen feel warm or burdensome?"]
+    metaphorHooks: ["the kitchen that feeds the mind", "the smell of preparation becoming ready"]
+    cardTitleSeeds: ["Kitchen at Night", "Empty Sink"]
+    smallPrescriptions: ["Do one practical thing today that feeds or sustains you."]
+    safeReading: "A kitchen can symbolize care, preparation, domestic rhythm, and practical nourishment."
+    avoidExpressions: ["family fortune will change", "food luck is coming"]

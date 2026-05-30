@@ -1,8 +1,61 @@
 id: dawn
 status: active
+editorialStatus: approved
 category: time
+subcategory: day_phase
+facets:
+  - transition
+  - early_awareness
+  - quiet_threshold
+  - sensitivity
+symbolRole:
+  - modifier
+  - context_signal
 safetyLevel: safe
 accessTier: free
+interpretationLenses:
+  universal:
+    sourceBasis:
+      - scene_function
+      - everyday_metaphor
+    coreMeanings:
+      - transition
+      - early awareness
+      - quiet threshold
+      - sensitivity
+    safeTransform:
+      - 아직 완전히 밝아지기 전의 신호
+      - 잠과 하루 사이의 얇은 문턱
+    avoidClaims:
+      - 새벽꿈은 반드시 맞는다
+      - 예지몽이다
+  east_asian:
+    sourceBasis:
+      - east_asian_symbolism
+      - product_editorial_rule
+    safeTransform:
+      - 이른 시간의 선명한 잔상
+      - 하루가 시작되기 전 올라온 감각
+    avoidClaims:
+      - 새벽꿈은 반드시 맞는다
+      - 예지몽이다
+  western:
+    sourceBasis:
+      - western_psychological
+      - mythic_association
+      - product_editorial_rule
+    safeTransform:
+      - threshold between sleep and waking
+      - early awareness before clarity
+    avoidClaims:
+      - 새벽꿈은 반드시 맞는다
+      - 예지몽이다
+embeddingProfile:
+  chunkTypes:
+    - searchText
+    - sceneModifier
+    - safeReading
+    - metaphorHook
 universalMeanings:
   - transition
   - early awareness

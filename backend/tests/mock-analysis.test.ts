@@ -48,4 +48,91 @@ describe("analyzeDream", () => {
   test("rejects empty dream text", () => {
     expect(() => analyzeDream({ dreamText: "   " })).toThrow("dreamText is required");
   });
+
+  test("adds a safety notice for medical prediction requests", () => {
+    const result = analyzeDream({
+      dreamText: "꿈에서 병원에 있었고 피가 났어. 혹시 큰 병이나 암을 예지하는 꿈일까?",
+      locale: "ko",
+      wakeMood: "anxious",
+    });
+
+    expect(result.safetyNotice).toContain("의학적 진단");
+  });
+
+  test("uses a production-ready gray cat reader note", () => {
+    const result = analyzeDream({
+      dreamText: "꿈에서 학교 복도에 있었고 문이 계속 바뀌었어.",
+      locale: "ko",
+      catReaderType: "gray_cat",
+      wakeMood: "anxious",
+    });
+
+    expect(result.readerNote).toContain("회색냥");
+    expect(result.readerNote).toContain("가능성");
+    expect(result.readerNote).not.toContain("준비 중");
+    expect(result.readerNote).not.toContain("꿈+타로");
+  });
+
+  test("localizes deterministic fallback interpretation for English dreams", () => {
+    const result = analyzeDream({
+      dreamText: "I dreamed an elevator stopped, then I missed a train and saw the sea.",
+      locale: "en",
+      wakeMood: "anxious",
+    });
+    const generatedText = [
+      result.summary,
+      result.interpretation,
+      result.smallPrescription,
+      result.card.message,
+      ...result.symbolReadings.map((reading) => reading.reading),
+    ].join(" ");
+
+    expect(result.symbols).toEqual(expect.arrayContaining(["Elevator", "Train", "Sea"]));
+    expect(generatedText).not.toMatch(/[가-힣]/);
+    expect(result.interpretation).toContain("It is hard to be certain");
+    expect(result.smallPrescription).toContain("one scene");
+  });
+
+  test("uses natural Korean particles in deterministic fallback readings", () => {
+    const result = analyzeDream({
+      dreamText: "엘리베이터에 갇혔고 바다를 봤어.",
+      locale: "ko",
+    });
+    const generatedText = [
+      result.summary,
+      result.interpretation,
+      ...result.symbolReadings.map((reading) => reading.reading),
+    ].join(" ");
+
+    expect(result.symbolReadings.some((reading) => reading.reading.includes("엘리베이터는"))).toBe(true);
+    expect(result.symbolReadings.some((reading) => reading.reading.includes("바다는"))).toBe(true);
+    expect(generatedText).not.toContain("엘리베이터은");
+    expect(generatedText).not.toContain("바다은");
+  });
+
+  test("analyzes real UTF-8 Korean snake and owned-land dream text", () => {
+    const result = analyzeDream({
+      dreamText: "내 땅에 큰 구렁이와 뱀이 수십 마리 나왔어.",
+      locale: "ko",
+      wakeMood: "surprised",
+    });
+
+    expect(result.symbols).toEqual(expect.arrayContaining(["뱀", "우리 땅", "많은 수"]));
+    expect(result.readingBasis.usedSymbols).toEqual(expect.arrayContaining(["뱀", "우리 땅"]));
+    expect(result.readingBasis.confidence).toBeGreaterThanOrEqual(0.8);
+  });
+
+  test("analyzes real UTF-8 Korean object and nature dream text without falling back", () => {
+    const result = analyzeDream({
+      dreamText: "엘리베이터에 갇혔고 바다를 봤어.",
+      locale: "ko",
+      wakeMood: "anxious",
+    });
+
+    expect(result.symbols).toEqual(expect.arrayContaining(["엘리베이터", "바다"]));
+    expect(result.readingBasis.usedSymbols).toEqual(expect.arrayContaining(["엘리베이터", "바다"]));
+    expect(result.readingBasis.confidence).toBeGreaterThanOrEqual(0.8);
+    expect(result.symbolReadings.some((reading) => reading.symbol === "엘리베이터")).toBe(true);
+    expect(result.symbolReadings.some((reading) => reading.symbol === "바다")).toBe(true);
+  });
 });

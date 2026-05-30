@@ -1,0 +1,54 @@
+id: father
+status: active
+editorialStatus: approved
+category: relationship
+subcategory: family
+facets: [authority, support, standard, distance]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [relationship_symbolism, family_role_metaphor, scene_function], coreMeanings: [authority, support, standard, distance], safeTransform: ["a figure of standard, protection, or judgment", "the mind checking rules and approval"], avoidClaims: ["your father will judge you", "something will happen to your father"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["family responsibility and authority can gather around the father image", "duty and recognition made personal"], avoidClaims: ["your father will judge you", "something will happen to your father"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["paternal figure as structure, authority, or distance", "inner standard appearing through a familiar person"], avoidClaims: ["your father will judge you", "something will happen to your father"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [authority, support, standard, distance]
+tensionAxis: [guidance, judgment]
+relatedIds: [home, workplace, child]
+sourceBasis: [relationship symbolism, family role metaphor, scene function]
+locales:
+  ko:
+    label: "아버지"
+    aliases: ["아버지", "아빠", "부친", "아빠가 나오는 꿈"]
+    searchText: "아버지, 아빠, 부친, 권위, 기준, 인정, 책임, 보호, 거리감, 가족의 규칙"
+    coreMeanings: ["권위", "기준", "책임감", "인정 욕구"]
+    lightReadings: ["기준을 세우고 중심을 잡으려는 마음", "보호받거나 인정받고 싶은 마음"]
+    shadowReadings: ["평가받는 느낌", "거리감이나 말하지 못한 부담"]
+    sceneModifiers:
+      silent: { triggerTerms: ["말이 없", "침묵", "무표정"], reading: "인정받고 싶은데 확인받지 못한 마음이 남은 장면", weight: 0.76 }
+      helping: { triggerTerms: ["도와", "태워", "잡아", "지켜"], reading: "버팀목이나 실질적 지원을 찾는 마음이 드러난 장면", weight: 0.78 }
+      arguing: { triggerTerms: ["싸", "말다툼", "화", "반대"], reading: "기준과 자율성 사이의 충돌이 드러난 장면", weight: 0.82 }
+    contextQuestions: ["꿈속 아버지는 도움을 주었나요, 평가하는 느낌이었나요?", "요즘 인정받고 싶은 일이 있었나요?"]
+    metaphorHooks: ["마음속 기준을 세우는 사람", "인정과 거리감 사이의 문턱"]
+    cardTitleSeeds: ["아버지의 기준", "침묵 속의 인정"]
+    smallPrescriptions: ["오늘 내 기준인지 타인의 기준인지 헷갈리는 일을 하나만 구분해보세요."]
+    safeReading: "아버지는 권위, 기준, 책임, 인정 욕구를 비추는 상징으로 읽을 수 있어요."
+    avoidExpressions: ["아버지에게 일이 생긴다", "아버지가 곧 판단한다"]
+  en:
+    label: Father
+    aliases: [father, dad, paternal figure, my father, daddy]
+    searchText: "father, dad, paternal figure, authority, standards, recognition, responsibility, support, distance"
+    coreMeanings: [authority, standard, responsibility, need for recognition]
+    lightReadings: ["setting a firmer inner standard", "wanting support or recognition"]
+    shadowReadings: ["feeling judged", "distance or pressure left unspoken"]
+    sceneModifiers:
+      silent: { triggerTerms: ["silent", "quiet", "blank face"], reading: "wanting recognition without getting clear confirmation", weight: 0.76 }
+      helping: { triggerTerms: ["helped", "drove me", "held", "protected"], reading: "looking for support or a steadier base", weight: 0.78 }
+      arguing: { triggerTerms: ["argued", "fought", "angry", "disapproved"], reading: "conflict between personal freedom and a standard", weight: 0.82 }
+    contextQuestions: ["Did he feel supportive or judging?", "Where do you want recognition right now?"]
+    metaphorHooks: ["the person who carries the standard", "a threshold between approval and distance"]
+    cardTitleSeeds: ["Standard of the Father", "Recognition in Silence"]
+    smallPrescriptions: ["Separate one inherited standard from one standard you choose today."]
+    safeReading: "A father figure can point to authority, standards, responsibility, support, or the wish for recognition."
+    avoidExpressions: ["something will happen to your father", "your father is judging you"]

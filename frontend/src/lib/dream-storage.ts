@@ -131,6 +131,26 @@ export function saveDreamRecord(storage: StorageLike, record: DreamRecord): void
   storage.setItem(dreamRecordsKey, JSON.stringify([record, ...records]));
 }
 
+export function restoreDreamRecordAsLatestAnalysis(storage: StorageLike, recordId: string): LatestAnalysisPayload | null {
+  const record = getDreamRecords(storage).find((storedRecord) => storedRecord.id === recordId);
+
+  if (!record) {
+    return null;
+  }
+
+  const payload: LatestAnalysisPayload = {
+    dreamText: record.dreamText,
+    dreamDate: record.dreamDate,
+    analysis: record.analysis,
+    ...(record.catReaderType !== undefined ? { catReaderType: record.catReaderType } : {}),
+    ...(record.wakeMood !== undefined ? { wakeMood: record.wakeMood } : {}),
+  };
+
+  saveLatestAnalysis(storage, payload);
+
+  return payload;
+}
+
 export function deleteDreamRecord(storage: StorageLike, recordId: string): void {
   const records = getDreamRecords(storage).filter((storedRecord) => storedRecord.id !== recordId);
 
@@ -190,6 +210,22 @@ export function saveDreamRecordToBrowser(record: DreamRecord): void {
     saveDreamRecord(storage, record);
     notifyDreamStorageChanged();
   }
+}
+
+export function restoreDreamRecordAsLatestAnalysisToBrowser(recordId: string): boolean {
+  const storage = getBrowserStorage();
+
+  if (!storage) {
+    return false;
+  }
+
+  const restoredPayload = restoreDreamRecordAsLatestAnalysis(storage, recordId);
+
+  if (restoredPayload) {
+    notifyDreamStorageChanged();
+  }
+
+  return restoredPayload !== null;
 }
 
 export function deleteDreamRecordToBrowser(recordId: string): void {

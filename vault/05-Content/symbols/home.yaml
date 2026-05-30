@@ -1,0 +1,64 @@
+id: home
+status: active
+editorialStatus: approved
+category: place
+subcategory: home_space
+facets: [private_space, stability, self, belonging]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal:
+    sourceBasis: [scene_function, everyday_metaphor]
+    coreMeanings: [self, safety, private space, belonging]
+    safeTransform: [내가 돌아가 쉬는 내면의 자리, 생활의 기준과 안정감을 확인하는 장면]
+    avoidClaims: [집을 사게 된다, 가족에게 반드시 일이 생긴다]
+  east_asian:
+    sourceBasis: [east_asian_symbolism, product_editorial_rule]
+    safeTransform: [가족과 생활권이 겹친 사적 기반, 내 울타리 안의 질서를 살피는 흐름]
+    avoidClaims: [집을 사게 된다, 가족에게 반드시 일이 생긴다]
+  western:
+    sourceBasis: [western_psychological, mythic_association, product_editorial_rule]
+    safeTransform: [inner home and private self, a container for memory and identity]
+    avoidClaims: [집을 사게 된다, 가족에게 반드시 일이 생긴다]
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [self, safety, private space, belonging]
+tensionAxis: [comfort, confinement]
+relatedIds: [room, door, owned_land]
+sourceBasis: [everyday metaphor, spatial symbolism, scene function]
+locales:
+  ko:
+    label: 집
+    aliases: [집, 우리집, 낯선 집, 방, 집안]
+    searchText: 집, 우리집, 낯선 집, 집안, 가족 공간, 사적 영역, 안정감, 내면의 기반
+    coreMeanings: [자기 영역, 안정감, 사적 공간, 내면의 기반]
+    lightReadings: [쉴 수 있는 기준을 다시 찾는 흐름, 내 생활의 중심을 정리하는 장면]
+    shadowReadings: [익숙한 곳에서도 편하지 않은 감각, 울타리 안의 부담]
+    sceneModifiers:
+      unfamiliar: { triggerTerms: [낯선 집, 모르는 집, 처음 보는 집], reading: 익숙해야 할 곳이 낯설게 느껴지는 장면, weight: 0.8 }
+      messy: { triggerTerms: [어질러진, 지저분한, 정리가 안 된], reading: 생활의 기준이 잠시 흐트러진 장면, weight: 0.72 }
+      empty: { triggerTerms: [비어, 아무도, 텅 빈], reading: 혼자 남은 느낌이나 여백이 커진 장면, weight: 0.7 }
+    contextQuestions: [그 집은 실제 집이었나요, 낯선 집이었나요?, 집 안에서 편했나요, 불편했나요?]
+    metaphorHooks: [마음이 돌아가는 방, 내 울타리 안의 기척]
+    cardTitleSeeds: [집 안에 남은 달, 돌아온 마음의 방]
+    smallPrescriptions: [오늘 내 공간에서 하나만 정리해보세요.]
+    safeReading: 집은 내면의 기반이나 생활의 안정감을 비추는 장소로 읽을 수 있어요.
+    avoidExpressions: [집을 사게 된다, 가족에게 반드시 일이 생긴다]
+  en:
+    label: Home
+    aliases: [home, house, my house, inside the house, family home]
+    searchText: home, house, family home, private space, safety, belonging, inner foundation
+    coreMeanings: [self, safety, private space, belonging]
+    lightReadings: [returning to a place that steadies you, reorganizing your inner base]
+    shadowReadings: [not feeling at ease even in a familiar place, pressure inside your own space]
+    sceneModifiers:
+      unfamiliar: { triggerTerms: [unfamiliar home, strange house, unknown house], reading: a familiar base feeling strange, weight: 0.8 }
+      messy: { triggerTerms: [messy, cluttered, untidy], reading: a private standard feeling unsettled, weight: 0.72 }
+      empty: { triggerTerms: [empty house, no one there, vacant], reading: a larger sense of loneliness or space, weight: 0.7 }
+    contextQuestions: [Was it your real home or only yours in the dream?, Did the home feel safe or uneasy?]
+    metaphorHooks: [the room your mind returns to, a private threshold of self]
+    cardTitleSeeds: [Moon Inside the House, The Room That Remembers]
+    smallPrescriptions: [Tidy one small part of your space today.]
+    safeReading: A home can point to your private base, safety, and sense of belonging.
+    avoidExpressions: [you will buy a house, something will happen to your family]

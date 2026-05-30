@@ -1,0 +1,54 @@
+id: food
+status: active
+editorialStatus: approved
+category: food
+subcategory: sustenance
+facets: [nourishment, desire, need, sharing]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [everyday_object_symbolism, body_metaphor, scene_function], coreMeanings: [nourishment, desire, need, sharing], safeTransform: ["what the self needs to take in", "hunger for care, energy, or experience"], avoidClaims: ["wealth will arrive", "you will gain weight"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["먹는 장면은 복보다 필요와 돌봄으로 안전하게 해석", "나눔과 접대의 생활 감각"], avoidClaims: ["재물이 들어온다", "살이 찐다"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["food as appetite, nourishment, desire, and sharing", "what the psyche wants to digest"], avoidClaims: ["wealth will arrive", "you will gain weight"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [nourishment, desire, need, sharing]
+tensionAxis: [satisfaction, lack]
+relatedIds: [kitchen, body, mother]
+sourceBasis: [everyday object symbolism, body metaphor, scene function]
+locales:
+  ko:
+    label: "음식"
+    aliases: ["음식", "밥", "먹는 꿈", "식사", "맛있는 음식"]
+    searchText: "음식, 밥, 먹는 꿈, 식사, 맛있는 음식, 영양, 욕구, 필요, 나눔, 채워지고 싶은 마음"
+    coreMeanings: ["영양", "욕구", "필요", "나눔"]
+    lightReadings: ["필요한 것을 받아들이려는 장면", "마음이 채워지고 싶은 지점을 보여주는 장면"]
+    shadowReadings: ["채워지지 않는 허기", "받아들이기 어려운 감정이나 경험"]
+    sceneModifiers:
+      eating: { triggerTerms: ["먹", "식사", "맛있"], reading: "필요한 것을 받아들이거나 소화하려는 장면", weight: 0.78 }
+      spoiled: { triggerTerms: ["상한", "썩", "냄새"], reading: "받아들이기 꺼려지는 감정이나 경험이 드러난 장면", weight: 0.86 }
+      sharing: { triggerTerms: ["나눠", "같이", "차려"], reading: "돌봄과 관계의 교환이 보이는 장면", weight: 0.76 }
+    contextQuestions: ["음식은 맛있었나요, 먹기 어려웠나요?", "혼자 먹었나요, 누군가와 나눴나요?"]
+    metaphorHooks: ["마음이 먹고 싶어 하는 것", "소화되지 않은 허기"]
+    cardTitleSeeds: ["식탁 위의 밤", "채워지지 않은 그릇"]
+    smallPrescriptions: ["오늘 나에게 부족한 에너지나 돌봄이 무엇인지 적어보세요."]
+    safeReading: "음식은 재물운보다 필요, 욕구, 영양, 나눔의 감각을 비추는 상징일 수 있어요."
+    avoidExpressions: ["재물이 들어온다", "살이 찐다"]
+  en:
+    label: Food
+    aliases: [food, meal, eating, dinner, delicious food]
+    searchText: "food, meal, eating, dinner, nourishment, desire, need, sharing, hunger for care"
+    coreMeanings: [nourishment, desire, need, sharing]
+    lightReadings: ["taking in what you need", "noticing what wants to be filled"]
+    shadowReadings: ["hunger that remains unmet", "difficulty digesting an emotion or experience"]
+    sceneModifiers:
+      eating: { triggerTerms: [eating, meal, delicious], reading: "taking in or digesting what is needed", weight: 0.78 }
+      spoiled: { triggerTerms: [spoiled, rotten, bad smell], reading: "something hard to accept or digest", weight: 0.86 }
+      sharing: { triggerTerms: [sharing, together, served], reading: "care and relationship moving through exchange", weight: 0.76 }
+    contextQuestions: ["Was the food enjoyable or hard to eat?", "Were you alone or sharing it?"]
+    metaphorHooks: ["what the mind wants to eat", "hunger not yet digested"]
+    cardTitleSeeds: ["Night on the Table", "The Unfilled Bowl"]
+    smallPrescriptions: ["Write what kind of energy or care you are missing today."]
+    safeReading: "Food can symbolize need, desire, nourishment, and sharing rather than fortune."
+    avoidExpressions: ["wealth will arrive", "you will gain weight"]

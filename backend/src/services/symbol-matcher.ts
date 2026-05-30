@@ -1,7 +1,7 @@
 import { encyclopediaEntries } from "../data/encyclopedia";
 import { getRuntimeSymbolEntries } from "../data/symbol-encyclopedia";
 import type { EncyclopediaEntry } from "../contracts/dream";
-import type { RuntimeSymbolEntry, SupportedLocale, SymbolCategory } from "../contracts/symbol-encyclopedia";
+import type { RuntimeSymbolEntry, SupportedLocale, SymbolCategory, SymbolRole } from "../contracts/symbol-encyclopedia";
 import type { RetrievalMatchType } from "./retrieval-scoring";
 import { scoreRetrievalCandidate } from "./retrieval-scoring";
 
@@ -121,6 +121,9 @@ export type RuntimeSymbolMatch = {
   locale: SupportedLocale;
   label: string;
   category: SymbolCategory;
+  subcategory: string;
+  facets: string[];
+  symbolRole: SymbolRole[];
   matchType: RetrievalMatchType;
   confidence: number;
   matchedText: string[];
@@ -188,6 +191,9 @@ export function findRuntimeSymbolMatches(text: string, options: RuntimeSymbolMat
         locale,
         label: entry.label,
         category: entry.category,
+        subcategory: entry.subcategory,
+        facets: entry.facets,
+        symbolRole: entry.symbolRole,
         matchType,
         confidence,
         matchedText,

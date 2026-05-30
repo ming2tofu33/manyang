@@ -1,0 +1,54 @@
+id: rain
+status: active
+editorialStatus: approved
+category: nature
+subcategory: weather
+facets: [release, sadness, cleansing, softening]
+symbolRole: [primary_candidate, context_signal]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [weather_symbolism, embodied_metaphor, scene_function], coreMeanings: [release, sadness, cleansing, weathering], safeTransform: [감정이 바깥으로 흘러나오는 장면, 묵은 기분이 부드럽게 씻기는 마음], avoidClaims: [슬픈 일이 생긴다, 돈이 들어온다] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: [비가 씻고 적시는 기운, 감정의 흐름이 생활 장면에 내려앉는 모습], avoidClaims: [슬픈 일이 생긴다, 돈이 들어온다] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: [emotional release and weathering, a mood moving through the dream atmosphere], avoidClaims: [슬픈 일이 생긴다, 돈이 들어온다] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [release, sadness, cleansing, weathering]
+tensionAxis: [relief, gloom]
+relatedIds: [water, sea, dawn]
+sourceBasis: [weather symbolism, embodied metaphor, scene function]
+locales:
+  ko:
+    label: 비
+    aliases: [비, 소나기, 빗속, 장마, 폭우]
+    searchText: 비, 소나기, 빗속, 장마, 폭우, 감정 배출, 씻김, 우울감, 완화
+    coreMeanings: [감정 배출, 씻김, 우울감, 완화]
+    lightReadings: [묵은 감정이 부드럽게 흘러나오는 장면, 긴장이 조금 씻기는 마음]
+    shadowReadings: [기분이 가라앉은 감각, 젖은 채 버티는 피로]
+    sceneModifiers:
+      heavyRain: { triggerTerms: [폭우, 장대비, 많이 와], reading: 감정의 양이 커져 압도되는 장면, weight: 0.82 }
+      gentleRain: { triggerTerms: [보슬비, 가랑비, 조용한], reading: 기분이 천천히 풀리는 장면, weight: 0.68 }
+      drenched: { triggerTerms: [젖었, 흠뻑, 젖은], reading: 감정에 젖어 있는 듯한 상태, weight: 0.78 }
+    contextQuestions: [비를 맞고 있었나요, 바라보고 있었나요?, 비가 시원했나요, 무겁게 느껴졌나요?]
+    metaphorHooks: [바깥으로 내리는 마음, 젖은 하루의 결]
+    cardTitleSeeds: [비 내리는 달, 빗속의 작은 신호]
+    smallPrescriptions: [오늘 흘려보내고 싶은 감정 하나를 적어보세요.]
+    safeReading: 비는 감정 배출과 씻김, 기분의 완화를 보여주는 장면으로 읽을 수 있어요.
+    avoidExpressions: [슬픈 일이 생긴다, 돈이 들어온다]
+  en:
+    label: Rain
+    aliases: [rain, raining, shower, storm, heavy rain]
+    searchText: rain, shower, storm, emotional release, cleansing, sadness, softening, drenched
+    coreMeanings: [emotional release, cleansing, sadness, softening]
+    lightReadings: [feelings moving out gently, tension being washed through]
+    shadowReadings: [a mood feeling heavy, fatigue from staying wet inside a feeling]
+    sceneModifiers:
+      heavyRain: { triggerTerms: [heavy rain, storm, pouring], reading: emotion becoming large enough to overwhelm, weight: 0.82 }
+      gentleRain: { triggerTerms: [gentle rain, drizzle, quiet rain], reading: a mood slowly softening, weight: 0.68 }
+      drenched: { triggerTerms: [drenched, soaked, wet clothes], reading: being soaked in a feeling, weight: 0.78 }
+    contextQuestions: [Were you standing in the rain or watching it?, Did the rain feel relieving or heavy?]
+    metaphorHooks: [feeling falling outward, the grain of a wet day]
+    cardTitleSeeds: [Moon in the Rain, Small Signal in the Shower]
+    smallPrescriptions: [Write one feeling you want to let pass through today.]
+    safeReading: Rain can point to emotional release, cleansing, and the way a mood moves through you.
+    avoidExpressions: [something sad will happen, money will arrive]

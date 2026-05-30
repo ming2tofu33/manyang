@@ -10,7 +10,7 @@ status: accepted
 
 # Symbol Encyclopedia Schema
 
-> Contract v0.1. 마냥 상징 백과사전의 원본 저장 형태와 런타임 변환 기준을 고정한다.
+> Contract v0.2. 마냥 상징 백과사전의 원본 저장 형태, 분류 체계, 렌즈, 런타임 변환 기준을 고정한다.
 
 ---
 
@@ -61,9 +61,67 @@ school.yaml
 ```yaml
 id: snake
 status: active
-category: animal
+editorialStatus: approved
+category: living_being
+subcategory: animal
+facets:
+  - reptile
+  - instinct
+  - hidden_movement
+  - transformation
+  - life_force
+symbolRole:
+  - primary_candidate
 safetyLevel: sensitive
 accessTier: free
+
+interpretationLenses:
+  universal:
+    sourceBasis:
+      - scene_function
+      - everyday_metaphor
+    coreMeanings:
+      - instinct
+      - hidden movement
+      - change
+      - life force
+    safeTransform:
+      - 본능적 감각이 선명해지는 장면
+      - 조용히 드러나는 변화의 신호
+    avoidClaims:
+      - 재물운이 반드시 오른다
+      - 태몽이다
+      - 위험한 일이 생긴다
+  east_asian:
+    sourceBasis:
+      - east_asian_symbolism
+      - product_editorial_rule
+    safeTransform:
+      - 내 영역 안에서 커지는 생명력
+      - 터와 연결된 강한 존재감
+    avoidClaims:
+      - 재물운이 반드시 오른다
+      - 태몽이다
+      - 위험한 일이 생긴다
+  western:
+    sourceBasis:
+      - western_psychological
+      - mythic_association
+      - product_editorial_rule
+    safeTransform:
+      - 무의식적으로 감지한 긴장
+      - 변화와 재생 앞에서 올라오는 경계심
+    avoidClaims:
+      - 재물운이 반드시 오른다
+      - 태몽이다
+      - 위험한 일이 생긴다
+
+embeddingProfile:
+  chunkTypes:
+    - searchText
+    - sceneModifier
+    - safeReading
+    - metaphorHook
 
 universalMeanings:
   - instinct
@@ -202,27 +260,56 @@ locales:
 
 ```ts
 type SymbolEntryStatus = "draft" | "active" | "deprecated";
+type SymbolEditorialStatus = "needs_review" | "approved";
 type SymbolSafetyLevel = "safe" | "sensitive";
 type SymbolAccessTier = "free" | "premium";
 type SupportedLocale = "ko" | "en";
 
 type SymbolCategory =
   | "place"
+  | "living_being"
   | "object"
+  | "body"
   | "action"
+  | "event"
   | "nature"
-  | "animal"
-  | "person"
+  | "food"
   | "emotion"
+  | "social"
+  | "relationship"
+  | "state"
   | "quantity"
-  | "time";
+  | "time"
+  | "abstract";
+
+type SymbolRole = "primary_candidate" | "modifier" | "context_signal";
+type InterpretationLensKey = "universal" | "east_asian" | "western";
+type EmbeddingChunkType = "searchText" | "sceneModifier" | "safeReading" | "metaphorHook";
+
+type InterpretationLens = {
+  sourceBasis: string[];
+  coreMeanings?: string[];
+  referenceNotes?: string[];
+  safeTransform: string[];
+  avoidClaims: string[];
+};
+
+type EmbeddingProfile = {
+  chunkTypes: EmbeddingChunkType[];
+};
 
 type SymbolEntry = {
   id: string;
   status: SymbolEntryStatus;
+  editorialStatus: SymbolEditorialStatus;
   category: SymbolCategory;
+  subcategory: string;
+  facets: string[];
+  symbolRole: SymbolRole[];
   safetyLevel: SymbolSafetyLevel;
   accessTier: SymbolAccessTier;
+  interpretationLenses: Record<InterpretationLensKey, InterpretationLens>;
+  embeddingProfile: EmbeddingProfile;
   universalMeanings: string[];
   tensionAxis: string[];
   relatedIds: string[];
@@ -267,9 +354,15 @@ type SceneModifier = {
 | --- | --- |
 | `id` | stable identifier. UI label이나 번역이 바뀌어도 유지 |
 | `status` | MVP 검색 대상은 `active`만 기본 포함 |
-| `category` | MMR 다양성, 필터링, 결과 설명에 사용 |
+| `editorialStatus` | 내부 검수 상태. `approved`만 기본 배포 |
+| `category` | 안정적인 대분류. metadata filter, MMR 다양성, 통계에 사용 |
+| `subcategory` | 대분류 안의 세부 칸. 검색 필터와 백과 확장에 사용 |
+| `facets` | 의미 태그. vector reranking과 세밀한 검색 제어에 사용 |
+| `symbolRole` | 중심 상징인지 modifier/context signal인지 구분 |
 | `safetyLevel` | `sensitive`는 표현 강도와 금지어 검사를 강화 |
 | `accessTier` | free/premium 백과 깊이 분리용. MVP는 대부분 `free` |
+| `interpretationLenses` | universal/east_asian/western 렌즈별 safe transform과 금지 claim |
+| `embeddingProfile` | 나중에 vector DB에 넣을 chunk 타입 선언 |
 | `universalMeanings` | 언어권 공통 의미. 사용자에게 직접 노출하지 않아도 됨 |
 | `tensionAxis` | 상징의 양면성. 예: fascination/wariness |
 | `relatedIds` | exact match가 없을 때 related/fallback 검색에 사용 |
@@ -285,6 +378,12 @@ active 항목은 최소 기준을 만족해야 한다.
 
 | 항목 | 최소 수 |
 | --- | --- |
+| category | strict enum 중 1개 |
+| subcategory | 1개 이상 |
+| facets | 3개 이상 |
+| symbolRole | 1개 이상 |
+| interpretationLenses | `universal`, `east_asian`, `western` 모두 작성 |
+| embeddingProfile.chunkTypes | `searchText`, `sceneModifier`, `safeReading`, `metaphorHook` 포함 |
 | locale | `ko`, `en` 모두 작성 |
 | aliases | locale별 3개 이상 |
 | coreMeanings | locale별 3개 이상 |
@@ -305,6 +404,9 @@ YAML 원본은 구현 단계에서 다음 형태로 변환한다.
 type RuntimeSymbolEntry = {
   id: string;
   category: SymbolCategory;
+  subcategory: string;
+  facets: string[];
+  symbolRole: SymbolRole[];
   safetyLevel: SymbolSafetyLevel;
   accessTier: SymbolAccessTier;
   label: string;
@@ -332,9 +434,15 @@ Supabase/Postgres 이전 시 테이블은 다음으로 분리한다.
 symbol_entries
 - id
 - status
+- editorial_status
 - category
+- subcategory
+- facets text[]
+- symbol_role text[]
 - safety_level
 - access_tier
+- interpretation_lenses jsonb
+- embedding_profile jsonb
 - universal_meanings jsonb
 - tension_axis jsonb
 - related_ids text[]

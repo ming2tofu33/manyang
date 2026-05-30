@@ -45,7 +45,7 @@ export function TodayHomeScene() {
       contentMode="fixed"
     >
       <header className="relative flex min-h-[78px] items-start justify-between">
-        <AssetIconButton src={manyangAssets.icons.bell} label="알림" size="header" className="relative z-20" />
+        <AssetIconButton src={manyangAssets.actionIcons.bell} label="알림" size="header" className="relative z-20" />
 
         <div className="pointer-events-none absolute left-[4.1rem] right-[4.1rem] top-0 z-10 py-1 text-center">
           <div className={titleTheme.haloClassName} />
@@ -57,7 +57,7 @@ export function TodayHomeScene() {
           </div>
         </div>
 
-        <AssetIconButton src={manyangAssets.icons.settings} label="설정" size="header" className="relative z-20" />
+        <AssetIconButton src={manyangAssets.actionIcons.settings} label="설정" size="header" className="relative z-20" />
       </header>
 
       <TodayHomeActions />

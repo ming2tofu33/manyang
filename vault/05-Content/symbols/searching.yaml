@@ -1,8 +1,61 @@
 id: searching
 status: active
+editorialStatus: approved
 category: action
+subcategory: seeking
+facets:
+  - seeking
+  - uncertainty
+  - missing_piece
+  - desire_for_clarity
+symbolRole:
+  - primary_candidate
+  - modifier
 safetyLevel: safe
 accessTier: free
+interpretationLenses:
+  universal:
+    sourceBasis:
+      - scene_function
+      - everyday_metaphor
+    coreMeanings:
+      - seeking
+      - uncertainty
+      - desire for clarity
+      - missing piece
+    safeTransform:
+      - 아직 이름 없는 단서를 찾는 마음
+      - 빠진 조각을 더듬는 과정
+    avoidClaims:
+      - 결국 잃게 된다
+      - 원하는 것을 반드시 찾는다
+  east_asian:
+    sourceBasis:
+      - east_asian_symbolism
+      - product_editorial_rule
+    safeTransform:
+      - 길과 단서를 찾는 과정으로 드러난 마음
+      - 답보다 기준을 먼저 찾는 장면
+    avoidClaims:
+      - 결국 잃게 된다
+      - 원하는 것을 반드시 찾는다
+  western:
+    sourceBasis:
+      - western_psychological
+      - mythic_association
+      - product_editorial_rule
+    safeTransform:
+      - a search for clarity or a missing piece
+      - an unresolved question becoming visible
+    avoidClaims:
+      - 결국 잃게 된다
+      - 원하는 것을 반드시 찾는다
+embeddingProfile:
+  chunkTypes:
+    - searchText
+    - sceneModifier
+    - safeReading
+    - metaphorHook
 universalMeanings:
   - seeking
   - uncertainty

@@ -1,0 +1,54 @@
+id: wedding
+status: active
+editorialStatus: approved
+category: event
+subcategory: commitment_ritual
+facets: [commitment, union, public_role, expectation]
+symbolRole: [primary_candidate]
+safetyLevel: sensitive
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [ritual_symbolism, relationship_metaphor, product_safety_rule], coreMeanings: [commitment, union, public_role, expectation], safeTransform: ["a public commitment or joining of parts", "expectation around a role becoming visible"], avoidClaims: ["you will get married", "the relationship is decided"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["결혼식은 실제 결혼 예언보다 관계와 책임의 공개적 장면", "가족/사회 기대는 노출하지 않고 안전하게 처리"], avoidClaims: ["결혼한다", "관계가 결정된다"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["wedding as union, commitment, public role, and expectation", "a ritual of joining rather than a prediction"], avoidClaims: ["you will get married", "the relationship is decided"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [commitment, union, public role, expectation]
+tensionAxis: [commitment, pressure]
+relatedIds: [partner, clothes, crowd]
+sourceBasis: [ritual symbolism, relationship metaphor, product safety rule]
+locales:
+  ko:
+    label: "결혼식"
+    aliases: ["결혼식", "결혼하는 꿈", "웨딩드레스", "신랑", "신부"]
+    searchText: "결혼식, 결혼하는 꿈, 웨딩드레스, 신랑, 신부, 약속, 결합, 공개적 역할, 기대, 부담"
+    coreMeanings: ["약속", "결합", "공개적 역할", "기대"]
+    lightReadings: ["어떤 책임이나 관계를 공식화하려는 마음", "서로 다른 부분을 하나로 묶으려는 장면"]
+    shadowReadings: ["주변 기대에 눌리는 부담", "아직 준비되지 않은 약속에 대한 불안"]
+    sceneModifiers:
+      brideGroom: { triggerTerms: ["신랑", "신부", "드레스"], reading: "관계나 역할의 중심에 서는 부담과 기대", weight: 0.82 }
+      canceled: { triggerTerms: ["취소", "파혼", "안 함"], reading: "약속이나 결합에 대한 망설임이 드러난 장면", weight: 0.86 }
+      crowded: { triggerTerms: ["하객", "사람 많", "축하"], reading: "개인 선택이 주변 시선과 얽힌 장면", weight: 0.78 }
+    contextQuestions: ["결혼식의 주인공은 누구였나요?", "기쁨보다 부담이 더 컸나요?"]
+    metaphorHooks: ["공개적으로 묶이는 약속", "기대 앞에 선 역할"]
+    cardTitleSeeds: ["결혼식의 밤", "취소된 약속"]
+    smallPrescriptions: ["요즘 내가 공식화해야 한다고 느끼는 약속이나 역할이 있는지 적어보세요."]
+    safeReading: "결혼식은 실제 결혼 예고가 아니라 약속, 결합, 공개적 역할, 기대를 비추는 상징일 수 있어요."
+    avoidExpressions: ["결혼한다", "관계가 결정된다", "파혼한다"]
+  en:
+    label: Wedding
+    aliases: [wedding, getting married, bride, groom, wedding dress]
+    searchText: "wedding, getting married, bride, groom, wedding dress, commitment, union, public role, expectation"
+    coreMeanings: [commitment, union, public role, expectation]
+    lightReadings: ["wanting to formalize a responsibility or bond", "joining different parts into one shape"]
+    shadowReadings: ["pressure from public expectation", "anxiety about a commitment not yet ready"]
+    sceneModifiers:
+      brideGroom: { triggerTerms: [bride, groom, wedding dress], reading: "standing at the center of role and expectation", weight: 0.82 }
+      canceled: { triggerTerms: [canceled wedding, called off, did not marry], reading: "hesitation around commitment or union", weight: 0.86 }
+      crowded: { triggerTerms: [guests, crowded, celebration], reading: "private choice entangled with public attention", weight: 0.78 }
+    contextQuestions: ["Who was getting married?", "Did joy or pressure feel stronger?"]
+    metaphorHooks: ["a promise made public", "a role standing before expectation"]
+    cardTitleSeeds: ["Wedding Night", "The Canceled Promise"]
+    smallPrescriptions: ["Name one commitment or role you feel pressured to formalize."]
+    safeReading: "A wedding can symbolize commitment, union, public role, and expectation, not a literal relationship outcome."
+    avoidExpressions: ["you will get married", "the relationship is decided", "you will break up"]

@@ -1,0 +1,54 @@
+id: mountain
+status: active
+editorialStatus: approved
+category: nature
+subcategory: landform
+facets: [challenge, perspective, stability, ascent]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [natural_symbolism, height_metaphor, scene_function], coreMeanings: [challenge, perspective, stability, ascent], safeTransform: ["a large challenge or stable presence ahead", "climbing toward a wider view"], avoidClaims: ["success is guaranteed", "a great person will help you"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["산은 큰 기운보다 높은 과제와 버팀의 감각으로 해석", "오름과 부담을 함께 봄"], avoidClaims: ["반드시 성공한다", "귀인이 온다"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["mountain as challenge, aspiration, obstacle, and perspective", "the height that asks for effort"], avoidClaims: ["success is guaranteed", "a great person will help you"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [challenge, perspective, stability, ascent]
+tensionAxis: [achievement, burden]
+relatedIds: [road, flying, falling]
+sourceBasis: [natural symbolism, height metaphor, scene function]
+locales:
+  ko:
+    label: "산"
+    aliases: ["산", "높은 산", "산을 오르는 꿈", "등산", "산 정상"]
+    searchText: "산, 높은 산, 산을 오르는 꿈, 등산, 산 정상, 도전, 시야, 안정감, 높은 목표"
+    coreMeanings: ["도전", "시야", "안정감", "높은 목표"]
+    lightReadings: ["더 넓은 시야를 얻기 위해 오르는 장면", "큰 과제를 꾸준히 마주하는 마음"]
+    shadowReadings: ["과제가 너무 크게 느껴지는 부담", "올라가야 한다는 압박"]
+    sceneModifiers:
+      climbing: { triggerTerms: ["오르", "등산", "올라"], reading: "목표를 향해 꾸준히 오르는 과정", weight: 0.78 }
+      summit: { triggerTerms: ["정상", "꼭대기", "위"], reading: "시야가 넓어지거나 성취감을 확인하는 장면", weight: 0.76 }
+      steep: { triggerTerms: ["가파", "험한", "높은"], reading: "과제의 난도가 크게 느껴지는 장면", weight: 0.84 }
+    contextQuestions: ["산을 오르고 있었나요, 바라보고 있었나요?", "정상에 도착했나요?"]
+    metaphorHooks: ["높이 놓인 과제", "오를수록 넓어지는 시야"]
+    cardTitleSeeds: ["산을 오르는 밤", "정상 앞의 마음"]
+    smallPrescriptions: ["큰 목표를 오늘 올라갈 수 있는 작은 구간으로 나눠보세요."]
+    safeReading: "산은 큰 도전, 안정감, 시야, 오름의 과정을 보여주는 상징일 수 있어요."
+    avoidExpressions: ["반드시 성공한다", "귀인이 온다"]
+  en:
+    label: Mountain
+    aliases: [mountain, high mountain, climbing a mountain, hiking, summit]
+    searchText: "mountain, high mountain, climbing, hiking, summit, challenge, perspective, stability, aspiration"
+    coreMeanings: [challenge, perspective, stability, ascent]
+    lightReadings: ["climbing toward a wider view", "meeting a large task with steadiness"]
+    shadowReadings: ["a task feeling too large", "pressure to keep climbing"]
+    sceneModifiers:
+      climbing: { triggerTerms: [climbing, hiking, going up], reading: "steady movement toward a goal", weight: 0.78 }
+      summit: { triggerTerms: [summit, top, peak], reading: "wider perspective or achievement becoming visible", weight: 0.76 }
+      steep: { triggerTerms: [steep, rough, high], reading: "the challenge feeling difficult or demanding", weight: 0.84 }
+    contextQuestions: ["Were you climbing or only looking at it?", "Did you reach the summit?"]
+    metaphorHooks: ["a task placed high", "a view widening as you climb"]
+    cardTitleSeeds: ["Night Climbing the Mountain", "Mind Before the Summit"]
+    smallPrescriptions: ["Turn one large goal into a smaller climb for today."]
+    safeReading: "A mountain can symbolize challenge, stability, perspective, and the process of ascent."
+    avoidExpressions: ["success is guaranteed", "a powerful helper will come"]

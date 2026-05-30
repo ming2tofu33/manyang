@@ -1,0 +1,371 @@
+import type { DreamAnalysisRequest, DreamAnalysisResponse, DreamCardResponse } from "../contracts/dream";
+import {
+  buildDreamReadingPrompt,
+  DREAM_READING_DRAFT_JSON_SCHEMA,
+  DREAM_READING_DRAFT_SCHEMA_NAME,
+} from "./dream-reading-prompt";
+import { LlmProviderTimeoutError, type DreamReadingLlmProvider, type DreamReadingLlmRequest } from "./llm-provider";
+import { analyzeDreamSafetyPolicy, applySafetyPolicyToResponse } from "./dream-safety-policy";
+import { buildEvidenceGate, isVerifiedSymbolLabel, type EvidenceGateResult } from "./evidence-gate";
+import { analyzeDream } from "./mock-analysis";
+import {
+  retrieveDreamEvidenceSet,
+  retrieveDreamEvidenceSetWithVectorIndex,
+} from "./dream-rag-retriever";
+import type { DreamEmbeddingProvider } from "./dream-embedding-provider";
+import type { DreamVectorIndex } from "./dream-vector-index";
+import { analyzeDreamStructure } from "./structured-dream-analysis";
+
+export type AnalyzeDreamWithLlmOptions = {
+  provider?: DreamReadingLlmProvider;
+  model?: string;
+  providerTimeoutMs?: number;
+  embeddingProvider?: DreamEmbeddingProvider;
+  vectorIndex?: DreamVectorIndex;
+  onProviderError?: (error: unknown) => void;
+};
+
+export const DEFAULT_LLM_PROVIDER_TIMEOUT_MS = 25_000;
+
+type DreamReadingDraft = {
+  summary: string;
+  interpretation: string;
+  symbolReadings: {
+    symbol: string;
+    reading: string;
+  }[];
+  smallPrescription: string;
+  card: DreamCardResponse;
+};
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function cleanString(value: unknown, maxLength = 1200): string | undefined {
+  if (typeof value !== "string") {
+    return undefined;
+  }
+
+  const trimmed = value.trim();
+  if (trimmed.length === 0) {
+    return undefined;
+  }
+
+  return trimmed.slice(0, maxLength);
+}
+
+function cleanStringArray(value: unknown, maxItems: number): string[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .map((item) => cleanString(item, 80))
+    .filter((item): item is string => Boolean(item))
+    .slice(0, maxItems);
+}
+
+function parseCard(value: unknown): DreamCardResponse | undefined {
+  if (!isRecord(value)) {
+    return undefined;
+  }
+
+  const name = cleanString(value.name, 80);
+  const type = cleanString(value.type, 40);
+  const keywords = cleanStringArray(value.keywords, 4);
+  const summary = cleanString(value.summary, 180);
+  const message = cleanString(value.message, 220);
+  const theme = cleanString(value.theme, 80);
+
+  if (!name || !type || keywords.length === 0 || !summary || !message || !theme) {
+    return undefined;
+  }
+
+  return { name, type, keywords, summary, message, theme };
+}
+
+function parseSymbolReadings(value: unknown): DreamReadingDraft["symbolReadings"] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .flatMap((item) => {
+      if (!isRecord(item)) {
+        return [];
+      }
+
+      const symbol = cleanString(item.symbol, 80);
+      const reading = cleanString(item.reading, 320);
+
+      return symbol && reading ? [{ symbol, reading }] : [];
+    })
+    .slice(0, 5);
+}
+
+function parseDreamReadingDraft(value: unknown): DreamReadingDraft | undefined {
+  if (!isRecord(value)) {
+    return undefined;
+  }
+
+  const summary = cleanString(value.summary, 180);
+  const interpretation = cleanString(value.interpretation, 1400);
+  const symbolReadings = parseSymbolReadings(value.symbolReadings);
+  const smallPrescription = cleanString(value.smallPrescription, 260);
+  const card = parseCard(value.card);
+
+  if (!summary || !interpretation || symbolReadings.length === 0 || !smallPrescription || !card) {
+    return undefined;
+  }
+
+  return {
+    summary,
+    interpretation,
+    symbolReadings,
+    smallPrescription,
+    card,
+  };
+}
+
+function filterSymbolReadings(
+  baseline: DreamAnalysisResponse,
+  draft: DreamReadingDraft,
+  evidenceGate: EvidenceGateResult,
+): DreamReadingDraft["symbolReadings"] {
+  const verifiedReadings = draft.symbolReadings.filter((reading) => isVerifiedSymbolLabel(reading.symbol, evidenceGate));
+
+  return verifiedReadings.length > 0 ? verifiedReadings : baseline.symbolReadings;
+}
+
+function uniqueNonEmpty(values: string[]): string[] {
+  return Array.from(new Set(values.map((value) => value.trim()).filter(Boolean)));
+}
+
+const SCENE_ONLY_SYMBOLIC_INFERENCE_TERMS = [
+  "meaning",
+  "means",
+  "symbol",
+  "represents",
+  "suggests",
+  "indicates",
+  "predicts",
+  "prophecy",
+  "omen",
+  "points to",
+  "reveals",
+  "shows",
+  "reflects",
+  "뜻",
+  "의미",
+  "상징",
+  "암시",
+  "예지",
+  "예고",
+  "나타내",
+  "보여",
+  "드러",
+  "가리",
+  "연결",
+  "읽",
+  "소진",
+  "에너지",
+  "빠져나가",
+];
+
+function containsSceneOnlySymbolicInference(interpretation: string, evidenceGate: EvidenceGateResult): boolean {
+  const lowerInterpretation = interpretation.toLocaleLowerCase();
+
+  return evidenceGate.evidenceRules.sceneOnly.some((term) => {
+    const normalizedTerm = term.trim().toLocaleLowerCase();
+
+    if (!normalizedTerm) {
+      return false;
+    }
+
+    let index = lowerInterpretation.indexOf(normalizedTerm);
+    while (index >= 0) {
+      const windowStart = Math.max(0, index - 48);
+      const windowEnd = Math.min(lowerInterpretation.length, index + normalizedTerm.length + 96);
+      const nearbyText = lowerInterpretation.slice(windowStart, windowEnd);
+
+      if (SCENE_ONLY_SYMBOLIC_INFERENCE_TERMS.some((marker) => nearbyText.includes(marker))) {
+        return true;
+      }
+
+      index = lowerInterpretation.indexOf(normalizedTerm, index + normalizedTerm.length);
+    }
+
+    return false;
+  });
+}
+
+function buildEvidenceBoundedInterpretation(
+  baseline: DreamAnalysisResponse,
+  symbolReadings: DreamReadingDraft["symbolReadings"],
+  locale: DreamAnalysisRequest["locale"] = "ko",
+  evidenceGate?: EvidenceGateResult,
+): string {
+  const readings = symbolReadings.length > 0 ? symbolReadings : baseline.symbolReadings;
+  const symbols = readings.map((reading) => reading.symbol).join(locale === "en" ? ", " : ", ");
+  const readingText = readings
+    .slice(0, 2)
+    .map((reading) => reading.reading)
+    .join(" ");
+  const sceneOnlyTerms = uniqueNonEmpty(evidenceGate?.evidenceRules.sceneOnly ?? []).slice(0, 4);
+  const literalSceneSentence =
+    sceneOnlyTerms.length > 0
+      ? locale === "en"
+        ? `Details such as ${sceneOnlyTerms.join(", ")} are kept visible as literal dream details, but they are not used as evidence for a prediction, diagnosis, or guarantee.`
+        : `${sceneOnlyTerms.join(", ")} 같은 세부 장면은 꿈에 나온 그대로의 장면으로 언급하되, 그 자체에 예언이나 진단의 의미를 붙이지 않습니다.`
+      : locale === "en"
+        ? "Other vivid details are kept as literal scene details rather than evidence for a prediction, diagnosis, or guarantee."
+        : "함께 나온 다른 세부 장면은 그대로의 장면으로 두고, 그 자체에 예언이나 진단의 의미를 붙이지 않습니다.";
+
+  if (locale === "en") {
+    return [
+      `The safest symbolic reading stays with the verified image${readings.length > 1 ? "s" : ""}: ${symbols}.`,
+      readingText,
+      literalSceneSentence,
+    ]
+      .filter(Boolean)
+      .join(" ");
+  }
+
+  return [
+    `가장 중심에 둘 수 있는 이미지는 ${symbols}입니다.`,
+    readingText,
+    literalSceneSentence,
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+function mergeDraftIntoBaseline(
+  baseline: DreamAnalysisResponse,
+  draft: DreamReadingDraft,
+  evidenceGate: EvidenceGateResult,
+  locale: DreamAnalysisRequest["locale"] = "ko",
+): DreamAnalysisResponse {
+  const symbolReadings = filterSymbolReadings(baseline, draft, evidenceGate);
+  const symbols = uniqueNonEmpty(symbolReadings.map((reading) => reading.symbol));
+  const interpretation = containsSceneOnlySymbolicInference(draft.interpretation, evidenceGate)
+    ? buildEvidenceBoundedInterpretation(baseline, symbolReadings, locale, evidenceGate)
+    : draft.interpretation;
+
+  return {
+    ...baseline,
+    symbols: symbols.length > 0 ? symbols : baseline.symbols,
+    summary: draft.summary,
+    interpretation,
+    symbolReadings,
+    smallPrescription: draft.smallPrescription,
+    readingBasis: {
+      ...baseline.readingBasis,
+      usedSymbols: symbols.length > 0 ? symbols : baseline.readingBasis.usedSymbols,
+    },
+    card: draft.card,
+  };
+}
+
+function normalizeProviderTimeoutMs(timeoutMs: number | undefined): number {
+  if (typeof timeoutMs !== "number" || !Number.isFinite(timeoutMs) || timeoutMs <= 0) {
+    return DEFAULT_LLM_PROVIDER_TIMEOUT_MS;
+  }
+
+  return Math.round(timeoutMs);
+}
+
+async function generateJsonWithTimeout(
+  provider: DreamReadingLlmProvider,
+  request: DreamReadingLlmRequest,
+  timeoutMs: number,
+): Promise<unknown> {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+  try {
+    return await Promise.race([
+      provider.generateJson(request),
+      new Promise<never>((_, reject) => {
+        timeoutId = setTimeout(() => reject(new LlmProviderTimeoutError(timeoutMs)), timeoutMs);
+      }),
+    ]);
+  } finally {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+  }
+}
+
+export async function analyzeDreamWithLlm(
+  request: DreamAnalysisRequest,
+  options: AnalyzeDreamWithLlmOptions = {},
+): Promise<DreamAnalysisResponse> {
+  const baseline = analyzeDream(request);
+  const safetyPolicy = analyzeDreamSafetyPolicy(request);
+
+  if (!options.provider) {
+    return applySafetyPolicyToResponse(baseline, safetyPolicy);
+  }
+
+  try {
+    const locale = request.locale ?? "ko";
+    const structuredAnalysis = analyzeDreamStructure({
+      dreamText: request.dreamText,
+      ...(request.dreamDate ? { dreamDate: request.dreamDate } : {}),
+      ...(request.wakeMood ? { wakeMood: request.wakeMood } : {}),
+      ...(request.dreamMood ? { dreamMood: request.dreamMood } : {}),
+      locale,
+    });
+    const evidenceSet =
+      options.embeddingProvider && options.vectorIndex
+        ? await retrieveDreamEvidenceSetWithVectorIndex({
+            dreamText: request.dreamText,
+            locale,
+            structuredAnalysis,
+            limit: 5,
+            embeddingProvider: options.embeddingProvider,
+            vectorIndex: options.vectorIndex,
+          })
+        : retrieveDreamEvidenceSet({
+            dreamText: request.dreamText,
+            locale,
+            structuredAnalysis,
+            limit: 5,
+          });
+    const matches = evidenceSet.confirmedEvidence;
+    const evidenceGate = buildEvidenceGate({
+      structuredAnalysis,
+      matches,
+      candidateMatches: evidenceSet.candidateEvidence,
+      safetyPolicy,
+    });
+    const prompt = buildDreamReadingPrompt({
+      request,
+      baseline,
+      structuredAnalysis,
+      matches,
+      candidateMatches: evidenceSet.candidateEvidence,
+      retrievalPolicy: evidenceSet.retrievalPolicy,
+      safetyPolicy,
+      evidenceGate,
+    });
+    const llmRequest = {
+      instructions: prompt.instructions,
+      input: prompt.input,
+      schemaName: DREAM_READING_DRAFT_SCHEMA_NAME,
+      jsonSchema: DREAM_READING_DRAFT_JSON_SCHEMA,
+      timeoutMs: normalizeProviderTimeoutMs(options.providerTimeoutMs),
+      ...(options.model ? { model: options.model } : {}),
+    };
+    const rawDraft = await generateJsonWithTimeout(options.provider, llmRequest, llmRequest.timeoutMs);
+    const draft = parseDreamReadingDraft(rawDraft);
+
+    const response = draft ? mergeDraftIntoBaseline(baseline, draft, evidenceGate, locale) : baseline;
+
+    return applySafetyPolicyToResponse(response, safetyPolicy);
+  } catch (error) {
+    options.onProviderError?.(error);
+    return applySafetyPolicyToResponse(baseline, safetyPolicy);
+  }
+}

@@ -1,0 +1,54 @@
+id: dog
+status: active
+editorialStatus: approved
+category: living_being
+subcategory: animal
+facets: [loyalty, protection, trust, instinctive_response]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [animal_symbolism, relationship_metaphor, scene_function], coreMeanings: [loyalty, protection, trust, instinct], safeTransform: [관계 안의 신뢰와 보호 본능, 가까운 존재에게 반응하는 감각], avoidClaims: [충성스러운 사람이 나타난다, 사고를 막아준다] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: [집과 사람을 지키는 친숙한 동반 이미지, 관계의 충직함과 경계심], avoidClaims: [충성스러운 사람이 나타난다, 사고를 막아준다] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: [loyal companion and protective instinct, trust with alertness], avoidClaims: [충성스러운 사람이 나타난다, 사고를 막아준다] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [loyalty, protection, trust, instinct]
+tensionAxis: [companionship, alertness]
+relatedIds: [home, stranger, running]
+sourceBasis: [animal symbolism, relationship metaphor, scene function]
+locales:
+  ko:
+    label: 개
+    aliases: [개, 강아지, 반려견, 멍멍이, 큰 개]
+    searchText: 개, 강아지, 반려견, 충성, 보호, 관계의 신뢰, 본능적 반응, 경계
+    coreMeanings: [충성, 보호, 관계의 신뢰, 본능적 반응]
+    lightReadings: [믿을 수 있는 관계 감각, 나를 지키려는 본능이 살아 있는 장면]
+    shadowReadings: [경계심이 커진 상태, 관계에서 짖고 싶은 마음]
+    sceneModifiers:
+      friendly: { triggerTerms: [따라와, 반가워, 꼬리], reading: 신뢰와 친밀감이 살아 있는 장면, weight: 0.72 }
+      barking: { triggerTerms: [짖, 으르렁, 소리], reading: 경계 신호가 커진 장면, weight: 0.8 }
+      biting: { triggerTerms: [물, 공격, 달려듦], reading: 관계의 경계가 강하게 부딪힌 장면, weight: 0.85 }
+    contextQuestions: [개는 친근했나요, 위협적이었나요?, 개가 누구를 향해 반응했나요?]
+    metaphorHooks: [문 앞에서 짖는 본능, 곁을 지키는 신뢰]
+    cardTitleSeeds: [문 앞의 강아지, 보호 본능의 달]
+    smallPrescriptions: [오늘 내가 지키고 싶은 관계의 경계를 한 문장으로 정리해보세요.]
+    safeReading: 개는 신뢰, 보호 본능, 관계 속 경계감으로 읽을 수 있어요.
+    avoidExpressions: [충성스러운 사람이 나타난다, 사고를 막아준다]
+  en:
+    label: Dog
+    aliases: [dog, puppy, pet dog, big dog, barking dog]
+    searchText: dog, puppy, pet dog, loyalty, protection, trust, instinctive response, alertness
+    coreMeanings: [loyalty, protection, trust, instinctive response]
+    lightReadings: [a sense of reliable connection, protective instinct staying alive]
+    shadowReadings: [heightened alertness, a relationship boundary wanting to bark]
+    sceneModifiers:
+      friendly: { triggerTerms: [friendly dog, followed me, wagging], reading: trust and closeness being present, weight: 0.72 }
+      barking: { triggerTerms: [barking, growling, loud dog], reading: an alert signal becoming loud, weight: 0.8 }
+      biting: { triggerTerms: [bit me, attacked, lunged], reading: a relational boundary clashing strongly, weight: 0.85 }
+    contextQuestions: [Was the dog friendly or threatening?, Who or what was the dog reacting to?]
+    metaphorHooks: [instinct barking at the door, trust staying beside you]
+    cardTitleSeeds: [Dog at the Door, Moon of Protection]
+    smallPrescriptions: [Write one boundary you want to protect in a relationship today.]
+    safeReading: A dog can point to trust, protection, instinct, and relational boundaries.
+    avoidExpressions: [a loyal person will appear, it will prevent an accident]

@@ -1,0 +1,54 @@
+id: crowd
+status: active
+editorialStatus: approved
+category: social
+subcategory: social_density
+facets: [social_pressure, visibility, belonging, overwhelm]
+symbolRole: [primary_candidate, modifier]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [social_symbolism, quantity_modifier, scene_function], coreMeanings: [social_pressure, visibility, belonging, overwhelm], safeTransform: ["many eyes or many presences shaping the scene", "belonging and overwhelm appearing together"], avoidClaims: ["people will judge you", "you will become popular"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["군중은 체면, 소속, 주변 시선을 함께 보여주는 장면", "많음이 사회적 압박을 키움"], avoidClaims: ["사람들이 판단한다", "인기가 생긴다"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["crowd as social field, visibility, belonging, or overwhelm", "many presences amplifying emotion"], avoidClaims: ["people will judge you", "you will become popular"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [social pressure, visibility, belonging, overwhelm]
+tensionAxis: [belonging, overwhelm]
+relatedIds: [friend, stranger, wedding]
+sourceBasis: [social symbolism, quantity modifier, scene function]
+locales:
+  ko:
+    label: "군중"
+    aliases: ["군중", "사람들", "많은 사람", "인파", "사람이 많은 꿈"]
+    searchText: "군중, 사람들, 많은 사람, 인파, 사람이 많은 꿈, 주변 시선, 소속감, 압박, 압도감"
+    coreMeanings: ["주변 시선", "소속감", "압박", "압도감"]
+    lightReadings: ["혼자가 아니라는 감각을 확인하는 장면", "사회적 흐름 속에서 내 위치를 살피는 마음"]
+    shadowReadings: ["많은 시선에 압도되는 느낌", "내 목소리가 묻히는 불안"]
+    sceneModifiers:
+      crowded: { triggerTerms: ["붐비", "가득", "많은 사람"], reading: "주변 시선과 사회적 밀도가 커진 장면", weight: 0.82 }
+      watching: { triggerTerms: ["쳐다", "시선", "구경"], reading: "평가받거나 주목받는 느낌이 강한 장면", weight: 0.84 }
+      lostInCrowd: { triggerTerms: ["잃어", "휩쓸", "못 찾"], reading: "소속 속에서도 길을 잃는 느낌", weight: 0.86 }
+    contextQuestions: ["군중 속에서 편했나요, 압도됐나요?", "사람들이 나를 보고 있었나요?"]
+    metaphorHooks: ["많은 시선 속의 나", "인파에 묻힌 목소리"]
+    cardTitleSeeds: ["군중의 밤", "많은 사람 사이에서"]
+    smallPrescriptions: ["오늘 내 목소리가 묻히는 상황이 있다면 한 문장만 분명히 정리해보세요."]
+    safeReading: "군중은 주변 시선, 소속감, 압박, 압도감을 보여주는 상징일 수 있어요."
+    avoidExpressions: ["사람들이 판단한다", "인기가 생긴다"]
+  en:
+    label: Crowd
+    aliases: [crowd, many people, people, packed place, public crowd]
+    searchText: "crowd, many people, packed place, public crowd, social pressure, visibility, belonging, overwhelm"
+    coreMeanings: [social pressure, visibility, belonging, overwhelm]
+    lightReadings: ["checking the feeling of not being alone", "locating yourself in a social flow"]
+    shadowReadings: ["being overwhelmed by many eyes", "anxiety that your voice disappears"]
+    sceneModifiers:
+      crowded: { triggerTerms: [crowded, packed, many people], reading: "social density and attention becoming larger", weight: 0.82 }
+      watching: { triggerTerms: [watching me, staring, everyone looked], reading: "feeling watched or evaluated", weight: 0.84 }
+      lostInCrowd: { triggerTerms: [lost in crowd, swept away, could not find], reading: "feeling lost even within belonging", weight: 0.86 }
+    contextQuestions: ["Did the crowd feel comforting or overwhelming?", "Were people watching you?"]
+    metaphorHooks: ["the self among many eyes", "a voice covered by the crowd"]
+    cardTitleSeeds: ["Night of the Crowd", "Among Many People"]
+    smallPrescriptions: ["If your voice feels buried, write one sentence clearly for yourself."]
+    safeReading: "A crowd can symbolize social pressure, visibility, belonging, and overwhelm."
+    avoidExpressions: ["people will judge you", "you will become popular"]

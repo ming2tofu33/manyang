@@ -1,0 +1,54 @@
+id: being_chased
+status: active
+editorialStatus: approved
+category: action
+subcategory: avoidance
+facets: [pressure, avoidance, threat, urgency]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [action_symbolism, threat_metaphor, scene_function], coreMeanings: [pressure, avoidance, threat, urgency], safeTransform: ["something avoided gaining speed behind the self", "pressure that feels hard to face directly"], avoidClaims: ["someone is actually after you", "danger will happen"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["쫓기는 장면은 액운보다 미룬 부담과 압박으로 해석", "도망과 마주봄 사이의 긴장"], avoidClaims: ["위험한 일이 생긴다", "누군가 해치려 한다"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["being chased as avoidance, threat, urgency, and pressure", "an avoided issue becoming pursuit"], avoidClaims: ["someone is actually after you", "danger will happen"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [pressure, avoidance, threat, urgency]
+tensionAxis: [avoidance, confrontation]
+relatedIds: [running, stranger, road]
+sourceBasis: [action symbolism, threat metaphor, scene function]
+locales:
+  ko:
+    label: "쫓김"
+    aliases: ["쫓김", "쫓기", "쫓기다가", "쫓기는 꿈", "도망치는 꿈", "추격", "누가 따라오는 꿈"]
+    searchText: "쫓김, 쫓기는 꿈, 도망치는 꿈, 추격, 누가 따라오는 꿈, 압박, 회피, 위협감, 급박함"
+    coreMeanings: ["압박", "회피", "위협감", "급박함"]
+    lightReadings: ["미뤄둔 일을 마주볼 때가 가까워진 장면", "압박의 정체를 알아차리려는 신호"]
+    shadowReadings: ["피하고 싶은 문제가 계속 따라오는 느낌", "긴장과 불안이 커진 상태"]
+    sceneModifiers:
+      unknownChaser: { triggerTerms: ["쫓기", "누군가", "모르는", "정체"], reading: "압박의 정체가 아직 분명하지 않은 장면", weight: 0.84 }
+      monster: { triggerTerms: ["괴물", "무서운", "귀신"], reading: "문제가 실제보다 더 크게 느껴지는 장면", weight: 0.86 }
+      cannotRun: { triggerTerms: ["안 뛰", "느려", "다리가"], reading: "피하고 싶지만 움직이지 못하는 무력감", weight: 0.88 }
+    contextQuestions: ["무엇에게 쫓기고 있었나요?", "도망치고 싶은 현실의 압박이 있나요?"]
+    metaphorHooks: ["뒤에서 속도를 내는 부담", "마주보지 못한 일이 따라오는 밤"]
+    cardTitleSeeds: ["쫓기는 밤", "뒤따라오는 압박"]
+    smallPrescriptions: ["가장 피하고 싶은 일을 오늘 5분만 들여다보세요."]
+    safeReading: "쫓기는 꿈은 실제 위험 예고가 아니라 압박, 회피, 급박함을 보여주는 상징일 수 있어요."
+    avoidExpressions: ["위험한 일이 생긴다", "누군가 해치려 한다"]
+  en:
+    label: Being Chased
+    aliases: [being chased, chased, running away, pursuit, someone following me]
+    searchText: "being chased, chased, running away, pursuit, someone following me, pressure, avoidance, threat, urgency"
+    coreMeanings: [pressure, avoidance, threat feeling, urgency]
+    lightReadings: ["an avoided issue becoming ready to face", "noticing what pressure is made of"]
+    shadowReadings: ["a problem feeling like it keeps following you", "heightened tension and anxiety"]
+    sceneModifiers:
+      unknownChaser: { triggerTerms: [unknown person, someone, could not see who], reading: "pressure whose identity is not yet clear", weight: 0.84 }
+      monster: { triggerTerms: [monster, scary thing, ghost], reading: "a problem feeling larger than its real shape", weight: 0.86 }
+      cannotRun: { triggerTerms: [could not run, slow legs, stuck], reading: "helplessness while trying to avoid pressure", weight: 0.88 }
+    contextQuestions: ["What was chasing you?", "What pressure are you avoiding in waking life?"]
+    metaphorHooks: ["pressure gaining speed behind you", "the night an avoided thing follows"]
+    cardTitleSeeds: ["Night of Being Chased", "Pressure Behind You"]
+    smallPrescriptions: ["Look at the most avoided task for just five minutes today."]
+    safeReading: "Being chased can symbolize pressure, avoidance, threat feeling, and urgency, not literal danger."
+    avoidExpressions: ["danger will happen", "someone is after you"]

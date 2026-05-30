@@ -1,0 +1,54 @@
+id: stranger
+status: active
+editorialStatus: approved
+category: relationship
+subcategory: unknown_person
+facets: [unknown_self, boundary, projection, new_relation]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [relationship_symbolism, psychological_metaphor, scene_function], coreMeanings: [unknown_self, boundary, projection, new_relation], safeTransform: [낯선 감정이나 가능성이 사람의 얼굴을 쓰고 나타난 장면, 관계 거리감을 점검하는 마음], avoidClaims: [나쁜 사람이 나타난다, 배신당한다] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: [낯선 인연과 경계의 기운, 아직 이름 붙이지 못한 마음의 방문객], avoidClaims: [나쁜 사람이 나타난다, 배신당한다] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: [projection unfamiliar self and boundary, a new relation to what is unknown], avoidClaims: [나쁜 사람이 나타난다, 배신당한다] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [unknown self, boundary, projection, new relation]
+tensionAxis: [curiosity, threat]
+relatedIds: [running, dog, door]
+sourceBasis: [relationship symbolism, psychological metaphor, scene function]
+locales:
+  ko:
+    label: 낯선 사람
+    aliases: [낯선 사람, 모르는 사람, 처음 보는 사람, 이상한 사람, 남자]
+    searchText: 낯선 사람, 모르는 사람, 처음 보는 사람, 낯선 감정, 경계, 새로운 관계, 투사
+    coreMeanings: [낯선 자기, 경계, 새로운 관계, 투사]
+    lightReadings: [새로운 면을 조심스럽게 알아가는 마음, 관계의 거리를 조정하는 장면]
+    shadowReadings: [익숙하지 않은 것에 대한 불안, 경계가 흐려질 때의 압박]
+    sceneModifiers:
+      friendly: { triggerTerms: [친절, 도와, 웃었], reading: 낯선 가능성을 받아들일 여지, weight: 0.72 }
+      threatening: { triggerTerms: [무서, 위협, 따라왔], reading: 경계 반응이 강하게 올라온 장면, weight: 0.86 }
+      silent: { triggerTerms: [말없이, 쳐다, 서있], reading: 아직 이름 붙이지 못한 존재감, weight: 0.72 }
+    contextQuestions: [낯선 사람은 위협적이었나요, 중립적이었나요?, 그 사람에게서 어떤 감정이 강했나요?]
+    metaphorHooks: [아직 이름 없는 타자, 낯선 얼굴로 온 마음의 일부]
+    cardTitleSeeds: [낯선 사람의 달, 처음 보는 얼굴의 밤]
+    smallPrescriptions: [오늘 낯설게 느껴진 감정 하나를 판단하지 말고 적어보세요.]
+    safeReading: 모르는 사람은 실제 인물 예고보다, 낯선 감정이나 관계의 경계를 보여주는 상징으로 읽을 수 있어요.
+    avoidExpressions: [나쁜 사람이 나타난다, 배신당한다]
+  en:
+    label: Stranger
+    aliases: [stranger, unknown person, someone I did not know, strange person, unknown man]
+    searchText: stranger, unknown person, unfamiliar person, unknown self, boundary, new relation, projection
+    coreMeanings: [unknown self, boundary, new relation, projection]
+    lightReadings: [getting to know a new side carefully, adjusting relational distance]
+    shadowReadings: [anxiety around the unfamiliar, pressure when boundaries feel unclear]
+    sceneModifiers:
+      friendly: { triggerTerms: [friendly, helped me, smiling], reading: room to accept an unfamiliar possibility, weight: 0.72 }
+      threatening: { triggerTerms: [threatening, scary, followed me], reading: a strong boundary response, weight: 0.86 }
+      silent: { triggerTerms: [silent, staring, just stood there], reading: an unclear presence that has not been named, weight: 0.72 }
+    contextQuestions: [Was the stranger threatening, neutral, or kind?, What feeling did they carry?]
+    metaphorHooks: [an unnamed other, a part of the mind arriving with an unfamiliar face]
+    cardTitleSeeds: [Moon of the Stranger, Night of the Unknown Face]
+    smallPrescriptions: [Write one unfamiliar feeling today without judging it.]
+    safeReading: A stranger can point to unfamiliar feeling, projection, or relational boundaries rather than a real person.
+    avoidExpressions: [a bad person will appear, someone will betray you]

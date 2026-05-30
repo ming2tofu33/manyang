@@ -46,8 +46,42 @@ describe("retrieval scoring", () => {
       localeMatches: true,
     });
 
-    expect(confidence).toBe(1);
+    expect(confidence).toBeGreaterThanOrEqual(0.9);
+    expect(confidence).toBeLessThan(1);
     expect(classifyRetrievalMatch({ confidence, matchType: "alias" })).toBe("primary");
+  });
+
+  test("keeps exact confidence below saturation while preserving ranking signal", () => {
+    const exactWithModifier = scoreRetrievalCandidate({
+      matchType: "exact",
+      source: "explicit",
+      importance: 5,
+      hasEvidenceText: true,
+      hasSceneModifier: true,
+      localeMatches: true,
+      repeatedSymbolBoost: 0.08,
+    });
+    const exactWithoutModifier = scoreRetrievalCandidate({
+      matchType: "exact",
+      source: "explicit",
+      importance: 5,
+      hasEvidenceText: true,
+      hasSceneModifier: false,
+      localeMatches: true,
+    });
+    const aliasWithModifier = scoreRetrievalCandidate({
+      matchType: "alias",
+      source: "explicit",
+      importance: 5,
+      hasEvidenceText: true,
+      hasSceneModifier: true,
+      localeMatches: true,
+    });
+
+    expect(exactWithModifier).toBeLessThan(1);
+    expect(exactWithModifier).toBeGreaterThan(exactWithoutModifier);
+    expect(exactWithoutModifier).toBeGreaterThan(aliasWithModifier);
+    expect(classifyRetrievalMatch({ confidence: exactWithModifier, matchType: "exact" })).toBe("primary");
   });
 
   test("penalizes inferred candidates without source evidence", () => {

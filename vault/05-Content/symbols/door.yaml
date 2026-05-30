@@ -1,8 +1,60 @@
 id: door
 status: active
+editorialStatus: approved
 category: object
+subcategory: threshold_item
+facets:
+  - boundary
+  - choice
+  - access
+  - transition
+symbolRole:
+  - primary_candidate
 safetyLevel: safe
 accessTier: free
+interpretationLenses:
+  universal:
+    sourceBasis:
+      - scene_function
+      - everyday_metaphor
+    coreMeanings:
+      - boundary
+      - choice
+      - transition
+      - access
+    safeTransform:
+      - 선택 앞의 문턱에 선 마음
+      - 다음 장면으로 넘어가기 위한 조건을 살피는 흐름
+    avoidClaims:
+      - 반드시 기회가 온다
+      - 문이 닫혔으니 실패한다
+  east_asian:
+    sourceBasis:
+      - east_asian_symbolism
+      - product_editorial_rule
+    safeTransform:
+      - 안과 밖을 가르는 경계
+      - 새 장면으로 넘어가기 전의 조심스러운 전환
+    avoidClaims:
+      - 반드시 기회가 온다
+      - 문이 닫혔으니 실패한다
+  western:
+    sourceBasis:
+      - western_psychological
+      - mythic_association
+      - product_editorial_rule
+    safeTransform:
+      - threshold symbolism과 liminal transition
+      - 허락과 접근 권한을 둘러싼 긴장
+    avoidClaims:
+      - 반드시 기회가 온다
+      - 문이 닫혔으니 실패한다
+embeddingProfile:
+  chunkTypes:
+    - searchText
+    - sceneModifier
+    - safeReading
+    - metaphorHook
 universalMeanings:
   - boundary
   - choice

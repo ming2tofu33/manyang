@@ -21,6 +21,7 @@ type AppShellProps = {
   backHref?: string;
   rightAction?: "settings" | "share" | "calendar" | "book";
   showHeader?: boolean;
+  showBottomNav?: boolean;
   contentMode?: "scroll" | "fixed";
 };
 
@@ -38,16 +39,17 @@ export function AppShell({
   backHref,
   rightAction = "settings",
   showHeader = true,
+  showBottomNav = true,
   contentMode = "scroll",
 }: AppShellProps) {
   const rightIcon =
     rightAction === "share"
-      ? manyangAssets.icons.share
+      ? manyangAssets.actionIcons.share
       : rightAction === "calendar"
-        ? manyangAssets.icons.calendar
+        ? manyangAssets.actionIcons.calendar
         : rightAction === "book"
-          ? manyangAssets.icons.book
-          : manyangAssets.icons.settings;
+          ? manyangAssets.actionIcons.book
+          : manyangAssets.actionIcons.settings;
   const rightLabel =
     rightAction === "share"
       ? "공유"
@@ -81,12 +83,12 @@ export function AppShell({
               {backHref ? (
                 <AssetIconButton
                   href={backHref}
-                  src={manyangAssets.icons.arrowLeft}
+                  src={manyangAssets.actionIcons.arrowLeft}
                   label="뒤로 가기"
                   size="header"
                 />
               ) : (
-                <AssetIconButton src={manyangAssets.icons.bell} label="알림" size="header" />
+                <AssetIconButton src={manyangAssets.actionIcons.bell} label="알림" size="header" />
               )}
 
               {title ? (
@@ -118,7 +120,7 @@ export function AppShell({
           >
             <div className="flex min-h-full flex-col">{children}</div>
           </div>
-          <BottomNav />
+          {showBottomNav ? <BottomNav /> : null}
         </div>
       </section>
     </main>

@@ -1,0 +1,54 @@
+id: bird
+status: active
+editorialStatus: approved
+category: living_being
+subcategory: animal
+facets: [freedom, message, distance, perspective]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [animal_symbolism, spatial_metaphor, scene_function], coreMeanings: [freedom, message, distance, perspective], safeTransform: [멀리서 바라보는 시야, 가볍게 날아오르는 소식이나 생각], avoidClaims: [좋은 소식이 반드시 온다, 떠나게 된다] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: [소식과 이동의 기척, 하늘로 열린 시야와 자유감], avoidClaims: [좋은 소식이 반드시 온다, 떠나게 된다] }
+  western: { sourceBasis: [western_psychological, mythic_association, product_editorial_rule], safeTransform: [freedom message and aerial perspective, thoughts moving above the immediate scene], avoidClaims: [좋은 소식이 반드시 온다, 떠나게 된다] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [freedom, message, distance, perspective]
+tensionAxis: [lightness, unreachability]
+relatedIds: [window, sky, dawn]
+sourceBasis: [animal symbolism, spatial metaphor, scene function]
+locales:
+  ko:
+    label: 새
+    aliases: [새, 새떼, 작은 새, 날개, 새장]
+    searchText: 새, 새떼, 작은 새, 날개, 새장, 자유, 소식, 거리감, 시야 확장
+    coreMeanings: [자유, 소식, 거리감, 시야 확장]
+    lightReadings: [더 넓은 관점에서 보는 마음, 가벼운 생각이나 소식이 날아오르는 장면]
+    shadowReadings: [붙잡을 수 없는 거리감, 날고 싶지만 갇힌 감각]
+    sceneModifiers:
+      flying: { triggerTerms: [날, 날아, 하늘], reading: 시야와 가능성이 넓어지는 장면, weight: 0.75 }
+      caged: { triggerTerms: [새장, 갇힘, 못 날], reading: 자유롭고 싶은 마음이 제한된 장면, weight: 0.84 }
+      flock: { triggerTerms: [새떼, 많은 새, 무리], reading: 생각이나 신호가 여러 갈래로 움직이는 장면, weight: 0.78 }
+    contextQuestions: [새는 자유롭게 날고 있었나요, 갇혀 있었나요?, 새가 혼자였나요, 무리였나요?]
+    metaphorHooks: [창밖으로 날아간 생각, 붙잡히지 않는 작은 소식]
+    cardTitleSeeds: [날개의 달, 새장 없는 밤]
+    smallPrescriptions: [오늘 너무 가까이 붙어 있는 문제를 조금 멀리서 바라보세요.]
+    safeReading: 새는 자유, 소식, 거리감, 시야 확장과 연결해 읽을 수 있어요.
+    avoidExpressions: [좋은 소식이 반드시 온다, 떠나게 된다]
+  en:
+    label: Bird
+    aliases: [bird, birds, wings, flock, cage]
+    searchText: bird, wings, flock, cage, freedom, message, distance, perspective, flight
+    coreMeanings: [freedom, message, distance, expanded view]
+    lightReadings: [seeing from a wider angle, a light thought or message rising]
+    shadowReadings: [distance from something hard to hold, wanting to fly but feeling contained]
+    sceneModifiers:
+      flying: { triggerTerms: [flying, flew, in the sky], reading: perspective and possibility expanding, weight: 0.75 }
+      caged: { triggerTerms: [caged bird, in a cage, could not fly], reading: freedom feeling restricted, weight: 0.84 }
+      flock: { triggerTerms: [flock, many birds, swarm of birds], reading: many signals or thoughts moving together, weight: 0.78 }
+    contextQuestions: [Was the bird flying freely or caged?, Was it alone or in a flock?]
+    metaphorHooks: [a thought flying beyond the window, a small message hard to hold]
+    cardTitleSeeds: [Moon of Wings, Night Beside the Cage]
+    smallPrescriptions: [Look at one close problem from farther away today.]
+    safeReading: A bird can point to freedom, message, distance, and a wider perspective.
+    avoidExpressions: [good news is guaranteed, you will leave]

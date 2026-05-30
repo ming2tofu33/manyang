@@ -1,0 +1,54 @@
+id: car
+status: active
+editorialStatus: approved
+category: object
+subcategory: vehicle
+facets: [direction, control, pace, personal_agency]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [vehicle_metaphor, movement_symbolism, scene_function], coreMeanings: [direction, control, pace, personal_agency], safeTransform: ["how the self is moving through a situation", "control and pace becoming visible through driving"], avoidClaims: ["a real accident will happen", "your path is fixed"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["movement and life direction can be read through vehicle scenes", "control should be framed as agency not fate"], avoidClaims: ["a real accident will happen", "your path is fixed"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["car as personal agency direction and control", "the driver seat as a metaphor for autonomy"], avoidClaims: ["a real accident will happen", "your path is fixed"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [direction, control, pace, personal agency]
+tensionAxis: [control, loss_of_control]
+relatedIds: [road, bus, train]
+sourceBasis: [vehicle metaphor, movement symbolism, scene function]
+locales:
+  ko:
+    label: "자동차"
+    aliases: ["자동차", "차", "운전", "차를 타는 꿈", "차 사고"]
+    searchText: "자동차, 차, 운전, 차를 타는 꿈, 이동, 방향, 통제감, 속도, 내 삶의 운전대"
+    coreMeanings: ["방향", "통제감", "속도", "자기 주도성"]
+    lightReadings: ["내 방향을 직접 잡으려는 마음", "앞으로 나아갈 힘이 생긴 장면"]
+    shadowReadings: ["속도가 너무 빠르거나 통제되지 않는 느낌", "누가 운전대를 쥐고 있는지에 대한 불안"]
+    sceneModifiers:
+      driving: { triggerTerms: ["운전", "몰고", "핸들"], reading: "상황을 직접 이끌고 싶은 마음이 드러난 장면", weight: 0.78 }
+      passenger: { triggerTerms: ["조수석", "뒷자리", "타고"], reading: "내가 아닌 누군가가 방향을 정한다고 느끼는 장면", weight: 0.76 }
+      accident: { triggerTerms: ["사고", "부딪", "브레이크"], reading: "속도와 통제감에 대한 불안이 강하게 표현된 장면", weight: 0.86 }
+    contextQuestions: ["꿈에서 운전자는 누구였나요?", "차는 원하는 방향으로 가고 있었나요?"]
+    metaphorHooks: ["내 삶의 운전대", "속도가 먼저 달려가는 길"]
+    cardTitleSeeds: ["운전대의 밤", "브레이크 없는 길"]
+    smallPrescriptions: ["오늘 내가 직접 조절할 수 있는 일과 없는 일을 나눠보세요."]
+    safeReading: "자동차는 실제 사고 예고가 아니라 방향, 속도, 통제감, 자기 주도성을 보여주는 상징일 수 있어요."
+    avoidExpressions: ["교통사고가 난다", "위험한 일이 생긴다", "운전하면 안 된다"]
+  en:
+    label: Car
+    aliases: [car, driving, vehicle, car accident, passenger]
+    searchText: "car, driving, vehicle, passenger, accident, direction, control, speed, personal agency"
+    coreMeanings: [direction, control, pace, personal agency]
+    lightReadings: ["wanting to steer your own direction", "having energy to move forward"]
+    shadowReadings: ["moving too fast or without control", "worry about who is steering"]
+    sceneModifiers:
+      driving: { triggerTerms: ["driving", "steering", "driver seat"], reading: "wanting to actively lead the situation", weight: 0.78 }
+      passenger: { triggerTerms: ["passenger", "back seat", "riding"], reading: "feeling someone else is setting the direction", weight: 0.76 }
+      accident: { triggerTerms: ["accident", "crash", "brakes"], reading: "anxiety around speed and control", weight: 0.86 }
+    contextQuestions: ["Who was driving?", "Was the car going where you wanted?"]
+    metaphorHooks: ["the steering wheel of your life", "a road where speed runs ahead"]
+    cardTitleSeeds: ["Night at the Wheel", "Road Without Brakes"]
+    smallPrescriptions: ["Separate one thing you can steer today from one thing you cannot."]
+    safeReading: "A car can symbolize direction, pace, control, and personal agency, not a literal accident prediction."
+    avoidExpressions: ["you will have an accident", "danger will happen", "do not drive"]

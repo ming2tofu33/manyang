@@ -1,0 +1,54 @@
+id: crying
+status: active
+editorialStatus: approved
+category: emotion
+subcategory: emotional_release
+facets: [release, grief, relief, overwhelm]
+symbolRole: [primary_candidate, modifier]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [action_symbolism, emotion_metaphor, scene_function], coreMeanings: [release, grief, relief, overwhelm], safeTransform: ["emotion finding a way out", "pressure softening through tears"], avoidClaims: ["you will receive good news", "sadness will happen"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["우는 장면은 해소와 감정의 배출로 안전하게 읽음", "기쁨과 슬픔의 단정은 피함"], avoidClaims: ["좋은 일이 생긴다", "슬픈 일이 생긴다"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["crying as emotional release, grief, relief, or overwhelm", "tears as pressure leaving the body"], avoidClaims: ["you will receive good news", "sadness will happen"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [release, grief, relief, overwhelm]
+tensionAxis: [release, overwhelm]
+relatedIds: [rain, funeral, child]
+sourceBasis: [action symbolism, emotion metaphor, scene function]
+locales:
+  ko:
+    label: "울음"
+    aliases: ["울음", "우는 꿈", "눈물", "펑펑 울다", "흐느낌"]
+    searchText: "울음, 우는 꿈, 눈물, 펑펑 울다, 흐느낌, 감정 해소, 슬픔, 안도, 벅찬 마음"
+    coreMeanings: ["감정 해소", "슬픔", "안도", "벅찬 마음"]
+    lightReadings: ["눌려 있던 감정이 빠져나오는 장면", "마음이 긴장을 내려놓는 과정"]
+    shadowReadings: ["감당하기 어려울 만큼 감정이 쌓인 느낌", "표현하지 못한 슬픔"]
+    sceneModifiers:
+      loud: { triggerTerms: ["펑펑", "소리", "크게"], reading: "감정이 더는 조용히 머물 수 없을 만큼 커진 장면", weight: 0.84 }
+      silent: { triggerTerms: ["소리 없이", "조용히", "참"], reading: "겉으로 드러내기 어려운 슬픔이나 긴장", weight: 0.78 }
+      relief: { triggerTerms: ["시원", "후련", "괜찮"], reading: "울고 난 뒤 풀리는 감각이 중요한 장면", weight: 0.72 }
+    contextQuestions: ["울고 난 뒤 후련했나요, 더 답답했나요?", "누구 앞에서 울고 있었나요?"]
+    metaphorHooks: ["눈물로 빠져나가는 압력", "마음이 물이 되는 순간"]
+    cardTitleSeeds: ["눈물의 밤", "후련해진 마음"]
+    smallPrescriptions: ["요즘 참아온 감정을 판단하지 말고 이름만 붙여보세요."]
+    safeReading: "울음은 좋은 일/나쁜 일 예고보다 감정 해소, 슬픔, 안도의 흐름으로 읽을 수 있어요."
+    avoidExpressions: ["좋은 일이 생긴다", "슬픈 일이 생긴다"]
+  en:
+    label: Crying
+    aliases: [crying, tears, sobbed, weeping, cried]
+    searchText: "crying, tears, sobbing, weeping, emotional release, grief, relief, overwhelm"
+    coreMeanings: [emotional release, grief, relief, overwhelm]
+    lightReadings: ["held emotion finding a way out", "pressure softening through expression"]
+    shadowReadings: ["emotion built up beyond capacity", "unspoken sadness"]
+    sceneModifiers:
+      loud: { triggerTerms: [sobbed, loud crying, crying hard], reading: "emotion becoming too large to stay quiet", weight: 0.84 }
+      silent: { triggerTerms: [silent tears, quietly crying, holding back], reading: "sadness or tension difficult to show", weight: 0.78 }
+      relief: { triggerTerms: [relieved, felt better, calm after], reading: "release after crying becoming central", weight: 0.72 }
+    contextQuestions: ["Did you feel relieved afterward?", "Who was present while you cried?"]
+    metaphorHooks: ["pressure leaving through tears", "the moment the mind becomes water"]
+    cardTitleSeeds: ["Night of Tears", "The Relieved Heart"]
+    smallPrescriptions: ["Name one feeling you have been holding back without judging it."]
+    safeReading: "Crying can symbolize emotional release, grief, relief, or overwhelm, not a fixed omen."
+    avoidExpressions: ["good news will come", "sadness will happen"]

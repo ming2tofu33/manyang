@@ -1,0 +1,54 @@
+id: death
+status: active
+editorialStatus: approved
+category: event
+subcategory: ending
+facets: [ending, transition, fear, release]
+symbolRole: [primary_candidate]
+safetyLevel: sensitive
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [event_symbolism, transition_metaphor, product_safety_rule], coreMeanings: [ending, transition, fear, release], safeTransform: ["an ending or transformation being emotionally staged", "fear around change appearing in a strong image"], avoidClaims: ["someone will die", "this predicts death"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["old cycles ending can be safely reframed without fortune claims", "separation and renewal appear together"], avoidClaims: ["someone will die", "this predicts death"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["death as symbolic transformation closure or fear of loss", "a threshold image rather than prediction"], avoidClaims: ["someone will die", "this predicts death"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [ending, transition, fear, release]
+tensionAxis: [closure, fear]
+relatedIds: [funeral, door, lost_item]
+sourceBasis: [event symbolism, transition metaphor, product safety rule]
+locales:
+  ko:
+    label: "죽음"
+    aliases: ["죽음", "죽는 꿈", "사망", "죽었다", "죽은 사람"]
+    searchText: "죽음, 죽는 꿈, 사망, 죽었다, 끝남, 전환, 상실 불안, 놓아보내기, 변화의 문턱"
+    coreMeanings: ["끝남", "전환", "상실 불안", "놓아보내기"]
+    lightReadings: ["오래 붙잡은 것을 정리하려는 마음", "한 단계가 끝나고 다른 국면으로 넘어가는 장면"]
+    shadowReadings: ["상실에 대한 강한 불안", "변화를 받아들이기 어려운 마음"]
+    sceneModifiers:
+      ownDeath: { triggerTerms: ["내가 죽", "내 죽음", "내 장례"], reading: "자기 정체성의 한 부분이 바뀌는 느낌이 강한 장면", weight: 0.86 }
+      lovedOne: { triggerTerms: ["가족", "친구", "연인", "부모"], reading: "소중한 관계를 잃을까 봐 두려운 마음이 드러난 장면", weight: 0.84 }
+      peaceful: { triggerTerms: ["평온", "조용", "편안", "잠든"], reading: "끝맺음과 놓아보내기가 비교적 차분하게 진행되는 장면", weight: 0.74 }
+    contextQuestions: ["꿈속 죽음은 공포였나요, 이상하게 차분했나요?", "요즘 끝내야 하지만 미루고 있는 일이 있나요?"]
+    metaphorHooks: ["끝난 뒤에도 남는 문턱", "한 장면이 내려가고 다른 장면이 올라오는 밤"]
+    cardTitleSeeds: ["끝의 문턱", "조용한 전환"]
+    smallPrescriptions: ["실제 죽음의 예고로 보지 말고, 요즘 끝나가고 있는 흐름 하나를 적어보세요."]
+    safeReading: "죽음은 실제 사망 예언이 아니라 끝남, 전환, 상실 불안, 놓아보내기를 강하게 표현하는 상징일 수 있어요."
+    avoidExpressions: ["누가 죽는다", "사망을 예고한다", "불길한 일이 생긴다"]
+  en:
+    label: Death
+    aliases: [death, dying, dead, someone died, my death]
+    searchText: "death, dying, dead, ending, transition, fear of loss, release, threshold of change"
+    coreMeanings: [ending, transition, fear of loss, release]
+    lightReadings: ["the mind preparing to end an old phase", "movement from one state into another"]
+    shadowReadings: ["strong fear of loss", "difficulty accepting change"]
+    sceneModifiers:
+      ownDeath: { triggerTerms: ["I died", "my death", "my funeral"], reading: "a part of identity feeling ready or forced to change", weight: 0.86 }
+      lovedOne: { triggerTerms: ["family", "friend", "partner", "parent"], reading: "fear of losing someone or something precious", weight: 0.84 }
+      peaceful: { triggerTerms: ["peaceful", "quiet", "calm", "asleep"], reading: "closure or release happening with less resistance", weight: 0.74 }
+    contextQuestions: ["Did the death feel terrifying or strangely calm?", "What phase of life may be ending now?"]
+    metaphorHooks: ["a threshold after an ending", "one scene lowering as another rises"]
+    cardTitleSeeds: ["Threshold of Ending", "Quiet Transition"]
+    smallPrescriptions: ["Treat this as symbolic and name one current phase that may be ending."]
+    safeReading: "Death in a dream should be read symbolically as ending, transition, fear of loss, or release, not as a prediction."
+    avoidExpressions: ["someone will die", "this predicts death", "something ominous will happen"]

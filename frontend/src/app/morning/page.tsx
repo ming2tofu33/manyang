@@ -35,9 +35,10 @@ export default function MorningPage() {
       }
       title={morningMoodCopy.pageTitle}
       subtitle={morningMoodCopy.pageSubtitle}
-      titleIconSrc={manyangAssets.icons.moon}
+      titleIconSrc={manyangAssets.semanticIcons.moon}
       backHref="/"
       rightAction="calendar"
+      showBottomNav={false}
     >
       <MorningMoodForm />
     </AppShell>

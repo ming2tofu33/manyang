@@ -30,6 +30,27 @@ describe("EncyclopediaDetailContent", () => {
     expect(markup).toContain("고양이가 다가왔나요");
     expect(markup).toContain("상징 힌트");
     expect(markup).toContain("href=\"/write?symbol=cat\"");
+    expect(markup).toContain("/manyang/ui/buttons/dreammemory-submit-frame.png");
     expect(markup).toContain("href=\"/encyclopedia/darkness\"");
+  });
+
+  it("renders a result-context version when opened from a dream receipt", () => {
+    if (!catEntry) {
+      throw new Error("Missing cat encyclopedia entry");
+    }
+
+    const markup = renderToStaticMarkup(
+      <EncyclopediaDetailContent entry={catEntry} relatedSymbols={[]} source="result" />,
+    );
+
+    expect(markup).toContain("data-result-encyclopedia-context=\"true\"");
+    expect(markup).toContain("영수증에 담긴 상징 메모");
+    expect(markup).toContain("방금 받은 꿈 영수증에서 이어서 살펴보는 상징이에요.");
+    expect(markup).toContain("영수증으로 돌아가기");
+    expect(markup).toContain("href=\"/result\"");
+    expect(markup).toContain("/manyang/ui/buttons/common-medium-primary-frame.png");
+    expect(markup).toContain("/manyang/ui/buttons/common-medium-secondary-frame.png");
+    expect(markup).not.toContain("꿈 영수증의 근거");
+    expect(markup).not.toContain("오늘의 꿈 영수증 받기");
   });
 });

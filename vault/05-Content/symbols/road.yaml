@@ -1,0 +1,54 @@
+id: road
+status: active
+editorialStatus: approved
+category: place
+subcategory: route
+facets: [direction, journey, choice, continuity]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [spatial_metaphor, journey_symbolism, scene_function], coreMeanings: [direction, journey, choice, continuity], safeTransform: ["a path the self is trying to follow", "movement through a current life phase"], avoidClaims: ["your future path is fixed", "you must choose this way"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["길은 흐름과 방향을 드러내는 생활 상징", "앞으로 갈 곳을 살피는 장면"], avoidClaims: ["미래가 정해졌다", "이 길로 가야 한다"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["road as path, process, and life direction", "the route between present and next state"], avoidClaims: ["your future path is fixed", "you must choose this way"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [direction, journey, choice, continuity]
+tensionAxis: [movement, uncertainty]
+relatedIds: [car, bridge, train]
+sourceBasis: [spatial metaphor, journey symbolism, scene function]
+locales:
+  ko:
+    label: "길"
+    aliases: ["길", "도로", "긴 길", "골목길", "길을 걷는 꿈"]
+    searchText: "길, 도로, 긴 길, 골목길, 길을 걷는 꿈, 방향, 여정, 선택, 앞으로 가는 과정"
+    coreMeanings: ["방향", "여정", "선택", "계속되는 과정"]
+    lightReadings: ["앞으로 가야 할 방향을 살피는 장면", "아직 끝나지 않은 과정 속에서 움직이는 마음"]
+    shadowReadings: ["어디로 가야 할지 모르는 불확실성", "길이 멀게 느껴지는 피로"]
+    sceneModifiers:
+      longRoad: { triggerTerms: ["긴 길", "끝없는", "멀리"], reading: "과정이 길고 꾸준함을 요구하는 장면", weight: 0.78 }
+      lost: { triggerTerms: ["길을 잃", "헤매", "모르"], reading: "방향을 잃었거나 선택지가 흐릿한 장면", weight: 0.84 }
+      blocked: { triggerTerms: ["막힌", "공사", "막혀"], reading: "앞으로 가고 싶지만 막힌 느낌이 드러난 장면", weight: 0.82 }
+    contextQuestions: ["길은 곧게 이어졌나요, 막혀 있었나요?", "그 길을 혼자 걷고 있었나요?"]
+    metaphorHooks: ["아직 끝나지 않은 길", "마음이 따라가는 방향"]
+    cardTitleSeeds: ["긴 길의 밤", "막힌 도로 앞에서"]
+    smallPrescriptions: ["오늘 당장 정해야 할 방향과 천천히 봐도 되는 방향을 나눠보세요."]
+    safeReading: "길은 미래 예언보다 현재 지나가는 과정, 방향감, 선택의 감각을 보여줄 수 있어요."
+    avoidExpressions: ["미래가 정해졌다", "이 길로 가야 한다"]
+  en:
+    label: Road
+    aliases: [road, path, street, long road, walking on a road]
+    searchText: "road, path, street, long road, walking, direction, journey, choice, process"
+    coreMeanings: [direction, journey, choice, ongoing process]
+    lightReadings: ["checking the direction ahead", "moving through a process that is not finished"]
+    shadowReadings: ["uncertainty about where to go", "fatigue when the path feels long"]
+    sceneModifiers:
+      longRoad: { triggerTerms: [long road, endless road, far away], reading: "a process requiring patience and continuity", weight: 0.78 }
+      lost: { triggerTerms: [lost, wandering, did not know where], reading: "direction or choice feeling unclear", weight: 0.84 }
+      blocked: { triggerTerms: [blocked road, construction, closed road], reading: "wanting to move forward but feeling blocked", weight: 0.82 }
+    contextQuestions: ["Was the road open or blocked?", "Were you walking alone?"]
+    metaphorHooks: ["a path not yet finished", "the direction the mind follows"]
+    cardTitleSeeds: ["Night of the Long Road", "Before the Blocked Road"]
+    smallPrescriptions: ["Separate one direction that needs a decision from one that can wait."]
+    safeReading: "A road can symbolize process, direction, and choice rather than a fixed future."
+    avoidExpressions: ["your future is fixed", "you must take this path"]

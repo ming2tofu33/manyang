@@ -2,7 +2,11 @@ import type { EncyclopediaEntry } from "@manyang/backend";
 import Image from "next/image";
 import Link from "next/link";
 
-import { EncyclopediaReaderSymbolHint } from "@/components/encyclopedia-reader-guide-client";
+import {
+  EncyclopediaDetailActionClient,
+  EncyclopediaReaderSymbolHint,
+  EncyclopediaResultContextClient,
+} from "@/components/encyclopedia-reader-guide-client";
 import { manyangAssets } from "@/lib/manyang-assets";
 import { cn, ui } from "@/lib/styles";
 
@@ -14,18 +18,22 @@ export type RelatedSymbolLink = {
 type EncyclopediaDetailContentProps = {
   entry: EncyclopediaEntry;
   relatedSymbols: RelatedSymbolLink[];
+  source?: "default" | "result";
 };
 
 export function EncyclopediaDetailContent({
   entry,
   relatedSymbols,
+  source = "default",
 }: EncyclopediaDetailContentProps) {
   return (
     <div className="mt-auto space-y-4 pb-5">
+      <EncyclopediaResultContextClient source={source} />
+
       <section className={cn(ui.panel, "p-5")}>
         <div className="flex items-start gap-4">
           <span className="relative h-16 w-16 shrink-0">
-            <Image src={manyangAssets.icons.door} alt="" fill sizes="64px" unoptimized className="object-contain" />
+            <Image src={manyangAssets.semanticIcons.door} alt="" fill sizes="64px" unoptimized className="object-contain" />
           </span>
           <div>
             <p className="text-sm text-[#f0bc7d]">핵심 의미</p>
@@ -75,18 +83,7 @@ export function EncyclopediaDetailContent({
         </div>
       </section>
 
-      <section className={cn(ui.panel, "p-5")}>
-        <p className="text-lg font-semibold leading-7 text-[#ffd98a]">내 꿈에도 {entry.symbol}이 나왔나요?</p>
-        <p className="mt-2 text-[15px] leading-6 text-[#fff3d7]/82">
-          상징만으로 단정하기보다 꿈의 장면과 기분을 함께 넣으면 더 자연스럽게 읽을 수 있어요.
-        </p>
-        <Link href={`/write?symbol=${entry.slug}`} className={cn(ui.primaryAction, "mt-4 min-h-[3.25rem] text-base")}>
-          오늘의 꿈 영수증 받기
-        </Link>
-        <p className="mt-3 text-xs leading-5 text-[#caa37b]">
-          마냥 꿈해몽은 오락과 자기 성찰을 위한 해석을 제공하며, 의학적·법적·심리 진단을 대신하지 않아요.
-        </p>
-      </section>
+      <EncyclopediaDetailActionClient symbol={entry.symbol} slug={entry.slug} source={source} />
     </div>
   );
 }

@@ -1,0 +1,54 @@
+id: baby
+status: active
+editorialStatus: approved
+category: living_being
+subcategory: human_stage
+facets: [new_beginning, vulnerability, care, potential]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [life_stage_symbolism, care_metaphor, scene_function], coreMeanings: [new_beginning, vulnerability, care, potential], safeTransform: ["something new and fragile needing attention", "potential that has not yet grown a shape"], avoidClaims: ["this means pregnancy", "a baby will arrive"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["new life and family care can be safely reframed as potential", "care responsibility appears without pregnancy claims"], avoidClaims: ["this means pregnancy", "a baby will arrive"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["baby as new self new project vulnerability or emerging potential", "care and responsibility joined together"], avoidClaims: ["this means pregnancy", "a baby will arrive"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [new beginning, vulnerability, care, potential]
+tensionAxis: [potential, responsibility]
+relatedIds: [child, mother, pregnancy]
+sourceBasis: [life-stage symbolism, care metaphor, scene function]
+locales:
+  ko:
+    label: "아기"
+    aliases: ["아기", "갓난아기", "신생아", "아이", "아기를 안는 꿈"]
+    searchText: "아기, 갓난아기, 신생아, 아이, 새 시작, 취약함, 돌봄, 가능성, 아직 작은 계획"
+    coreMeanings: ["새 시작", "취약함", "돌봄", "가능성"]
+    lightReadings: ["아직 작지만 소중한 가능성이 생긴 장면", "보살펴야 할 마음이나 계획을 발견하는 장면"]
+    shadowReadings: ["책임이 갑자기 커질까 봐 느끼는 부담", "서툰 시작에 대한 불안"]
+    sceneModifiers:
+      holding: { triggerTerms: ["안고", "품", "업고"], reading: "새로운 가능성을 직접 책임지고 돌보려는 마음", weight: 0.8 }
+      crying: { triggerTerms: ["울", "울음", "칭얼"], reading: "돌봄이 필요한 취약한 감정이 강하게 신호를 보내는 장면", weight: 0.84 }
+      lostBaby: { triggerTerms: ["잃어", "사라", "찾아"], reading: "새로운 시작을 놓칠까 봐 불안한 마음이 드러난 장면", weight: 0.86 }
+    contextQuestions: ["아기는 편안했나요, 계속 울고 있었나요?", "요즘 막 시작했지만 아직 약한 일이 있나요?"]
+    metaphorHooks: ["아직 이름 붙지 않은 가능성", "작아서 더 신경 쓰이는 시작"]
+    cardTitleSeeds: ["작은 시작", "품 안의 가능성"]
+    smallPrescriptions: ["키우고 싶은 작은 계획 하나를 무리하지 않는 크기로 적어보세요."]
+    safeReading: "아기는 임신 예고로 단정하기보다 새 시작, 취약함, 돌봄이 필요한 가능성으로 읽는 편이 안전해요."
+    avoidExpressions: ["임신한다", "태몽이다", "아이가 생긴다"]
+  en:
+    label: Baby
+    aliases: [baby, newborn, infant, little child, holding a baby]
+    searchText: "baby, newborn, infant, new beginning, vulnerability, care, potential, small new project"
+    coreMeanings: [new beginning, vulnerability, care, potential]
+    lightReadings: ["a small but precious possibility appearing", "noticing something that needs care"]
+    shadowReadings: ["pressure from sudden responsibility", "anxiety around an unsteady beginning"]
+    sceneModifiers:
+      holding: { triggerTerms: ["holding a baby", "in my arms", "carrying"], reading: "taking direct responsibility for a new possibility", weight: 0.8 }
+      crying: { triggerTerms: ["crying", "screaming", "fussy"], reading: "a vulnerable feeling asking for care", weight: 0.84 }
+      lostBaby: { triggerTerms: ["lost baby", "missing baby", "could not find"], reading: "fear of losing a new beginning before it grows", weight: 0.86 }
+    contextQuestions: ["Was the baby calm or crying?", "What new but fragile thing has started recently?"]
+    metaphorHooks: ["a possibility not yet named", "a beginning small enough to need care"]
+    cardTitleSeeds: ["Small Beginning", "Potential in Your Arms"]
+    smallPrescriptions: ["Write one tiny next step for a new thing you want to protect."]
+    safeReading: "A baby is safest to read as new beginning, vulnerability, care, and potential, not as a pregnancy prediction."
+    avoidExpressions: ["you will get pregnant", "this means a baby is coming", "this is a pregnancy dream"]

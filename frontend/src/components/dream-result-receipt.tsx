@@ -554,20 +554,20 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
         style={createReceiptDelayStyle(receiptPaperSettledDelayMs)}
       >
         <AssetTextButton
-          frame={manyangAssets.boxes.pillWide}
+          frame={manyangAssets.buttons.compactPrimary}
           iconSrc={manyangAssets.actionIcons.download}
           onClick={handleDownload}
-          contentClassName="min-h-[3.75rem] px-3 text-[15px]"
-          iconClassName="h-7 w-7"
+          contentClassName="min-h-[3.45rem] px-2.5 text-[14px]"
+          iconClassName="h-6 w-6"
         >
           저장하기
         </AssetTextButton>
         <AssetTextButton
-          frame={manyangAssets.boxes.pillWide}
+          frame={manyangAssets.buttons.compactPrimary}
           iconSrc={manyangAssets.actionIcons.share}
           onClick={() => void handleShare()}
-          contentClassName="min-h-[3.75rem] px-3 text-[15px]"
-          iconClassName="h-7 w-7"
+          contentClassName="min-h-[3.45rem] px-2.5 text-[14px]"
+          iconClassName="h-6 w-6"
         >
           공유하기
         </AssetTextButton>

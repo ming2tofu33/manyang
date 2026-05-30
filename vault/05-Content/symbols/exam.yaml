@@ -1,0 +1,54 @@
+id: exam
+status: active
+editorialStatus: approved
+category: event
+subcategory: evaluation
+facets: [evaluation, preparation, performance, standard]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [event_symbolism, evaluation_metaphor, scene_function], coreMeanings: [evaluation, preparation, performance, standard], safeTransform: ["the self being measured against a standard", "readiness and pressure appearing together"], avoidClaims: ["you will pass", "you will fail"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["시험은 합격 예언보다 준비 상태와 평가 불안으로 해석", "사회적 기준 앞의 긴장"], avoidClaims: ["합격한다", "떨어진다"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["exam as performance anxiety, preparation, and inner standard", "a scene of being measured"], avoidClaims: ["you will pass", "you will fail"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [evaluation, preparation, performance, standard]
+tensionAxis: [readiness, pressure]
+relatedIds: [school, workplace, father]
+sourceBasis: [event symbolism, evaluation metaphor, scene function]
+locales:
+  ko:
+    label: "시험"
+    aliases: ["시험", "시험 보는 꿈", "시험지", "문제 풀기", "평가"]
+    searchText: "시험, 시험 보는 꿈, 시험지, 문제 풀기, 평가, 준비, 성과, 기준, 부담감"
+    coreMeanings: ["평가", "준비", "성과", "기준"]
+    lightReadings: ["내 준비 상태를 점검하려는 장면", "기준 앞에서 실력을 확인하고 싶은 마음"]
+    shadowReadings: ["평가받는 불안", "준비가 부족하다고 느끼는 압박"]
+    sceneModifiers:
+      unprepared: { triggerTerms: ["공부 안", "준비 안", "모르"], reading: "준비가 부족하다는 불안이 강한 장면", weight: 0.86 }
+      blankPaper: { triggerTerms: ["백지", "답이", "안 풀"], reading: "표현하거나 답해야 하는데 막힌 느낌", weight: 0.84 }
+      late: { triggerTerms: ["지각", "늦", "시간"], reading: "기준이나 일정에 늦을까 봐 느끼는 압박", weight: 0.82 }
+    contextQuestions: ["시험 준비가 되어 있었나요?", "결과보다 과정의 압박이 더 컸나요?"]
+    metaphorHooks: ["마음이 치르는 평가", "백지 앞에 선 준비"]
+    cardTitleSeeds: ["시험장의 밤", "풀리지 않는 문제"]
+    smallPrescriptions: ["평가받는 느낌이 드는 일을 실제 준비 단계로 쪼개보세요."]
+    safeReading: "시험은 합격/불합격 예고보다 평가 불안, 준비 상태, 기준을 비추는 상징일 수 있어요."
+    avoidExpressions: ["합격한다", "떨어진다"]
+  en:
+    label: Exam
+    aliases: [exam, test, taking a test, exam paper, quiz]
+    searchText: "exam, test, taking a test, exam paper, evaluation, preparation, performance, standard, pressure"
+    coreMeanings: [evaluation, preparation, performance, standard]
+    lightReadings: ["checking readiness", "wanting to know how you perform against a standard"]
+    shadowReadings: ["anxiety about being evaluated", "pressure from feeling unprepared"]
+    sceneModifiers:
+      unprepared: { triggerTerms: [unprepared, did not study, did not know], reading: "anxiety about not being ready", weight: 0.86 }
+      blankPaper: { triggerTerms: [blank paper, no answer, could not solve], reading: "feeling blocked when you need to answer", weight: 0.84 }
+      late: { triggerTerms: [late, time ran out, missed exam], reading: "pressure about timing or expectations", weight: 0.82 }
+    contextQuestions: ["Were you prepared for the exam?", "Was the pressure stronger than the result?"]
+    metaphorHooks: ["the test the mind is taking", "readiness before a blank page"]
+    cardTitleSeeds: ["Night in the Exam Room", "The Unsolved Problem"]
+    smallPrescriptions: ["Break one evaluation pressure into a concrete preparation step."]
+    safeReading: "An exam can symbolize evaluation, readiness, standards, and performance anxiety, not pass/fail prediction."
+    avoidExpressions: ["you will pass", "you will fail"]

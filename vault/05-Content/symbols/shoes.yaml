@@ -1,0 +1,54 @@
+id: shoes
+status: active
+editorialStatus: approved
+category: object
+subcategory: clothing
+facets: [readiness, movement, grounding, social_fit]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [scene_function, everyday_metaphor], coreMeanings: [readiness, movement, grounding, fit], safeTransform: [움직이기 위한 준비 상태, 현실의 바닥을 딛는 방식], avoidClaims: [여행을 간다, 일이 막힌다] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: [길을 나서기 전의 준비물, 사회적 자리와 체면에 맞는 상태], avoidClaims: [여행을 간다, 일이 막힌다] }
+  western: { sourceBasis: [western_psychological, mythic_association, product_editorial_rule], safeTransform: [how the self moves through the world, grounding and fit], avoidClaims: [여행을 간다, 일이 막힌다] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [readiness, movement, grounding, fit]
+tensionAxis: [prepared, exposed]
+relatedIds: [running, lost_item, corridor]
+sourceBasis: [embodied metaphor, object symbolism, scene function]
+locales:
+  ko:
+    label: 신발
+    aliases: [신발, 구두, 운동화, 슬리퍼, 맨발]
+    searchText: 신발, 구두, 운동화, 슬리퍼, 맨발, 이동, 준비 상태, 현실 적응, 발걸음
+    coreMeanings: [준비 상태, 이동, 현실 적응, 발걸음]
+    lightReadings: [다음 걸음을 준비하는 흐름, 내 속도에 맞는 방식을 찾는 장면]
+    shadowReadings: [준비되지 않은 느낌, 맨몸으로 드러난 듯한 민감함]
+    sceneModifiers:
+      missing: { triggerTerms: [잃어버, 없어, 못 찾], reading: 움직일 준비가 부족하다고 느끼는 장면, weight: 0.84 }
+      barefoot: { triggerTerms: [맨발, 신발 없이, 발이 아픈], reading: 보호 없이 현실을 딛는 민감한 상태, weight: 0.82 }
+      wrongShoes: { triggerTerms: [안 맞, 작은, 큰 신발], reading: 내게 맞지 않는 방식으로 움직이는 장면, weight: 0.78 }
+    contextQuestions: [신발을 신고 있었나요, 잃어버렸나요?, 그 신발은 편했나요, 불편했나요?]
+    metaphorHooks: [다음 걸음을 위한 밑창, 내 속도에 맞는 발걸음]
+    cardTitleSeeds: [잃어버린 신발의 달, 맨발의 복도]
+    smallPrescriptions: [오늘 움직이기 전에 필요한 준비 하나만 확인해보세요.]
+    safeReading: 신발은 움직일 준비와 현실에 적응하는 방식을 보여주는 상징으로 읽을 수 있어요.
+    avoidExpressions: [여행을 간다, 일이 막힌다]
+  en:
+    label: Shoes
+    aliases: [shoes, sneakers, barefoot, slippers, boots]
+    searchText: shoes, sneakers, barefoot, movement, readiness, grounding, fit, walking
+    coreMeanings: [readiness, movement, grounding, fit]
+    lightReadings: [getting ready for the next step, finding a pace that fits you]
+    shadowReadings: [feeling unprepared, sensitivity around being exposed]
+    sceneModifiers:
+      missing: { triggerTerms: [lost shoes, missing shoes, could not find], reading: feeling unready to move, weight: 0.84 }
+      barefoot: { triggerTerms: [barefoot, no shoes, feet hurt], reading: meeting reality without much protection, weight: 0.82 }
+      wrongShoes: { triggerTerms: [wrong shoes, too small, too big], reading: moving in a way that does not fit, weight: 0.78 }
+    contextQuestions: [Were you wearing shoes or missing them?, Did the shoes fit comfortably?]
+    metaphorHooks: [the sole for the next step, a pace that belongs to you]
+    cardTitleSeeds: [Moon of the Missing Shoes, Barefoot Hallway]
+    smallPrescriptions: [Check one thing you need before taking the next step today.]
+    safeReading: Shoes can point to readiness, movement, and how you meet the ground of daily life.
+    avoidExpressions: [you will travel, your work will be blocked]

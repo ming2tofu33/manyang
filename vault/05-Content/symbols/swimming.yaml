@@ -1,0 +1,54 @@
+id: swimming
+status: active
+editorialStatus: approved
+category: action
+subcategory: water_movement
+facets: [emotion_navigation, effort, flow, survival]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [action_symbolism, water_metaphor, scene_function], coreMeanings: [emotion_navigation, effort, flow, survival], safeTransform: ["moving through feeling rather than standing outside it", "effort to stay afloat in emotion"], avoidClaims: ["you will overcome everything", "danger is coming"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["물속 움직임은 감정 흐름 속 적응으로 해석", "흐름과 버티는 힘을 함께 봄"], avoidClaims: ["모든 일이 해결된다", "위험이 온다"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["swimming as navigating unconscious feeling", "staying afloat through emotional effort"], avoidClaims: ["you will overcome everything", "danger is coming"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [emotion navigation, effort, flow, survival]
+tensionAxis: [flow, struggle]
+relatedIds: [water, sea, body]
+sourceBasis: [action symbolism, water metaphor, scene function]
+locales:
+  ko:
+    label: "수영"
+    aliases: ["수영", "헤엄", "물속에서 헤엄치는 꿈", "수영하는 꿈", "물에 떠 있음"]
+    searchText: "수영, 헤엄, 물속에서 헤엄치는 꿈, 수영하는 꿈, 감정 속 이동, 노력, 흐름, 버티기"
+    coreMeanings: ["감정 속 이동", "노력", "흐름", "버티기"]
+    lightReadings: ["감정 안에서 방향을 잡아가려는 장면", "흐름을 타며 버티는 힘"]
+    shadowReadings: ["감정에 잠길까 봐 느끼는 불안", "계속 움직여야 하는 피로"]
+    sceneModifiers:
+      easySwim: { triggerTerms: ["잘 헤엄", "편하게", "부드럽"], reading: "감정의 흐름과 비교적 잘 맞춰가는 장면", weight: 0.74 }
+      drowning: { triggerTerms: ["빠져", "가라앉", "숨"], reading: "감정이나 상황에 잠길까 봐 불안한 장면", weight: 0.88 }
+      deepWater: { triggerTerms: ["깊은", "바다", "검은 물"], reading: "깊은 감정이나 무의식적 소재가 강한 장면", weight: 0.82 }
+    contextQuestions: ["수영은 편했나요, 버거웠나요?", "물은 맑았나요, 깊거나 어두웠나요?"]
+    metaphorHooks: ["감정 속을 헤엄치는 몸", "가라앉지 않으려는 마음"]
+    cardTitleSeeds: ["물속의 밤", "헤엄치는 마음"]
+    smallPrescriptions: ["지금 감정에서 벗어나려 하기보다 이름을 붙여보세요."]
+    safeReading: "수영은 감정 속에서 방향을 잡고 버티는 힘을 보여주는 상징일 수 있어요."
+    avoidExpressions: ["모든 일이 해결된다", "위험이 온다"]
+  en:
+    label: Swimming
+    aliases: [swimming, swam, swimming underwater, floating, drowning]
+    searchText: "swimming, swimming underwater, floating, drowning, emotional navigation, effort, flow, survival"
+    coreMeanings: [emotional navigation, effort, flow, staying afloat]
+    lightReadings: ["finding direction inside emotion", "strength to move with a flow"]
+    shadowReadings: ["fear of being submerged by feeling", "fatigue from needing to keep moving"]
+    sceneModifiers:
+      easySwim: { triggerTerms: [swam easily, comfortable swimming, smooth], reading: "moving with emotion relatively well", weight: 0.74 }
+      drowning: { triggerTerms: [drowning, sinking, could not breathe], reading: "fear of being overwhelmed or submerged", weight: 0.88 }
+      deepWater: { triggerTerms: [deep water, ocean, dark water], reading: "deep emotional or unconscious material becoming strong", weight: 0.82 }
+    contextQuestions: ["Was swimming easy or exhausting?", "Was the water clear, deep, or dark?"]
+    metaphorHooks: ["the body swimming through feeling", "the mind trying not to sink"]
+    cardTitleSeeds: ["Night Underwater", "Swimming Mind"]
+    smallPrescriptions: ["Name the feeling instead of trying to escape it immediately."]
+    safeReading: "Swimming can symbolize navigating emotion, effort, flow, and staying afloat."
+    avoidExpressions: ["everything will be solved", "danger is coming"]

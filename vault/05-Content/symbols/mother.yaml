@@ -1,0 +1,54 @@
+id: mother
+status: active
+editorialStatus: approved
+category: relationship
+subcategory: family
+facets: [care, origin, expectation, emotional_dependency]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [relationship_symbolism, family_role_metaphor, scene_function], coreMeanings: [care, origin, expectation, emotional_dependency], safeTransform: ["care or emotional origin appearing as a person", "a need to be held or understood"], avoidClaims: ["your mother will contact you", "something will happen to your mother"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["family obligation and care can appear through the mother image", "home-based attachment made visible"], avoidClaims: ["your mother will contact you", "something will happen to your mother"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["maternal figure as nurture, origin, or inner care", "attachment and expectation carried by a familiar figure"], avoidClaims: ["your mother will contact you", "something will happen to your mother"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [care, origin, expectation, emotional dependency]
+tensionAxis: [comfort, pressure]
+relatedIds: [home, child, baby]
+sourceBasis: [relationship symbolism, family role metaphor, scene function]
+locales:
+  ko:
+    label: "어머니"
+    aliases: ["어머니", "엄마", "모친", "엄마가 나오는 꿈"]
+    searchText: "어머니, 엄마, 모친, 가족, 돌봄, 기대, 마음의 의지, 원가족, 보호받고 싶은 마음"
+    coreMeanings: ["돌봄", "정서적 기원", "기대", "의지하고 싶은 마음"]
+    lightReadings: ["마음이 기대고 싶은 곳을 찾는 장면", "스스로를 보살피려는 감각"]
+    shadowReadings: ["기대나 간섭처럼 느껴지는 부담", "독립과 의존 사이의 긴장"]
+    sceneModifiers:
+      comforting: { triggerTerms: ["안아", "위로", "다정", "밥"], reading: "위로받고 싶은 마음이나 안정감의 욕구가 커진 장면", weight: 0.78 }
+      angry: { triggerTerms: ["화", "혼", "꾸중", "소리"], reading: "기대에 못 미칠까 봐 생기는 압박감이 드러난 장면", weight: 0.82 }
+      distant: { triggerTerms: ["멀리", "보이지", "떠나", "등"], reading: "가까운 돌봄과 거리두기 사이의 마음이 함께 나타난 장면", weight: 0.74 }
+    contextQuestions: ["꿈속 어머니는 다정했나요, 부담스럽게 느껴졌나요?", "요즘 누구에게 기대고 싶은 마음이 있었나요?"]
+    metaphorHooks: ["마음속 가장 오래된 돌봄의 자리", "기대와 위로가 함께 있는 방"]
+    cardTitleSeeds: ["어머니의 방", "돌봄이 남긴 목소리"]
+    smallPrescriptions: ["오늘은 스스로에게 필요한 돌봄이 무엇인지 한 문장으로 적어보세요."]
+    safeReading: "어머니는 실제 사건의 예고라기보다 돌봄, 기대, 의지하고 싶은 마음을 비추는 상징으로 읽을 수 있어요."
+    avoidExpressions: ["어머니에게 일이 생긴다", "어머니가 곧 연락한다"]
+  en:
+    label: Mother
+    aliases: [mother, mom, mum, maternal figure, my mother]
+    searchText: "mother, mom, maternal figure, care, origin, expectation, family attachment, emotional support"
+    coreMeanings: [care, emotional origin, expectation, need for support]
+    lightReadings: ["a wish for comfort or emotional holding", "the mind checking how it cares for itself"]
+    shadowReadings: ["pressure carried by expectations", "tension between dependence and independence"]
+    sceneModifiers:
+      comforting: { triggerTerms: ["hugged", "comforted", "kind", "fed me"], reading: "a need for comfort and emotional steadiness", weight: 0.78 }
+      angry: { triggerTerms: ["angry", "yelled", "scolded", "argued"], reading: "pressure around expectations or approval", weight: 0.82 }
+      distant: { triggerTerms: ["distant", "left", "could not see her", "turned away"], reading: "distance from care or difficulty receiving support", weight: 0.74 }
+    contextQuestions: ["Did she feel comforting or pressuring?", "Where in life do you want more care right now?"]
+    metaphorHooks: ["the oldest room of care", "a voice where comfort and expectation meet"]
+    cardTitleSeeds: ["Room of the Mother", "Voice of Care"]
+    smallPrescriptions: ["Name one form of care you actually need today."]
+    safeReading: "A mother figure can point to care, origin, expectation, or the wish to be emotionally supported."
+    avoidExpressions: ["something will happen to your mother", "your mother will contact you"]

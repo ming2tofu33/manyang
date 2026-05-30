@@ -1,0 +1,54 @@
+id: flying
+status: active
+editorialStatus: approved
+category: action
+subcategory: movement
+facets: [freedom, perspective, escape, ambition]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [action_symbolism, height_metaphor, scene_function], coreMeanings: [freedom, perspective, escape, ambition], safeTransform: ["rising above a situation to see it differently", "freedom mixed with the wish to escape"], avoidClaims: ["you will succeed", "you should leave everything"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["하늘로 오르는 장면은 확장과 거리두기로 안전하게 해석", "높이와 불안을 함께 살핌"], avoidClaims: ["반드시 성공한다", "모든 것을 떠나라"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["flying as freedom, perspective, ambition, or escape", "a body image of liberation"], avoidClaims: ["you will succeed", "you should leave everything"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [freedom, perspective, escape, ambition]
+tensionAxis: [freedom, escape]
+relatedIds: [bird, airplane, falling]
+sourceBasis: [action symbolism, height metaphor, scene function]
+locales:
+  ko:
+    label: "날기"
+    aliases: ["날기", "나는 꿈", "하늘을 나는 꿈", "비행", "공중에 뜸"]
+    searchText: "날기, 나는 꿈, 하늘을 나는 꿈, 공중에 뜸, 자유, 시야, 벗어남, 높은 목표"
+    coreMeanings: ["자유", "시야", "벗어남", "높은 목표"]
+    lightReadings: ["상황을 더 넓게 보고 싶은 마음", "답답한 조건에서 벗어나려는 감각"]
+    shadowReadings: ["현실에서 떨어져 있고 싶은 회피감", "높이 올라갈수록 생기는 불안"]
+    sceneModifiers:
+      easyFlight: { triggerTerms: ["자유롭게", "쉽게", "편하게"], reading: "자유와 가능성이 자연스럽게 느껴지는 장면", weight: 0.76 }
+      unableToControl: { triggerTerms: ["조절", "마음대로", "흔들"], reading: "자유롭지만 방향을 잡기 어려운 장면", weight: 0.82 }
+      fallingAfter: { triggerTerms: ["떨어", "추락", "내려"], reading: "올라간 뒤 다시 불안정해지는 장면", weight: 0.84 }
+    contextQuestions: ["나는 동안 자유로웠나요, 불안했나요?", "어디에서 벗어나고 싶었나요?"]
+    metaphorHooks: ["땅에서 잠시 떨어진 마음", "높이 올라간 시야"]
+    cardTitleSeeds: ["하늘을 나는 밤", "공중의 마음"]
+    smallPrescriptions: ["지금 상황을 한 걸음 떨어져 보면 무엇이 달라지는지 적어보세요."]
+    safeReading: "나는 꿈은 성공 예고보다 자유, 시야, 벗어나고 싶은 감각을 보여줄 수 있어요."
+    avoidExpressions: ["반드시 성공한다", "모든 것을 떠나라"]
+  en:
+    label: Flying
+    aliases: [flying, flying in the sky, floating, levitating, flight]
+    searchText: "flying, flying in the sky, floating, levitating, freedom, perspective, escape, ambition"
+    coreMeanings: [freedom, perspective, escape, ambition]
+    lightReadings: ["wanting a wider view", "feeling a way out of tight conditions"]
+    shadowReadings: ["wanting to avoid grounded reality", "anxiety that comes with height"]
+    sceneModifiers:
+      easyFlight: { triggerTerms: [flying freely, easy flying, comfortable], reading: "freedom and possibility feeling natural", weight: 0.76 }
+      unableToControl: { triggerTerms: [could not control, out of control, wobbly], reading: "freedom without clear direction", weight: 0.82 }
+      fallingAfter: { triggerTerms: [fell, crashed, dropped], reading: "instability returning after rising", weight: 0.84 }
+    contextQuestions: ["Did flying feel free or anxious?", "What did you want to escape or rise above?"]
+    metaphorHooks: ["the mind briefly leaving the ground", "a view lifted higher"]
+    cardTitleSeeds: ["Night of Flying", "Mind in the Air"]
+    smallPrescriptions: ["Write what changes when you look at the situation from one step away."]
+    safeReading: "Flying can symbolize freedom, perspective, escape, and ambition rather than guaranteed success."
+    avoidExpressions: ["you will succeed", "leave everything behind"]

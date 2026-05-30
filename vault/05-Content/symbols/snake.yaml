@@ -1,8 +1,64 @@
 id: snake
 status: active
-category: animal
+editorialStatus: approved
+category: living_being
+subcategory: animal
+facets:
+  - reptile
+  - instinct
+  - hidden_movement
+  - transformation
+  - life_force
+symbolRole:
+  - primary_candidate
 safetyLevel: sensitive
 accessTier: free
+interpretationLenses:
+  universal:
+    sourceBasis:
+      - scene_function
+      - everyday_metaphor
+    coreMeanings:
+      - instinct
+      - hidden movement
+      - change
+      - life force
+    safeTransform:
+      - 본능적 감각이 선명해지는 장면
+      - 조용히 드러나는 변화의 신호
+    avoidClaims:
+      - 재물운이 반드시 오른다
+      - 태몽이다
+      - 위험한 일이 생긴다
+  east_asian:
+    sourceBasis:
+      - east_asian_symbolism
+      - product_editorial_rule
+    safeTransform:
+      - 내 영역 안에서 커지는 생명력
+      - 터와 연결된 강한 존재감
+    avoidClaims:
+      - 재물운이 반드시 오른다
+      - 태몽이다
+      - 위험한 일이 생긴다
+  western:
+    sourceBasis:
+      - western_psychological
+      - mythic_association
+      - product_editorial_rule
+    safeTransform:
+      - 무의식적으로 감지한 긴장
+      - 변화와 재생 앞에서 올라오는 경계심
+    avoidClaims:
+      - 재물운이 반드시 오른다
+      - 태몽이다
+      - 위험한 일이 생긴다
+embeddingProfile:
+  chunkTypes:
+    - searchText
+    - sceneModifier
+    - safeReading
+    - metaphorHook
 universalMeanings:
   - instinct
   - hidden movement

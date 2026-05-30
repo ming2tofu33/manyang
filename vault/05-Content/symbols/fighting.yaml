@@ -1,0 +1,54 @@
+id: fighting
+status: active
+editorialStatus: approved
+category: action
+subcategory: conflict
+facets: [conflict, boundary, anger, assertion]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [action_symbolism, relationship_metaphor, scene_function], coreMeanings: [conflict, boundary, anger, assertion], safeTransform: ["a boundary trying to speak through conflict", "anger asking to be understood before it acts"], avoidClaims: ["you will fight with someone", "the relationship will break"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["싸움은 실제 다툼 예고보다 관계 속 경계와 체면의 긴장", "참아온 감정의 충돌"], avoidClaims: ["싸움이 생긴다", "관계가 끝난다"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["fighting as boundary, anger, assertion, or inner conflict", "a scene where force replaces words"], avoidClaims: ["you will fight with someone", "the relationship will break"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [conflict, boundary, anger, assertion]
+tensionAxis: [assertion, aggression]
+relatedIds: [stranger, partner, workplace]
+sourceBasis: [action symbolism, relationship metaphor, scene function]
+locales:
+  ko:
+    label: "싸움"
+    aliases: ["싸움", "싸우는 꿈", "말다툼", "주먹질", "다툼"]
+    searchText: "싸움, 싸우는 꿈, 말다툼, 주먹질, 다툼, 갈등, 경계, 분노, 주장, 참아온 감정"
+    coreMeanings: ["갈등", "경계", "분노", "주장"]
+    lightReadings: ["내 경계를 분명히 하려는 장면", "말하지 못한 감정이 힘을 얻는 장면"]
+    shadowReadings: ["분노가 말보다 앞서는 느낌", "관계 안의 압박과 충돌"]
+    sceneModifiers:
+      verbal: { triggerTerms: ["말다툼", "소리", "언쟁"], reading: "말로 경계나 서운함을 표현하려는 장면", weight: 0.78 }
+      physical: { triggerTerms: ["때", "주먹", "몸싸움"], reading: "감정의 강도가 행동 이미지로 커진 장면", weight: 0.86 }
+      withKnownPerson: { triggerTerms: ["친구", "가족", "연인", "동료"], reading: "익숙한 관계 안의 미묘한 긴장이 커진 장면", weight: 0.8 }
+    contextQuestions: ["누구와 싸웠나요?", "싸운 이유가 꿈속에서 분명했나요?"]
+    metaphorHooks: ["말 대신 주먹이 된 감정", "경계가 부딪히는 자리"]
+    cardTitleSeeds: ["싸움의 밤", "말하지 못한 경계"]
+    smallPrescriptions: ["진짜로 싸우기 전, 내가 지키고 싶은 경계를 한 문장으로 써보세요."]
+    safeReading: "싸움은 실제 다툼 예고보다 갈등, 경계, 분노, 자기주장의 신호로 읽을 수 있어요."
+    avoidExpressions: ["싸움이 생긴다", "관계가 끝난다"]
+  en:
+    label: Fighting
+    aliases: [fighting, fight, argument, physical fight, quarrel]
+    searchText: "fighting, argument, physical fight, quarrel, conflict, boundary, anger, assertion"
+    coreMeanings: [conflict, boundary, anger, assertion]
+    lightReadings: ["a boundary trying to become clear", "unspoken emotion gaining force"]
+    shadowReadings: ["anger moving faster than language", "pressure and collision inside a relationship"]
+    sceneModifiers:
+      verbal: { triggerTerms: [argument, yelling, argued], reading: "trying to express hurt or boundary through words", weight: 0.78 }
+      physical: { triggerTerms: [hit, punch, physical fight], reading: "emotional intensity becoming physical image", weight: 0.86 }
+      withKnownPerson: { triggerTerms: [friend, family, partner, coworker], reading: "tension inside a familiar relationship becoming larger", weight: 0.8 }
+    contextQuestions: ["Who were you fighting?", "Was the reason clear in the dream?"]
+    metaphorHooks: ["emotion becoming force instead of words", "the place where boundaries collide"]
+    cardTitleSeeds: ["Night of Fighting", "Unspoken Boundary"]
+    smallPrescriptions: ["Before acting, write one boundary you want to protect."]
+    safeReading: "Fighting can symbolize conflict, boundary, anger, and assertion rather than predicting a real fight."
+    avoidExpressions: ["you will fight with someone", "the relationship will end"]

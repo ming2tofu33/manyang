@@ -56,6 +56,8 @@ source: docs/manyang-dream-project-spec-updated.md
 
 ## Related
 
+- [[Revenue-Expansion-and-Positioning]]
+- [[Pricing-Revenue-Strategy]]
 - [[Access-Plan-Strategy]]
 - [[MVP-Currency-Strategy]]
 - [[Retention-Loops]]

@@ -188,6 +188,8 @@ describe("DreamResultReceipt", () => {
     expect(markup).toContain("animation-delay:3500ms");
     expect(markup).toContain("저장하기");
     expect(markup).toContain("공유하기");
+    expect(markup).toContain("/manyang/ui/buttons/common-compact-primary-frame.png");
+    expect(markup).not.toContain("/manyang/cutouts/boxes/17-pill-wide.png");
     expect(markup).not.toContain("data-receipt-result-actions=\"true\" style=\"animation-delay:9000ms\"");
   });
 

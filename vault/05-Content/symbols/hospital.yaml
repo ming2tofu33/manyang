@@ -1,0 +1,54 @@
+id: hospital
+status: active
+editorialStatus: approved
+category: place
+subcategory: institution
+facets: [recovery, care, vulnerability, diagnosis_anxiety]
+symbolRole: [primary_candidate]
+safetyLevel: sensitive
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [institutional_symbolism, scene_function, product_safety_rule], coreMeanings: [care, recovery, vulnerability, diagnosis_anxiety], safeTransform: [돌봄과 회복이 필요로 드러나는 마음, 취약함을 안전하게 이해하는 장면], avoidClaims: [병이 생긴다, 건강에 문제가 있다] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: [몸과 마음을 돌보는 기관의 이미지, 상태를 확인받고 싶은 생활 감각], avoidClaims: [병이 생긴다, 건강에 문제가 있다] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: [care vulnerability and repair, anxiety around being examined], avoidClaims: [병이 생긴다, 건강에 문제가 있다] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [care, recovery, vulnerability, diagnosis anxiety]
+tensionAxis: [healing, fear]
+relatedIds: [body, child, water]
+sourceBasis: [institutional symbolism, scene function, product safety rule]
+locales:
+  ko:
+    label: 병원
+    aliases: [병원, 진료실, 의사, 간호사, 입원]
+    searchText: 병원, 진료실, 의사, 간호사, 입원, 회복 욕구, 돌봄, 취약함, 진단 불안
+    coreMeanings: [회복 욕구, 돌봄, 취약함, 진단 불안]
+    lightReadings: [돌봄이 필요한 상태를 인정하는 마음, 무리한 부분을 점검하려는 장면]
+    shadowReadings: [진단받고 싶지 않은 두려움, 취약함이 드러나는 불안]
+    sceneModifiers:
+      waiting: { triggerTerms: [기다, 대기, 순서], reading: 확인을 기다리는 긴장, weight: 0.76 }
+      treatment: { triggerTerms: [치료, 주사, 진료], reading: 회복을 위해 개입이 필요한 장면, weight: 0.78 }
+      emergency: { triggerTerms: [응급, 급하게, 위급], reading: 돌봄 요청이 급하게 느껴지는 장면, weight: 0.84 }
+    contextQuestions: [병원에서 기다리고 있었나요, 치료받고 있었나요?, 꿈이 건강 걱정으로 이어졌나요?]
+    metaphorHooks: [마음의 진료실, 회복을 기다리는 작은 신호]
+    cardTitleSeeds: [진료실의 달, 회복을 기다리는 밤]
+    smallPrescriptions: [걱정이 몸과 관련된다면 해몽보다 실제 컨디션 확인을 우선하세요.]
+    safeReading: 병원은 실제 진단이 아니라 돌봄과 회복이 필요한 감각을 보여주는 장면으로 읽을 수 있어요.
+    avoidExpressions: [병이 생긴다, 건강에 문제가 있다]
+  en:
+    label: Hospital
+    aliases: [hospital, clinic, doctor, nurse, emergency room]
+    searchText: hospital, clinic, doctor, nurse, recovery, care, vulnerability, diagnosis anxiety
+    coreMeanings: [need for recovery, care, vulnerability, diagnosis anxiety]
+    lightReadings: [acknowledging a need for care, checking what has been overworked]
+    shadowReadings: [fear around being examined, anxiety when vulnerability is visible]
+    sceneModifiers:
+      waiting: { triggerTerms: [waiting room, waiting, line], reading: tension while waiting for confirmation, weight: 0.76 }
+      treatment: { triggerTerms: [treatment, injection, exam], reading: a need for active repair, weight: 0.78 }
+      emergency: { triggerTerms: [emergency, urgent, rushed], reading: care feeling urgent, weight: 0.84 }
+    contextQuestions: [Were you waiting or being treated?, Did the dream connect to health worry after waking?]
+    metaphorHooks: [the clinic of the mind, a small signal waiting for care]
+    cardTitleSeeds: [Moon in the Clinic, Night Waiting for Repair]
+    smallPrescriptions: [If the worry is about your body, prioritize checking real condition over interpretation.]
+    safeReading: A hospital can point to care, repair, and vulnerability without implying an actual diagnosis.
+    avoidExpressions: [you are sick, you have a health problem]

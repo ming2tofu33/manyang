@@ -1,0 +1,54 @@
+id: pregnancy
+status: active
+editorialStatus: approved
+category: body
+subcategory: reproductive_state
+facets: [gestation, potential, private_change, anxiety]
+symbolRole: [primary_candidate]
+safetyLevel: sensitive
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [body_symbolism, growth_metaphor, product_safety_rule], coreMeanings: [gestation, potential, private_change, anxiety], safeTransform: ["something developing before it is ready to be shown", "private change carrying both hope and worry"], avoidClaims: ["you are pregnant", "this is definitely a pregnancy dream"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["pregnancy imagery can be handled as potential without declaring taemong", "family meaning should stay optional and non predictive"], avoidClaims: ["you are pregnant", "this is definitely a pregnancy dream"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["pregnancy as incubation creativity hidden growth or bodily anxiety", "a private process before birth into form"], avoidClaims: ["you are pregnant", "this is definitely a pregnancy dream"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [gestation, potential, private change, anxiety]
+tensionAxis: [growth, uncertainty]
+relatedIds: [baby, body, home]
+sourceBasis: [body symbolism, growth metaphor, product safety rule]
+locales:
+  ko:
+    label: "임신"
+    aliases: ["임신", "임신한 꿈", "배가 부른 꿈", "태몽", "아이를 가진 꿈"]
+    searchText: "임신, 임신한 꿈, 배가 부른 꿈, 태몽, 아이를 가진 꿈, 아직 드러나지 않은 변화, 가능성, 불안"
+    coreMeanings: ["자라나는 가능성", "사적인 변화", "기대와 불안", "아직 드러나지 않은 계획"]
+    lightReadings: ["아직 공개하기 전의 가능성이 자라는 장면", "내 안에서 준비 중인 변화가 느껴지는 장면"]
+    shadowReadings: ["책임이나 변화가 감당하기 크게 느껴지는 마음", "몸과 미래에 대한 불안"]
+    sceneModifiers:
+      visibleBelly: { triggerTerms: ["배", "불룩", "만삭"], reading: "변화가 더는 숨기기 어렵게 커졌다고 느끼는 장면", weight: 0.82 }
+      anxious: { triggerTerms: ["무서", "불안", "걱정"], reading: "가능성보다 부담과 불확실성이 더 크게 느껴지는 장면", weight: 0.84 }
+      givingBirth: { triggerTerms: ["낳", "출산", "분만"], reading: "준비하던 일이 바깥으로 나오는 전환의 장면", weight: 0.86 }
+    contextQuestions: ["꿈속 임신은 기뻤나요, 부담스러웠나요?", "요즘 아직 공개하지 않은 계획이나 변화가 있나요?"]
+    metaphorHooks: ["아직 세상에 나오지 않은 가능성", "몸 안에서 자라는 계획"]
+    cardTitleSeeds: ["숨은 가능성", "아직 태어나지 않은 일"]
+    smallPrescriptions: ["임신 여부가 현실 걱정이라면 꿈보다 실제 확인을 우선하고, 해석은 상징으로만 남겨두세요."]
+    safeReading: "임신은 실제 임신이나 태몽으로 단정하지 않고, 안에서 자라는 가능성이나 사적인 변화를 비추는 상징으로 다뤄야 해요."
+    avoidExpressions: ["임신했다", "태몽이다", "아이가 생긴다"]
+  en:
+    label: Pregnancy
+    aliases: [pregnancy, pregnant, pregnant belly, giving birth, expecting]
+    searchText: "pregnancy, pregnant, pregnant belly, giving birth, hidden growth, potential, private change, uncertainty"
+    coreMeanings: [growing potential, private change, hope and anxiety, not-yet-visible plan]
+    lightReadings: ["a possibility developing before it is public", "a change preparing inside the self"]
+    shadowReadings: ["responsibility or change feeling too large", "anxiety about body or future"]
+    sceneModifiers:
+      visibleBelly: { triggerTerms: ["pregnant belly", "big belly", "showing"], reading: "a change feeling too large to hide", weight: 0.82 }
+      anxious: { triggerTerms: ["scared", "anxious", "worried"], reading: "uncertainty or burden outweighing excitement", weight: 0.84 }
+      givingBirth: { triggerTerms: ["giving birth", "labor", "delivered"], reading: "something prepared inside moving into visible form", weight: 0.86 }
+    contextQuestions: ["Did the pregnancy feel joyful or burdensome?", "What change is developing before you are ready to show it?"]
+    metaphorHooks: ["potential not yet born into the world", "a plan growing inside the body"]
+    cardTitleSeeds: ["Hidden Potential", "Not Yet Born"]
+    smallPrescriptions: ["If pregnancy is a real concern, prioritize a real-world check and treat the dream as symbolic only."]
+    safeReading: "Pregnancy imagery should not be treated as a literal claim; it can symbolize hidden growth, potential, or private change."
+    avoidExpressions: ["you are pregnant", "this means pregnancy", "a baby is coming"]

@@ -1,4 +1,5 @@
-import type { SupportedLocale, SymbolCategory } from "../contracts/symbol-encyclopedia";
+import { getRuntimeSymbolEntries } from "../data/symbol-encyclopedia";
+import type { RuntimeSymbolEntry, SupportedLocale, SymbolCategory } from "../contracts/symbol-encyclopedia";
 
 export type StructuredDreamAnalysisRequest = {
   dreamText: string;
@@ -60,212 +61,469 @@ export type StructuredDreamAnalysis = {
   language: SupportedLocale;
 };
 
-function includesAny(text: string, values: string[]): boolean {
-  return values.some((value) => text.includes(value.toLowerCase()));
+type MatchedModifier = {
+  key: string;
+  matchedTerms: string[];
+  weight: number;
+};
+
+type MatchedSymbol = {
+  entry: RuntimeSymbolEntry;
+  matchedAliases: string[];
+  matchedModifiers: MatchedModifier[];
+  index: number;
+};
+
+const KOREAN_SUFFIXES = [
+  "이",
+  "가",
+  "을",
+  "를",
+  "은",
+  "는",
+  "도",
+  "에",
+  "에서",
+  "에게",
+  "와",
+  "과",
+  "로",
+  "으로",
+  "처럼",
+  "만",
+  "부터",
+  "까지",
+  "마다",
+  "고",
+  "던",
+  "들",
+  "들이",
+  "들을",
+  "들과",
+  "들하고",
+  "다",
+  "요",
+  "어",
+  "아",
+  "어도",
+  "아도",
+  "어서",
+  "아서",
+  "하다가",
+  "하는데",
+  "했어",
+  "진",
+  "다가",
+  "는데",
+  "는지",
+  "는지는",
+  "면서",
+  "었어",
+  "았어",
+  "였어",
+  "었어요",
+  "았어요",
+  "였어요",
+];
+
+const ENGLISH_SCENE_STOP_WORDS = new Set([
+  "about",
+  "across",
+  "after",
+  "again",
+  "being",
+  "beside",
+  "could",
+  "dream",
+  "dreamed",
+  "during",
+  "every",
+  "felt",
+  "from",
+  "have",
+  "into",
+  "just",
+  "like",
+  "mean",
+  "more",
+  "over",
+  "really",
+  "scene",
+  "something",
+  "that",
+  "there",
+  "this",
+  "while",
+  "with",
+  "were",
+  "what",
+  "when",
+  "where",
+  "would",
+]);
+
+const LEGACY_MODIFIER_QUERY_BY_SYMBOL_MODIFIER: Record<string, string[]> = {
+  "snake:large": ["largeSnake"],
+  "snake:many": ["manySnakes"],
+  "owned_land:filledWithAnimals": ["ownedLand"],
+  "many:manyAnimals": ["manySnakes"],
+  "door:changing": ["changingDoor"],
+};
+
+const LEGACY_SYMBOL_MODIFIER_QUERY: Record<string, string[]> = {
+  dawn: ["dawn"],
+  owned_land: ["ownedLand"],
+};
+
+const LEGACY_THEME_BY_SYMBOL: Record<string, { ko: string; en: string }> = {
+  snake: { ko: "생명력", en: "life force" },
+  owned_land: { ko: "영역", en: "territory" },
+  many: { ko: "압도감", en: "overwhelm" },
+};
+
+function normalize(text: string): string {
+  return text.trim().toLocaleLowerCase();
+}
+
+function compact(text: string): string {
+  return normalize(text).replace(/[^\p{L}\p{N}]/gu, "");
+}
+
+function tokenize(text: string): string[] {
+  return normalize(text).match(/[\p{L}\p{N}]+/gu) ?? [];
 }
 
 function unique(values: string[]): string[] {
-  return [...new Set(values.filter(Boolean))];
+  return [...new Set(values.map((value) => value.trim()).filter(Boolean))];
 }
 
-function candidate(input: SymbolCandidate): SymbolCandidate {
-  return input;
+function includesAny(text: string, values: string[]): boolean {
+  return values.some((value) => text.includes(value.toLocaleLowerCase()));
+}
+
+function containsHangul(text: string): boolean {
+  return /\p{Script=Hangul}/u.test(text);
+}
+
+function stripKoreanEnding(term: string): string | undefined {
+  if (!containsHangul(term) || compact(term).length < 3) {
+    return undefined;
+  }
+
+  const endings = ["하는꿈", "는꿈", "꿈", "는", "은", "고", "다"];
+  const key = compact(term);
+  const ending = endings.find((candidate) => key.endsWith(candidate));
+
+  if (!ending) {
+    return undefined;
+  }
+
+  const stem = key.slice(0, -ending.length);
+
+  return stem.length >= 2 ? stem : undefined;
+}
+
+function tokenMatchesTerm(term: string, token: string): boolean {
+  const termKey = compact(term);
+  const tokenKey = compact(token);
+
+  if (!termKey || !tokenKey) {
+    return false;
+  }
+
+  if (tokenKey === termKey) {
+    return true;
+  }
+
+  if (containsHangul(termKey)) {
+    if (tokenKey.startsWith(termKey)) {
+      const suffix = tokenKey.slice(termKey.length);
+
+      return KOREAN_SUFFIXES.includes(suffix);
+    }
+
+    const stem = stripKoreanEnding(termKey);
+
+    if (stem && tokenKey.startsWith(stem)) {
+      const suffix = tokenKey.slice(stem.length);
+
+      return suffix.length > 0 && suffix.length <= 4;
+    }
+  }
+
+  return false;
+}
+
+function termMatchesText(term: string, normalizedText: string, tokens: string[]): boolean {
+  const normalizedTerm = normalize(term);
+  const termKey = compact(normalizedTerm);
+
+  if (!termKey) {
+    return false;
+  }
+
+  if (normalizedTerm.includes(" ") || termKey.length >= 4) {
+    const textKey = compact(normalizedText);
+
+    if (textKey.includes(termKey)) {
+      return true;
+    }
+  }
+
+  return tokens.some((token) => tokenMatchesTerm(normalizedTerm, token));
+}
+
+function matchedTerms(terms: string[], normalizedText: string, tokens: string[]): string[] {
+  return unique(terms.filter((term) => termMatchesText(term, normalizedText, tokens)));
+}
+
+function matchedModifiers(entry: RuntimeSymbolEntry, normalizedText: string, tokens: string[]): MatchedModifier[] {
+  return Object.entries(entry.evidence.sceneModifiers)
+    .map(([key, modifier]) => ({
+      key,
+      weight: modifier.weight,
+      matchedTerms: matchedTerms(modifier.triggerTerms, normalizedText, tokens),
+    }))
+    .filter((modifier) => modifier.matchedTerms.length > 0);
+}
+
+function findMatchedSymbols(text: string, locale: SupportedLocale): MatchedSymbol[] {
+  const normalizedText = normalize(text);
+  const tokens = tokenize(text);
+
+  return getRuntimeSymbolEntries(locale)
+    .map((entry, index): MatchedSymbol => {
+      const aliases = [...entry.aliases, entry.label];
+
+      return {
+        entry,
+        matchedAliases: matchedTerms(aliases, normalizedText, tokens),
+        matchedModifiers: matchedModifiers(entry, normalizedText, tokens),
+        index,
+      };
+    })
+    .filter(
+      (match) =>
+        match.matchedAliases.length > 0 ||
+        (match.matchedModifiers.length > 0 && match.entry.symbolRole.some((role) => role !== "primary_candidate")),
+    )
+    .sort((left, right) => {
+      const leftImportance = symbolImportance(left.entry, left.matchedModifiers);
+      const rightImportance = symbolImportance(right.entry, right.matchedModifiers);
+
+      return rightImportance - leftImportance || confidenceFor(right) - confidenceFor(left) || left.index - right.index;
+    });
+}
+
+function clampImportance(value: number): 1 | 2 | 3 | 4 | 5 {
+  return Math.max(1, Math.min(5, Math.round(value))) as 1 | 2 | 3 | 4 | 5;
+}
+
+function symbolImportance(entry: RuntimeSymbolEntry, modifiers: MatchedModifier[]): 1 | 2 | 3 | 4 | 5 {
+  const base =
+    entry.category === "time"
+      ? 2
+      : entry.category === "quantity"
+        ? 4
+        : entry.symbolRole.includes("primary_candidate")
+          ? 4
+          : 3;
+
+  return clampImportance(base + (modifiers.length > 0 ? 1 : 0));
+}
+
+function confidenceFor(match: MatchedSymbol): number {
+  const labelMatched = match.matchedAliases.some((term) => compact(term) === compact(match.entry.label));
+  const aliasScore = labelMatched ? 0.86 : match.matchedAliases.length > 0 ? 0.8 : 0.66;
+  const modifierScore = Math.min(0.12, match.matchedModifiers.length * 0.05);
+  const weightScore = Math.min(0.06, Math.max(0, ...match.matchedModifiers.map((modifier) => modifier.weight)) * 0.06);
+
+  return Number(Math.min(0.96, aliasScore + modifierScore + weightScore).toFixed(2));
+}
+
+function roleFor(match: MatchedSymbol, isAmbiguousSearching: boolean): string {
+  if (match.entry.id === "searching" && isAmbiguousSearching) {
+    return "ambiguousSearching";
+  }
+
+  if (match.matchedModifiers.length > 0) {
+    return match.matchedModifiers.map((modifier) => modifier.key).join("+");
+  }
+
+  if (match.entry.symbolRole.includes("context_signal")) {
+    return "contextSignal";
+  }
+
+  if (match.entry.symbolRole.includes("modifier")) {
+    return "modifier";
+  }
+
+  return "primarySymbol";
+}
+
+function buildCandidate(match: MatchedSymbol, isAmbiguousSearching: boolean): SymbolCandidate {
+  const matchedTerm = match.matchedAliases[0] ?? match.matchedModifiers[0]?.matchedTerms[0] ?? match.entry.label;
+  const confidence = match.entry.id === "searching" && isAmbiguousSearching ? 0.68 : confidenceFor(match);
+
+  return {
+    text: matchedTerm,
+    normalizedText: compact(matchedTerm),
+    candidateId: match.entry.id,
+    type: match.entry.category,
+    evidenceText: matchedTerm,
+    roleInDream: roleFor(match, isAmbiguousSearching),
+    source: "explicit",
+    importance: match.entry.id === "searching" && isAmbiguousSearching ? 3 : symbolImportance(match.entry, match.matchedModifiers),
+    confidence,
+  };
 }
 
 function theme(label: string, evidenceText: string | undefined, confidence: number): ThemeSignal {
   return evidenceText ? { label, evidenceText, confidence } : { label, confidence };
 }
 
-export function analyzeDreamStructure(request: StructuredDreamAnalysisRequest): StructuredDreamAnalysis {
-  const language = request.locale ?? "ko";
-  const normalizedText = request.dreamText.trim().replace(/\s+/g, " ");
-  const lowerText = normalizedText.toLowerCase();
-  const symbolCandidates: SymbolCandidate[] = [];
-  const sceneFacts: string[] = [];
-  const literalQueries: string[] = [];
-  const sceneQueries: string[] = [];
-  const themeQueries: string[] = [];
-  const modifierQueries: string[] = [];
-  const themes: ThemeSignal[] = [];
-  const inferredEmotions: EmotionSignal[] = [];
-  const safetySignals: SafetySignal[] = [];
+function sceneFactFor(match: MatchedSymbol, locale: SupportedLocale): string {
+  const evidence = unique([
+    ...match.matchedAliases,
+    ...match.matchedModifiers.flatMap((modifier) => modifier.matchedTerms),
+  ]).slice(0, 4);
+  const suffix = evidence.length > 0 ? evidence.join(locale === "en" ? ", " : ", ") : match.entry.label;
 
-  if (includesAny(lowerText, ["구렁이", "뱀"])) {
-    sceneFacts.push("큰 구렁이와 뱀이 나타남");
-    symbolCandidates.push(
-      candidate({
-        text: "뱀",
-        normalizedText: "뱀",
-        candidateId: "snake",
-        type: "animal",
-        evidenceText: includesAny(lowerText, ["구렁이"]) ? "큰 구렁이들" : "뱀",
-        roleInDream: includesAny(lowerText, ["구렁이", "큰"]) ? "largeSnakeAppearing" : "snakeAppearing",
-        source: "explicit",
-        importance: 5,
-        confidence: 0.94,
-      }),
-    );
-    literalQueries.push("구렁이", "뱀");
-    themeQueries.push("생명력", "숨은 움직임");
-    modifierQueries.push("largeSnake");
-    themes.push(theme("생명력", "큰 구렁이들", 0.8));
+  return locale === "en" ? `${match.entry.label} scene: ${suffix}` : `${match.entry.label} 장면: ${suffix}`;
+}
+
+function modifierQueriesFor(match: MatchedSymbol): string[] {
+  return unique([
+    ...match.matchedModifiers.map((modifier) => modifier.key),
+    ...match.matchedModifiers.flatMap((modifier) => LEGACY_MODIFIER_QUERY_BY_SYMBOL_MODIFIER[`${match.entry.id}:${modifier.key}`] ?? []),
+    ...(LEGACY_SYMBOL_MODIFIER_QUERY[match.entry.id] ?? []),
+  ]);
+}
+
+function legacySceneQueries(matches: MatchedSymbol[], locale: SupportedLocale): string[] {
+  const ids = new Set(matches.map((match) => match.entry.id));
+  const modifierKeys = new Set(matches.flatMap((match) => match.matchedModifiers.map((modifier) => `${match.entry.id}:${modifier.key}`)));
+  const queries: string[] = [];
+
+  if (locale === "ko" && ids.has("owned_land") && (ids.has("snake") || ids.has("many"))) {
+    queries.push("많은 뱀이 내 영역에 있음");
   }
 
-  if (includesAny(lowerText, ["우리 땅", "내 땅", "집터", "대지"])) {
-    sceneFacts.push("우리 땅이라는 소유/영역의 장소");
-    symbolCandidates.push(
-      candidate({
-        text: "우리 땅",
-        normalizedText: "우리땅",
-        candidateId: "owned_land",
-        type: "place",
-        evidenceText: "우리 땅",
-        roleInDream: "ownedTerritory",
-        source: "explicit",
-        importance: 5,
-        confidence: 0.9,
-      }),
-    );
-    literalQueries.push("우리 땅");
-    sceneQueries.push("많은 뱀이 내 영역에 있음");
-    modifierQueries.push("ownedLand");
-    themes.push(theme("영역", "우리 땅", 0.82));
+  if (locale === "ko" && (modifierKeys.has("school:lostClassroom") || (ids.has("school") && ids.has("searching")))) {
+    queries.push("교실을 찾기");
   }
 
-  if (includesAny(lowerText, ["수십", "가득", "많이", "many", "dozens"])) {
-    sceneFacts.push("많은 수의 대상이 한꺼번에 나타남");
-    symbolCandidates.push(
-      candidate({
-        text: language === "ko" ? "수십 마리" : "many",
-        normalizedText: language === "ko" ? "수십마리" : "many",
-        candidateId: "many",
-        type: "quantity",
-        evidenceText: language === "ko" ? "수십 마리" : "many",
-        roleInDream: "manyThingsAppearing",
-        source: "explicit",
-        importance: 4,
-        confidence: 0.9,
-      }),
-    );
-    literalQueries.push(language === "ko" ? "수십 마리" : "many");
-    modifierQueries.push(includesAny(lowerText, ["뱀", "snake"]) ? "manySnakes" : "many");
-    themeQueries.push(language === "ko" ? "압도감" : "overwhelm");
-    themes.push(theme(language === "ko" ? "압도감" : "overwhelm", language === "ko" ? "수십 마리" : "many", 0.76));
-    inferredEmotions.push({
-      label: language === "ko" ? "놀람" : "surprise",
+  if (locale === "ko" && modifierKeys.has("door:changing")) {
+    queries.push("문이 계속 바뀜");
+  }
+
+  return queries;
+}
+
+function buildThemes(matches: MatchedSymbol[], locale: SupportedLocale, isAmbiguousSearching: boolean): ThemeSignal[] {
+  const legacyThemes = matches.flatMap((match) => {
+    const legacyTheme = LEGACY_THEME_BY_SYMBOL[match.entry.id]?.[locale];
+    const evidenceText = match.matchedAliases[0] ?? match.matchedModifiers[0]?.matchedTerms[0] ?? match.entry.label;
+
+    return legacyTheme ? [theme(legacyTheme, evidenceText, match.entry.id === "many" ? 0.76 : 0.8)] : [];
+  });
+
+  const coreThemes = matches.flatMap((match) => {
+    const evidenceText = match.matchedAliases[0] ?? match.matchedModifiers[0]?.matchedTerms[0] ?? match.entry.label;
+
+    return match.entry.evidence.coreMeanings.slice(0, 2).map((label) => theme(label, evidenceText, 0.62));
+  });
+  const themes = [...legacyThemes, ...coreThemes];
+
+  if (isAmbiguousSearching) {
+    themes.push(theme(locale === "ko" ? "단서 부족" : "unclear clue", locale === "ko" ? "장면이 흐릿했어" : "blurry", 0.72));
+  }
+
+  return uniqueThemes(themes);
+}
+
+function uniqueThemes(themes: ThemeSignal[]): ThemeSignal[] {
+  const seen = new Set<string>();
+  const output: ThemeSignal[] = [];
+
+  for (const item of themes) {
+    const key = compact(item.label);
+
+    if (!key || seen.has(key)) {
+      continue;
+    }
+
+    seen.add(key);
+    output.push(item);
+  }
+
+  return output;
+}
+
+function inferEmotions(matches: MatchedSymbol[], locale: SupportedLocale): EmotionSignal[] {
+  const ids = new Set(matches.map((match) => match.entry.id));
+  const emotions: EmotionSignal[] = [];
+
+  if (ids.has("many")) {
+    emotions.push({
+      label: locale === "ko" ? "놀람" : "surprise",
       source: "text",
-      evidenceText: language === "ko" ? "수십 마리" : "many",
+      evidenceText: locale === "ko" ? "많은 수" : "many",
       confidence: 0.55,
     });
   }
 
-  if (includesAny(lowerText, ["새벽", "dawn", "early morning"])) {
-    sceneFacts.push(language === "ko" ? "새벽에 꾼 꿈" : "a dream around dawn");
-    symbolCandidates.push(
-      candidate({
-        text: language === "ko" ? "새벽" : "dawn",
-        normalizedText: language === "ko" ? "새벽" : "dawn",
-        candidateId: "dawn",
-        type: "time",
-        evidenceText: language === "ko" ? "새벽" : "dawn",
-        roleInDream: "timeModifier",
-        source: "explicit",
-        importance: 2,
-        confidence: 0.72,
-      }),
-    );
-    literalQueries.push(language === "ko" ? "새벽" : "dawn");
-    modifierQueries.push("dawn");
+  if (ids.has("being_chased")) {
+    emotions.push({
+      label: locale === "ko" ? "긴박감" : "urgency",
+      source: "text",
+      evidenceText: locale === "ko" ? "쫓김" : "being chased",
+      confidence: 0.62,
+    });
   }
 
-  if (includesAny(lowerText, ["학교", "school"])) {
-    sceneFacts.push(language === "ko" ? "학교 장면" : "school scene");
-    symbolCandidates.push(
-      candidate({
-        text: language === "ko" ? "학교" : "school",
-        normalizedText: language === "ko" ? "학교" : "school",
-        candidateId: "school",
-        type: "place",
-        evidenceText: language === "ko" ? "학교" : "school",
-        roleInDream: "learningOrEvaluationPlace",
-        source: "explicit",
-        importance: 5,
-        confidence: 0.92,
-      }),
-    );
-    literalQueries.push(language === "ko" ? "학교" : "school");
-  }
+  return emotions;
+}
 
-  if (includesAny(lowerText, ["복도", "hallway", "corridor"])) {
-    sceneFacts.push(language === "ko" ? "복도에서 이동함" : "moving through a hallway");
-    symbolCandidates.push(
-      candidate({
-        text: language === "ko" ? "복도" : "hallway",
-        normalizedText: language === "ko" ? "복도" : "hallway",
-        candidateId: "corridor",
-        type: "place",
-        evidenceText: language === "ko" ? "복도" : "hallway",
-        roleInDream: "inBetweenMovement",
-        source: "explicit",
-        importance: 4,
-        confidence: 0.88,
-      }),
-    );
-    literalQueries.push(language === "ko" ? "복도" : "hallway");
-    themeQueries.push(language === "ko" ? "전환" : "transition");
-  }
+function unmatchedEnglishSceneCandidates(
+  normalizedText: string,
+  matchedSymbols: MatchedSymbol[],
+): SymbolCandidate[] {
+  const matchedKeys = new Set(
+    matchedSymbols
+      .flatMap((match) => [
+        match.entry.label,
+        ...match.matchedAliases,
+        ...match.matchedModifiers.flatMap((modifier) => modifier.matchedTerms),
+      ])
+      .map(compact),
+  );
 
-  if (includesAny(lowerText, ["문", "door", "entrance"])) {
-    sceneFacts.push(language === "ko" ? "문 또는 입구가 중요함" : "door or entrance is important");
-    symbolCandidates.push(
-      candidate({
-        text: language === "ko" ? "문" : "door",
-        normalizedText: language === "ko" ? "문" : "door",
-        candidateId: "door",
-        type: "object",
-        evidenceText: language === "ko" ? "문" : "door",
-        roleInDream: includesAny(lowerText, ["바뀌", "changing", "moving away"]) ? "changingThreshold" : "threshold",
-        source: "explicit",
-        importance: 5,
-        confidence: 0.92,
-      }),
-    );
-    literalQueries.push(language === "ko" ? "문" : "door");
-    if (includesAny(lowerText, ["바뀌", "changing", "moving away"])) {
-      sceneQueries.push(language === "ko" ? "문이 계속 바뀜" : "the entrance keeps moving away");
-      modifierQueries.push("changingDoor");
-      themes.push(theme(language === "ko" ? "기준" : "moving standard", language === "ko" ? "문이 계속 바뀜" : "entrance kept moving", 0.78));
-    }
-  }
+  return unique(tokenize(normalizedText))
+    .filter((token) => token.length >= 4)
+    .filter((token) => !ENGLISH_SCENE_STOP_WORDS.has(token))
+    .filter((token) => !matchedKeys.has(compact(token)))
+    .slice(0, 4)
+    .map((token) => ({
+      text: token,
+      normalizedText: compact(token),
+      type: "object" as const,
+      evidenceText: token,
+      roleInDream: "unmatchedSceneDetail",
+      source: "inferred" as const,
+      importance: 1 as const,
+      confidence: 0.25,
+    }));
+}
 
-  if (includesAny(lowerText, ["찾", "못 찾", "돌아다", "looking for", "cannot find", "searching"])) {
-    const ambiguous = includesAny(lowerText, ["잘 모르", "흐릿", "blurry"]);
-    symbolCandidates.push(
-      candidate({
-        text: language === "ko" ? "찾기" : "searching",
-        normalizedText: language === "ko" ? "찾기" : "searching",
-        candidateId: "searching",
-        type: "action",
-        evidenceText: language === "ko" ? "찾" : "searching",
-        roleInDream: ambiguous ? "ambiguousSearching" : "searchingForTarget",
-        source: "explicit",
-        importance: ambiguous ? 3 : 4,
-        confidence: ambiguous ? 0.68 : 0.86,
-      }),
-    );
-    literalQueries.push(language === "ko" ? "찾기" : "searching");
-    sceneQueries.push(language === "ko" ? "교실을 찾기" : "looking for something");
-    themeQueries.push(language === "ko" ? "탐색" : "searching");
-    if (ambiguous) {
-      themes.push(theme("단서 부족", "장면이 흐릿했어", 0.72));
-    }
-  }
+function safetySignalsFromText(lowerText: string, locale: SupportedLocale): SafetySignal[] {
+  const safetySignals: SafetySignal[] = [];
 
   if (includesAny(lowerText, ["울고", "힘들", "너무 무겁", "heavy and hard"])) {
     safetySignals.push({
       type: "distress",
       severity: "medium",
-      evidenceText: language === "ko" ? "마음이 너무 무겁고 힘들었어" : "heavy and hard",
+      evidenceText: locale === "ko" ? "마음이 너무 무겁고 힘들었어" : "heavy and hard",
     });
   }
 
@@ -277,6 +535,27 @@ export function analyzeDreamStructure(request: StructuredDreamAnalysisRequest): 
     });
   }
 
+  return safetySignals;
+}
+
+export function analyzeDreamStructure(request: StructuredDreamAnalysisRequest): StructuredDreamAnalysis {
+  const language = request.locale ?? "ko";
+  const normalizedText = request.dreamText.trim().replace(/\s+/g, " ");
+  const lowerText = normalizedText.toLocaleLowerCase();
+  const matchedSymbols = findMatchedSymbols(normalizedText, language);
+  const isAmbiguousSearching = includesAny(lowerText, ["잘 모르", "흐릿", "blurry", "unclear"]);
+  const symbolCandidates = [
+    ...matchedSymbols.map((match) => buildCandidate(match, isAmbiguousSearching)),
+    ...(language === "en" ? unmatchedEnglishSceneCandidates(normalizedText, matchedSymbols) : []),
+  ];
+  const sceneFacts = matchedSymbols.map((match) => sceneFactFor(match, language));
+  const literalQueries = unique([
+    ...matchedSymbols.flatMap((match) => match.matchedAliases),
+    ...matchedSymbols.flatMap((match) => match.matchedModifiers.flatMap((modifier) => modifier.matchedTerms)),
+  ]);
+  const sceneQueries = unique(legacySceneQueries(matchedSymbols, language));
+  const themeQueries = unique(matchedSymbols.flatMap((match) => match.entry.evidence.coreMeanings));
+  const modifierQueries = unique(matchedSymbols.flatMap(modifierQueriesFor));
   const selectedMoods: SelectedMood[] = [
     ...(request.wakeMood ? [{ source: "wakeMood" as const, value: request.wakeMood }] : []),
     ...(request.dreamMood ? [{ source: "dreamMood" as const, value: request.dreamMood }] : []),
@@ -287,14 +566,14 @@ export function analyzeDreamStructure(request: StructuredDreamAnalysisRequest): 
     summary: sceneFacts.length > 0 ? sceneFacts.slice(0, 3).join(", ") : normalizedText.slice(0, 80),
     sceneFacts,
     symbolCandidates,
-    literalQueries: unique(literalQueries),
-    sceneQueries: unique(sceneQueries),
-    themeQueries: unique(themeQueries),
-    modifierQueries: unique(modifierQueries),
+    literalQueries,
+    sceneQueries,
+    themeQueries,
+    modifierQueries,
     selectedMoods,
-    inferredEmotions,
-    themes,
-    safetySignals,
+    inferredEmotions: inferEmotions(matchedSymbols, language),
+    themes: buildThemes(matchedSymbols, language, isAmbiguousSearching),
+    safetySignals: safetySignalsFromText(lowerText, language),
     language,
   };
 }

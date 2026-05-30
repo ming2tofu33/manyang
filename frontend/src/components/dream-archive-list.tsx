@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useSyncExternalStore } from "react";
 
 import { AssetIconButton, AssetTextButton } from "@/components/asset-primitives";
@@ -21,6 +22,7 @@ import {
   deleteDreamRecordToBrowser,
   getDreamRecordsSnapshotFromBrowser,
   getEmptyDreamRecordsSnapshot,
+  restoreDreamRecordAsLatestAnalysisToBrowser,
   subscribeToDreamStorage,
 } from "@/lib/dream-storage";
 import { manyangAssets } from "@/lib/manyang-assets";
@@ -35,21 +37,13 @@ const archiveYear = 2026;
 const archiveMonth = 5;
 
 const timelineIcons: Record<ArchiveTimelineItem["type"], string> = {
-  dream: manyangAssets.icons.moon,
-  pawprint: manyangAssets.icons.paw,
-  seed: manyangAssets.icons.sparkles,
+  dream: manyangAssets.semanticIcons.moon,
+  pawprint: manyangAssets.semanticIcons.paw,
+  seed: manyangAssets.semanticIcons.sparkles,
 };
 
 function formatArchiveDate(date: string): string {
   return date.replaceAll("-", ".");
-}
-
-function getTimelineIconClassName(type: ArchiveTimelineItem["type"]): string {
-  if (type === "seed") {
-    return "hue-rotate-[58deg] saturate-[1.35]";
-  }
-
-  return "";
 }
 
 export function ArchiveCatGuide({ selectedCatReaderId }: { selectedCatReaderId: CatReaderId }) {
@@ -72,7 +66,37 @@ export function ArchiveCatGuide({ selectedCatReaderId }: { selectedCatReaderId: 
   );
 }
 
+export function DreamRecordActions({
+  title,
+  onOpen,
+  onDelete,
+}: {
+  title: string;
+  onOpen: () => void;
+  onDelete: () => void;
+}) {
+  return (
+    <div className="flex shrink-0 items-center gap-1">
+      <AssetIconButton
+        src={manyangAssets.actionIcons.book}
+        label={`${title} 꿈 영수증 다시 보기`}
+        title="꿈 영수증 다시 보기"
+        onClick={onOpen}
+        className="h-9 w-9"
+      />
+      <AssetIconButton
+        src={manyangAssets.actionIcons.trash}
+        label={`${title} 기록 삭제`}
+        title="기록 삭제"
+        onClick={onDelete}
+        className="h-9 w-9"
+      />
+    </div>
+  );
+}
+
 export function DreamArchiveList() {
+  const router = useRouter();
   const dreamRecords = useSyncExternalStore(
     subscribeToDreamStorage,
     getDreamRecordsSnapshotFromBrowser,
@@ -115,6 +139,18 @@ export function DreamArchiveList() {
     }
   }
 
+  function handleOpenReceipt(item: ArchiveTimelineItem) {
+    if (!item.dreamRecordId) {
+      return;
+    }
+
+    const restored = restoreDreamRecordAsLatestAnalysisToBrowser(item.dreamRecordId);
+
+    if (restored) {
+      router.push("/result");
+    }
+  }
+
   if (timeline.length === 0) {
     const reader = getCatReaderById(selectedCatReaderId);
 
@@ -136,9 +172,11 @@ export function DreamArchiveList() {
         </p>
         <AssetTextButton
           href="/write"
-          frame={manyangAssets.boxes.buttonFeather}
-          className="mx-auto max-w-[13.5rem]"
-          contentClassName="min-h-[3.25rem] justify-start pl-[4.1rem] pr-4 text-base"
+          frame={manyangAssets.buttons.mediumSecondary}
+          iconSrc={manyangAssets.actionIcons.pencil}
+          className="mx-auto max-w-[15rem]"
+          contentClassName="min-h-[3.2rem] px-4 text-base"
+          iconClassName="h-6 w-6"
         >
           꿈쓰기
         </AssetTextButton>
@@ -167,7 +205,7 @@ export function DreamArchiveList() {
                   fill
                   sizes="28px"
                   unoptimized
-                  className={cn("object-contain", getTimelineIconClassName(item.type))}
+                  className="object-contain"
                 />
               </span>
             </span>
@@ -181,17 +219,15 @@ export function DreamArchiveList() {
             </div>
 
             {item.dreamRecordId ? (
-              <AssetIconButton
-                src={manyangAssets.icons.trash}
-                label={`${item.title} 기록 삭제`}
-                title="기록 삭제"
-                onClick={() => handleDelete(item)}
-                className="h-9 w-9"
+              <DreamRecordActions
+                title={item.title}
+                onOpen={() => handleOpenReceipt(item)}
+                onDelete={() => handleDelete(item)}
               />
             ) : (
               <span className="relative h-7 w-7 shrink-0 opacity-72" aria-hidden="true">
                 <Image
-                  src={manyangAssets.icons.arrowRight}
+                  src={manyangAssets.actionIcons.arrowRight}
                   alt=""
                   fill
                   sizes="28px"

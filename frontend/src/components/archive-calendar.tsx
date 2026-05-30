@@ -121,15 +121,14 @@ export function ArchiveCalendar() {
   return (
     <section className="space-y-4">
       <div className="mx-auto grid w-full max-w-[382px] grid-cols-4 gap-1.5 rounded-[1.35rem] border border-[#7c4a38]/72 bg-[rgba(5,4,12,0.74)] p-2.5 shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md">
-        <ArchiveSummaryCard icon={manyangAssets.icons.moon} label="꿈 기록" value={monthlyDreams} />
-        <ArchiveSummaryCard icon={manyangAssets.icons.paw} label="발자국 기록" value={monthlyPawprints} />
+        <ArchiveSummaryCard icon={manyangAssets.semanticIcons.moon} label="꿈 기록" value={monthlyDreams} />
+        <ArchiveSummaryCard icon={manyangAssets.semanticIcons.paw} label="발자국 기록" value={monthlyPawprints} />
         <ArchiveSummaryCard
-          icon={manyangAssets.icons.sparkles}
+          icon={manyangAssets.semanticIcons.sparkles}
           label="꿈 씨앗"
           value={monthlySeeds}
-          accentClassName="hue-rotate-[58deg] saturate-[1.35]"
         />
-        <ArchiveSummaryCard icon={manyangAssets.icons.crystalBall} label="이번 달 상징" value={monthlySymbols} />
+        <ArchiveSummaryCard icon={manyangAssets.semanticIcons.crystalBall} label="이번 달 상징" value={monthlySymbols} />
       </div>
 
       <div className="relative mx-auto aspect-[962/1452] w-full max-w-[382px]">
@@ -172,7 +171,7 @@ export function ArchiveCalendar() {
                     {hasDream ? (
                       <span className={archiveCalendarDreamIconClassName}>
                         <Image
-                          src={manyangAssets.icons.moon}
+                          src={manyangAssets.semanticIcons.moon}
                           alt=""
                           fill
                           sizes="14px"
@@ -184,7 +183,7 @@ export function ArchiveCalendar() {
                     {hasPawprint ? (
                       <span className={archiveCalendarPawprintIconClassName}>
                         <Image
-                          src={manyangAssets.icons.paw}
+                          src={manyangAssets.semanticIcons.paw}
                           alt=""
                           fill
                           sizes="12px"
@@ -196,12 +195,12 @@ export function ArchiveCalendar() {
                     {hasSeed ? (
                       <span className={archiveCalendarSeedIconClassName}>
                         <Image
-                          src={manyangAssets.icons.sparkles}
+                          src={manyangAssets.semanticIcons.sparkles}
                           alt=""
                           fill
                           sizes="12px"
                           unoptimized
-                          className="object-contain hue-rotate-[58deg] saturate-[1.35]"
+                          className="object-contain"
                         />
                       </span>
                     ) : null}

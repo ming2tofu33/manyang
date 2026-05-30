@@ -1,0 +1,54 @@
+id: bus
+status: active
+editorialStatus: approved
+category: object
+subcategory: vehicle
+facets: [shared_direction, schedule, belonging, limited_control]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [vehicle_metaphor, social_movement_symbolism, scene_function], coreMeanings: [shared_direction, schedule, belonging, limited_control], safeTransform: ["moving with others under a shared route", "belonging and limited control in one vehicle"], avoidClaims: ["you will miss an opportunity", "you must follow the crowd"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["group rhythm and public schedule can appear as a bus", "social pace rather than private destiny"], avoidClaims: ["you will miss an opportunity", "you must follow the crowd"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["bus as collective journey schedule and reduced agency", "public movement with others"], avoidClaims: ["you will miss an opportunity", "you must follow the crowd"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [shared direction, schedule, belonging, limited control]
+tensionAxis: [togetherness, loss_of_control]
+relatedIds: [car, train, school]
+sourceBasis: [vehicle metaphor, social movement symbolism, scene function]
+locales:
+  ko:
+    label: "버스"
+    aliases: ["버스", "버스를 타는 꿈", "정류장", "버스 놓침", "대중교통"]
+    searchText: "버스, 정류장, 버스를 타는 꿈, 버스 놓침, 대중교통, 공동 방향, 일정, 소속감, 제한된 통제"
+    coreMeanings: ["공동 방향", "일정", "소속감", "제한된 통제"]
+    lightReadings: ["함께 움직이는 흐름에 올라타는 장면", "정해진 일정 속에서 방향을 찾는 마음"]
+    shadowReadings: ["내 마음대로 속도를 조절하지 못하는 답답함", "놓칠까 봐 느끼는 조급함"]
+    sceneModifiers:
+      missing: { triggerTerms: ["놓", "지나", "늦", "못 탔"], reading: "흐름이나 기회를 놓칠까 봐 조급한 마음", weight: 0.84 }
+      crowded: { triggerTerms: ["만원", "사람 많", "붐비"], reading: "주변 사람들의 속도와 내 리듬이 겹쳐 답답한 장면", weight: 0.78 }
+      wrongBus: { triggerTerms: ["잘못", "다른 버스", "엉뚱"], reading: "내가 탄 흐름이 맞는지 의심하는 마음", weight: 0.82 }
+    contextQuestions: ["버스를 탔나요, 놓쳤나요?", "그 버스는 내가 원한 방향으로 가고 있었나요?"]
+    metaphorHooks: ["함께 타는 일정의 흐름", "내 속도가 아닌 길"]
+    cardTitleSeeds: ["놓친 버스", "정류장의 밤"]
+    smallPrescriptions: ["남의 일정과 내 일정을 구분해서 오늘 해야 할 일 하나만 정해보세요."]
+    safeReading: "버스는 공동의 흐름, 일정, 소속감, 제한된 통제감을 보여주는 상징일 수 있어요."
+    avoidExpressions: ["기회를 놓친다", "운이 떠난다", "무조건 따라가야 한다"]
+  en:
+    label: Bus
+    aliases: [bus, bus stop, missed bus, public transport, riding a bus]
+    searchText: "bus, bus stop, missed bus, public transport, shared direction, schedule, belonging, limited control"
+    coreMeanings: [shared direction, schedule, belonging, limited control]
+    lightReadings: ["joining a shared movement", "finding direction inside a schedule"]
+    shadowReadings: ["frustration from not controlling the pace", "urgency around missing a flow"]
+    sceneModifiers:
+      missing: { triggerTerms: ["missed bus", "late", "left without me"], reading: "fear of missing a flow or opportunity", weight: 0.84 }
+      crowded: { triggerTerms: ["crowded", "packed", "many people"], reading: "your rhythm pressed by other people's pace", weight: 0.78 }
+      wrongBus: { triggerTerms: ["wrong bus", "different bus", "wrong direction"], reading: "doubt about whether you are in the right flow", weight: 0.82 }
+    contextQuestions: ["Did you catch the bus or miss it?", "Was it going where you wanted?"]
+    metaphorHooks: ["a schedule everyone rides together", "a road moving at someone else's pace"]
+    cardTitleSeeds: ["The Missed Bus", "Night at the Stop"]
+    smallPrescriptions: ["Separate another person's schedule from one task that is truly yours today."]
+    safeReading: "A bus can symbolize shared direction, schedule, belonging, and limited control."
+    avoidExpressions: ["you missed your chance", "luck is gone", "you must follow the crowd"]

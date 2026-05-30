@@ -22,7 +22,7 @@ describe("backend public API", () => {
         hasSceneModifier: false,
         localeMatches: true,
       }),
-    ).toBe(1);
+    ).toBeGreaterThanOrEqual(0.95);
   });
 
   it("exports the structured analysis stage", () => {

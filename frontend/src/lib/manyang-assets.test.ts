@@ -225,10 +225,17 @@ describe("manyang assets", () => {
     expect(manyangAssets.buttons.dreamseed).toBe("/manyang/ui/buttons/dreamseed-frame.png");
     expect(manyangAssets.buttons.dreamseedArchive).toBe("/manyang/ui/buttons/dreamseed-archive-frame.png");
     expect(manyangAssets.buttons.morningPawprint).toBe("/manyang/ui/buttons/morning-pawprint-frame.png");
+    expect(manyangAssets.buttons.compactPrimary).toBe("/manyang/ui/buttons/common-compact-primary-frame.png");
+    expect(manyangAssets.buttons.mediumPrimary).toBe("/manyang/ui/buttons/common-medium-primary-frame.png");
+    expect(manyangAssets.buttons.mediumSecondary).toBe("/manyang/ui/buttons/common-medium-secondary-frame.png");
 
     Object.values(manyangAssets.buttons).forEach((assetPath) => {
       expect(publicAssetExists(assetPath)).toBe(true);
     });
+
+    expect(readImageSize(manyangAssets.buttons.compactPrimary)).toEqual({ width: 640, height: 200 });
+    expect(readImageSize(manyangAssets.buttons.mediumPrimary)).toEqual({ width: 850, height: 150 });
+    expect(readImageSize(manyangAssets.buttons.mediumSecondary)).toEqual({ width: 850, height: 150 });
   });
 
   test("exposes the generated footer frame and navigation icon assets", () => {
@@ -298,6 +305,34 @@ describe("manyang assets", () => {
 
     Object.values(manyangAssets.semanticIcons).forEach((assetPath) => {
       expect(publicAssetExists(assetPath)).toBe(true);
+    });
+  });
+
+  test("exposes profile room setting icon assets", () => {
+    expect(manyangAssets.profileIcons.notifications).toBe("/manyang/ui/profile-icons/profile-notifications.png");
+    expect(manyangAssets.profileIcons.privacy).toBe("/manyang/ui/profile-icons/profile-privacy.png");
+    expect(manyangAssets.profileIcons.theme).toBe("/manyang/ui/profile-icons/profile-theme.png");
+    expect(manyangAssets.profileIcons.moonPass).toBe("/manyang/ui/profile-icons/profile-moon-pass.png");
+    expect(manyangAssets.profileIcons.service).toBe("/manyang/ui/profile-icons/profile-service.png");
+    expect(manyangAssets.profileIcons.account).toBe("/manyang/ui/profile-icons/profile-account.png");
+
+    Object.values(manyangAssets.profileIcons).forEach((assetPath) => {
+      expect(publicAssetExists(assetPath)).toBe(true);
+      expect(readImageSize(assetPath)).toEqual({ width: 192, height: 192 });
+    });
+  });
+
+  test("exposes the home cat transition magic cloud assets", () => {
+    expect(manyangAssets.transitions.catMagicCloudLeft).toBe(
+      "/manyang/ui/transitions/cat-transition-magic-cloud-left.png",
+    );
+    expect(manyangAssets.transitions.catMagicCloudRight).toBe(
+      "/manyang/ui/transitions/cat-transition-magic-cloud-right.png",
+    );
+
+    [manyangAssets.transitions.catMagicCloudLeft, manyangAssets.transitions.catMagicCloudRight].forEach((assetPath) => {
+      expect(publicAssetExists(assetPath)).toBe(true);
+      expect(readImageSize(assetPath)).toEqual({ width: 1200, height: 900 });
     });
   });
 });

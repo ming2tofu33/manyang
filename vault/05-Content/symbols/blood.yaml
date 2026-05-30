@@ -1,0 +1,54 @@
+id: blood
+status: active
+editorialStatus: approved
+category: body
+subcategory: body_fluid
+facets: [vitality, wound, intensity, alarm]
+symbolRole: [primary_candidate]
+safetyLevel: sensitive
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [body_symbolism, injury_metaphor, product_safety_rule], coreMeanings: [vitality, wound, intensity, alarm], safeTransform: ["a vivid sign that something feels emotionally charged", "life force and vulnerability appearing together"], avoidClaims: ["you are injured", "blood means money luck"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["피는 재물보다 생생한 감정과 상처 감각으로 안전하게 전환", "몸의 신호는 실제 확인을 우선"], avoidClaims: ["사고가 난다", "재물이 들어온다"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["blood as vitality, wound, alarm, and emotional intensity", "a visible mark of vulnerability"], avoidClaims: ["you are injured", "blood means money luck"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [vitality, wound, intensity, alarm]
+tensionAxis: [life_force, alarm]
+relatedIds: [body, hospital, teeth]
+sourceBasis: [body symbolism, injury metaphor, product safety rule]
+locales:
+  ko:
+    label: "피"
+    aliases: ["피", "피가 나는 꿈", "출혈", "피를 보는 꿈", "상처"]
+    searchText: "피, 피가 나는 꿈, 출혈, 피를 보는 꿈, 상처, 생명력, 강한 감정, 놀람, 취약함"
+    coreMeanings: ["생명력", "상처", "강한 감정", "놀람"]
+    lightReadings: ["무시하기 어려운 감정의 강도가 드러난 장면", "상처를 알아차리고 돌보려는 신호"]
+    shadowReadings: ["몸이나 안전에 대한 불안", "감정이 너무 생생하게 터져 나오는 느낌"]
+    sceneModifiers:
+      bleeding: { triggerTerms: ["피가", "출혈", "흐르"], reading: "감정적 상처나 긴장이 밖으로 드러난 장면", weight: 0.88 }
+      wound: { triggerTerms: ["상처", "베", "다쳤"], reading: "취약한 지점이나 다친 느낌이 선명한 장면", weight: 0.86 }
+      muchBlood: { triggerTerms: ["피가 많이", "피범벅", "가득"], reading: "감정의 강도나 놀람이 크게 확대된 장면", weight: 0.9 }
+    contextQuestions: ["피는 어디에서 났나요?", "놀람이 컸나요, 통증이 컸나요?"]
+    metaphorHooks: ["감정이 붉게 보인 자리", "상처가 말을 얻는 순간"]
+    cardTitleSeeds: ["피가 보인 밤", "붉은 신호"]
+    smallPrescriptions: ["실제 몸의 걱정이 있다면 꿈보다 현실 확인을 우선하세요."]
+    safeReading: "피는 재물운이나 사고 예고보다 생생한 감정, 상처, 취약함을 비추는 상징으로 다루는 것이 안전해요."
+    avoidExpressions: ["사고가 난다", "재물이 들어온다", "다친다"]
+  en:
+    label: Blood
+    aliases: [blood, bleeding, bloody, wound, seeing blood]
+    searchText: "blood, bleeding, bloody, wound, seeing blood, vitality, injury, emotional intensity, alarm"
+    coreMeanings: [vitality, wound, emotional intensity, alarm]
+    lightReadings: ["an emotional charge becoming hard to ignore", "a wound asking to be noticed and cared for"]
+    shadowReadings: ["anxiety about body or safety", "emotion feeling too vivid or exposed"]
+    sceneModifiers:
+      bleeding: { triggerTerms: [bleeding, blood flowing, bled], reading: "an emotional wound or tension becoming visible", weight: 0.88 }
+      wound: { triggerTerms: [wound, cut, injured], reading: "a vulnerable or hurt point becoming clear", weight: 0.86 }
+      muchBlood: { triggerTerms: [a lot of blood, covered in blood, blood everywhere], reading: "alarm or emotional intensity greatly amplified", weight: 0.9 }
+    contextQuestions: ["Where did the blood come from?", "Was shock or pain stronger?"]
+    metaphorHooks: ["a place where feeling became red", "the moment a wound found language"]
+    cardTitleSeeds: ["Night of Blood", "Red Signal"]
+    smallPrescriptions: ["If real body worry remains, check reality first and keep the dream symbolic."]
+    safeReading: "Blood is safest to read as emotional intensity, wound, vitality, or vulnerability, not fortune or accident prediction."
+    avoidExpressions: ["an accident will happen", "money will come", "you are injured"]

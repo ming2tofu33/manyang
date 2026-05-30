@@ -1,10 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { FormEvent, type ReactNode, useState, useSyncExternalStore } from "react";
 
-import { AssetImageTextButton } from "@/components/asset-primitives";
+import { AssetImageTextButton, AssetTextButton } from "@/components/asset-primitives";
 import {
   createMorningMoodRecord,
   getEmptyMorningMoodRecordsSnapshot,
@@ -27,7 +26,7 @@ import {
 import { manyangAssets } from "@/lib/manyang-assets";
 import { cn, ui } from "@/lib/styles";
 
-type IconName = keyof typeof manyangAssets.icons;
+type IconName = keyof typeof manyangAssets.semanticIcons;
 
 function getTodayDate(): string {
   const now = new Date();
@@ -47,7 +46,7 @@ type ChoiceChipProps = {
 };
 
 function ChoiceChip({ label, icon, isSelected, onClick, compact = false }: ChoiceChipProps) {
-  const iconSrc = manyangAssets.icons[icon as IconName] ?? manyangAssets.icons.paw;
+  const iconSrc = manyangAssets.semanticIcons[icon as IconName] ?? manyangAssets.semanticIcons.paw;
 
   return (
     <button
@@ -86,7 +85,7 @@ function Panel({ title, children, className }: PanelProps) {
     >
       <div className="mb-2 flex items-center justify-center gap-2 text-[#ffd98a]">
         <span className="relative h-5 w-5">
-          <Image src={manyangAssets.icons.paw} alt="" fill sizes="20px" unoptimized className="object-contain opacity-90" />
+          <Image src={manyangAssets.semanticIcons.paw} alt="" fill sizes="20px" unoptimized className="object-contain opacity-90" />
         </span>
         <h2 className={cn("text-[1.05rem] font-semibold", ui.textGlow)}>{title}</h2>
       </div>
@@ -186,7 +185,7 @@ export function MorningMoodForm() {
             className={cn(ui.field, "h-14 rounded-[0.95rem] px-4 pr-16 text-[15px]")}
           />
           <span className="pointer-events-none absolute right-4 top-1/2 h-6 w-6 -translate-y-1/2">
-            <Image src={manyangAssets.icons.feather} alt="" fill sizes="24px" unoptimized className="object-contain opacity-60" />
+            <Image src={manyangAssets.semanticIcons.feather} alt="" fill sizes="24px" unoptimized className="object-contain opacity-60" />
           </span>
         </div>
       </Panel>
@@ -213,12 +212,16 @@ export function MorningMoodForm() {
       </AssetImageTextButton>
 
       {hasSavedToday ? (
-        <Link
+        <AssetTextButton
           href="/"
-          className="block text-center text-sm font-semibold text-[#f0bc7d] transition hover:text-[#ffd98a] focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
+          frame={manyangAssets.buttons.mediumSecondary}
+          iconSrc={manyangAssets.actionIcons.arrowLeft}
+          className="mx-auto max-w-[15rem]"
+          contentClassName="min-h-[3.05rem] px-4 text-sm"
+          iconClassName="h-6 w-6"
         >
           오늘 화면으로 돌아가기
-        </Link>
+        </AssetTextButton>
       ) : null}
 
       <p className="text-center text-sm text-[#fff3d7]/70">{morningMoodCopy.footer}</p>

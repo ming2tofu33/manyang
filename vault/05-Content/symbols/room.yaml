@@ -1,0 +1,54 @@
+id: room
+status: active
+editorialStatus: approved
+category: place
+subcategory: home_space
+facets: [private_space, hidden_feeling, solitude, boundary]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [scene_function, everyday_metaphor], coreMeanings: [privacy, inner state, hidden feeling, solitude], safeTransform: [혼자만 알고 있는 감정의 방, 드러나기 전의 사적인 상태], avoidClaims: [비밀이 반드시 드러난다, 혼자가 된다는 뜻이다] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: [집 안에서도 더 안쪽에 있는 사적 공간, 말하지 않은 감정을 보관하는 자리], avoidClaims: [비밀이 반드시 드러난다, 혼자가 된다는 뜻이다] }
+  western: { sourceBasis: [western_psychological, mythic_association, product_editorial_rule], safeTransform: [an inner chamber of the self, private material not yet shared], avoidClaims: [비밀이 반드시 드러난다, 혼자가 된다는 뜻이다] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [privacy, inner state, hidden feeling, solitude]
+tensionAxis: [privacy, isolation]
+relatedIds: [home, door, window]
+sourceBasis: [spatial symbolism, everyday metaphor, scene function]
+locales:
+  ko:
+    label: 방
+    aliases: [방, 침실, 작은방, 빈방, 내 방]
+    searchText: 방, 침실, 내 방, 빈방, 개인 공간, 혼자 있는 마음, 숨겨진 감정
+    coreMeanings: [개인 공간, 숨겨진 감정, 혼자 있는 마음, 내면 상태]
+    lightReadings: [혼자 정리할 시간이 필요한 흐름, 내 감정을 조용히 들여다보는 장면]
+    shadowReadings: [고립감, 문을 닫고 숨고 싶은 마음]
+    sceneModifiers:
+      locked: { triggerTerms: [잠긴, 문이 안 열, 들어갈 수 없], reading: 사적인 감정에 접근하기 어려운 장면, weight: 0.82 }
+      bright: { triggerTerms: [밝은, 햇빛, 환한], reading: 혼자 있는 시간이 선명함을 주는 장면, weight: 0.68 }
+      dark: { triggerTerms: [어두운, 깜깜, 불 꺼진], reading: 아직 보기 어려운 감정이 남은 장면, weight: 0.75 }
+    contextQuestions: [방은 익숙했나요, 낯설었나요?, 혼자 있었나요, 누군가 들어왔나요?]
+    metaphorHooks: [마음 안쪽의 작은 방, 닫힌 문 뒤의 감정]
+    cardTitleSeeds: [작은 방의 달, 닫힌 방에 남은 기척]
+    smallPrescriptions: [오늘 혼자 정리할 감정 하나를 짧게 적어보세요.]
+    safeReading: 방은 사적인 감정과 혼자 정리해야 할 내면 상태로 읽을 수 있어요.
+    avoidExpressions: [비밀이 반드시 드러난다, 혼자가 된다는 뜻이다]
+  en:
+    label: Room
+    aliases: [room, bedroom, small room, empty room, my room]
+    searchText: room, bedroom, private space, hidden feeling, solitude, inner state
+    coreMeanings: [privacy, hidden feeling, solitude, inner state]
+    lightReadings: [a need for quiet inner sorting, a private feeling becoming easier to see]
+    shadowReadings: [isolation, wanting to hide behind a closed door]
+    sceneModifiers:
+      locked: { triggerTerms: [locked room, could not enter, door would not open], reading: private feelings that feel hard to access, weight: 0.82 }
+      bright: { triggerTerms: [bright room, sunlight, well lit], reading: solitude bringing clarity, weight: 0.68 }
+      dark: { triggerTerms: [dark room, no lights, black room], reading: a feeling not yet easy to face, weight: 0.75 }
+    contextQuestions: [Was the room familiar or strange?, Were you alone, or did someone enter?]
+    metaphorHooks: [a small room inside the mind, feeling behind a closed door]
+    cardTitleSeeds: [Moon in the Small Room, The Room Behind the Door]
+    smallPrescriptions: [Write one private feeling in a single sentence today.]
+    safeReading: A room can point to privacy, hidden feeling, and the inner state you are sorting through.
+    avoidExpressions: [your secret will be exposed, you will be alone]

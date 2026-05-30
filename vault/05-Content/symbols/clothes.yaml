@@ -1,0 +1,54 @@
+id: clothes
+status: active
+editorialStatus: approved
+category: object
+subcategory: appearance_item
+facets: [identity, role, presentation, protection]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [appearance_metaphor, everyday_object_symbolism, scene_function], coreMeanings: [identity, role, presentation, protection], safeTransform: ["the role the self wears in front of others", "protection and presentation in one layer"], avoidClaims: ["you will be embarrassed", "your status will change"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["옷은 체면과 역할, 상황에 맞추는 태도를 보여줌", "나를 드러내고 가리는 생활 상징"], avoidClaims: ["망신을 당한다", "신분이 바뀐다"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["clothing as persona, role, protection, and self-presentation", "the surface between self and society"], avoidClaims: ["you will be embarrassed", "your status will change"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [identity, role, presentation, protection]
+tensionAxis: [expression, exposure]
+relatedIds: [mirror, hair, workplace]
+sourceBasis: [appearance metaphor, everyday object symbolism, scene function]
+locales:
+  ko:
+    label: "옷"
+    aliases: ["옷", "옷을 입는 꿈", "옷을 벗는 꿈", "새 옷", "더러운 옷"]
+    searchText: "옷, 옷을 입는 꿈, 새 옷, 더러운 옷, 역할, 자기 표현, 체면, 보호, 사회적 모습"
+    coreMeanings: ["역할", "자기 표현", "체면", "보호"]
+    lightReadings: ["새로운 역할이나 모습을 준비하는 장면", "나를 어떻게 보여줄지 조율하는 마음"]
+    shadowReadings: ["맞지 않는 역할을 입은 답답함", "보이고 싶지 않은 모습이 드러나는 불안"]
+    sceneModifiers:
+      newClothes: { triggerTerms: ["새 옷", "새로운 옷", "갈아입"], reading: "새로운 역할이나 이미지로 전환하려는 장면", weight: 0.78 }
+      dirtyClothes: { triggerTerms: ["더러운", "찢어진", "얼룩"], reading: "현재 역할이나 이미지가 부담스럽게 느껴지는 장면", weight: 0.82 }
+      naked: { triggerTerms: ["벗", "알몸", "노출"], reading: "사회적 보호막 없이 드러난 느낌이 강한 장면", weight: 0.88 }
+    contextQuestions: ["옷은 잘 맞았나요, 불편했나요?", "그 옷을 누가 보았나요?"]
+    metaphorHooks: ["내가 입고 있는 역할", "보여주기 위해 걸친 표정"]
+    cardTitleSeeds: ["새 옷의 밤", "맞지 않는 옷"]
+    smallPrescriptions: ["요즘 내가 억지로 입고 있는 역할이 있는지 적어보세요."]
+    safeReading: "옷은 역할, 자기 표현, 체면, 보호막을 비추는 상징일 수 있어요."
+    avoidExpressions: ["망신을 당한다", "신분이 바뀐다"]
+  en:
+    label: Clothes
+    aliases: [clothes, clothing, new clothes, dirty clothes, naked]
+    searchText: "clothes, clothing, new clothes, dirty clothes, naked, role, self-presentation, protection, persona"
+    coreMeanings: [role, self-presentation, persona, protection]
+    lightReadings: ["preparing a new role or image", "adjusting how you are seen"]
+    shadowReadings: ["feeling trapped in a role that does not fit", "anxiety about exposure"]
+    sceneModifiers:
+      newClothes: { triggerTerms: [new clothes, changed clothes, new outfit], reading: "moving into a new role or image", weight: 0.78 }
+      dirtyClothes: { triggerTerms: [dirty clothes, torn clothes, stained], reading: "a current role or image feeling strained", weight: 0.82 }
+      naked: { triggerTerms: [naked, undressed, exposed], reading: "feeling exposed without social protection", weight: 0.88 }
+    contextQuestions: ["Did the clothes fit well?", "Who saw what you were wearing?"]
+    metaphorHooks: ["the role you are wearing", "a surface put on to be seen"]
+    cardTitleSeeds: ["Night of New Clothes", "The Clothes That Did Not Fit"]
+    smallPrescriptions: ["Name one role you may be wearing too tightly right now."]
+    safeReading: "Clothes can symbolize role, self-presentation, protection, and the persona shown to others."
+    avoidExpressions: ["you will be embarrassed", "your status will change"]

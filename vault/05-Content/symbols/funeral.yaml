@@ -1,0 +1,54 @@
+id: funeral
+status: active
+editorialStatus: approved
+category: event
+subcategory: ritual
+facets: [closure, grief, public_goodbye, transition]
+symbolRole: [primary_candidate]
+safetyLevel: sensitive
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [ritual_symbolism, social_scene_function, product_safety_rule], coreMeanings: [closure, grief, public_goodbye, transition], safeTransform: ["a ritualized goodbye to a phase or feeling", "grief becoming visible in a shared scene"], avoidClaims: ["a funeral will happen", "this predicts death"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["family and social ritual can express closure and duty", "respectful farewell without fortune claims"], avoidClaims: ["a funeral will happen", "this predicts death"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["funeral as mourning closure and communal witnessing", "the psyche staging a goodbye"], avoidClaims: ["a funeral will happen", "this predicts death"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [closure, grief, public goodbye, transition]
+tensionAxis: [mourning, release]
+relatedIds: [death, home, stranger]
+sourceBasis: [ritual symbolism, social scene function, product safety rule]
+locales:
+  ko:
+    label: "장례식"
+    aliases: ["장례식", "상가", "발인", "상복", "조문"]
+    searchText: "장례식, 상가, 발인, 상복, 조문, 끝맺음, 애도, 공개적 작별, 가족 의무, 정리"
+    coreMeanings: ["끝맺음", "애도", "공개적 작별", "정리"]
+    lightReadings: ["마음이 어떤 일을 공식적으로 정리하려는 장면", "슬픔을 인정하고 보내려는 움직임"]
+    shadowReadings: ["끝났다는 사실을 받아들이기 어려운 마음", "주변 시선 속에서 감정을 눌러두는 긴장"]
+    sceneModifiers:
+      wearingBlack: { triggerTerms: ["상복", "검은 옷", "검정"], reading: "애도나 책임의 무게가 크게 느껴지는 장면", weight: 0.78 }
+      crowded: { triggerTerms: ["사람 많", "조문객", "붐비"], reading: "개인 감정이 주변 관계와 함께 얽혀 있는 장면", weight: 0.76 }
+      unknownDeceased: { triggerTerms: ["누군지 모", "모르는 사람", "낯선"], reading: "무엇을 보내는지 아직 선명하지 않은 정리의 장면", weight: 0.8 }
+    contextQuestions: ["누구의 장례인지 분명했나요?", "슬픔보다 의무감이 더 컸나요?"]
+    metaphorHooks: ["마음이 차리는 작은 작별식", "끝난 것 앞에 모인 사람들"]
+    cardTitleSeeds: ["작별의 방", "검은 옷의 밤"]
+    smallPrescriptions: ["끝났다고 인정하고 싶은 일 하나를 조용히 적어보세요."]
+    safeReading: "장례식은 실제 장례 예고가 아니라 끝맺음, 애도, 정리, 관계 속 작별의 감각을 보여줄 수 있어요."
+    avoidExpressions: ["장례가 생긴다", "누가 죽는다", "불길한 꿈이다"]
+  en:
+    label: Funeral
+    aliases: [funeral, mourning, wake, burial, black clothes]
+    searchText: "funeral, wake, burial, mourning, black clothes, closure, grief, public goodbye, ritual"
+    coreMeanings: [closure, grief, public goodbye, ritualized ending]
+    lightReadings: ["the mind formally closing a chapter", "allowing grief to be acknowledged"]
+    shadowReadings: ["difficulty accepting an ending", "holding emotion under social pressure"]
+    sceneModifiers:
+      wearingBlack: { triggerTerms: ["black clothes", "wearing black", "mourning clothes"], reading: "grief or responsibility feeling heavy", weight: 0.78 }
+      crowded: { triggerTerms: ["crowded", "many people", "mourners"], reading: "private feeling mixed with social expectations", weight: 0.76 }
+      unknownDeceased: { triggerTerms: ["unknown person", "stranger died", "did not know who"], reading: "not yet knowing exactly what is being released", weight: 0.8 }
+    contextQuestions: ["Was it clear whose funeral it was?", "Did duty or grief feel stronger?"]
+    metaphorHooks: ["a small ceremony of goodbye inside the mind", "people gathering around an ending"]
+    cardTitleSeeds: ["Room of Farewell", "Night in Black Clothes"]
+    smallPrescriptions: ["Name one thing you may be ready to acknowledge as over."]
+    safeReading: "A funeral can symbolize closure, grief, public goodbye, or ritualized transition, not a literal prediction."
+    avoidExpressions: ["a funeral will happen", "someone will die", "this is an omen"]

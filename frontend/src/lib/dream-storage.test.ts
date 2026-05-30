@@ -6,6 +6,7 @@ import {
   getDreamRecordsSnapshot,
   getLatestAnalysis,
   getLatestAnalysisSnapshot,
+  restoreDreamRecordAsLatestAnalysis,
   saveDreamRecord,
   saveLatestAnalysis,
   type DreamRecord,
@@ -107,6 +108,39 @@ describe("dream storage helpers", () => {
     deleteDreamRecord(storage, "first");
 
     expect(getDreamRecords(storage).map((record) => record.id)).toEqual(["second"]);
+  });
+
+  test("restores a saved dream record as the latest analysis payload", () => {
+    const storage = createMemoryStorage();
+    const first: DreamRecord = {
+      id: "first",
+      savedAt: "2026-05-24T00:00:00.000Z",
+      ...createPayload(),
+    };
+    const second: DreamRecord = {
+      id: "second",
+      savedAt: "2026-05-25T00:00:00.000Z",
+      ...createPayload(),
+      dreamDate: "2026-05-25",
+      wakeMood: "궁금함",
+    };
+
+    saveDreamRecord(storage, first);
+    saveDreamRecord(storage, second);
+
+    expect(restoreDreamRecordAsLatestAnalysis(storage, "first")).toEqual({
+      dreamText: first.dreamText,
+      dreamDate: first.dreamDate,
+      wakeMood: first.wakeMood,
+      analysis: first.analysis,
+    });
+    expect(getLatestAnalysis(storage)).toEqual({
+      dreamText: first.dreamText,
+      dreamDate: first.dreamDate,
+      wakeMood: first.wakeMood,
+      analysis: first.analysis,
+    });
+    expect(restoreDreamRecordAsLatestAnalysis(storage, "missing")).toBeNull();
   });
 
   test("keeps dream records unchanged when deleting a missing record", () => {

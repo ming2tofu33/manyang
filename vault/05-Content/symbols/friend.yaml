@@ -1,0 +1,54 @@
+id: friend
+status: active
+editorialStatus: approved
+category: relationship
+subcategory: peer
+facets: [belonging, comparison, trust, social_self]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [relationship_symbolism, social_metaphor, scene_function], coreMeanings: [belonging, comparison, trust, social_self], safeTransform: ["a mirror of belonging and mutual recognition", "the social self checking connection"], avoidClaims: ["that friend thinks this", "the friendship will end"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["peer relationship and group belonging can become central", "face loyalty and comparison appear gently"], avoidClaims: ["that friend thinks this", "the friendship will end"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["friend as companion social mirror or peer comparison", "trust and belonging in everyday relationships"], avoidClaims: ["that friend thinks this", "the friendship will end"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [belonging, comparison, trust, social self]
+tensionAxis: [connection, comparison]
+relatedIds: [stranger, school, phone]
+sourceBasis: [relationship symbolism, social metaphor, scene function]
+locales:
+  ko:
+    label: "친구"
+    aliases: ["친구", "친한 사람", "동창", "지인", "친구가 나오는 꿈"]
+    searchText: "친구, 친한 사람, 동창, 지인, 관계, 소속감, 비교, 신뢰, 사회적 자아, 함께 있음"
+    coreMeanings: ["소속감", "비교", "신뢰", "사회적 자아"]
+    lightReadings: ["연결감을 확인하고 싶은 마음", "혼자가 아니라는 감각을 찾는 장면"]
+    shadowReadings: ["비교나 소외감", "관계에서 말하지 못한 긴장"]
+    sceneModifiers:
+      laughing: { triggerTerms: ["웃", "즐겁", "놀", "같이"], reading: "함께 있는 감각과 소속감이 살아나는 장면", weight: 0.76 }
+      ignoring: { triggerTerms: ["무시", "못 본 척", "멀어", "답이 없"], reading: "관계 안에서 소외되거나 밀려난 느낌이 드러난 장면", weight: 0.82 }
+      oldFriend: { triggerTerms: ["옛 친구", "동창", "오랜만", "예전"], reading: "과거의 나와 현재의 내가 만나는 장면", weight: 0.78 }
+    contextQuestions: ["그 친구와 있을 때 편했나요, 비교되는 느낌이었나요?", "요즘 관계에서 확인받고 싶은 부분이 있나요?"]
+    metaphorHooks: ["나를 비추는 또 하나의 얼굴", "함께 걷는 마음의 거리"]
+    cardTitleSeeds: ["친구의 거울", "함께 걷던 밤"]
+    smallPrescriptions: ["가볍게 안부를 묻고 싶은 사람이 있다면 이름만 적어보세요."]
+    safeReading: "친구는 관계의 실제 예언이 아니라 소속감, 신뢰, 비교감 같은 사회적 마음을 비추는 상징일 수 있어요."
+    avoidExpressions: ["그 친구가 배신한다", "관계가 끝난다"]
+  en:
+    label: Friend
+    aliases: [friend, close friend, classmate, acquaintance, old friend]
+    searchText: "friend, classmate, acquaintance, belonging, comparison, trust, social self, companionship"
+    coreMeanings: [belonging, comparison, trust, social self]
+    lightReadings: ["checking a sense of connection", "wanting the ease of not being alone"]
+    shadowReadings: ["comparison or exclusion", "unspoken tension in a relationship"]
+    sceneModifiers:
+      laughing: { triggerTerms: ["laughing", "having fun", "together", "playing"], reading: "belonging and shared ease becoming visible", weight: 0.76 }
+      ignoring: { triggerTerms: ["ignored", "would not answer", "left me", "distant"], reading: "feeling excluded or unseen", weight: 0.82 }
+      oldFriend: { triggerTerms: ["old friend", "classmate", "from school", "years ago"], reading: "the present self meeting an older version of the self", weight: 0.78 }
+    contextQuestions: ["Did the friend feel warm or comparative?", "What part of connection do you want confirmed?"]
+    metaphorHooks: ["another face reflecting the self", "the distance of walking together"]
+    cardTitleSeeds: ["Mirror of a Friend", "Night We Walked Together"]
+    smallPrescriptions: ["Write the name of one person you would like to reconnect with lightly."]
+    safeReading: "A friend can symbolize belonging, trust, comparison, or the social self."
+    avoidExpressions: ["that friend will betray you", "the friendship will end"]

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState, useSyncExternalStore } from "react";
 
 import { AssetImageTextButton } from "./asset-primitives";
@@ -158,15 +157,21 @@ export function TodayHomeActions() {
         />
         {isNight ? <NightSeedButton /> : <SecondaryForgotButton />}
 
-        <Link
+        <AssetImageTextButton
           href={homeState.tertiary.href}
+          frame={manyangAssets.buttons.dreamseedArchive}
+          width={808}
+          height={148}
+          sizes="240px"
           className={cn(
-            "mx-auto block w-fit rounded-full px-4 py-2 text-center text-[13px] font-semibold text-[#f4b65f] transition hover:text-[#ffd98a] focus:outline-none focus:ring-2 focus:ring-[#f7d58b]",
-            isNight ? "mt-2" : "",
+            "mx-auto -my-1 block w-[57%] max-w-[240px] px-2 py-1",
+            isNight ? "mt-1" : "",
           )}
+          imageClassName="manyang-button-glow-soft"
+          contentClassName="text-[0.93rem]"
         >
-          {homeState.tertiary.label} &gt;
-        </Link>
+          {homeState.tertiary.label}
+        </AssetImageTextButton>
       </div>
     </div>
   );

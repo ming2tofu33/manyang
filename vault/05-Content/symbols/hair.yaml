@@ -1,0 +1,54 @@
+id: hair
+status: active
+editorialStatus: approved
+category: body
+subcategory: appearance
+facets: [identity, vitality, control, self_image]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [body_symbolism, appearance_metaphor, scene_function], coreMeanings: [identity, vitality, control, self_image], safeTransform: ["self-image and vitality appearing through hair", "control over how the self is seen"], avoidClaims: ["you will lose health", "your luck will be cut"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["appearance and vitality can be read through hair without fortune claims", "cutting hair may mark reset or control"], avoidClaims: ["you will lose health", "your luck will be cut"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["hair as identity vitality sensuality control or self-presentation", "a visible surface of inner change"], avoidClaims: ["you will lose health", "your luck will be cut"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [identity, vitality, control, self image]
+tensionAxis: [expression, control]
+relatedIds: [mirror, teeth, bathroom]
+sourceBasis: [body symbolism, appearance metaphor, scene function]
+locales:
+  ko:
+    label: "머리카락"
+    aliases: ["머리카락", "머리", "머리 자르는 꿈", "탈모", "긴 머리"]
+    searchText: "머리카락, 머리, 머리 자르는 꿈, 탈모, 긴 머리, 정체성, 활력, 자기 이미지, 통제감"
+    coreMeanings: ["정체성", "활력", "자기 이미지", "통제감"]
+    lightReadings: ["나를 어떻게 보여줄지 다시 정리하는 장면", "새로운 모습으로 정돈하고 싶은 마음"]
+    shadowReadings: ["이미지나 활력이 줄어드는 느낌", "통제당하거나 강제로 바뀌는 불안"]
+    sceneModifiers:
+      cutting: { triggerTerms: ["자르", "잘랐", "미용실"], reading: "이미지나 역할을 새롭게 정리하려는 장면", weight: 0.78 }
+      fallingOut: { triggerTerms: ["빠", "탈모", "우수수"], reading: "활력이나 자신감이 줄어드는 듯한 불안이 드러난 장면", weight: 0.86 }
+      longHair: { triggerTerms: ["긴 머리", "길어", "찰랑"], reading: "표현하고 싶은 자기 이미지가 길게 드러나는 장면", weight: 0.72 }
+    contextQuestions: ["머리카락 변화가 마음에 들었나요, 불안했나요?", "요즘 나의 이미지나 역할을 바꾸고 싶은 마음이 있나요?"]
+    metaphorHooks: ["밖으로 자라는 자기 이미지", "잘라내고 싶은 오래된 모습"]
+    cardTitleSeeds: ["머리카락의 밤", "잘려 나간 모습"]
+    smallPrescriptions: ["바꾸고 싶은 내 모습 하나와 유지하고 싶은 모습 하나를 적어보세요."]
+    safeReading: "머리카락은 정체성, 활력, 자기 이미지, 통제감을 비추는 상징으로 읽을 수 있어요."
+    avoidExpressions: ["건강이 나빠진다", "운이 잘린다", "불행이 온다"]
+  en:
+    label: Hair
+    aliases: [hair, long hair, haircut, hair falling out, balding]
+    searchText: "hair, long hair, haircut, hair falling out, balding, identity, vitality, self image, control"
+    coreMeanings: [identity, vitality, self image, control]
+    lightReadings: ["reorganizing how you want to be seen", "wanting a cleaner or newer self-presentation"]
+    shadowReadings: ["worry that vitality or image is weakening", "anxiety around being changed by force"]
+    sceneModifiers:
+      cutting: { triggerTerms: ["haircut", "cutting hair", "salon"], reading: "reworking image or role", weight: 0.78 }
+      fallingOut: { triggerTerms: ["hair falling out", "balding", "clumps"], reading: "anxiety about losing vitality or confidence", weight: 0.86 }
+      longHair: { triggerTerms: ["long hair", "flowing hair", "grew long"], reading: "self-expression becoming more visible", weight: 0.72 }
+    contextQuestions: ["Did the hair change feel good or alarming?", "Do you want to change how you are seen?"]
+    metaphorHooks: ["self-image growing outward", "an old look being cut away"]
+    cardTitleSeeds: ["Night of Hair", "The Cut-Away Self"]
+    smallPrescriptions: ["Name one part of your image you want to change and one part you want to keep."]
+    safeReading: "Hair can symbolize identity, vitality, self-image, and control over presentation."
+    avoidExpressions: ["your health will decline", "your luck is cut", "misfortune is coming"]

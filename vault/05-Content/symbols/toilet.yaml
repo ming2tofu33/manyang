@@ -1,0 +1,54 @@
+id: toilet
+status: active
+editorialStatus: approved
+category: place
+subcategory: private_release
+facets: [release, privacy, shame, relief]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [everyday_place_symbolism, body_metaphor, scene_function], coreMeanings: [release, privacy, shame, relief], safeTransform: ["a private need to let something out", "relief mixed with exposure or embarrassment"], avoidClaims: ["money will come because of toilet imagery", "this is dirty or shameful"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["private cleansing and release can appear through toilet spaces", "shame should be softened into privacy needs"], avoidClaims: ["money will come because of toilet imagery", "this is dirty or shameful"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["toilet as release boundary bodily privacy or embarrassment", "letting go of waste or pressure"], avoidClaims: ["money will come because of toilet imagery", "this is dirty or shameful"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [release, privacy, shame, relief]
+tensionAxis: [relief, exposure]
+relatedIds: [bathroom, water, body]
+sourceBasis: [everyday place symbolism, body metaphor, scene function]
+locales:
+  ko:
+    label: "화장실 변기"
+    aliases: ["변기", "화장실", "소변", "대변", "볼일 보는 꿈"]
+    searchText: "변기, 화장실, 소변, 대변, 볼일, 배출, 해소, 사생활, 부끄러움, 숨기고 싶은 감정"
+    coreMeanings: ["배출", "해소", "사생활", "노출 불안"]
+    lightReadings: ["쌓인 것을 내보내고 싶어 하는 마음", "혼자 정리할 공간을 찾는 장면"]
+    shadowReadings: ["보이고 싶지 않은 부분이 드러날까 봐 느끼는 불안", "해소가 막힌 답답함"]
+    sceneModifiers:
+      noPrivacy: { triggerTerms: ["문이 없", "사람들", "보여", "공개"], reading: "혼자 처리하고 싶은 일이 노출될까 봐 불안한 장면", weight: 0.86 }
+      clogged: { triggerTerms: ["막혀", "넘쳐", "고장"], reading: "풀어내고 싶은 감정이나 일이 막혀 있는 장면", weight: 0.84 }
+      relief: { triggerTerms: ["시원", "해결", "비웠"], reading: "쌓인 압박을 내려놓는 감각이 강한 장면", weight: 0.72 }
+    contextQuestions: ["화장실은 사적인 공간이었나요, 노출된 공간이었나요?", "요즘 혼자 조용히 처리하고 싶은 일이 있나요?"]
+    metaphorHooks: ["마음이 비워내고 싶은 작은 방", "보이고 싶지 않은 해소의 자리"]
+    cardTitleSeeds: ["비워내는 방", "문 없는 화장실"]
+    smallPrescriptions: ["오늘은 쌓인 부담 하나를 아주 작게 정리해보세요."]
+    safeReading: "변기나 화장실은 배출, 해소, 사생활, 노출 불안을 상징할 수 있으며 더럽거나 나쁜 꿈으로 단정할 필요는 없어요."
+    avoidExpressions: ["더러운 꿈이다", "재물이 들어온다", "수치스러운 일이 생긴다"]
+  en:
+    label: Toilet
+    aliases: [toilet, restroom, pee, poop, using the toilet]
+    searchText: "toilet, restroom, pee, poop, release, relief, privacy, embarrassment, bodily boundary"
+    coreMeanings: [release, relief, privacy, fear of exposure]
+    lightReadings: ["wanting to let out what has built up", "looking for a private space to process"]
+    shadowReadings: ["fear that a private matter will be exposed", "frustration when release is blocked"]
+    sceneModifiers:
+      noPrivacy: { triggerTerms: ["no door", "people watching", "public", "exposed"], reading: "anxiety about handling something private in public", weight: 0.86 }
+      clogged: { triggerTerms: ["clogged", "overflowing", "broken"], reading: "a blocked release of pressure or emotion", weight: 0.84 }
+      relief: { triggerTerms: ["relieved", "finally went", "emptied"], reading: "a clear sense of letting pressure down", weight: 0.72 }
+    contextQuestions: ["Was the toilet private or exposed?", "What do you want to handle quietly by yourself?"]
+    metaphorHooks: ["a small room for release", "a private place with no door"]
+    cardTitleSeeds: ["Room of Release", "Toilet Without a Door"]
+    smallPrescriptions: ["Clear one small piece of built-up pressure today."]
+    safeReading: "A toilet can symbolize release, relief, privacy, or fear of exposure without making the dream shameful."
+    avoidExpressions: ["this is dirty", "money will come", "something humiliating will happen"]

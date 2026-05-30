@@ -1,0 +1,54 @@
+id: partner
+status: active
+editorialStatus: approved
+category: relationship
+subcategory: intimate
+facets: [intimacy, commitment, desire, negotiation]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [relationship_symbolism, attachment_metaphor, scene_function], coreMeanings: [intimacy, commitment, desire, negotiation], safeTransform: ["closeness and negotiation appearing through one person", "a bond where desire and boundaries meet"], avoidClaims: ["your partner will do this", "the relationship outcome is fixed"] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: ["commitment duty and emotional closeness can be read through partnership", "shared life rhythm becomes visible"], avoidClaims: ["your partner will do this", "the relationship outcome is fixed"] }
+  western: { sourceBasis: [western_psychological, product_editorial_rule], safeTransform: ["partner as attachment desire and shared future image", "a relational mirror for closeness and autonomy"], avoidClaims: ["your partner will do this", "the relationship outcome is fixed"] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [intimacy, commitment, desire, negotiation]
+tensionAxis: [closeness, autonomy]
+relatedIds: [ex_partner, home, phone]
+sourceBasis: [relationship symbolism, attachment metaphor, scene function]
+locales:
+  ko:
+    label: "연인"
+    aliases: ["연인", "애인", "배우자", "남자친구", "여자친구"]
+    searchText: "연인, 애인, 배우자, 남자친구, 여자친구, 친밀감, 약속, 욕구, 관계의 거리, 함께 사는 리듬"
+    coreMeanings: ["친밀감", "약속", "욕구", "관계 조율"]
+    lightReadings: ["가까워지고 싶은 마음", "관계 안에서 안정감을 확인하려는 장면"]
+    shadowReadings: ["거리와 자율성에 대한 긴장", "말하지 못한 기대나 서운함"]
+    sceneModifiers:
+      affectionate: { triggerTerms: ["안아", "손잡", "키스", "다정"], reading: "친밀감과 안정감을 확인하고 싶은 마음이 강해진 장면", weight: 0.78 }
+      conflict: { triggerTerms: ["싸", "헤어", "화", "울"], reading: "관계 안의 기대와 경계가 부딪히는 장면", weight: 0.84 }
+      absent: { triggerTerms: ["없", "사라", "기다", "연락 안"], reading: "가까운 관계에서 비어 있는 자리가 크게 느껴지는 장면", weight: 0.8 }
+    contextQuestions: ["꿈속 연인은 가까웠나요, 멀게 느껴졌나요?", "요즘 관계에서 더 확인하고 싶은 감정이 있나요?"]
+    metaphorHooks: ["서로의 거리를 맞추는 밤", "친밀감과 경계가 만나는 자리"]
+    cardTitleSeeds: ["연인의 거리", "손을 놓친 밤"]
+    smallPrescriptions: ["관계에서 지금 가장 필요한 말 하나를 적어보세요."]
+    safeReading: "연인은 실제 관계의 결론보다 친밀감, 약속, 기대, 거리 조율을 비추는 상징으로 읽을 수 있어요."
+    avoidExpressions: ["헤어지게 된다", "상대가 배신한다", "결혼하게 된다"]
+  en:
+    label: Partner
+    aliases: [partner, lover, boyfriend, girlfriend, spouse]
+    searchText: "partner, lover, spouse, boyfriend, girlfriend, intimacy, commitment, desire, boundaries, relationship distance"
+    coreMeanings: [intimacy, commitment, desire, relationship negotiation]
+    lightReadings: ["wanting closeness or reassurance", "checking emotional steadiness in a bond"]
+    shadowReadings: ["tension around distance and autonomy", "unspoken expectation or hurt"]
+    sceneModifiers:
+      affectionate: { triggerTerms: ["hugged", "held hands", "kissed", "kind"], reading: "a wish for closeness and reassurance", weight: 0.78 }
+      conflict: { triggerTerms: ["fought", "broke up", "angry", "crying"], reading: "expectations and boundaries colliding", weight: 0.84 }
+      absent: { triggerTerms: ["missing", "gone", "waiting", "would not text"], reading: "the empty place in closeness feeling large", weight: 0.8 }
+    contextQuestions: ["Did the partner feel close or distant?", "What feeling in the relationship wants clearer language?"]
+    metaphorHooks: ["a night measuring the distance between two people", "where closeness meets boundary"]
+    cardTitleSeeds: ["Distance of the Partner", "Night of the Missing Hand"]
+    smallPrescriptions: ["Write one sentence you wish could be said clearly in the relationship."]
+    safeReading: "A partner can symbolize intimacy, commitment, expectation, desire, and the need to adjust distance."
+    avoidExpressions: ["you will break up", "they will betray you", "you will get married"]

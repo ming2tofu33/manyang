@@ -36,6 +36,9 @@ export const manyangAssets = {
     dreamseed: "/manyang/ui/buttons/dreamseed-frame.png",
     dreamseedArchive: "/manyang/ui/buttons/dreamseed-archive-frame.png",
     morningPawprint: "/manyang/ui/buttons/morning-pawprint-frame.png",
+    compactPrimary: "/manyang/ui/buttons/common-compact-primary-frame.png",
+    mediumPrimary: "/manyang/ui/buttons/common-medium-primary-frame.png",
+    mediumSecondary: "/manyang/ui/buttons/common-medium-secondary-frame.png",
   },
   footer: {
     frame: "/manyang/ui/footer/footer-frame.png",
@@ -78,6 +81,19 @@ export const manyangAssets = {
     crystalBall: "/manyang/ui/semantic-icons/semantic-crystal-ball.png",
     crystals: "/manyang/ui/semantic-icons/semantic-crystals.png",
     star: "/manyang/ui/semantic-icons/semantic-star.png",
+  },
+  profileIcons: {
+    notifications: "/manyang/ui/profile-icons/profile-notifications.png",
+    privacy: "/manyang/ui/profile-icons/profile-privacy.png",
+    theme: "/manyang/ui/profile-icons/profile-theme.png",
+    moonPass: "/manyang/ui/profile-icons/profile-moon-pass.png",
+    service: "/manyang/ui/profile-icons/profile-service.png",
+    account: "/manyang/ui/profile-icons/profile-account.png",
+  },
+  transitions: {
+    catMist: "/manyang/ui/transitions/cat-transition-mist.png",
+    catMagicCloudLeft: "/manyang/ui/transitions/cat-transition-magic-cloud-left.png",
+    catMagicCloudRight: "/manyang/ui/transitions/cat-transition-magic-cloud-right.png",
   },
   boxes: {
     decorativePanelWide: "/manyang/cutouts/boxes/01-decorative-panel-wide.png",

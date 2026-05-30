@@ -1,8 +1,60 @@
 id: cat
 status: active
-category: animal
+editorialStatus: approved
+category: living_being
+subcategory: animal
+facets:
+  - intuition
+  - independence
+  - quiet_observation
+  - distance
+symbolRole:
+  - primary_candidate
 safetyLevel: safe
 accessTier: free
+interpretationLenses:
+  universal:
+    sourceBasis:
+      - scene_function
+      - everyday_metaphor
+    coreMeanings:
+      - intuition
+      - independence
+      - quiet observation
+      - distance
+    safeTransform:
+      - 조용히 이미 알고 있던 마음
+      - 가까움과 거리 사이를 살피는 감각
+    avoidClaims:
+      - 검은 고양이는 불길하다
+      - 누군가 배신한다
+  east_asian:
+    sourceBasis:
+      - east_asian_symbolism
+      - product_editorial_rule
+    safeTransform:
+      - 익숙한 공간을 조용히 살피는 동물적 직감
+      - 거리감 속에서 드러나는 보호 본능
+    avoidClaims:
+      - 검은 고양이는 불길하다
+      - 누군가 배신한다
+  western:
+    sourceBasis:
+      - western_psychological
+      - mythic_association
+      - product_editorial_rule
+    safeTransform:
+      - independent intuition and guarded closeness
+      - a quiet observer inside the dream
+    avoidClaims:
+      - 검은 고양이는 불길하다
+      - 누군가 배신한다
+embeddingProfile:
+  chunkTypes:
+    - searchText
+    - sceneModifier
+    - safeReading
+    - metaphorHook
 universalMeanings:
   - intuition
   - independence

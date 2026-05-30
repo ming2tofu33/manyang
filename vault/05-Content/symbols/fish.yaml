@@ -1,0 +1,54 @@
+id: fish
+status: active
+editorialStatus: approved
+category: living_being
+subcategory: animal
+facets: [emotion_within_water, life_force, elusiveness, flow]
+symbolRole: [primary_candidate]
+safetyLevel: safe
+accessTier: free
+interpretationLenses:
+  universal: { sourceBasis: [animal_symbolism, natural_symbolism, scene_function], coreMeanings: [life_in_emotion, flow, elusiveness, quiet_movement], safeTransform: [감정 속에서 움직이는 생명력, 잡으려 할수록 미끄러지는 생각], avoidClaims: [돈운이 오른다, 임신을 뜻한다] }
+  east_asian: { sourceBasis: [east_asian_symbolism, product_editorial_rule], safeTransform: [물속 생명력과 풍요 이미지를 안전하게 변환한 장면, 흐름 안에 살아 있는 가능성], avoidClaims: [돈운이 오른다, 임신을 뜻한다] }
+  western: { sourceBasis: [western_psychological, mythic_association, product_editorial_rule], safeTransform: [life moving in the unconscious water, an elusive thought within emotion], avoidClaims: [돈운이 오른다, 임신을 뜻한다] }
+embeddingProfile:
+  chunkTypes: [searchText, sceneModifier, safeReading, metaphorHook]
+universalMeanings: [life in emotion, flow, elusiveness, quiet movement]
+tensionAxis: [vitality, slipperiness]
+relatedIds: [water, sea, many]
+sourceBasis: [animal symbolism, natural symbolism, scene function]
+locales:
+  ko:
+    label: 물고기
+    aliases: [물고기, 생선, 잉어, 금붕어, 고기떼]
+    searchText: 물고기, 생선, 잉어, 금붕어, 물속 생명력, 붙잡히지 않는 생각, 감정 흐름
+    coreMeanings: [감정 속 생명력, 붙잡히지 않는 생각, 흐름, 조용한 움직임]
+    lightReadings: [감정 안에서도 살아 있는 가능성, 말로 잡기 전 움직이는 생각]
+    shadowReadings: [붙잡으려 할수록 미끄러지는 감각, 감정 속에서 방향을 놓치는 마음]
+    sceneModifiers:
+      catching: { triggerTerms: [잡, 낚, 건져], reading: 잡고 싶은 생각이나 가능성이 가까워지는 장면, weight: 0.78 }
+      deadFish: { triggerTerms: [죽은, 말라, 썩], reading: 흐름 안의 생명력이 약해진 듯한 장면, weight: 0.84 }
+      manyFish: { triggerTerms: [떼, 많은, 가득], reading: 감정 속 신호가 여러 갈래로 움직이는 장면, weight: 0.78 }
+    contextQuestions: [물고기는 살아 있었나요, 죽어 있었나요?, 잡으려고 했나요, 바라보기만 했나요?]
+    metaphorHooks: [감정 속을 헤엄치는 생각, 손에서 미끄러지는 작은 생명력]
+    cardTitleSeeds: [물고기의 달, 물속에 지나간 신호]
+    smallPrescriptions: [오늘 붙잡히지 않는 생각은 즉시 결론 내리지 말고 흐름만 적어보세요.]
+    safeReading: 물고기는 감정의 흐름 안에서 움직이는 생명력이나 붙잡히지 않는 생각으로 읽을 수 있어요.
+    avoidExpressions: [돈운이 오른다, 임신을 뜻한다]
+  en:
+    label: Fish
+    aliases: [fish, goldfish, carp, school of fish, dead fish]
+    searchText: fish, goldfish, carp, school of fish, life in water, emotional flow, elusive thought
+    coreMeanings: [life within emotion, elusive thought, flow, quiet movement]
+    lightReadings: [possibility alive inside feeling, a thought moving before words can catch it]
+    shadowReadings: [something slipping away when you try to hold it, losing direction inside emotion]
+    sceneModifiers:
+      catching: { triggerTerms: [catching fish, caught, fishing], reading: getting close to a thought or possibility you want to hold, weight: 0.78 }
+      deadFish: { triggerTerms: [dead fish, dried fish, rotting], reading: vitality inside a feeling seeming weakened, weight: 0.84 }
+      manyFish: { triggerTerms: [school of fish, many fish, full of fish], reading: many signals moving inside emotion, weight: 0.78 }
+    contextQuestions: [Was the fish alive or dead?, Were you trying to catch it or just watching?]
+    metaphorHooks: [a thought swimming through feeling, small life slipping through the hand]
+    cardTitleSeeds: [Moon of the Fish, Signal Underwater]
+    smallPrescriptions: [Write the flow of one elusive thought without forcing a conclusion.]
+    safeReading: A fish can point to life moving inside emotion, flow, and thoughts that are hard to catch.
+    avoidExpressions: [money luck is coming, this means pregnancy]
