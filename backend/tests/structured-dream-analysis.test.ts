@@ -157,4 +157,52 @@ describe("analyzeDreamStructure", () => {
     );
     expect(analysis.literalQueries).toEqual(expect.arrayContaining(["엘리베이터", "바다"]));
   });
+
+  test("turns selected atmosphere and sensation ids into weak interpretation signals", () => {
+    const analysis = analyzeDreamStructure({
+      dreamText: "복도를 끝없이 걸었어.",
+      locale: "ko",
+      dreamAtmospheres: ["anxious", "wistful"],
+      dreamSensations: ["falling", "chased"],
+    });
+
+    expect(analysis.inferredEmotions).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ label: "불안", source: "selectedMood" }),
+        expect.objectContaining({ label: "그리움", source: "selectedMood" }),
+      ]),
+    );
+    expect(analysis.selectedAtmosphereLabels).toEqual(["불안", "그리움"]);
+    expect(analysis.themeQueries).toEqual(expect.arrayContaining(["불안", "그리움"]));
+    expect(analysis.selectedSensationLabels).toEqual(["떨어지는 느낌", "쫓기는 느낌"]);
+    expect(analysis.literalQueries).toEqual(expect.arrayContaining(["떨어지는", "쫓기는"]));
+  });
+
+  test("adds the free-text sensation to selected labels but not to search queries", () => {
+    const analysis = analyzeDreamStructure({
+      dreamText: "복도를 걸었어.",
+      locale: "ko",
+      dreamSensations: ["cold"],
+      dreamSensationOther: "축축한 느낌",
+    });
+
+    expect(analysis.selectedSensationLabels).toEqual(["차가움", "축축한 느낌"]);
+    // 임의 텍스트는 검색 노이즈를 막기 위해 literalQueries에 들어가지 않는다.
+    expect(analysis.literalQueries).not.toEqual(expect.arrayContaining(["축축한 느낌"]));
+  });
+
+  test("localizes selected feeling signals for English", () => {
+    const analysis = analyzeDreamStructure({
+      dreamText: "I walked down an endless hallway.",
+      locale: "en",
+      dreamAtmospheres: ["anxious"],
+      dreamSensations: ["floating"],
+    });
+
+    expect(analysis.selectedAtmosphereLabels).toEqual(["anxiety"]);
+    expect(analysis.inferredEmotions).toEqual(
+      expect.arrayContaining([expect.objectContaining({ label: "anxiety", source: "selectedMood" })]),
+    );
+    expect(analysis.literalQueries).toEqual(expect.arrayContaining(["flying"]));
+  });
 });

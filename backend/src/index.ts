@@ -101,8 +101,16 @@ export {
   EmbeddingProviderRequestError,
 } from "./services/dream-embedding-provider";
 export type { DreamEmbeddingProvider } from "./services/dream-embedding-provider";
-export { analyzeDreamWithLlm, DEFAULT_LLM_PROVIDER_TIMEOUT_MS } from "./services/llm-dream-analysis";
-export type { AnalyzeDreamWithLlmOptions } from "./services/llm-dream-analysis";
+export {
+  analyzeDreamWithLlm,
+  generateDreamReadingForUser,
+  DEFAULT_LLM_PROVIDER_TIMEOUT_MS,
+} from "./services/llm-dream-analysis";
+export type {
+  AnalyzeDreamWithLlmOptions,
+  DreamReadingResult,
+  DreamReadingUnavailableReason,
+} from "./services/llm-dream-analysis";
 export {
   LlmProviderTimeoutError,
   LlmProviderConfigurationError,

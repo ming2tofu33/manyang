@@ -85,6 +85,10 @@ function topicParticle(value: string): "은" | "는" {
   return hasFinalConsonant(value) ? "은" : "는";
 }
 
+function connectiveParticle(value: string): "과" | "와" {
+  return hasFinalConsonant(value) ? "과" : "와";
+}
+
 function getCatReaderProfile(readerType: CatReaderType | string | undefined): CatReaderResponse & { note: string } {
   const normalizedReaderType = readerType === "orange_cat" || readerType === "yellow_cat" ? "cheese_cat" : readerType;
 
@@ -95,8 +99,16 @@ function fallbackEntries(locale: SupportedLocale): RuntimeSymbolEntry[] {
   return ["door", "water", "cat"].map((id) => getRuntimeSymbolEntry(id, locale));
 }
 
+// wakeMood가 "분위기: X / 감각: Y" 같은 표시용 복합 라벨이면 감정으로 취급하지 않는다.
+// 구조화된 분위기 정서는 structuredAnalysis.inferredEmotions(=inferredLabels)로 이미 들어온다.
+function isCompositeMoodLabel(value: string): boolean {
+  return value.includes("분위기:") || value.includes("감각:");
+}
+
 function inferEmotions(request: DreamAnalysisRequest, inferredLabels: string[]): string[] {
-  const selected = [request.wakeMood, request.dreamMood].flatMap((mood) => (mood ? [moodLabels[mood] ?? mood] : []));
+  const selected = [request.wakeMood, request.dreamMood].flatMap((mood) =>
+    mood && !isCompositeMoodLabel(mood) ? [moodLabels[mood] ?? mood] : [],
+  );
 
   return unique([...selected, ...inferredLabels]).slice(0, 4);
 }
@@ -167,7 +179,7 @@ function buildInterpretation(matches: RuntimeSymbolMatch[], themes: string[], is
 
   const firstLabel = firstMatch?.label ?? "이 장면";
 
-  return `단정하긴 어렵지만, ${firstLabel}${topicParticle(firstLabel)} ${firstTheme}와 연결되어 보여요.${secondLabel} 꿈이 남긴 감각을 조금 더 구체적으로 바라보게 합니다.`;
+  return `단정하긴 어렵지만, ${firstLabel}${topicParticle(firstLabel)} ${firstTheme}${connectiveParticle(firstTheme)} 연결되어 보여요.${secondLabel} 꿈이 남긴 감각을 조금 더 구체적으로 바라보게 합니다.`;
 }
 
 function buildSmallPrescription(matches: RuntimeSymbolMatch[], isFallback: boolean, locale: SupportedLocale): string {
@@ -303,6 +315,9 @@ export function analyzeDream(request: DreamAnalysisRequest): DreamAnalysisRespon
     ...(request.dreamDate ? { dreamDate: request.dreamDate } : {}),
     ...(request.wakeMood ? { wakeMood: request.wakeMood } : {}),
     ...(request.dreamMood ? { dreamMood: request.dreamMood } : {}),
+    ...(request.dreamAtmospheres ? { dreamAtmospheres: request.dreamAtmospheres } : {}),
+    ...(request.dreamSensations ? { dreamSensations: request.dreamSensations } : {}),
+    ...(request.dreamSensationOther ? { dreamSensationOther: request.dreamSensationOther } : {}),
     locale,
   });
   const matches = findRuntimeSymbolMatches(request.dreamText, { locale, limit: 5 });

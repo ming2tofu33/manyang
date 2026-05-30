@@ -291,12 +291,14 @@ describe("buildDreamReadingPrompt", () => {
     };
 
     expect(prompt.instructions).toContain("Candidate evidence is context only");
+    expect(prompt.instructions).toContain("never copy internal ids");
     expect(payload.retrievedSymbolEvidence).toEqual([]);
     expect(payload.candidateSymbolEvidence).toEqual(
       expect.arrayContaining([expect.objectContaining({ id: "hospital", evidenceStatus: "candidate" })]),
     );
     expect(payload.evidenceBoundaries?.evidenceRules.canInterpretSymbolically).not.toContain("병원");
     expect(payload.evidenceBoundaries?.evidenceRules.sceneOnly).toContain("병원");
+    expect(payload.evidenceBoundaries?.evidenceRules.sceneOnly).not.toContain("hospital");
   });
 
   test("requires dense scene-grounded output instead of short generic interpretation", () => {

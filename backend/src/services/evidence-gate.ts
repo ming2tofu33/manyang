@@ -57,7 +57,6 @@ function candidateTerms(candidate: SymbolCandidate): string[] {
     candidate.text,
     candidate.normalizedText,
     candidate.evidenceText,
-    ...(candidate.candidateId ? [candidate.candidateId] : []),
   ]);
 }
 
@@ -109,7 +108,7 @@ function sceneOnlyTermsFromSafety(policy: DreamSafetyPolicyResult | undefined, v
 
 function sceneOnlyTermsFromCandidateMatches(matches: RuntimeSymbolMatch[] | undefined, verifiedTerms: Set<string>): string[] {
   return (matches ?? [])
-    .flatMap((match) => [match.entryId, match.label, ...verifiedMatchedText(match)])
+    .flatMap((match) => [match.label, ...verifiedMatchedText(match)])
     .filter((term) => !isVerifiedTerm(term, verifiedTerms));
 }
 

@@ -6,6 +6,9 @@ export type StructuredDreamAnalysisRequest = {
   dreamDate?: string;
   wakeMood?: string;
   dreamMood?: string;
+  dreamAtmospheres?: string[];
+  dreamSensations?: string[];
+  dreamSensationOther?: string;
   locale?: SupportedLocale;
 };
 
@@ -55,11 +58,52 @@ export type StructuredDreamAnalysis = {
   themeQueries: string[];
   modifierQueries: string[];
   selectedMoods: SelectedMood[];
+  /** 사용자가 명시적으로 고른 분위기 정서(현지화 라벨). 페르소나 처방의 정서 앵커로 쓰인다. */
+  selectedAtmosphereLabels: string[];
+  /** 사용자가 명시적으로 고른 감각(현지화 라벨). 페르소나 처방·행동의 단서로 쓰인다. */
+  selectedSensationLabels: string[];
   inferredEmotions: EmotionSignal[];
   themes: ThemeSignal[];
   safetySignals: SafetySignal[];
   language: SupportedLocale;
 };
+
+// 분위기 옵션 id → 정서 라벨(현지화). frontend/src/lib/dream-entry-options.ts와 동기화.
+const ATMOSPHERE_EMOTION: Record<string, { ko: string; en: string }> = {
+  calm: { ko: "평온", en: "calm" },
+  warm: { ko: "따뜻함", en: "warmth" },
+  excited: { ko: "설렘", en: "excitement" },
+  wistful: { ko: "그리움", en: "longing" },
+  anxious: { ko: "불안", en: "anxiety" },
+  fearful: { ko: "두려움", en: "fear" },
+  sad: { ko: "슬픔", en: "sadness" },
+  angry: { ko: "분노", en: "anger" },
+  ashamed: { ko: "부끄러움", en: "shame" },
+  stifling: { ko: "답답함", en: "feeling stifled" },
+  confused: { ko: "혼란", en: "confusion" },
+  eerie: { ko: "묘함", en: "eeriness" },
+};
+
+// 감각 옵션 id → 감각 라벨(현지화) + 연결되는 KB 심볼(약한 검색 신호용).
+const SENSATION_SIGNAL: Record<string, { ko: string; en: string; symbolQuery?: { ko: string; en: string } }> = {
+  vivid: { ko: "선명함", en: "vividness" },
+  hazy: { ko: "흐릿함", en: "haziness" },
+  heavy: { ko: "무거움", en: "heaviness" },
+  stuck: { ko: "갇힌 느낌", en: "feeling stuck" },
+  falling: { ko: "떨어지는 느낌", en: "falling", symbolQuery: { ko: "떨어지는", en: "falling" } },
+  floating: { ko: "떠다니는 느낌", en: "floating", symbolQuery: { ko: "떠다니는", en: "flying" } },
+  chased: { ko: "쫓기는 느낌", en: "being chased", symbolQuery: { ko: "쫓기는", en: "chased" } },
+  cold: { ko: "차가움", en: "coldness" },
+  warmth: { ko: "온기", en: "warmth" },
+};
+
+function localizedLabelsFor(
+  ids: string[] | undefined,
+  table: Record<string, { ko: string; en: string }>,
+  locale: SupportedLocale,
+): string[] {
+  return unique((ids ?? []).flatMap((id) => (table[id] ? [table[id][locale]] : [])));
+}
 
 type MatchedModifier = {
   key: string;
@@ -549,17 +593,39 @@ export function analyzeDreamStructure(request: StructuredDreamAnalysisRequest): 
     ...(language === "en" ? unmatchedEnglishSceneCandidates(normalizedText, matchedSymbols) : []),
   ];
   const sceneFacts = matchedSymbols.map((match) => sceneFactFor(match, language));
+
+  // 사용자가 명시적으로 고른 분위기/감각을 신호로 변환한다(약한 신호 = 검색 쿼리에만 더함).
+  const selectedAtmosphereLabels = localizedLabelsFor(request.dreamAtmospheres, ATMOSPHERE_EMOTION, language);
+  const otherSensationLabel = request.dreamSensationOther?.trim();
+  const selectedSensationLabels = unique([
+    ...localizedLabelsFor(request.dreamSensations, SENSATION_SIGNAL, language),
+    ...(otherSensationLabel ? [otherSensationLabel] : []),
+  ]);
+  const atmosphereEmotions: EmotionSignal[] = (request.dreamAtmospheres ?? []).flatMap((id) =>
+    ATMOSPHERE_EMOTION[id] ? [{ label: ATMOSPHERE_EMOTION[id][language], source: "selectedMood" as const, confidence: 0.7 }] : [],
+  );
+  const sensationSymbolQueries = unique(
+    (request.dreamSensations ?? []).flatMap((id) =>
+      SENSATION_SIGNAL[id]?.symbolQuery ? [SENSATION_SIGNAL[id].symbolQuery![language]] : [],
+    ),
+  );
+
   const literalQueries = unique([
     ...matchedSymbols.flatMap((match) => match.matchedAliases),
     ...matchedSymbols.flatMap((match) => match.matchedModifiers.flatMap((modifier) => modifier.matchedTerms)),
+    ...sensationSymbolQueries,
   ]);
   const sceneQueries = unique(legacySceneQueries(matchedSymbols, language));
-  const themeQueries = unique(matchedSymbols.flatMap((match) => match.entry.evidence.coreMeanings));
+  const themeQueries = unique([
+    ...matchedSymbols.flatMap((match) => match.entry.evidence.coreMeanings),
+    ...selectedAtmosphereLabels,
+  ]);
   const modifierQueries = unique(matchedSymbols.flatMap(modifierQueriesFor));
   const selectedMoods: SelectedMood[] = [
     ...(request.wakeMood ? [{ source: "wakeMood" as const, value: request.wakeMood }] : []),
     ...(request.dreamMood ? [{ source: "dreamMood" as const, value: request.dreamMood }] : []),
   ];
+  const inferredEmotions = dedupeEmotions([...atmosphereEmotions, ...inferEmotions(matchedSymbols, language)]);
 
   return {
     normalizedText,
@@ -571,9 +637,29 @@ export function analyzeDreamStructure(request: StructuredDreamAnalysisRequest): 
     themeQueries,
     modifierQueries,
     selectedMoods,
-    inferredEmotions: inferEmotions(matchedSymbols, language),
+    selectedAtmosphereLabels,
+    selectedSensationLabels,
+    inferredEmotions,
     themes: buildThemes(matchedSymbols, language, isAmbiguousSearching),
     safetySignals: safetySignalsFromText(lowerText, language),
     language,
   };
+}
+
+function dedupeEmotions(emotions: EmotionSignal[]): EmotionSignal[] {
+  const seen = new Set<string>();
+  const output: EmotionSignal[] = [];
+
+  for (const emotion of emotions) {
+    const key = compact(emotion.label);
+
+    if (!key || seen.has(key)) {
+      continue;
+    }
+
+    seen.add(key);
+    output.push(emotion);
+  }
+
+  return output;
 }

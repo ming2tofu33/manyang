@@ -49,6 +49,20 @@ describe("analyzeDream", () => {
     expect(() => analyzeDream({ dreamText: "   " })).toThrow("dreamText is required");
   });
 
+  test("does not leak the composite wakeMood label into emotions", () => {
+    const result = analyzeDream({
+      dreamText: "복도를 걸었어.",
+      locale: "ko",
+      wakeMood: "분위기: 슬픔, 평온함 / 감각: 선명함",
+      dreamAtmospheres: ["sad", "calm"],
+    });
+
+    expect(result.emotions).not.toContain("분위기: 슬픔, 평온함 / 감각: 선명함");
+    expect(result.emotions.every((emotion) => !emotion.includes("분위기:"))).toBe(true);
+    // 구조화된 분위기 정서는 정상적으로 들어온다.
+    expect(result.emotions).toEqual(expect.arrayContaining(["슬픔", "평온"]));
+  });
+
   test("adds a safety notice for medical prediction requests", () => {
     const result = analyzeDream({
       dreamText: "꿈에서 병원에 있었고 피가 났어. 혹시 큰 병이나 암을 예지하는 꿈일까?",
@@ -108,6 +122,16 @@ describe("analyzeDream", () => {
     expect(result.symbolReadings.some((reading) => reading.reading.includes("바다는"))).toBe(true);
     expect(generatedText).not.toContain("엘리베이터은");
     expect(generatedText).not.toContain("바다은");
+  });
+
+  test("uses natural Korean and/or particles in deterministic fallback interpretation", () => {
+    const result = analyzeDream({
+      dreamText: "바다를 봤어.",
+      locale: "ko",
+    });
+
+    expect(result.interpretation).toContain("큰 감정과 연결되어");
+    expect(result.interpretation).not.toContain("큰 감정와");
   });
 
   test("analyzes real UTF-8 Korean snake and owned-land dream text", () => {

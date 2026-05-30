@@ -7,7 +7,7 @@ import {
 } from "../src/services/llm-provider";
 import type { DreamEmbeddingProvider } from "../src/services/dream-embedding-provider";
 import { buildDreamRagChunks } from "../src/services/dream-rag-chunks";
-import { analyzeDreamWithLlm } from "../src/services/llm-dream-analysis";
+import { analyzeDreamWithLlm, generateDreamReadingForUser } from "../src/services/llm-dream-analysis";
 import { analyzeDream } from "../src/services/mock-analysis";
 import { createDreamVectorIndex } from "../src/services/dream-vector-index";
 
@@ -221,6 +221,49 @@ describe("analyzeDreamWithLlm", () => {
     ]);
   });
 
+  test("removes only unsafe scene-only sentences instead of replacing the whole interpretation", async () => {
+    const provider = new FakeDreamReadingProvider({
+      summary: "An elevator and teeth dream holds two feelings at once.",
+      interpretation:
+        "The elevator and teeth make this feel specific: control loosens in a small enclosed space while your confidence feels exposed. Hair reveals a hidden loss and predicts a change. The sadness and calm sit together like the elevator stopping between floors.",
+      symbolReadings: [
+        {
+          symbol: "Teeth",
+          reading: "Teeth matter here because they connect the falling-out image to confidence, expression, and exposed control.",
+        },
+        {
+          symbol: "Elevator",
+          reading: "The elevator matters here because the scene puts change inside a small space the dreamer cannot fully control.",
+        },
+      ],
+      smallPrescription: "Write one line about where control felt exposed today.",
+      card: {
+        name: "Between Floors",
+        type: "half_moon",
+        keywords: ["teeth", "elevator", "control"],
+        summary: "The dream holds exposure inside a stalled transition.",
+        message: "Stay with the image without forcing a prediction.",
+        theme: "control",
+      },
+    });
+
+    const result = await analyzeDreamWithLlm(
+      {
+        dreamText: "I dreamed my teeth fell out in an elevator, then I was falling, but I woke up sad and calm.",
+        locale: "en",
+        catReaderType: "gray_cat",
+        wakeMood: "mixed",
+      },
+      { provider, model: "test-model" },
+    );
+
+    expect(result.interpretation).toContain("The elevator and teeth make this feel specific");
+    expect(result.interpretation).toContain("The sadness and calm sit together");
+    expect(result.interpretation).not.toContain("Hair reveals a hidden loss");
+    expect(result.interpretation).not.toContain("The safest symbolic reading stays with");
+    expect(result.symbolReadings.map((reading) => reading.symbol)).toEqual(["Teeth", "Elevator"]);
+  });
+
   test("replaces interpretation when the LLM assigns meaning to scene-only elements", async () => {
     const provider = new FakeDreamReadingProvider({
       summary: "병원 장면이 불안하게 남은 꿈입니다.",
@@ -404,5 +447,83 @@ describe("analyzeDreamWithLlm", () => {
       label: "병원",
       evidenceStatus: "candidate",
     });
+  });
+});
+
+describe("generateDreamReadingForUser", () => {
+  test("returns unavailable instead of a baseline reading when the provider fails", async () => {
+    const result = await generateDreamReadingForUser(
+      {
+        dreamText: "I dreamed that a snake appeared in my room.",
+        locale: "en",
+      },
+      {
+        provider: new ThrowingDreamReadingProvider(),
+        model: "test-model",
+      },
+    );
+
+    expect(result).toEqual({
+      status: "unavailable",
+      reason: "provider_error",
+      retryable: true,
+    });
+  });
+
+  test("returns timeout unavailable when the provider exceeds the timeout", async () => {
+    const result = await generateDreamReadingForUser(
+      {
+        dreamText: "I dreamed that a snake appeared in my room.",
+        locale: "en",
+      },
+      {
+        provider: new NeverResolvingDreamReadingProvider(),
+        model: "test-model",
+        providerTimeoutMs: 5,
+      },
+    );
+
+    expect(result).toEqual({
+      status: "unavailable",
+      reason: "timeout",
+      retryable: true,
+    });
+  });
+
+  test("returns invalid_response unavailable when the provider output cannot be parsed", async () => {
+    const result = await generateDreamReadingForUser(
+      {
+        dreamText: "I dreamed that a snake appeared in my room.",
+        locale: "en",
+      },
+      {
+        provider: new FakeDreamReadingProvider({ summary: "missing required fields" }),
+        model: "test-model",
+      },
+    );
+
+    expect(result).toEqual({
+      status: "unavailable",
+      reason: "invalid_response",
+      retryable: true,
+    });
+  });
+
+  test("keeps safety notice when user-facing generation is unavailable", async () => {
+    const result = await generateDreamReadingForUser(
+      {
+        dreamText: "I dreamed I was bleeding in a hospital. Does this mean I have cancer?",
+        locale: "en",
+      },
+      {
+        provider: new ThrowingDreamReadingProvider(),
+        model: "test-model",
+      },
+    );
+
+    expect(result.status).toBe("unavailable");
+    if (result.status === "unavailable") {
+      expect(result.safetyNotice).toContain("not a medical diagnosis");
+    }
   });
 });

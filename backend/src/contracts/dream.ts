@@ -35,6 +35,12 @@ export type DreamAnalysisRequest = {
   dreamDate?: string;
   wakeMood?: string;
   dreamMood?: string;
+  /** 사용자가 고른 꿈 분위기(정서) 옵션 id 목록. 예: ["anxious", "wistful"] */
+  dreamAtmospheres?: string[];
+  /** 사용자가 고른 꿈 감각 옵션 id 목록. 예: ["falling", "chased"] */
+  dreamSensations?: string[];
+  /** 사용자가 '그 외'에 직접 적은 감각. 약한 신호로 처방 앵커에만 쓰인다. */
+  dreamSensationOther?: string;
   catReaderType?: CatReaderType;
   locale?: "ko" | "en";
   userTimeZone?: string;
