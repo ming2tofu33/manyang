@@ -1,0 +1,14 @@
+{
+  "name": "@manyang/korean-analyzer",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Warm Korean morphological analyzer (Kiwi) served over HTTP for the dream matcher.",
+  "scripts": {
+    "fetch-model": "node scripts/fetch-model.mjs",
+    "start": "node src/server.mjs"
+  },
+  "dependencies": {
+    "kiwi-nlp": "^0.23.0"
+  }
+}
