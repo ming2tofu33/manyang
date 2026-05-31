@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "description": "Warm Korean morphological analyzer (Kiwi) served over HTTP for the dream matcher.",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "fetch-model": "node scripts/fetch-model.mjs",
     "prestart": "node scripts/fetch-model.mjs",
