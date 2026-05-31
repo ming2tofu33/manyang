@@ -59,8 +59,9 @@ export function getLocaleSnapshot(storage: StorageLike): Locale {
     return localeSnapshotCache.value;
   }
 
-  // 명시적으로 저장한 선택이 최우선, 없으면 브라우저 언어로 추정.
-  const value = normalizeLocale(raw) ?? detectBrowserLocale();
+  // 저장된 선택이 없으면 기본 언어(ko). 영어는 프로필의 언어 토글로 명시 전환한다.
+  // (자동 브라우저 감지는 KO-우선 제품에서 예측 불가하고 SSR 하이드레이션 플래시를 만든다.)
+  const value = normalizeLocale(raw) ?? defaultLocale;
   localeSnapshotCache = { raw, value };
 
   return value;

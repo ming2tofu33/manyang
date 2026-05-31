@@ -1,4 +1,5 @@
 import type { AccessPlan } from "./access-policy";
+import type { Locale } from "./locale";
 
 export type StorageLike = {
   getItem(key: string): string | null;
@@ -12,6 +13,8 @@ export type CatReaderId = "black_cat" | "white_cat" | "cheese_cat" | "gray_cat";
 export type CatReader = {
   id: CatReaderId;
   name: string;
+  /** 영어 표시 이름. 한국어 이름(검은냥 등)과 별개의 영문 캐릭터명. */
+  nameEn: string;
   access: CatReaderAccess;
   role: string;
   shortDescription: string;
@@ -35,6 +38,7 @@ export const catReaders: CatReader[] = [
   {
     id: "black_cat",
     name: "검은냥",
+    nameEn: "Midnight",
     access: "free",
     role: "기본 밤하늘 테마",
     shortDescription: "깊은 밤하늘과 촛불 무드",
@@ -47,6 +51,7 @@ export const catReaders: CatReader[] = [
   {
     id: "white_cat",
     name: "하얀냥",
+    nameEn: "Luna",
     access: "free",
     role: "부드러운 달빛 테마",
     shortDescription: "하얀 달빛과 포근한 밤 무드",
@@ -59,6 +64,7 @@ export const catReaders: CatReader[] = [
   {
     id: "cheese_cat",
     name: "치즈냥",
+    nameEn: "Sol",
     access: "free",
     role: "따뜻한 노을 테마",
     shortDescription: "노란 별빛과 따뜻한 노을 무드",
@@ -71,6 +77,7 @@ export const catReaders: CatReader[] = [
   {
     id: "gray_cat",
     name: "잿빛냥",
+    nameEn: "Ash",
     access: "annual_premium",
     role: "달빛 서재 테마",
     shortDescription: "잿빛 달빛과 조용한 서재 무드",
@@ -171,6 +178,11 @@ export function getCatReaderById(id: string | undefined | null): CatReader {
   const normalizedId = normalizeCatReaderId(id);
 
   return catReaders.find((reader) => reader.id === normalizedId) ?? catReaders[0];
+}
+
+/** locale에 맞는 고양이 표시 이름(ko: 검은냥…, en: Midnight…). */
+export function getCatReaderName(reader: CatReader, locale: Locale): string {
+  return locale === "en" ? reader.nameEn : reader.name;
 }
 
 export function getSelectedCatReaderId(storage: StorageLike): CatReaderId {

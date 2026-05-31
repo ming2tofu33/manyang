@@ -16,6 +16,11 @@ const ko = {
   "gate.guestDailyLimit.title": "오늘의 꿈 영수증은 이미 받았어요",
   "gate.guestDailyLimit.cta": "로그인하고 매일 꿈 기록 남기기",
   "gate.guestDailyLimit.message": "오늘의 무료 꿈 영수증은 이미 받았어요. 로그인하면 매일 꿈 기록을 이어갈 수 있어요.",
+
+  "profile.language.title": "언어",
+  "profile.language.description": "앱 표시 언어를 선택해요. 꿈 해몽도 선택한 언어로 제공돼요.",
+
+  "picker.saveWithTheme": "{name} 테마로 남겨요",
 } as const;
 
 export type MessageKey = keyof typeof ko;
@@ -36,10 +41,26 @@ const en: Record<MessageKey, string> = {
   "gate.guestDailyLimit.cta": "Sign in to keep a daily dream journal",
   "gate.guestDailyLimit.message":
     "You've already received today's free dream receipt. Sign in to keep recording your dreams every day.",
+
+  "profile.language.title": "Language",
+  "profile.language.description":
+    "Choose the app's display language. Your dream readings are delivered in the language you choose.",
+
+  "picker.saveWithTheme": "Save with the {name} theme",
 };
 
 export const messages: Record<Locale, Record<MessageKey, string>> = { ko, en };
 
-export function translate(locale: Locale, key: MessageKey): string {
-  return messages[locale]?.[key] ?? messages.ko[key] ?? key;
+export type MessageParams = Record<string, string | number>;
+
+export function translate(locale: Locale, key: MessageKey, params?: MessageParams): string {
+  const template = messages[locale]?.[key] ?? messages.ko[key] ?? key;
+
+  if (!params) {
+    return template;
+  }
+
+  return template.replace(/\{(\w+)\}/g, (_, name: string) =>
+    name in params ? String(params[name]) : `{${name}}`,
+  );
 }
