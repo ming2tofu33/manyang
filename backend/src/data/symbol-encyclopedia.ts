@@ -162,8 +162,8 @@ export const symbolEntries: SymbolEntry[] = [
         avoidExpressions: ["재물운이 반드시 오른다", "태몽이다", "위험한 일이 생긴다"],
         fortune: {
           valence: "conditional",
-          auspicious: "예부터 집이나 내 땅에 들어온 큰 구렁이는 재물이 깃들거나 태몽으로도 읽혀온 대표적인 길몽이다냥.",
-          cautious: "다만 뱀이 위협적으로 달려들거나 물려는 장면이면, 잠시 경계할 일을 살피라는 옛 환기로 봤다냥.",
+          auspicious: "전통적으로 집이나 내 땅에 들어온 큰 구렁이는 재물이 깃들거나 태몽으로 읽혀온 대표적인 길몽이다.",
+          cautious: "뱀이 위협적으로 달려들거나 물려는 장면은 잠시 경계할 일을 살피라는 환기로 여겨졌다.",
         },
       }),
       en: localized({
@@ -676,8 +676,8 @@ export const symbolEntries: SymbolEntry[] = [
         avoidExpressions: ["물꿈은 재물운이다", "물에 빠지면 나쁜 일이 생긴다"],
         fortune: {
           valence: "conditional",
-          auspicious: "전통적으로 맑은 물은 재물과 행운이 들어오는 길조로 봤다냥. ✨",
-          cautious: "흐리거나 잠긴 물은 잠시 구설이나 감정 과부하를 살피라는 옛 환기로 봤다냥.",
+          auspicious: "전통적으로 맑은 물은 재물과 행운이 들어오는 길조로 여겨졌다.",
+          cautious: "흐리거나 잠긴 물은 잠시 구설이나 감정 과부하를 살피라는 환기로 여겨졌다.",
         },
       }),
       en: localized({
@@ -700,7 +700,7 @@ export const symbolEntries: SymbolEntry[] = [
         avoidExpressions: ["water dreams mean money", "falling into water predicts trouble"],
         fortune: {
           valence: "conditional",
-          auspicious: "In Korean tradition, clear water was read as wealth and good fortune flowing in. ✨",
+          auspicious: "In Korean tradition, clear water was read as wealth and good fortune flowing in.",
           cautious: "Muddy or submerging water was a gentle nudge to watch for gossip or emotional overload — never a prediction of misfortune.",
         },
       }),
@@ -1422,8 +1422,8 @@ export const symbolEntries: SymbolEntry[] = [
       avoidExpressions: ["화재가 난다", "재물운이 오른다"],
       fortune: {
         valence: "conditional",
-        auspicious: "전통적으로 크게 일어나 활활 번지는 불은 재물·번성이 이는 길몽으로 봤다냥. 🔥",
-        cautious: "집이 타거나 끄지 못하는 불은 과열된 마음을 잠시 식히라는 옛 환기로 봤다냥.",
+        auspicious: "전통적으로 크게 일어나 활활 번지는 불은 재물과 번성이 이는 길몽으로 여겨졌다.",
+        cautious: "집이 타거나 끄지 못하는 불은 과열된 마음을 잠시 식히라는 환기로 여겨졌다.",
       },
     }),
     en: localized({
@@ -1446,7 +1446,7 @@ export const symbolEntries: SymbolEntry[] = [
       avoidExpressions: ["there will be a fire", "money luck is coming"],
       fortune: {
         valence: "conditional",
-        auspicious: "In Korean tradition, a fire blazing up and spreading wide was read as rising wealth and flourishing. 🔥",
+        auspicious: "In Korean tradition, a fire blazing up and spreading wide was read as rising wealth and flourishing.",
         cautious: "A house burning or a fire you cannot put out was a gentle nudge to cool an overheated feeling — never a prediction of disaster.",
       },
     }),
@@ -1769,7 +1769,7 @@ export const symbolEntries: SymbolEntry[] = [
       avoidExpressions: ["충성스러운 사람이 나타난다", "사고를 막아준다"],
       fortune: {
         valence: "auspicious",
-        auspicious: "반기거나 따르는 개는 전통적으로 도움을 주는 귀인·좋은 인연으로 봤다냥. 🐶",
+        auspicious: "전통적으로 반기거나 따르는 개는 도움을 주는 귀인이나 좋은 인연으로 여겨졌다.",
       },
     }),
     en: localized({
@@ -1792,7 +1792,7 @@ export const symbolEntries: SymbolEntry[] = [
       avoidExpressions: ["a loyal person will appear", "it will prevent an accident"],
       fortune: {
         valence: "auspicious",
-        auspicious: "A dog that greets or follows you was traditionally read as a helpful person or good connection coming your way. 🐶",
+        auspicious: "A dog that greets or follows you was traditionally read as a helpful person or good connection coming your way.",
       },
     }),
   }),
@@ -1833,7 +1833,7 @@ export const symbolEntries: SymbolEntry[] = [
       avoidExpressions: ["좋은 소식이 반드시 온다", "떠나게 된다"],
       fortune: {
         valence: "auspicious",
-        auspicious: "새는 전통적으로 반가운 소식을 물어오는 길조로 봤다냥(까치처럼). 🐦",
+        auspicious: "새는 전통적으로 반가운 소식을 물어오는 길조로 여겨졌고, 까치가 대표적이다.",
       },
     }),
     en: localized({
@@ -1856,7 +1856,7 @@ export const symbolEntries: SymbolEntry[] = [
       avoidExpressions: ["good news is guaranteed", "you will leave"],
       fortune: {
         valence: "auspicious",
-        auspicious: "A bird was traditionally an omen of welcome news arriving (like a magpie). 🐦",
+        auspicious: "A bird was traditionally an omen of welcome news arriving, the magpie being the classic example.",
       },
     }),
   }),
@@ -1897,7 +1897,7 @@ export const symbolEntries: SymbolEntry[] = [
       avoidExpressions: ["재물운이 오른다", "임신을 뜻한다"],
       fortune: {
         valence: "auspicious",
-        auspicious: "예부터 물고기를 잡거나 큰 물고기는 재물이 들어오는 길몽, 태몽으로도 봤다냥. 🐟",
+        auspicious: "전통적으로 물고기를 잡거나 큰 물고기를 보는 꿈은 재물이 들어오는 길몽이자 태몽으로 여겨졌다.",
       },
     }),
     en: localized({
@@ -1920,7 +1920,7 @@ export const symbolEntries: SymbolEntry[] = [
       avoidExpressions: ["money luck is coming", "this means pregnancy"],
       fortune: {
         valence: "auspicious",
-        auspicious: "In Korean tradition, catching a fish or seeing a big one was read as wealth coming in, sometimes even a 태몽 (conception dream). 🐟",
+        auspicious: "In Korean tradition, catching a fish or seeing a big one was read as wealth coming in, sometimes even a 태몽 (conception dream).",
       },
     }),
   }),
@@ -3310,7 +3310,7 @@ export const symbolEntries: SymbolEntry[] = [
       avoidExpressions: ["재물이 들어온다", "살이 찐다"],
       fortune: {
         valence: "auspicious",
-        auspicious: "음식이 푸짐하게 차려진 꿈은 전통적으로 재물과 복이 넉넉해지는 길조로 봤다냥.",
+        auspicious: "전통적으로 음식이 푸짐하게 차려진 꿈은 재물과 복이 넉넉해지는 길조로 여겨졌다.",
       },
     }),
     en: localized({
@@ -4161,7 +4161,7 @@ export const symbolEntries: SymbolEntry[] = [
       avoidExpressions: ["연애운이 온다", "행운이 확정된다"],
       fortune: {
         valence: "auspicious",
-        auspicious: "활짝 핀 꽃은 전통적으로 경사·명예가 따르는 길조로 봤다냥. 🌸",
+        auspicious: "전통적으로 활짝 핀 꽃은 경사나 명예가 따르는 길조로 여겨졌다.",
       },
     }),
     en: localized({
@@ -4184,7 +4184,7 @@ export const symbolEntries: SymbolEntry[] = [
       avoidExpressions: ["romance is coming", "good luck is guaranteed"],
       fortune: {
         valence: "auspicious",
-        auspicious: "A flower in full bloom was traditionally read as an omen of celebration and recognition. 🌸",
+        auspicious: "A flower in full bloom was traditionally read as an omen of celebration and recognition.",
       },
     }),
   }),
@@ -4220,12 +4220,12 @@ export const symbolEntries: SymbolEntry[] = [
       contextQuestions: ["돼지가 집 안으로 들어왔나요?", "돼지를 보고 기분이 좋았나요?"],
       metaphorHooks: ["품으로 들어온 복덩이", "통통하게 차오르는 기운"],
       cardTitleSeeds: ["집으로 들어온 복돼지", "재물을 몰고 온 밤"],
-      smallPrescriptions: ["오늘은 들어온 좋은 기운을 작은 행운 하나로 가볍게 누려보자냥."],
+      smallPrescriptions: ["오늘은 들어온 좋은 기운을 작은 행운 하나로 가볍게 누려보세요."],
       safeReading: "돼지는 풍요와 복의 상징으로, 좋은 기운이 들어오는 장면으로 즐겁게 읽을 수 있어요.",
       avoidExpressions: ["반드시 부자가 된다", "복권에 당첨된다"],
       fortune: {
         valence: "auspicious",
-        auspicious: "예부터 돼지꿈, 특히 집으로 들어오거나 품에 안기는 돼지는 재물과 복이 굴러든다는 대표적인 길몽으로 봤다냥. 🐷",
+        auspicious: "전통적으로 돼지꿈, 특히 집으로 들어오거나 품에 안기는 돼지는 재물과 복이 굴러든다는 대표적인 길몽으로 여겨졌다.",
       },
     }),
     en: localized({
@@ -4248,7 +4248,7 @@ export const symbolEntries: SymbolEntry[] = [
       avoidExpressions: ["you will definitely get rich", "you will win the lottery"],
       fortune: {
         valence: "auspicious",
-        auspicious: "In Korean tradition a pig dream — especially a pig coming into your home or into your arms — is the classic good-luck omen of wealth and fortune rolling in. 🐷",
+        auspicious: "In Korean tradition a pig dream — especially a pig coming into your home or into your arms — is the classic good-luck omen of wealth and fortune rolling in.",
       },
     }),
   }),
@@ -4284,12 +4284,12 @@ export const symbolEntries: SymbolEntry[] = [
       contextQuestions: ["똥을 밟거나 만졌나요?", "꿈에서 기분이 나빴나요, 의외였나요?"],
       metaphorHooks: ["발에 들러붙은 뜻밖의 복", "비워내자 들어온 자리"],
       cardTitleSeeds: ["행운을 밟은 밤", "비움 뒤의 재물"],
-      smallPrescriptions: ["오늘은 묵혀둔 것 하나를 가볍게 비워보자냥."],
+      smallPrescriptions: ["오늘은 묵혀둔 것 하나를 가볍게 비워보세요."],
       safeReading: "똥은 더러움보다, 비움과 뜻밖의 행운으로 읽는 재미있는 상징이에요.",
       avoidExpressions: ["반드시 돈이 생긴다", "복권을 사면 당첨된다"],
       fortune: {
         valence: "auspicious",
-        auspicious: "예부터 똥꿈은 재물이 들어오는 대표적인 길몽으로, 특히 똥을 밟거나 몸에 묻으면 뜻밖의 행운과 돈이 들러붙는다고 봤다냥. 💰",
+        auspicious: "전통적으로 똥꿈은 재물이 들어오는 대표적인 길몽으로, 특히 똥을 밟거나 몸에 묻으면 뜻밖의 행운과 돈이 들러붙는다고 여겨졌다.",
       },
     }),
     en: localized({
@@ -4312,7 +4312,7 @@ export const symbolEntries: SymbolEntry[] = [
       avoidExpressions: ["you will definitely get money", "buy a lottery ticket and win"],
       fortune: {
         valence: "auspicious",
-        auspicious: "In Korean tradition a feces dream is a classic omen of incoming wealth — stepping in it or getting it on you meant unexpected luck and money sticking to you. 💰",
+        auspicious: "In Korean tradition a feces dream is a classic omen of incoming wealth — stepping in it or getting it on you meant unexpected luck and money sticking to you.",
       },
     }),
   }),
