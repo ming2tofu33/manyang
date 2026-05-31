@@ -134,6 +134,7 @@ export type { OpenAIEmbeddingsProviderOptions } from "./services/openai-embeddin
 export { analyzeDreamStructure } from "./services/structured-dream-analysis";
 export type {
   EmotionSignal,
+  FortuneReading,
   SafetySignal,
   SelectedMood,
   StructuredDreamAnalysis,
@@ -141,6 +142,8 @@ export type {
   SymbolCandidate,
   ThemeSignal,
 } from "./services/structured-dream-analysis";
+export { safeLemmatize } from "./services/korean-lemmatizer";
+export type { KoreanLemmatizer } from "./services/korean-lemmatizer";
 export {
   classifyRetrievalMatch,
   MATCH_TYPE_BASE_SCORES,

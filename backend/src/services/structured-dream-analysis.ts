@@ -9,6 +9,8 @@ export type StructuredDreamAnalysisRequest = {
   dreamAtmospheres?: string[];
   dreamSensations?: string[];
   dreamSensationOther?: string;
+  /** 형태소 분석기가 돌려준 어간 목록(있으면 토큰에 합쳐 매칭 정확도를 높인다). */
+  lemmas?: string[];
   locale?: SupportedLocale;
 };
 
@@ -442,9 +444,10 @@ function matchedModifiers(entry: RuntimeSymbolEntry, normalizedText: string, tok
     .filter((modifier) => modifier.matchedTerms.length > 0);
 }
 
-function findMatchedSymbols(text: string, locale: SupportedLocale): MatchedSymbol[] {
+function findMatchedSymbols(text: string, locale: SupportedLocale, lemmas: string[] = []): MatchedSymbol[] {
   const normalizedText = normalize(text);
-  const tokens = tokenize(text);
+  // 형태소 분석기가 준 어간을 토큰에 합친다("올라갔어"가 안 잡혀도 어간 "올라가"로 잡히게).
+  const tokens = unique([...tokenize(text), ...lemmas.map(normalize)]);
 
   return getRuntimeSymbolEntries(locale)
     .map((entry, index): MatchedSymbol => {
@@ -697,7 +700,7 @@ export function analyzeDreamStructure(request: StructuredDreamAnalysisRequest): 
   const language = request.locale ?? "ko";
   const normalizedText = request.dreamText.trim().replace(/\s+/g, " ");
   const lowerText = normalizedText.toLocaleLowerCase();
-  const matchedSymbols = findMatchedSymbols(normalizedText, language);
+  const matchedSymbols = findMatchedSymbols(normalizedText, language, request.lemmas ?? []);
   const isAmbiguousSearching = includesAny(lowerText, ["잘 모르", "흐릿", "blurry", "unclear"]);
   const symbolCandidates = [
     ...matchedSymbols.map((match) => buildCandidate(match, isAmbiguousSearching)),

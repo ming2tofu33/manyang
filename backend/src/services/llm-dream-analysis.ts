@@ -15,6 +15,7 @@ import {
 import type { DreamEmbeddingProvider } from "./dream-embedding-provider";
 import type { DreamVectorIndex } from "./dream-vector-index";
 import { analyzeDreamStructure } from "./structured-dream-analysis";
+import { safeLemmatize, type KoreanLemmatizer } from "./korean-lemmatizer";
 
 export type AnalyzeDreamWithLlmOptions = {
   provider?: DreamReadingLlmProvider;
@@ -22,6 +23,8 @@ export type AnalyzeDreamWithLlmOptions = {
   providerTimeoutMs?: number;
   embeddingProvider?: DreamEmbeddingProvider;
   vectorIndex?: DreamVectorIndex;
+  /** 한국어 형태소 분석 창구. 없으면 기존 어휘 매칭으로 폴백. */
+  lemmatizer?: KoreanLemmatizer;
   onProviderError?: (error: unknown) => void;
 };
 
@@ -372,6 +375,8 @@ async function generateLlmDreamResponse(
   }
 
   const locale = request.locale ?? "ko";
+  // 해몽 시작 시 한 번 형태소 분석 창구에 물어보고(없으면 빈 배열로 폴백), 그 어간을 매처에 넘긴다.
+  const lemmas = await safeLemmatize(options.lemmatizer, request.dreamText);
   const structuredAnalysis = analyzeDreamStructure({
     dreamText: request.dreamText,
     ...(request.dreamDate ? { dreamDate: request.dreamDate } : {}),
@@ -380,6 +385,7 @@ async function generateLlmDreamResponse(
     ...(request.dreamAtmospheres ? { dreamAtmospheres: request.dreamAtmospheres } : {}),
     ...(request.dreamSensations ? { dreamSensations: request.dreamSensations } : {}),
     ...(request.dreamSensationOther ? { dreamSensationOther: request.dreamSensationOther } : {}),
+    ...(lemmas.length > 0 ? { lemmas } : {}),
     locale,
   });
   const evidenceSet =

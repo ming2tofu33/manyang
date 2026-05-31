@@ -232,6 +232,14 @@ describe("analyzeDreamStructure", () => {
     expect(clearButScared.readingTone).toBe("heavy");
   });
 
+  test("uses analyzer lemmas to match symbols the surface form would miss", () => {
+    const withoutLemmas = analyzeDreamStructure({ dreamText: "어젯밤 꿈", locale: "ko" });
+    expect(withoutLemmas.symbolCandidates.map((candidate) => candidate.candidateId)).not.toContain("water");
+
+    const withLemmas = analyzeDreamStructure({ dreamText: "어젯밤 꿈", locale: "ko", lemmas: ["물"] });
+    expect(withLemmas.symbolCandidates.map((candidate) => candidate.candidateId)).toContain("water");
+  });
+
   test("presents both sides when a conditional symbol has no scene cue", () => {
     const analysis = analyzeDreamStructure({ dreamText: "물이 있었어.", locale: "ko" });
     expect(analysis.fortuneReadings.find((reading) => reading.symbolId === "water")?.lean).toBe("both");
