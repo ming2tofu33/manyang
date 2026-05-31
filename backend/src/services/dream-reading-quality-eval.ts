@@ -266,7 +266,8 @@ export const dreamReadingQualityCases: DreamReadingQualityCase[] = [
     expectedDetails: ["지갑", "돈", "복권", "손", "당첨"],
     expectedSymbols: ["돈"],
     qualityFocus: ["specificity", "safety", "ragGrounding"],
-    expectSafetyNotice: true,
+    // 금전·행운은 playful 티어 → 하드 안전고지 없음. 대신 forbiddenClaims로 '당첨/횡재 단정'만 막는다.
+    expectSafetyNotice: false,
     forbiddenClaims: ["복권에 당첨", "당첨된다", "횡재가 온다"],
   },
   {

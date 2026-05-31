@@ -2879,8 +2879,8 @@ export const symbolEntries: SymbolEntry[] = [
       lightReadings: ["내가 가진 자원과 가치를 확인하는 장면", "필요한 것을 주고받는 감각"],
       shadowReadings: ["부족할까 봐 느끼는 불안", "가치가 숫자로 평가되는 느낌"],
       sceneModifiers: {
-        receiving: modifier("필요한 자원이나 인정이 들어오길 바라는 마음", ["받", "줬", "입금"], 0.78),
-        losing: modifier("안정감이나 가치가 사라질까 봐 느끼는 불안", ["잃", "도둑", "없어"], 0.86),
+        receiving: modifier("자원이나 재물이 들어오는 장면", ["받", "줬", "입금", "나오", "쏟아"], 0.78, "auspicious"),
+        losing: modifier("안정감이나 가치가 사라질까 봐 느끼는 불안", ["잃", "도둑", "없어"], 0.86, "cautious"),
         counting: modifier("가치와 부족함을 꼼꼼히 확인하려는 마음", ["세", "계산", "확인"], 0.76),
       },
       contextQuestions: ["돈을 받았나요, 잃어버렸나요?", "꿈속 돈은 안심을 줬나요, 불안을 키웠나요?"],
@@ -2888,7 +2888,14 @@ export const symbolEntries: SymbolEntry[] = [
       cardTitleSeeds: ["돈을 세는 밤", "사라진 지갑"],
       smallPrescriptions: ["실제 금전 판단은 꿈이 아니라 숫자와 계획으로 확인하세요."],
       safeReading: "돈은 실제 재물운 예언이 아니라 자원, 가치감, 안정감, 부족 불안을 비추는 상징으로 읽는 편이 안전해요.",
-      avoidExpressions: ["돈이 들어온다", "투자하면 좋다", "횡재한다"],
+      avoidExpressions: ["투자하면 좋다", "반드시 부자가 된다"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "지갑이나 주머니에서 돈이 자꾸 나오거나 들어오는 꿈은 전통적으로 재물과 여유가 깃드는 길몽으로 풀려온 대표적인 돈꿈이다.",
+        cautious:
+          "돈을 잃거나 빼앗기는 장면은 새는 지출이나 한동안의 금전 흐름을 한 번 챙겨보라는 환기로 여겨졌다.",
+      },
     }),
     en: localized({
       label: "Money",
@@ -2898,8 +2905,8 @@ export const symbolEntries: SymbolEntry[] = [
       lightReadings: ["checking what resources and value you have", "sensing what needs to be exchanged"],
       shadowReadings: ["fear of not having enough", "feeling valued only by numbers"],
       sceneModifiers: {
-        receiving: modifier("wanting support, resource, or recognition to come in", ["received money", "paid", "deposit"], 0.78),
-        losing: modifier("fear of losing security or value", ["lost money", "stolen", "gone"], 0.86),
+        receiving: modifier("resources or wealth coming to you", ["received money", "paid", "deposit", "pouring out", "coming out"], 0.78, "auspicious"),
+        losing: modifier("fear of losing security or value", ["lost money", "stolen", "gone"], 0.86, "cautious"),
         counting: modifier("carefully checking value and scarcity", ["counting", "calculating", "checking"], 0.76),
       },
       contextQuestions: ["Were you receiving or losing money?", "Did the money create relief or anxiety?"],
@@ -2907,7 +2914,14 @@ export const symbolEntries: SymbolEntry[] = [
       cardTitleSeeds: ["Night Counting Money", "The Missing Wallet"],
       smallPrescriptions: ["Use real numbers and plans for financial decisions; keep the dream symbolic."],
       safeReading: "Money can symbolize resource, value, security, exchange, and scarcity anxiety, not a financial prediction.",
-      avoidExpressions: ["money will arrive", "invest now", "you will have a windfall"],
+      avoidExpressions: ["invest now", "you will definitely get rich"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "Money pouring out of a wallet or coming to you has traditionally been read as an auspicious sign of incoming resources and ease.",
+        cautious:
+          "Losing or having money stolen was taken as a gentle nudge to check a leaky expense or your cash flow for a while.",
+      },
     }),
   }),
   activeSymbol({

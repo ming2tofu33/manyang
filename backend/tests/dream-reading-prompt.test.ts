@@ -329,6 +329,7 @@ describe("buildDreamReadingPrompt", () => {
     });
     const payload = JSON.parse(prompt.input) as {
       outputContract?: {
+        summary?: string;
         interpretation?: {
           length?: string;
           structure?: string[];
