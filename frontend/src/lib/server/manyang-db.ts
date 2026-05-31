@@ -1,3 +1,4 @@
+import type { DreamAnalysisResponse } from "@manyang/backend";
 import { Pool, type PoolClient, type PoolConfig } from "pg";
 
 import {
@@ -54,6 +55,35 @@ export async function hasCompletedBasicReadingForUserOnDate(
   );
 
   return result.rows[0]?.has_completed_basic_reading === true;
+}
+
+/**
+ * 같은 유저가 같은 날 같은 꿈 텍스트로 이미 받은 해몽이 있으면 그 해몽을 그대로 돌려준다.
+ * 같은 꿈 재제출(리롤)을 막아 "같은 꿈 → 같은 해몽"을 보장하고 재분석 비용을 아낀다.
+ * 다른 날 같은 텍스트는 별개의 (재발) 꿈으로 보고 매치하지 않는다.
+ */
+export async function findCompletedReadingForUserDreamOnDate(
+  userId: string,
+  dreamDate: string,
+  dreamText: string,
+  pool = getManyangDbPool(),
+): Promise<DreamAnalysisResponse | null> {
+  const result = await pool.query<{ raw_analysis: DreamAnalysisResponse }>(
+    `
+      select dr.raw_analysis
+      from manyang.dream_entries de
+      join manyang.dream_readings dr on dr.dream_id = de.id
+      where de.user_id = $1
+        and de.dream_date = $2::date
+        and de.status = 'completed'
+        and de.dream_text = $3
+      order by de.created_at desc
+      limit 1
+    `,
+    [userId, dreamDate, dreamText],
+  );
+
+  return result.rows[0]?.raw_analysis ?? null;
 }
 
 export async function hasCompletedGuestBasicReadingOnDate(

@@ -40,7 +40,7 @@ export function createSymbolSeoDescription(entry: EncyclopediaEntry): string {
   const coreMeanings = entry.coreMeanings.slice(0, 3).join(", ");
   const andParticle = getAndParticle(coreMeanings);
 
-  return `${entry.symbol} 꿈은 ${coreMeanings}${andParticle} 연결되어 읽을 수 있어요. 고양이 해몽사가 꿈속 상징을 꿈 영수증으로 정리해드립니다.`;
+  return `${entry.symbol} 꿈은 ${coreMeanings}${andParticle} 연결되어 읽을 수 있어요. 꿈속 상징을 꿈 영수증으로 정리하고 원하는 고양이 테마로 남겨보세요.`;
 }
 
 export function createSymbolCanonicalPath(entry: EncyclopediaEntry): string {

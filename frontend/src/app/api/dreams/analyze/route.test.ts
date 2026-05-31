@@ -1,3 +1,4 @@
+import type { DreamAnalysisResponse } from "@manyang/backend";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 import {
@@ -103,7 +104,8 @@ describe("POST /api/dreams/analyze", () => {
       name: "하얀냥",
       access: "free",
     });
-    expect(body.readerNote).toContain("하얀냥");
+    expect(body.readerNote).toContain("같은 기준");
+    expect(body.readerNote).not.toContain("하얀냥");
     expect(body.symbols).toEqual(expect.arrayContaining(["학교", "복도", "문", "찾기"]));
     expect(body.readingBasis.usedSymbols).toEqual(expect.arrayContaining(["학교", "복도", "문", "찾기"]));
     expect(body.summary).toContain("꿈");
@@ -149,7 +151,7 @@ describe("POST /api/dreams/analyze", () => {
       }),
       {
         getAuthenticatedUserId: async () => "00000000-0000-4000-8000-000000000001",
-        hasCompletedBasicReadingForUserOnDate: async () => false,
+        findCompletedReadingForUserDreamOnDate: async () => null,
         persistCompletedDreamReading: async (input) => {
           persistedInputs.push(input);
         },
@@ -184,7 +186,7 @@ describe("POST /api/dreams/analyze", () => {
       }),
       {
         getAuthenticatedUserId: async () => "00000000-0000-4000-8000-000000000001",
-        hasCompletedBasicReadingForUserOnDate: async () => false,
+        findCompletedReadingForUserDreamOnDate: async () => null,
         persistCompletedDreamReading: async () => {
           throw new Error("database temporarily unavailable");
         },
@@ -200,7 +202,7 @@ describe("POST /api/dreams/analyze", () => {
     });
   });
 
-  test("rejects Moon Pass-only detailed readings before analysis work starts", async () => {
+  test("allows gray cat theme readings without treating them as Moon Pass-only detailed readings", async () => {
     const persistCompletedDreamReading = vi.fn();
     const response = await handleDreamAnalyzeRequest(
       createJsonRequest({
@@ -210,20 +212,22 @@ describe("POST /api/dreams/analyze", () => {
       }),
       {
         getAuthenticatedUserId: async () => null,
+        hasCompletedGuestBasicReadingOnDate: async () => false,
+        persistGuestBasicReadingUsage: async () => undefined,
         persistCompletedDreamReading,
       },
     );
 
-    expect(response.status).toBe(403);
+    expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({
-      error: "dream reading is locked",
-      reason: "detailed_locked",
-      ctaLabel: "깊은 꿈을 더 깊게 읽기",
+      reader: {
+        id: "gray_cat",
+      },
     });
     expect(persistCompletedDreamReading).not.toHaveBeenCalled();
   });
 
-  test("allows detailed readings when the server access plan is Moon Pass", async () => {
+  test("keeps gray cat theme readings available for Moon Pass users", async () => {
     const getAccessPlanForUser = vi.fn(async () => "moon_pass" as const);
     const response = await handleDreamAnalyzeRequest(
       createJsonRequest({
@@ -234,7 +238,7 @@ describe("POST /api/dreams/analyze", () => {
       {
         getAuthenticatedUserId: async () => "00000000-0000-4000-8000-000000000001",
         getAccessPlanForUser,
-        hasCompletedBasicReadingForUserOnDate: async () => false,
+        findCompletedReadingForUserDreamOnDate: async () => null,
         persistCompletedDreamReading: async () => undefined,
       },
     );
@@ -261,7 +265,64 @@ describe("POST /api/dreams/analyze", () => {
     expect(response.status).toBe(200);
   });
 
-  test("rejects a second authenticated basic reading on the same date before analysis work starts", async () => {
+  test("returns the stored reading when a logged-in user re-submits the same dream (reroll lock)", async () => {
+    const persistCompletedDreamReading = vi.fn();
+    const storedReading = {
+      dreamId: "stored-dream-id",
+      summary: "이미 받은 해몽",
+    } as unknown as DreamAnalysisResponse;
+    const findCompletedReadingForUserDreamOnDate = vi.fn(async () => storedReading);
+
+    const response = await handleDreamAnalyzeRequest(
+      createJsonRequest({
+        dreamText: "I dreamed that a snake appeared in my room.",
+        dreamDate: "2026-05-30",
+        catReaderType: "black_cat",
+      }),
+      {
+        getAuthenticatedUserId: async () => "00000000-0000-4000-8000-000000000001",
+        getAccessPlanForUser: async () => "free_account",
+        findCompletedReadingForUserDreamOnDate,
+        persistCompletedDreamReading,
+      },
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({ dreamId: "stored-dream-id" });
+    expect(findCompletedReadingForUserDreamOnDate).toHaveBeenCalledWith(
+      "00000000-0000-4000-8000-000000000001",
+      "2026-05-30",
+      "I dreamed that a snake appeared in my room.",
+    );
+    expect(persistCompletedDreamReading).not.toHaveBeenCalled();
+  });
+
+  test("lets a logged-in user read a different dream on the same date", async () => {
+    const persistCompletedDreamReading = vi.fn();
+    const response = await handleDreamAnalyzeRequest(
+      createJsonRequest({
+        dreamText: "A brand new dream about climbing stairs.",
+        dreamDate: "2026-05-30",
+        catReaderType: "black_cat",
+      }),
+      {
+        getAuthenticatedUserId: async () => "00000000-0000-4000-8000-000000000001",
+        getAccessPlanForUser: async () => "free_account",
+        findCompletedReadingForUserDreamOnDate: async () => null,
+        persistCompletedDreamReading,
+      },
+    );
+
+    expect(response.status).toBe(200);
+    expect(persistCompletedDreamReading).toHaveBeenCalledTimes(1);
+  });
+
+  test("lets an admin bypass the reroll cache to re-test the same dream", async () => {
+    const storedReading = {
+      dreamId: "stored-dream-id",
+      summary: "이미 받은 해몽",
+    } as unknown as DreamAnalysisResponse;
+    const findCompletedReadingForUserDreamOnDate = vi.fn(async () => storedReading);
     const persistCompletedDreamReading = vi.fn();
     const response = await handleDreamAnalyzeRequest(
       createJsonRequest({
@@ -272,36 +333,16 @@ describe("POST /api/dreams/analyze", () => {
       {
         getAuthenticatedUserId: async () => "00000000-0000-4000-8000-000000000001",
         getAccessPlanForUser: async () => "free_account",
-        hasCompletedBasicReadingForUserOnDate: async () => true,
+        isAdminUser: async () => true,
+        findCompletedReadingForUserDreamOnDate,
         persistCompletedDreamReading,
       },
     );
 
-    expect(response.status).toBe(403);
-    await expect(response.json()).resolves.toMatchObject({
-      error: "dream reading is locked",
-      reason: "free_daily_limit",
-    });
-    expect(persistCompletedDreamReading).not.toHaveBeenCalled();
-  });
-
-  test("allows an admin to request another basic reading on the same date", async () => {
-    const response = await handleDreamAnalyzeRequest(
-      createJsonRequest({
-        dreamText: "I dreamed that a snake appeared in my room.",
-        dreamDate: "2026-05-30",
-        catReaderType: "black_cat",
-      }),
-      {
-        getAuthenticatedUserId: async () => "00000000-0000-4000-8000-000000000001",
-        getAccessPlanForUser: async () => "free_account",
-        isAdminUser: async () => true,
-        hasCompletedBasicReadingForUserOnDate: async () => true,
-        persistCompletedDreamReading: async () => undefined,
-      },
-    );
-
     expect(response.status).toBe(200);
+    expect(findCompletedReadingForUserDreamOnDate).not.toHaveBeenCalled();
+    await expect(response.json()).resolves.not.toMatchObject({ dreamId: "stored-dream-id" });
+    expect(persistCompletedDreamReading).toHaveBeenCalledTimes(1);
   });
 
   test("rejects a second guest basic reading on the same date before analysis work starts", async () => {

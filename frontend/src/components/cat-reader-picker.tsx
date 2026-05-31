@@ -80,7 +80,7 @@ export function CatReaderPicker({ value, onChange, variant = "home", className, 
 
   if (!isCompact) {
     return (
-      <section className={cn("relative", className)} aria-label="고양이 해몽사 선택">
+      <section className={cn("relative", className)} aria-label="고양이 테마 선택">
         <button
           type="button"
           onClick={() => setIsHomeSheetOpen(true)}
@@ -100,7 +100,7 @@ export function CatReaderPicker({ value, onChange, variant = "home", className, 
           </span>
           <span className="min-w-0 flex-1">
             <span className="flex min-w-0 items-center gap-1.5">
-              <span className="block text-[10px] font-semibold leading-none text-[#f0bc7d]">오늘의 고양이</span>
+              <span className="block text-[10px] font-semibold leading-none text-[#f0bc7d]">오늘의 테마</span>
               <span className="shrink-0 rounded-full border border-[#b98255]/35 bg-[#1b1028]/70 px-1.5 py-0.5 text-[9px] font-semibold leading-none text-[#f0bc7d]">
                 {selectedReaderCopy.tag}
               </span>
@@ -111,7 +111,7 @@ export function CatReaderPicker({ value, onChange, variant = "home", className, 
               ) : null}
             </span>
             <span className="mt-1 block truncate text-[0.94rem] font-semibold leading-tight text-[#ffd98a]">
-              {selectedReader.name}이 꿈을 읽어요
+              {selectedReader.name} 테마로 남겨요
             </span>
             <span className="mt-0.5 block truncate text-[11px] leading-4 text-[#fff3d7]/72">
               {selectedReaderCopy.line}
@@ -133,7 +133,7 @@ export function CatReaderPicker({ value, onChange, variant = "home", className, 
             <div
               role="dialog"
               aria-modal="true"
-              aria-label="고양이 해몽사 선택"
+              aria-label="고양이 테마 선택"
               className="fixed bottom-[5.3rem] left-1/2 z-50 w-[min(390px,calc(100vw-2rem))] -translate-x-1/2 rounded-[1.45rem] border border-[#7c4a38]/66 bg-[linear-gradient(180deg,rgba(18,12,34,0.96),rgba(6,5,14,0.96))] p-3 shadow-[0_18px_60px_rgba(0,0,0,0.56)] ring-1 ring-[#d799ff]/16 backdrop-blur-xl"
             >
               <div className="mb-2 flex items-center justify-between px-1">
@@ -222,7 +222,7 @@ export function CatReaderPicker({ value, onChange, variant = "home", className, 
         isCompact ? "space-y-2" : "space-y-3",
         className,
       )}
-      aria-label="고양이 해몽사 선택"
+      aria-label="고양이 테마 선택"
     >
       <div className="flex items-center gap-3">
         <span className={cn("relative shrink-0", isCompact ? "h-12 w-12" : "h-16 w-16")}>
@@ -237,7 +237,7 @@ export function CatReaderPicker({ value, onChange, variant = "home", className, 
         </span>
         <div className="min-w-0 flex-1">
           <p className="text-[12px] font-semibold text-[#f0bc7d]">
-            {heading ?? (isCompact ? "이번 꿈을 읽는 고양이" : "오늘 꿈을 읽어줄 고양이")}
+            {heading ?? (isCompact ? "이번 꿈 영수증 테마" : "오늘 꿈 영수증 테마")}
           </p>
           <h2 className={cn("flex min-w-0 items-center gap-2 font-semibold text-[#ffd98a]", isCompact ? "text-[1rem]" : "text-[1.12rem]")}>
             <span className="truncate">{selectedReader.name}</span>

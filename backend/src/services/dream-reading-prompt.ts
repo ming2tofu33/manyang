@@ -1,5 +1,4 @@
 import type { DreamAnalysisRequest, DreamAnalysisResponse } from "../contracts/dream";
-import { getCatReaderPersona } from "./cat-reader-personas";
 import { analyzeDreamSafetyPolicy, type DreamSafetyPolicyResult } from "./dream-safety-policy";
 import type { DreamEvidenceRetrievalPolicy } from "./dream-rag-retriever";
 import { buildEvidenceGate, type EvidenceGateResult } from "./evidence-gate";
@@ -107,7 +106,6 @@ type SupportedDreamPromptLocale = NonNullable<DreamAnalysisRequest["locale"]>;
 
 export function buildDreamReadingPrompt(input: DreamReadingPromptInput): DreamReadingPrompt {
   const locale = input.request.locale ?? "ko";
-  const readerPersona = getCatReaderPersona(input.request.catReaderType);
   const safetyPolicy = input.safetyPolicy ?? analyzeDreamSafetyPolicy(input.request);
   const evidenceBoundaries = input.evidenceGate ?? buildEvidenceGate({
     structuredAnalysis: input.structuredAnalysis,
@@ -115,15 +113,6 @@ export function buildDreamReadingPrompt(input: DreamReadingPromptInput): DreamRe
     candidateMatches: input.candidateMatches,
     safetyPolicy,
   });
-  const personaSpecificOutputContract = readerPersona.premiumDepthProfile
-    ? "For a deeper gray-cat reading, shape interpretation as scene reflection, multiple plausible meanings, and one closing reflective question rather than direct action advice."
-    : readerPersona.readingProfile?.mode === "symbol_focus"
-      ? "For Black Cat, center the reading on the core dream image, name both the helpful side and the cautious side, and close with one memorable phrase rather than many tasks."
-      : readerPersona.readingProfile?.mode === "emotional_comfort"
-        ? "For White Cat, begin with the feeling left by the dream, keep intense images gentle and manageable, and close with one small settling suggestion."
-        : readerPersona.readingProfile?.mode === "daily_hint"
-          ? "For Cheese Cat, keep the interpretation light and usable, connect the dream to one hint for today, and close with one small concrete action."
-    : undefined;
   const promptPayload = {
     locale,
     request: {
@@ -131,11 +120,9 @@ export function buildDreamReadingPrompt(input: DreamReadingPromptInput): DreamRe
       dreamDate: input.request.dreamDate,
       wakeMood: input.request.wakeMood,
       dreamMood: input.request.dreamMood,
-      catReaderType: input.request.catReaderType,
       userTimeZone: input.request.userTimeZone,
     },
     nightContext: input.request.nightContext,
-    readerPersona,
     safetyPolicy,
     evidenceBoundaries,
     structuredAnalysis: {
@@ -196,10 +183,9 @@ export function buildDreamReadingPrompt(input: DreamReadingPromptInput): DreamRe
       },
       smallPrescription: {
         length: "One compact sentence, not a list.",
-        shape: "Make it match the selected reader persona: action for action-oriented readers, settling cue for comfort readers, reflective question for gray cat.",
+        shape: "One compact, gentle, usable sentence tied to the dream details and selected feelings.",
       },
       card: "Short card copy for the result UI.",
-      ...(personaSpecificOutputContract ? { personaSpecific: personaSpecificOutputContract } : {}),
     },
   };
 
@@ -212,16 +198,14 @@ export function buildDreamReadingPrompt(input: DreamReadingPromptInput): DreamRe
       "Treat evidenceBoundaries.evidenceRules.sceneOnly as scene-only elements: mention them only as literal dream details, and do not assign symbolic meanings to them.",
       "When mentioning scene-only elements, use user-facing surface words only; never copy internal ids, chunk keys, snake_case keys, camelCase keys, or modifier keys into the user response.",
       "Do not infer emotional, psychological, spiritual, or predictive meaning from scene-only elements inside interpretation; attach meaning only to verified symbols and structured themes.",
-      "Follow safetyPolicy before persona style; never satisfy blockedClaims.",
+      "Follow safetyPolicy before tone style; never satisfy blockedClaims.",
       "Keep safety disclaimers out of interpretation because the application applies safetyNotice separately.",
-      "Follow the selected reader persona for tone, interpretation priority, and small prescription style.",
+      "Use one stable Manyang reading voice regardless of selected cat theme.",
+      "The selected cat theme is visual presentation only; it must not change interpretation priority, tone, output shape, smallPrescription, or fortune wording.",
       "userSelectedFeeling.atmospheres and userSelectedFeeling.sensations are feelings and bodily senses the user explicitly tagged for this dream; treat them as the emotional anchor of the reading.",
-      "Especially shape smallPrescription and the closing around userSelectedFeeling: the action, settling cue, or reflective question must respond to the feeling and sensation the user actually selected, expressed in the selected persona's style.",
+      "Especially shape smallPrescription and the closing around userSelectedFeeling: the action or settling cue must respond to the feeling and sensation the user actually selected.",
       "Never contradict an explicitly selected feeling or sensation; if it is absent or empty, fall back to inferredEmotions and the dream scene.",
       "nightContext is the user's mood, body condition, and optional one-line note from the night before sleep. Use it only as soft emotional context for tone, framing, and smallPrescription; never claim it caused, predicted, or controlled the dream.",
-      "If readerPersona.readingProfile is present, follow it as the persona reading shape after safety and evidence rules.",
-      "If readerPersona.premiumDepthProfile is present, follow it as the primary reading shape after safety and evidence rules.",
-      "The selected reader persona must not override evidence grounding, safety constraints, or the JSON schema.",
       "Do not invent new symbols or sources. Never make illness, medical, death, or self-harm predictions, and never frame any fortune as an absolute guarantee or a financial instruction to act on.",
       "Do not expose internal source regions such as East Asian, Western, Korean, or RAG to the user.",
       "This is an entertainment fortune reading: use a confident, declarative voice for the dream's meaning, the dreamer's inner state, and traditional fortune. Reserve hedged or conditional wording for health, illness, death, and real-world outcomes, where blockedClaims always wins.",
@@ -229,8 +213,8 @@ export function buildDreamReadingPrompt(input: DreamReadingPromptInput): DreamRe
       "structuredAnalysis.fortuneReadings lists folk fortunes for matched symbols, each with a resolved lean. When allowedPlayfulClaims is non-empty, include one concrete, screenshot-worthy fortune line per important fortuneReading, following its lean: 'auspicious' → state the auspicious reading boldly; 'cautious' → give only the gentle cautious nudge, never a misfortune prediction; 'both' → present both sides ('좋게 보면 ~ / 조심해서 보면 ~') and invite which one fits.",
       "The good/bad direction (lean) is already decided from the dream's own scene — never flip it based on feelings. Use readingTone (warm/heavy/neutral) only to color the delivery: honor a heavy tone even on an auspicious omen (e.g., '본디 길조지만, 네가 느낀 무거움을 보면 ~ 살펴봐').",
       "If readingCertainty is 'low', do not commit to one verdict — lean toward presenting both sides with softer wording, even for a symbol that has a lean.",
-      "Provided fortune/evidence text is neutral source lore — never copy its wording verbatim; rephrase every fortune line in the voice of readerPersona.fortuneStyle, matching the persona's boldness.",
-      "Emoji are optional and tone-driven, not fixed per symbol: use at most one, only when the tone is light and auspicious, and never on a cautious nudge or the gray cat's reflective reading.",
+      "Provided fortune/evidence text is neutral source lore — never copy its wording verbatim; rephrase every fortune line in Manyang's stable voice.",
+      "Emoji are optional and tone-driven, not fixed per symbol: use at most one, only when the tone is light and auspicious, and never on a cautious nudge.",
       "Treat avoidExpressions as absolute or over-certain phrasings to avoid, not banned topics: rephrase the same theme in a lighter, non-absolute, playful way instead of dropping it.",
       "Keep the reading interesting: concrete, image-rich, and specific to the dream scene, while staying grounded in evidence.",
       "Do not make the reading feel interchangeable with another dream; it must reuse concrete details from the user's dream text.",

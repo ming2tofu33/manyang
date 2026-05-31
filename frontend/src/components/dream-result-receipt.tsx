@@ -77,7 +77,7 @@ const fallbackPayload: DreamCompletedPayload = {
       message: "오늘은 미뤄둔 준비물 하나만 먼저 확인해보자냥.",
       theme: "장소와 전환",
     },
-    readerNote: "검은냥은 꿈속 상징과 장면의 연결을 조용히 먼저 살펴봤다냥.",
+    readerNote: "마냥은 꿈속 상징과 감정의 연결을 같은 기준으로 차분히 정리했어요.",
   },
 };
 
@@ -483,7 +483,7 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
               >
                 <span className="max-w-full break-keep">{displayMood}</span>
                 <span aria-hidden="true">·</span>
-                <span className="break-keep">{reader.name}이 읽음</span>
+                <span className="break-keep">{reader.name} 테마</span>
               </p>
             </div>
             <div className="mt-5 flex flex-nowrap justify-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" data-receipt-symbol-tags="true">
@@ -565,10 +565,14 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
         </section>
       ) : null}
       <div
-        className="animate-ink-fade grid grid-cols-2 gap-3"
-        data-receipt-result-actions="true"
+        className="animate-ink-fade space-y-4"
+        data-receipt-completion-stack="true"
         style={createReceiptDelayStyle(receiptPaperSettledDelayMs)}
       >
+        <div
+          className="grid grid-cols-2 gap-3"
+          data-receipt-result-actions="true"
+        >
         <AssetTextButton
           frame={manyangAssets.buttons.compactPrimary}
           iconSrc={manyangAssets.actionIcons.download}
@@ -587,8 +591,10 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
         >
           공유하기
         </AssetTextButton>
-      </div>
-      <ReceiptSaveCta />
+        </div>
+        <div data-receipt-save-slot="true">
+          <ReceiptSaveCta />
+        </div>
       {showPawprintLoginPrompt ? (
         <section
           className="animate-ink-fade rounded-[1.1rem] border border-[#b98255]/45 bg-[rgba(7,6,18,0.76)] px-4 py-3 text-sm leading-6 text-[#fff3d7] shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md"
@@ -601,16 +607,15 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
         </section>
       ) : null}
       <details
-        className="group animate-ink-fade overflow-hidden rounded-[1.15rem] border border-[#b98255]/52 bg-[rgba(7,6,18,0.78)] shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md"
+        className="group overflow-hidden rounded-[1.15rem] border border-[#b98255]/52 bg-[rgba(7,6,18,0.78)] shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md"
         data-symbol-basis-panel="true"
-        style={createReceiptDelayStyle(afterReceiptTextDelayMs + 280)}
       >
         <summary className="flex min-h-[4rem] cursor-pointer list-none items-center gap-3 px-4 py-3 text-[#f2c27d] transition hover:text-[#ffe7b5] [&::-webkit-details-marker]:hidden">
           <span className="relative h-9 w-9 shrink-0">
             <Image src={manyangAssets.actionIcons.book} alt="" fill sizes="36px" unoptimized className="object-contain" />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-[16px] font-bold">고양이가 읽은 상징들</span>
+            <span className="block text-[16px] font-bold">꿈 영수증에 담긴 상징들</span>
             <span className="mt-0.5 block text-[12px] font-medium text-[#caa37b]">
               영수증에 담긴 상징 메모를 펼쳐봅니다
             </span>
@@ -643,6 +648,7 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
           </div>
         </div>
       </details>
+      </div>
       {pawprintCreated ? <p className="text-center text-sm font-semibold text-[#f0bc7d]">오늘의 발자국이 남았어요.</p> : null}
       {pawprintSaveError ? <p className="text-center text-sm text-[#f0bc7d]">발자국 저장이 잠시 지연됐어요. 다시 시도해 주세요.</p> : null}
       {hasStoredPayload ? (

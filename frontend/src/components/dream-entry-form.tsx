@@ -223,8 +223,7 @@ export function DreamEntryForm() {
   const selectedCatReader = getCatReaderById(selectedCatReaderId);
   const readingState = getCatReaderDreamReadingState(selectedCatReaderId, accessPlan);
   const readingResolution = resolveCatReaderForDreamReading(selectedCatReaderId, accessPlan);
-  const requestCatReaderId = readingResolution.requestReaderId;
-  const requestCatReader = getCatReaderById(requestCatReaderId);
+  const requestCatReaderId = selectedCatReaderId;
   const isFallbackReading = readingResolution.isFallback;
   const readingKind = getReadingKindForCatReader(requestCatReaderId);
   const readingGate = canRequestReading({
@@ -242,12 +241,12 @@ export function DreamEntryForm() {
     ? (readingResolution.blockedLabel ?? unavailableLabel)
     : blockedNoticeTitle;
   const accessNoticeMessage = isFallbackReading
-    ? `무료 체험 해몽은 ${requestCatReader.name}으로 바로 받아볼 수 있어요.`
+    ? `선택한 ${selectedCatReader.name} 테마로 기본 꿈 영수증을 만들 수 있어요.`
     : readingGate.message;
   const submitButtonLabel = isSubmitting
       ? "꿈 읽는 중"
       : isFallbackReading
-        ? `${requestCatReader.name}으로 무료 해몽 받기`
+        ? `${selectedCatReader.name} 테마로 해몽 받기`
         : "해몽 받기";
 
   function toggleDreamAtmosphere(label: string): void {

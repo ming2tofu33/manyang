@@ -60,9 +60,9 @@ export type StructuredDreamAnalysis = {
   themeQueries: string[];
   modifierQueries: string[];
   selectedMoods: SelectedMood[];
-  /** 사용자가 명시적으로 고른 분위기 정서(현지화 라벨). 페르소나 처방의 정서 앵커로 쓰인다. */
+  /** 사용자가 명시적으로 고른 분위기 정서(현지화 라벨). 작은 처방의 정서 앵커로 쓰인다. */
   selectedAtmosphereLabels: string[];
-  /** 사용자가 명시적으로 고른 감각(현지화 라벨). 페르소나 처방·행동의 단서로 쓰인다. */
+  /** 사용자가 명시적으로 고른 감각(현지화 라벨). 작은 처방·행동의 단서로 쓰인다. */
   selectedSensationLabels: string[];
   inferredEmotions: EmotionSignal[];
   themes: ThemeSignal[];

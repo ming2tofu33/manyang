@@ -26,7 +26,7 @@ function createRecord(id: string): DreamRecord {
       cardId: "runtime-card-id",
       reader: {
         id: "gray_cat",
-        name: "Gray Cat",
+        name: "잿빛냥",
         access: "free",
       },
       summary: "A train dream near the sea.",

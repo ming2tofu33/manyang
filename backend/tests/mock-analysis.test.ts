@@ -73,18 +73,25 @@ describe("analyzeDream", () => {
     expect(result.safetyNotice).toContain("의학적 진단");
   });
 
-  test("uses a production-ready gray cat reader note", () => {
-    const result = analyzeDream({
+  test("keeps interpretation content stable across selected cat themes", () => {
+    const request = {
       dreamText: "꿈에서 학교 복도에 있었고 문이 계속 바뀌었어.",
       locale: "ko",
-      catReaderType: "gray_cat",
       wakeMood: "anxious",
-    });
+    } as const;
+    const black = analyzeDream({ ...request, catReaderType: "black_cat" });
+    const white = analyzeDream({ ...request, catReaderType: "white_cat" });
+    const gray = analyzeDream({ ...request, catReaderType: "gray_cat" });
 
-    expect(result.readerNote).toContain("회색냥");
-    expect(result.readerNote).toContain("가능성");
-    expect(result.readerNote).not.toContain("준비 중");
-    expect(result.readerNote).not.toContain("꿈+타로");
+    expect(white.readerNote).toBe(black.readerNote);
+    expect(gray.readerNote).toBe(black.readerNote);
+    expect(white.interpretation).toBe(black.interpretation);
+    expect(gray.interpretation).toBe(black.interpretation);
+    expect(white.smallPrescription).toBe(black.smallPrescription);
+    expect(gray.smallPrescription).toBe(black.smallPrescription);
+    expect(gray.reader.name).toBe("잿빛냥");
+    expect(gray.readerNote).not.toContain("회색냥");
+    expect(gray.readerNote).not.toContain("꿈+타로");
   });
 
   test("localizes deterministic fallback interpretation for English dreams", () => {

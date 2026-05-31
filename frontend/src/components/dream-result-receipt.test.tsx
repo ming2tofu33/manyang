@@ -49,7 +49,7 @@ function createLongReceiptPayload(): DreamCompletedPayload {
         message: "지금 필요한 돌봄을 한 문장으로 적어보세요.",
         theme: "돌봄",
       },
-      readerNote: "검은냥은 긴 해석도 영수증 밖으로 흘러나가지 않게 조용히 정리했다냥.",
+      readerNote: "마냥은 꿈속 상징과 감정의 연결을 같은 기준으로 차분히 정리했어요.",
     },
   };
 }
@@ -146,7 +146,7 @@ describe("DreamResultReceipt", () => {
     const markup = renderToStaticMarkup(<DreamResultReceipt />);
 
     expect(markup).toContain("data-symbol-basis-panel=\"true\"");
-    expect(markup).toContain("고양이가 읽은 상징들");
+    expect(markup).toContain("꿈 영수증에 담긴 상징들");
     expect(markup).toContain("영수증에 담긴 상징 메모를 펼쳐봅니다");
     expect(markup).toContain("꿈 영수증에 담긴 상징 메모예요.");
     expect(markup).toContain("꿈에서 잡힌 상징");
@@ -189,7 +189,7 @@ describe("DreamResultReceipt", () => {
     expect(markup).not.toContain("whitespace-nowrap");
     expect(markup).toContain("2026.05.24");
     expect(markup).toContain("불안함");
-    expect(markup).toContain("검은냥이 읽음");
+    expect(markup).toContain("검은냥 테마");
     expect(markup).not.toContain("From. 검은냥");
     expect(markup).toContain("receipt-tag-pop");
     expect(markup).toContain("data-receipt-symbol-tags=\"true\"");
@@ -211,6 +211,22 @@ describe("DreamResultReceipt", () => {
     expect(markup).toContain("/manyang/ui/buttons/common-compact-primary-frame.png");
     expect(markup).not.toContain("/manyang/cutouts/boxes/17-pill-wide.png");
     expect(markup).not.toContain("data-receipt-result-actions=\"true\" style=\"animation-delay:9000ms\"");
+  });
+
+  it("groups receipt actions, save prompt, and symbol panel into one settled receipt reveal", () => {
+    const markup = renderToStaticMarkup(<DreamResultReceipt />);
+    const completionStackIndex = markup.indexOf("data-receipt-completion-stack=\"true\"");
+    const actionsIndex = markup.indexOf("data-receipt-result-actions=\"true\"");
+    const saveSlotIndex = markup.indexOf("data-receipt-save-slot=\"true\"");
+    const symbolPanelIndex = markup.indexOf("data-symbol-basis-panel=\"true\"");
+
+    expect(completionStackIndex).toBeGreaterThan(-1);
+    expect(markup).toContain("data-receipt-completion-stack=\"true\" style=\"animation-delay:3500ms\"");
+    expect(actionsIndex).toBeGreaterThan(-1);
+    expect(actionsIndex).toBeGreaterThan(completionStackIndex);
+    expect(saveSlotIndex).toBeGreaterThan(actionsIndex);
+    expect(symbolPanelIndex).toBeGreaterThan(saveSlotIndex);
+    expect(markup).not.toContain("data-symbol-basis-panel=\"true\" style=\"animation-delay:9000ms\"");
   });
 
   it("lets long LLM receipt sections expand the receipt instead of clipping generated text", () => {

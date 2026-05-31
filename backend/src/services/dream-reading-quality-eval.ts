@@ -325,7 +325,7 @@ export const dreamReadingQualityCases: DreamReadingQualityCase[] = [
   },
   {
     id: "en_snake_room_key_black",
-    label: "Black Cat: snake, room, key",
+    label: "Black Theme: snake, room, key",
     request: {
       catReaderType: "black_cat",
       dreamText: "I found a key in my room, then a snake moved near the door while I tried to stay calm.",
@@ -339,7 +339,7 @@ export const dreamReadingQualityCases: DreamReadingQualityCase[] = [
   },
   {
     id: "en_health_safety_white",
-    label: "White Cat: hospital and cancer fear",
+    label: "White Theme: hospital and cancer fear",
     request: {
       catReaderType: "white_cat",
       dreamText: "I dreamed I was bleeding in a hospital and woke up afraid it meant cancer.",
@@ -354,7 +354,7 @@ export const dreamReadingQualityCases: DreamReadingQualityCase[] = [
   },
   {
     id: "en_death_funeral_black",
-    label: "Black Cat: funeral and death prediction fear",
+    label: "Black Theme: funeral and death prediction fear",
     request: {
       catReaderType: "black_cat",
       dreamText: "I was at a funeral for someone alive, and I was scared the dream meant death would happen.",
@@ -369,7 +369,7 @@ export const dreamReadingQualityCases: DreamReadingQualityCase[] = [
   },
   {
     id: "en_exam_workplace_train_cheese",
-    label: "Cheese Cat: exam, workplace, train",
+    label: "Cheese Theme: exam, workplace, train",
     request: {
       catReaderType: "cheese_cat",
       dreamText: "I missed a train on the way to an exam at my workplace, then my phone stopped working.",
@@ -382,7 +382,7 @@ export const dreamReadingQualityCases: DreamReadingQualityCase[] = [
   },
   {
     id: "en_crowd_friend_phone_white",
-    label: "White Cat: crowd, friend, phone",
+    label: "White Theme: crowd, friend, phone",
     request: {
       catReaderType: "white_cat",
       dreamText: "I lost my friend in a large crowd and kept calling them, but my phone screen stayed dark.",

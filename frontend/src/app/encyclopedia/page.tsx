@@ -8,7 +8,7 @@ import { getIndexableEncyclopediaEntries } from "@/lib/seo-encyclopedia";
 
 export const metadata: Metadata = {
   title: "꿈해몽 백과 | 마냥 꿈해몽",
-  description: "고양이 해몽사와 함께 꿈속 상징의 의미를 찾아보고, 내 꿈을 꿈 영수증으로 정리해보세요.",
+  description: "꿈속 상징의 의미를 찾아보고, 내 꿈을 꿈 영수증과 고양이 테마로 정리해보세요.",
   alternates: {
     canonical: "/encyclopedia",
   },

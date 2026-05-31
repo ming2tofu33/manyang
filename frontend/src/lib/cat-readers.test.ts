@@ -29,12 +29,17 @@ describe("cat readers", () => {
   test("defines the MVP cat reader set", () => {
     expect(catReaders.map((reader) => reader.id)).toEqual(["black_cat", "white_cat", "cheese_cat", "gray_cat"]);
     expect(catReaders.map((reader) => reader.name)).toEqual(["검은냥", "하얀냥", "치즈냥", "잿빛냥"]);
-    expect(catReaders.map((reader) => reader.role)).toEqual(["기본 해몽사", "위로 해몽사", "지적 해몽사", "타로 해몽사"]);
+    expect(catReaders.map((reader) => reader.role)).toEqual([
+      "기본 밤하늘 테마",
+      "부드러운 달빛 테마",
+      "따뜻한 노을 테마",
+      "달빛 서재 테마",
+    ]);
     expect(catReaders.map((reader) => reader.shortDescription)).toEqual([
-      "신비롭고 상징 중심",
-      "부드럽고 안정감 중심",
-      "밝고 현실적인 처방 중심",
-      "타로 패턴/기록 중심",
+      "깊은 밤하늘과 촛불 무드",
+      "하얀 달빛과 포근한 밤 무드",
+      "노란 별빛과 따뜻한 노을 무드",
+      "잿빛 달빛과 조용한 서재 무드",
     ]);
     expect(defaultCatReaderId).toBe("black_cat");
   });
@@ -85,15 +90,15 @@ describe("cat readers", () => {
     expect(freeCatReaders.map((reader) => reader.id)).toEqual(["black_cat", "white_cat", "cheese_cat"]);
   });
 
-  test("marks only free cat readers as available for guest and free account dream reading", () => {
+  test("keeps every valid cat selectable as a dream receipt theme", () => {
     expect(isCatReaderDreamReadingAvailable("black_cat")).toBe(true);
     expect(isCatReaderDreamReadingAvailable("white_cat")).toBe(true);
     expect(isCatReaderDreamReadingAvailable("cheese_cat")).toBe(true);
-    expect(isCatReaderDreamReadingAvailable("gray_cat")).toBe(false);
-    expect(isCatReaderDreamReadingAvailable("gray_cat", "free_account")).toBe(false);
+    expect(isCatReaderDreamReadingAvailable("gray_cat")).toBe(true);
+    expect(isCatReaderDreamReadingAvailable("gray_cat", "free_account")).toBe(true);
   });
 
-  test("allows Moon Pass users to read with gray cat", () => {
+  test("does not treat gray cat theme as a separate reading access gate", () => {
     expect(isCatReaderDreamReadingAvailable("gray_cat", "moon_pass")).toBe(true);
     expect(getCatReaderDreamReadingState("gray_cat", "moon_pass")).toEqual({
       isAvailable: true,
@@ -102,12 +107,12 @@ describe("cat readers", () => {
     });
   });
 
-  test("routes guest gray cat dream requests to a free basic reader", () => {
+  test("keeps guest gray cat theme requests on the selected theme", () => {
     expect(resolveCatReaderForDreamReading("gray_cat", "guest")).toEqual({
       selectedReaderId: "gray_cat",
-      requestReaderId: "black_cat",
-      isFallback: true,
-      blockedLabel: "잿빛냥은 Moon Pass에서 열려요",
+      requestReaderId: "gray_cat",
+      isFallback: false,
+      blockedLabel: null,
     });
   });
 
@@ -127,9 +132,9 @@ describe("cat readers", () => {
       fallbackReaderId: null,
     });
     expect(getCatReaderDreamReadingState("gray_cat")).toEqual({
-      isAvailable: false,
-      blockedLabel: "잿빛냥은 Moon Pass에서 열려요",
-      fallbackReaderId: "black_cat",
+      isAvailable: true,
+      blockedLabel: null,
+      fallbackReaderId: null,
     });
   });
 

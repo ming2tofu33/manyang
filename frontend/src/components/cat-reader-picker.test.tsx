@@ -18,11 +18,11 @@ describe("CatReaderPicker", () => {
 
     expect(markup).toContain("바꾸기");
     expect(markup).toContain("home-cat-picker-trigger");
-    expect(markup).toContain("오늘의 고양이");
-    expect(markup).toContain("하얀냥이 꿈을 읽어요");
-    expect(markup).toContain("위로");
-    expect(markup).toContain("불안한 꿈을 부드럽게 다독여요");
-    expect(markup).not.toContain("오늘 꿈을 읽어줄 고양이");
+    expect(markup).toContain("오늘의 테마");
+    expect(markup).toContain("하얀냥 테마로 남겨요");
+    expect(markup).toContain("달빛");
+    expect(markup).toContain("하얀 달빛 무드로 남겨요");
+    expect(markup).not.toContain("오늘 꿈 영수증 테마");
     expect(markup).not.toContain("검은냥");
     expect(markup).not.toContain("치즈냥");
     expect(markup).not.toContain("잿빛냥");
@@ -34,7 +34,7 @@ describe("CatReaderPicker", () => {
     );
 
     expect(markup).toContain("잿빛냥");
-    expect(markup).toContain("타로 해몽사");
+    expect(markup).toContain("달빛 서재 테마");
     expect(markup).not.toContain("disabled");
     expect(markup).toContain("Moon Pass");
   });

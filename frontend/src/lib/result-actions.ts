@@ -113,7 +113,7 @@ export function createReceiptShareText(payload: DreamCompletedPayload): string {
 
   return [
     `오늘의 꿈 영수증: ${payload.analysis.summary}`,
-    `From. ${reader.name}`,
+    `테마: ${reader.name}`,
     `주요 상징: ${payload.analysis.symbols.join(", ")}`,
     `작은 처방: ${payload.analysis.smallPrescription}`,
   ].join("\n");
@@ -142,10 +142,10 @@ export function createReceiptSvg(payload: DreamCompletedPayload): string {
   <text x="450" y="238" class="meta">DREAM RECEIPT</text>
   <text x="450" y="320" class="title">${escapeXml(payload.analysis.summary)}</text>
   <text x="450" y="380" class="meta">${escapeXml(payload.dreamDate)}  |  ${escapeXml(moodText)}</text>
-  <text x="450" y="425" class="meta">From. ${escapeXml(reader.name)}</text>
+  <text x="450" y="425" class="meta">테마: ${escapeXml(reader.name)}</text>
   <text x="450" y="475" class="label">주요 상징</text>
   <text x="450" y="535" class="meta">${escapeXml(symbolText)}</text>
-  <text x="450" y="640" class="label">고양이 해석</text>
+  <text x="450" y="640" class="label">공통 해몽</text>
   ${renderSvgLines(interpretationLines, 150, 705, 48, "body")}
   <text x="450" y="1080" class="label">오늘의 작은 처방</text>
   ${renderSvgLines(prescriptionLines, 150, 1138, 46, "body")}

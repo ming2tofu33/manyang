@@ -42,7 +42,7 @@ const profileSettings: ProfileSetting[] = [
   },
   {
     title: "Moon Pass",
-    description: "프리미엄 해몽사와 확장 기능",
+    description: "프리미엄 테마와 확장 기능",
     icon: "moonPass",
     value: "Guest",
   },
@@ -88,10 +88,10 @@ export function ProfileRoom() {
               </span>
             </div>
             <p className="mt-1 text-[12px] font-semibold text-[#f0bc7d]">
-              대표 해몽사 · {selectedReader.name}
+              대표 테마 · {selectedReader.name}
             </p>
             <p className="mt-1 line-clamp-2 text-[12px] leading-4 text-[#fff3d7]/76">
-              오늘은 {selectedReader.shortDescription} 리딩 톤으로 꿈을 읽어요.
+              오늘은 {selectedReader.shortDescription}로 꿈 영수증을 남겨요.
             </p>
           </div>
         </div>
@@ -103,7 +103,7 @@ export function ProfileRoom() {
         value={selectedCatReaderId}
         onChange={saveSelectedCatReaderIdToBrowser}
         variant="compact"
-        heading="대표 해몽사 설정"
+        heading="대표 테마 설정"
       />
 
       <section className="overflow-hidden rounded-[1.35rem] border border-[#7c4a38]/62 bg-[rgba(7,6,17,0.72)] shadow-[0_0_30px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/12 backdrop-blur-md">

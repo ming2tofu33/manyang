@@ -18,7 +18,7 @@ function createPersistInput(): PersistCompletedDreamReadingInput {
       cardId: "card-runtime-id",
       reader: {
         id: "gray_cat",
-        name: "Gray Cat",
+        name: "잿빛냥",
         access: "free",
       },
       summary: "A snake dream with a private room.",
@@ -38,7 +38,7 @@ function createPersistInput(): PersistCompletedDreamReadingInput {
         mainThemes: ["boundary"],
         confidence: 0.84,
       },
-      readerNote: "Gray Cat leaves this as a question.",
+      readerNote: "마냥은 꿈속 상징과 감정의 연결을 같은 기준으로 차분히 정리했어요.",
       safetyNotice: "This is not a prediction.",
       card: {
         name: "Quiet Snake",

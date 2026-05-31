@@ -28,7 +28,7 @@ function createDreamRecord(input: {
       cardId: `${input.id}-card`,
       reader: {
         id: "black_cat",
-        name: "Black Cat",
+        name: "검은냥",
         access: "free",
       },
       summary: input.summary ?? `${input.id} summary`,

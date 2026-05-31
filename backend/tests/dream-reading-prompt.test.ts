@@ -7,7 +7,7 @@ import { analyzeDreamStructure } from "../src/services/structured-dream-analysis
 import { findRuntimeSymbolMatches } from "../src/services/symbol-matcher";
 
 describe("buildDreamReadingPrompt", () => {
-  test("injects the selected reader persona into the prompt payload", () => {
+  test("does not inject the selected cat theme as a reader persona", () => {
     const request = {
       dreamText: "I dreamed that a snake appeared in my room.",
       locale: "en" as const,
@@ -22,24 +22,24 @@ describe("buildDreamReadingPrompt", () => {
       matches: findRuntimeSymbolMatches(request.dreamText, { locale: request.locale, limit: 5 }),
     });
     const payload = JSON.parse(prompt.input) as {
-      readerPersona?: {
-        id: string;
-        interpretationPriority: string[];
-        toneDirectives: string[];
-        smallPrescriptionStyle: string;
+      request?: {
+        catReaderType?: string;
+      };
+      readerPersona?: unknown;
+      outputContract?: {
+        personaSpecific?: string;
       };
     };
 
-    expect(prompt.instructions).toContain("Follow the selected reader persona");
-    expect(payload.readerPersona).toMatchObject({
-      id: "white_cat",
-      smallPrescriptionStyle: expect.stringContaining("reassuring"),
-    });
-    expect(payload.readerPersona?.interpretationPriority).toContain("emotional regulation");
-    expect(payload.readerPersona?.toneDirectives.join(" ")).toContain("gentle");
+    expect(prompt.instructions).toContain("Use one stable Manyang reading voice regardless of selected cat theme.");
+    expect(prompt.instructions).not.toContain("readerPersona");
+    expect(prompt.instructions).not.toContain("White Cat");
+    expect(payload.request?.catReaderType).toBeUndefined();
+    expect(payload.readerPersona).toBeUndefined();
+    expect(payload.outputContract?.personaSpecific).toBeUndefined();
   });
 
-  test("keeps persona priorities distinct across readers", () => {
+  test("keeps prompt payload stable across cat themes", () => {
     const baseRequest = {
       dreamText: "I dreamed that a snake appeared in my room.",
       locale: "en" as const,
@@ -59,17 +59,19 @@ describe("buildDreamReadingPrompt", () => {
     });
 
     const whitePayload = JSON.parse(whitePrompt.input) as {
-      readerPersona?: { interpretationPriority: string[] };
+      request?: { catReaderType?: string };
+      outputContract?: { personaSpecific?: string };
     };
     const cheesePayload = JSON.parse(cheesePrompt.input) as {
-      readerPersona?: { interpretationPriority: string[] };
+      request?: { catReaderType?: string };
+      outputContract?: { personaSpecific?: string };
     };
 
-    expect(whitePayload.readerPersona?.interpretationPriority).toContain("emotional regulation");
-    expect(cheesePayload.readerPersona?.interpretationPriority).toContain("practical next action");
-    expect(whitePayload.readerPersona?.interpretationPriority).not.toEqual(
-      cheesePayload.readerPersona?.interpretationPriority,
-    );
+    expect(whitePayload.request?.catReaderType).toBeUndefined();
+    expect(cheesePayload.request?.catReaderType).toBeUndefined();
+    expect(whitePayload.outputContract?.personaSpecific).toBeUndefined();
+    expect(cheesePayload.outputContract?.personaSpecific).toBeUndefined();
+    expect(whitePayload.outputContract).toEqual(cheesePayload.outputContract);
   });
 
   test("injects safety policy into the prompt payload", () => {
@@ -93,7 +95,7 @@ describe("buildDreamReadingPrompt", () => {
       };
     };
 
-    expect(prompt.instructions).toContain("Follow safetyPolicy before persona style");
+    expect(prompt.instructions).toContain("Follow safetyPolicy before tone style");
     expect(payload.safetyPolicy?.risks).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -104,7 +106,7 @@ describe("buildDreamReadingPrompt", () => {
     expect(payload.safetyPolicy?.blockedClaims).toContain("medical diagnosis or health prediction");
   });
 
-  test("injects gray cat premium reading mode without leaking premium profile to non-premium readers", () => {
+  test("does not inject gray cat as a premium prompt mode", () => {
     const baseRequest = {
       dreamText: "I was walking through a school corridor, but every door kept changing places.",
       locale: "en" as const,
@@ -122,37 +124,31 @@ describe("buildDreamReadingPrompt", () => {
       matches: findRuntimeSymbolMatches(baseRequest.dreamText, { locale: baseRequest.locale, limit: 5 }),
     });
     const grayPayload = JSON.parse(grayPrompt.input) as {
-      readerPersona?: {
-        premiumDepthProfile?: {
-          mode: string;
-          principle: string;
-          readingShape: string[];
-          closingStyle: string;
-        };
-      };
       outputContract?: {
         personaSpecific?: string;
       };
+      readerPersona?: unknown;
+      request?: { catReaderType?: string };
     };
     const blackPayload = JSON.parse(blackPrompt.input) as {
-      readerPersona?: {
-        premiumDepthProfile?: unknown;
-      };
       outputContract?: {
         personaSpecific?: string;
       };
+      readerPersona?: unknown;
+      request?: { catReaderType?: string };
     };
 
-    expect(grayPrompt.instructions).toContain("If readerPersona.premiumDepthProfile is present");
-    expect(grayPayload.readerPersona?.premiumDepthProfile).toMatchObject({
-      mode: "gray_depth",
-      closingStyle: expect.stringContaining("reflective question"),
-    });
-    expect(grayPayload.outputContract?.personaSpecific).toContain("deeper gray-cat reading");
-    expect(blackPayload.readerPersona?.premiumDepthProfile).toBeUndefined();
+    expect(grayPrompt.instructions).not.toContain("premiumDepthProfile");
+    expect(grayPrompt.instructions).not.toContain("gray-cat");
+    expect(grayPayload.readerPersona).toBeUndefined();
+    expect(blackPayload.readerPersona).toBeUndefined();
+    expect(grayPayload.request?.catReaderType).toBeUndefined();
+    expect(blackPayload.request?.catReaderType).toBeUndefined();
+    expect(grayPayload.outputContract?.personaSpecific).toBeUndefined();
+    expect(blackPayload.outputContract?.personaSpecific).toBeUndefined();
   });
 
-  test("injects free cat reading profiles into the prompt payload", () => {
+  test("does not inject free cat reading profiles into the prompt payload", () => {
     const baseRequest = {
       dreamText: "꿈에서 학교 복도에 있었고 문이 계속 바뀌었어.",
       locale: "ko" as const,
@@ -177,34 +173,25 @@ describe("buildDreamReadingPrompt", () => {
     });
 
     const blackPayload = JSON.parse(blackPrompt.input) as {
-      readerPersona?: { readingProfile?: { mode: string; principle: string } };
+      readerPersona?: unknown;
       outputContract?: { personaSpecific?: string };
     };
     const whitePayload = JSON.parse(whitePrompt.input) as {
-      readerPersona?: { readingProfile?: { mode: string; principle: string } };
+      readerPersona?: unknown;
       outputContract?: { personaSpecific?: string };
     };
     const cheesePayload = JSON.parse(cheesePrompt.input) as {
-      readerPersona?: { readingProfile?: { mode: string; principle: string } };
+      readerPersona?: unknown;
       outputContract?: { personaSpecific?: string };
     };
 
-    expect(blackPrompt.instructions).toContain("If readerPersona.readingProfile is present");
-    expect(blackPayload.readerPersona?.readingProfile).toMatchObject({
-      mode: "symbol_focus",
-      principle: expect.stringContaining("clearest scene"),
-    });
-    expect(whitePayload.readerPersona?.readingProfile).toMatchObject({
-      mode: "emotional_comfort",
-      principle: expect.stringContaining("feeling left by the dream"),
-    });
-    expect(cheesePayload.readerPersona?.readingProfile).toMatchObject({
-      mode: "daily_hint",
-      principle: expect.stringContaining("hint the user can use today"),
-    });
-    expect(blackPayload.outputContract?.personaSpecific).toContain("core dream image");
-    expect(whitePayload.outputContract?.personaSpecific).toContain("feeling left by the dream");
-    expect(cheesePayload.outputContract?.personaSpecific).toContain("one small concrete action");
+    expect(blackPrompt.instructions).not.toContain("readingProfile");
+    expect(blackPayload.readerPersona).toBeUndefined();
+    expect(whitePayload.readerPersona).toBeUndefined();
+    expect(cheesePayload.readerPersona).toBeUndefined();
+    expect(blackPayload.outputContract?.personaSpecific).toBeUndefined();
+    expect(whitePayload.outputContract?.personaSpecific).toBeUndefined();
+    expect(cheesePayload.outputContract?.personaSpecific).toBeUndefined();
   });
 
   test("injects evidence boundaries for scene-only unverified elements", () => {

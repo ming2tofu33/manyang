@@ -32,30 +32,32 @@ const moodLabels: Record<string, string> = {
   흐릿: "흐릿함",
 };
 
+const commonReaderNote = "마냥은 꿈속 상징과 감정의 연결을 같은 기준으로 차분히 정리했어요.";
+
 const catReaderProfiles: Record<CatReaderType, CatReaderResponse & { note: string }> = {
   black_cat: {
     id: "black_cat",
     name: "검은냥",
     access: "free",
-    note: "검은냥은 꿈속 상징과 장면의 연결을 조용히 먼저 살펴봤다냥.",
+    note: commonReaderNote,
   },
   white_cat: {
     id: "white_cat",
     name: "하얀냥",
     access: "free",
-    note: "하얀냥은 이 꿈이 남긴 감정을 부드럽게 이름 붙여봤다냥.",
+    note: commonReaderNote,
   },
   cheese_cat: {
     id: "cheese_cat",
     name: "치즈냥",
     access: "free",
-    note: "치즈냥은 꿈에서 오늘 바로 해볼 작은 행동을 찾아봤다냥.",
+    note: commonReaderNote,
   },
   gray_cat: {
     id: "gray_cat",
-    name: "회색냥",
+    name: "잿빛냥",
     access: "annual_premium",
-    note: "회색냥은 꿈을 하나로 단정하지 않고, 지금 마음에 가까운 가능성들을 차분히 나눠봤다냥.",
+    note: commonReaderNote,
   },
 };
 

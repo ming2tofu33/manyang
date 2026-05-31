@@ -50,7 +50,7 @@ function createPayload(): DreamCompletedPayload {
         message: "불안을 작은 단서로 데려가보자냥.",
         theme: "장소와 전환",
       },
-      readerNote: "하얀냥은 이 꿈이 남긴 감정을 부드럽게 이름 붙여봤다냥.",
+      readerNote: "마냥은 꿈속 상징과 감정의 연결을 같은 기준으로 차분히 정리했어요.",
     },
   };
 }
@@ -94,7 +94,7 @@ describe("result action helpers", () => {
     const text = createReceiptShareText(createPayload());
 
     expect(text).toContain("복도와 신발이 남은 꿈");
-    expect(text).toContain("From. 하얀냥");
+    expect(text).toContain("테마: 하얀냥");
     expect(text).toContain("복도, 신발, 학교");
     expect(text).toContain("준비물 하나만 먼저 확인해보자냥.");
   });
@@ -104,7 +104,8 @@ describe("result action helpers", () => {
 
     expect(svg).toContain("<svg");
     expect(svg).toContain("복도와 신발이 남은 꿈");
-    expect(svg).toContain("From. 하얀냥");
+    expect(svg).toContain("테마: 하얀냥");
+    expect(svg).toContain("공통 해몽");
     expect(svg).toContain("준비물 하나만 먼저 확인해보자냥.");
   });
 });

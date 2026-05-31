@@ -1,4 +1,4 @@
-import { isPaidAccessPlan, type AccessPlan } from "./access-policy";
+import type { AccessPlan } from "./access-policy";
 
 export type StorageLike = {
   getItem(key: string): string | null;
@@ -36,10 +36,10 @@ export const catReaders: CatReader[] = [
     id: "black_cat",
     name: "검은냥",
     access: "free",
-    role: "기본 해몽사",
-    shortDescription: "신비롭고 상징 중심",
-    tone: "신비롭고 차분함",
-    ctaLabel: "검은냥에게 꿈 비춰보기",
+    role: "기본 밤하늘 테마",
+    shortDescription: "깊은 밤하늘과 촛불 무드",
+    tone: "신비로운 밤하늘",
+    ctaLabel: "검은냥 테마로 남기기",
     assetKey: "blackCat",
     homeBackgroundKey: "blackCatHome",
     interpretationBackgroundKey: "blackCatInterpretation",
@@ -48,10 +48,10 @@ export const catReaders: CatReader[] = [
     id: "white_cat",
     name: "하얀냥",
     access: "free",
-    role: "위로 해몽사",
-    shortDescription: "부드럽고 안정감 중심",
-    tone: "부드럽고 따뜻함",
-    ctaLabel: "하얀냥에게 부드럽게 읽어달라고 하기",
+    role: "부드러운 달빛 테마",
+    shortDescription: "하얀 달빛과 포근한 밤 무드",
+    tone: "부드러운 달빛",
+    ctaLabel: "하얀냥 테마로 남기기",
     assetKey: "whiteCat",
     homeBackgroundKey: "whiteCatHome",
     interpretationBackgroundKey: "whiteCatInterpretation",
@@ -60,10 +60,10 @@ export const catReaders: CatReader[] = [
     id: "cheese_cat",
     name: "치즈냥",
     access: "free",
-    role: "지적 해몽사",
-    shortDescription: "밝고 현실적인 처방 중심",
-    tone: "밝고 현실적임",
-    ctaLabel: "치즈냥에게 오늘의 처방 받기",
+    role: "따뜻한 노을 테마",
+    shortDescription: "노란 별빛과 따뜻한 노을 무드",
+    tone: "따뜻한 노을",
+    ctaLabel: "치즈냥 테마로 남기기",
     assetKey: "cheeseCat",
     homeBackgroundKey: "cheeseCatHome",
     interpretationBackgroundKey: "cheeseCatInterpretation",
@@ -72,10 +72,10 @@ export const catReaders: CatReader[] = [
     id: "gray_cat",
     name: "잿빛냥",
     access: "annual_premium",
-    role: "타로 해몽사",
-    shortDescription: "타로 패턴/기록 중심",
-    tone: "조용하고 깊음",
-    ctaLabel: "잿빛냥의 꿈+타로 리딩 보기",
+    role: "달빛 서재 테마",
+    shortDescription: "잿빛 달빛과 조용한 서재 무드",
+    tone: "차분한 달빛 서재",
+    ctaLabel: "잿빛냥 테마로 남기기",
     assetKey: "grayCat",
     homeBackgroundKey: "grayCatHome",
     interpretationBackgroundKey: "grayCatInterpretation",
@@ -131,19 +131,11 @@ export function isCatReaderDreamReadingAvailable(
   value: string | undefined | null,
   accessPlan: AccessPlan = "guest",
 ): boolean {
+  void accessPlan;
+
   const normalizedId = normalizeCatReaderId(value);
 
-  if (!normalizedId) {
-    return false;
-  }
-
-  const reader = getCatReaderById(normalizedId);
-
-  if (reader.access === "annual_premium") {
-    return isPaidAccessPlan(accessPlan);
-  }
-
-  return freeCatReaders.some((freeReader) => freeReader.id === normalizedId);
+  return Boolean(normalizedId);
 }
 
 export function getCatReaderDreamReadingState(
@@ -155,8 +147,8 @@ export function getCatReaderDreamReadingState(
 
   return {
     isAvailable,
-    blockedLabel: isAvailable ? null : `${reader.name}은 Moon Pass에서 열려요`,
-    fallbackReaderId: isAvailable ? null : defaultCatReaderId,
+    blockedLabel: null,
+    fallbackReaderId: null,
   };
 }
 
@@ -167,19 +159,10 @@ export function resolveCatReaderForDreamReading(
   const selectedReader = getCatReaderById(value);
   const selectedState = getCatReaderDreamReadingState(selectedReader.id, accessPlan);
 
-  if (selectedState.isAvailable || !selectedState.fallbackReaderId) {
-    return {
-      selectedReaderId: selectedReader.id,
-      requestReaderId: selectedReader.id,
-      isFallback: false,
-      blockedLabel: selectedState.blockedLabel,
-    };
-  }
-
   return {
     selectedReaderId: selectedReader.id,
-    requestReaderId: selectedState.fallbackReaderId,
-    isFallback: true,
+    requestReaderId: selectedReader.id,
+    isFallback: false,
     blockedLabel: selectedState.blockedLabel,
   };
 }

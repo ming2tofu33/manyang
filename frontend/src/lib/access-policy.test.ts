@@ -50,11 +50,11 @@ describe("access policy", () => {
     expect(isPaidAccessPlan("moon_pass")).toBe(true);
   });
 
-  test("maps gray cat to detailed reading and other cats to basic reading", () => {
+  test("treats every cat selection as a basic reading theme", () => {
     expect(getReadingKindForCatReader("black_cat")).toBe("basic");
     expect(getReadingKindForCatReader("white_cat")).toBe("basic");
     expect(getReadingKindForCatReader("cheese_cat")).toBe("basic");
-    expect(getReadingKindForCatReader("gray_cat")).toBe("detailed");
+    expect(getReadingKindForCatReader("gray_cat")).toBe("basic");
   });
 
   test("allows a guest basic reading before the daily reading is used", () => {
@@ -87,7 +87,7 @@ describe("access policy", () => {
     });
   });
 
-  test("blocks a free account second basic reading without asking for payment", () => {
+  test("lets a logged-in user record more readings the same day (reroll is blocked by content, not count)", () => {
     expect(
       canRequestReading({
         accessPlan: "free_account",
@@ -95,10 +95,21 @@ describe("access policy", () => {
         hasUsedBasicReadingToday: true,
       }),
     ).toEqual({
-      allowed: false,
-      reason: "free_daily_limit",
+      allowed: true,
+      reason: "allowed",
       ctaLabel: null,
-      message: "오늘의 기본 꿈 해몽은 이미 받았어요. 내일 다시 새로운 꿈 영수증을 받아볼 수 있어요.",
+      message: null,
+    });
+
+    expect(
+      canRequestReading({
+        accessPlan: "moon_pass",
+        readingKind: "basic",
+        hasUsedBasicReadingToday: true,
+      }),
+    ).toMatchObject({
+      allowed: true,
+      reason: "allowed",
     });
   });
 
@@ -126,7 +137,7 @@ describe("access policy", () => {
       allowed: false,
       reason: "detailed_locked",
       ctaLabel: "깊은 꿈을 더 깊게 읽기",
-      message: "상징별 세부 해석, 감정 흐름, 잿빛냥 꿈+타로 리딩은 Moon Pass에서 열려요.",
+      message: "상징별 세부 해석, 감정 흐름, 타로 추가 리딩은 Moon Pass에서 열려요.",
     });
 
     expect(
@@ -169,7 +180,7 @@ describe("access policy", () => {
         },
         "2026-05-30",
       ),
-    ).toBe(false);
+    ).toBe(true);
   });
 
   test("uses dev access override to simulate a valid product plan outside production", () => {

@@ -44,7 +44,7 @@ function createPayload(): DreamCompletedPayload {
       cardId: "card-id",
       reader: {
         id: "black_cat",
-        name: "Black Cat",
+        name: "검은냥",
         access: "free",
       },
       summary: "학교, 복도 그리고 신발이 특히 남은 꿈",

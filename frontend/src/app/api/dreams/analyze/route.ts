@@ -1,6 +1,7 @@
 import {
   analyzeDream,
   createOpenAIEmbeddingsProviderFromEnv,
+  createEnglishLemmatizer,
   createKoreanLemmatizerFromEnv,
   createOpenAIResponsesProviderFromEnv,
   DEFAULT_LLM_PROVIDER_TIMEOUT_MS,
@@ -18,7 +19,7 @@ import {
 import { randomUUID } from "node:crypto";
 
 import {
-  hasCompletedBasicReadingForUserOnDate,
+  findCompletedReadingForUserDreamOnDate,
   hasCompletedGuestBasicReadingOnDate,
   isAdminUser as isAdminUserFromDb,
   persistCompletedDreamReading,
@@ -79,7 +80,11 @@ export type DreamAnalyzeRouteDependencies = {
   getAuthenticatedUserId?: () => Promise<string | null>;
   getAccessPlanForUser?: (userId: string | null) => Promise<AccessPlan>;
   isAdminUser?: (userId: string) => Promise<boolean>;
-  hasCompletedBasicReadingForUserOnDate?: (userId: string, dreamDate: string) => Promise<boolean>;
+  findCompletedReadingForUserDreamOnDate?: (
+    userId: string,
+    dreamDate: string,
+    dreamText: string,
+  ) => Promise<DreamAnalysisResponse | null>;
   hasCompletedGuestBasicReadingOnDate?: (guestId: string, dreamDate: string) => Promise<boolean>;
   persistCompletedDreamReading?: (input: PersistCompletedDreamReadingInput) => Promise<unknown>;
   persistGuestBasicReadingUsage?: (input: PersistGuestBasicReadingUsageInput) => Promise<unknown>;
@@ -472,6 +477,19 @@ async function persistCompletedReadingForAuthenticatedUser(
   }
 }
 
+async function findExistingReadingBestEffort(
+  userId: string,
+  dreamDate: string,
+  dreamText: string,
+  dependencies: Required<DreamAnalyzeRouteDependencies>,
+): Promise<DreamAnalysisResponse | null> {
+  try {
+    return await dependencies.findCompletedReadingForUserDreamOnDate(userId, dreamDate, dreamText);
+  } catch {
+    return null;
+  }
+}
+
 async function persistGuestBasicReadingUsageBestEffort(
   guestSession: GuestSession | null,
   dreamDate: string,
@@ -501,7 +519,7 @@ export async function handleDreamAnalyzeRequest(
     getAuthenticatedUserId,
     getAccessPlanForUser: getDefaultAccessPlanForUser,
     isAdminUser: getDefaultIsAdminUser,
-    hasCompletedBasicReadingForUserOnDate,
+    findCompletedReadingForUserDreamOnDate,
     hasCompletedGuestBasicReadingOnDate,
     persistCompletedDreamReading,
     persistGuestBasicReadingUsage,
@@ -529,17 +547,30 @@ export async function handleDreamAnalyzeRequest(
     const isAdmin = userId ? await resolvedDependencies.isAdminUser(userId) : false;
     const readingKind = getReadingKindForCatReader(validatedBody.value.catReaderType);
     const dreamDate = validatedBody.value.dreamDate ?? getDefaultDreamDate();
+
+    // 리롤 잠금: 로그인 유저가 같은 날 같은 꿈을 다시 제출하면 새로 분석하지 않고
+    // 이미 저장된 해몽을 그대로 돌려준다(같은 꿈 → 같은 해몽, 추가 비용 없음).
+    // 어드민은 재테스트를 위해 통과시킨다.
+    if (userId && !isAdmin) {
+      const existingReading = await findExistingReadingBestEffort(
+        userId,
+        dreamDate,
+        validatedBody.value.dreamText,
+        resolvedDependencies,
+      );
+
+      if (existingReading) {
+        return createJsonResponse(existingReading, undefined, null);
+      }
+    }
+
     const guestSession = !userId && readingKind === "basic"
       ? resolveGuestSession(request, resolvedDependencies.createGuestId)
       : null;
-    const hasUsedBasicReadingToday =
-      isAdmin
-        ? false
-        : userId && readingKind === "basic"
-        ? await resolvedDependencies.hasCompletedBasicReadingForUserOnDate(userId, dreamDate)
-        : guestSession
-          ? await resolvedDependencies.hasCompletedGuestBasicReadingOnDate(guestSession.guestId, dreamDate)
-        : false;
+    // 횟수 제한은 게스트에게만 적용된다(로그인 유저는 서로 다른 꿈을 여러 번 기록 가능).
+    const hasUsedBasicReadingToday = guestSession
+      ? await resolvedDependencies.hasCompletedGuestBasicReadingOnDate(guestSession.guestId, dreamDate)
+      : false;
     const readingGate = canRequestReading({
       accessPlan,
       readingKind,
@@ -581,7 +612,12 @@ export async function handleDreamAnalyzeRequest(
     }
 
     const vectorOptions = provider ? await createVectorAnalysisOptions(validatedBody.value.locale) : {};
-    const lemmatizer = provider ? createKoreanLemmatizerFromEnv(process.env) : undefined;
+    // 영어는 인-프로세스(서버 불필요), 그 외(ko)는 Kiwi 서비스(env로 on/off).
+    const lemmatizer = provider
+      ? validatedBody.value.locale === "en"
+        ? createEnglishLemmatizer()
+        : createKoreanLemmatizerFromEnv(process.env)
+      : undefined;
     if (provider) {
       const result = await generateDreamReadingForUser(validatedBody.value, {
         provider,

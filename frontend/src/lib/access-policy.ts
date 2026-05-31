@@ -93,7 +93,9 @@ export function isPaidAccessPlan(accessPlan: AccessPlan): boolean {
 }
 
 export function getReadingKindForCatReader(catReaderId: string | null | undefined): ReadingKind {
-  return catReaderId === "gray_cat" ? "detailed" : "basic";
+  void catReaderId;
+
+  return "basic";
 }
 
 export function hasUsedBasicReadingOnDate(payload: DreamReadingUsageLike, date: string): boolean {
@@ -118,15 +120,14 @@ export function canRequestReading(input: ReadingGateInput): ReadingGateResult {
       allowed: false,
       reason: "detailed_locked",
       ctaLabel: "깊은 꿈을 더 깊게 읽기",
-      message: "상징별 세부 해석, 감정 흐름, 잿빛냥 꿈+타로 리딩은 Moon Pass에서 열려요.",
+      message: "상징별 세부 해석, 감정 흐름, 타로 추가 리딩은 Moon Pass에서 열려요.",
     };
   }
 
-  if (!input.hasUsedBasicReadingToday || input.bypassDailyLimit === true) {
-    return allowedResult;
-  }
-
-  if (input.accessPlan === "guest") {
+  // 게스트만 하루 1회로 제한해 가입을 유도한다. 로그인 유저는 서로 다른 꿈을 하루에도
+  // 여러 번 기록할 수 있고, 같은 꿈 재제출(리롤)은 서버가 저장된 해몽을 그대로 돌려주는
+  // 방식(내용 기반 잠금)으로 막으므로 여기서 횟수로 막지 않는다.
+  if (input.accessPlan === "guest" && input.hasUsedBasicReadingToday && input.bypassDailyLimit !== true) {
     return {
       allowed: false,
       reason: "guest_daily_limit",
@@ -135,12 +136,7 @@ export function canRequestReading(input: ReadingGateInput): ReadingGateResult {
     };
   }
 
-  return {
-    allowed: false,
-    reason: "free_daily_limit",
-    ctaLabel: null,
-    message: "오늘의 기본 꿈 해몽은 이미 받았어요. 내일 다시 새로운 꿈 영수증을 받아볼 수 있어요.",
-  };
+  return allowedResult;
 }
 
 export function getDevAccessOverride(

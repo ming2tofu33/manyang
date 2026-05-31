@@ -3,12 +3,12 @@ import { describe, expect, test } from "vitest";
 import { getCatReaderPersona } from "../src/services/cat-reader-personas";
 
 describe("cat reader personas", () => {
-  test("returns the requested persona profile", () => {
+  test("returns a common persona profile for every cat theme", () => {
     const persona = getCatReaderPersona("white_cat");
 
     expect(persona.id).toBe("white_cat");
-    expect(persona.interpretationPriority).toContain("emotional regulation");
-    expect(persona.toneDirectives.join(" ")).toContain("gentle");
+    expect(persona.interpretationPriority).toContain("symbol evidence");
+    expect(persona.outputBias.join(" ")).toContain("regardless of selected cat theme");
   });
 
   test("normalizes legacy cheese reader ids", () => {
@@ -21,38 +21,20 @@ describe("cat reader personas", () => {
     expect(getCatReaderPersona(undefined).id).toBe("black_cat");
   });
 
-  test("defines gray cat as a premium depth reader with reflective question guidance", () => {
+  test("does not define gray cat as a separate premium depth reader", () => {
     const persona = getCatReaderPersona("gray_cat");
 
     expect(persona.access).toBe("annual_premium");
-    expect(persona.premiumDepthProfile).toMatchObject({
-      mode: "gray_depth",
-      closingStyle: expect.stringContaining("reflective question"),
-    });
-    expect(persona.premiumDepthProfile?.principle).toContain("does not sort dreams into lucky or unlucky readings");
-    expect(persona.premiumDepthProfile?.readingShape).toEqual(
-      expect.arrayContaining([
-        expect.stringContaining("what the dream scene may reflect about the user's recent inner flow"),
-        expect.stringContaining("more than one plausible possibility"),
-      ]),
-    );
+    expect("premiumDepthProfile" in persona).toBe(false);
+    expect(persona.outputBias).toEqual(getCatReaderPersona("black_cat").outputBias);
   });
 
-  test("defines clear reading profiles for free cat readers", () => {
-    expect(getCatReaderPersona("black_cat").readingProfile).toMatchObject({
-      mode: "symbol_focus",
-      principle: expect.stringContaining("clearest scene"),
-      closingStyle: expect.stringContaining("core image"),
-    });
-    expect(getCatReaderPersona("white_cat").readingProfile).toMatchObject({
-      mode: "emotional_comfort",
-      principle: expect.stringContaining("feeling left by the dream"),
-      closingStyle: expect.stringContaining("small and easy"),
-    });
-    expect(getCatReaderPersona("cheese_cat").readingProfile).toMatchObject({
-      mode: "daily_hint",
-      principle: expect.stringContaining("hint the user can use today"),
-      closingStyle: expect.stringContaining("one small concrete action"),
-    });
+  test("does not define distinct reading profiles for free cat themes", () => {
+    expect("readingProfile" in getCatReaderPersona("black_cat")).toBe(false);
+    expect("readingProfile" in getCatReaderPersona("white_cat")).toBe(false);
+    expect("readingProfile" in getCatReaderPersona("cheese_cat")).toBe(false);
+    expect(getCatReaderPersona("black_cat").interpretationPriority).toEqual(
+      getCatReaderPersona("white_cat").interpretationPriority,
+    );
   });
 });
