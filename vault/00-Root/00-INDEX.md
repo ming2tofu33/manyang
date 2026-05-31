@@ -17,7 +17,7 @@ tags:
 | Features | [[Dream-Entry]] — 꿈 입력, 결과, 기록, 백과 기능 |
 | AI System | [[LLM-Pipeline]] — 구조화 분석, 백과 검색, 해몽 생성 |
 | Content | [[Encyclopedia-Seed-Data]] — 백과사전 seed와 고양이 말투 |
-| Business | [[MVP-Currency-Strategy]] — 발자국, 씨앗, 달조각, Moon Pass 검증 |
+| Business | [[MVP-Currency-Strategy]] — 발자국, 밤의 기록, 달조각, Moon Pass 검증 |
 | Operations | [[Safety-&-Compliance]] — 안전 문구, 보안, 운영 기준 |
 | Design | [[Visual-Direction]] — 달빛 냥몽관 UI와 에셋 |
 | Implementation | [[Implementation-Plan]] — 실행 계약, Phase, 현재 스프린트 |

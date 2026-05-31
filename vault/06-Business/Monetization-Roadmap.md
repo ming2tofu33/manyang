@@ -17,7 +17,7 @@ source: docs/manyang-dream-project-spec-updated.md
 | 단계 | 대상 | 제공 가치 |
 | --- | --- | --- |
 | Guest | 비로그인 사용자 | 하루 1회 기본 꿈 해몽과 기본 꿈 영수증 체험 |
-| Free Account | 로그인 무료 사용자 | 매일 기본 꿈 해몽, 꿈 영수증 보관, 발자국/씨앗 루틴 |
+| Free Account | 로그인 무료 사용자 | 매일 기본 꿈 해몽, 꿈 영수증 보관, 발자국/밤의 기록 루틴 |
 | Moon Pass | 유료 사용자 | 상세 꿈 해몽, 회색냥, 타로 상징 리딩, 월간 꿈 정산 |
 
 ## Guest

@@ -24,13 +24,13 @@ source: docs/manyang-dream-project-spec-updated.md
 
 ## 밤 루프
 
-자기 전 꿈 씨앗은 좋은 장치지만 1차 MVP에서는 제외한다.
+자기 전 루틴은 꿈을 유도하는 의도 선택보다, 오늘 하루의 기분과 컨디션을 남기는 밤의 기록으로 가져간다.
 
 ```text
 자기 전 접속
-→ 오늘 밤 꿈에게 묻고 싶은 질문 선택
-→ 꿈 씨앗 심기
-→ 다음날 아침 꿈 기록 유도
+→ 오늘 하루의 기분과 몸 컨디션 선택
+→ 한 줄 기록 남기기
+→ 다음날 꿈 해몽에서 어젯밤의 맥락으로 참고
 ```
 
 ## 핵심 리텐션 장치
@@ -41,7 +41,7 @@ source: docs/manyang-dream-project-spec-updated.md
 | 기억 안 남 흐름 | 예 | 매일 꿈을 기억하지 못하는 문제 보완 |
 | 상징 히스토리 | 부분 | 자주 등장한 상징을 보여주는 재미 |
 | 주간 리포트 | 아니오 | 2차 MVP |
-| 꿈 씨앗 | 아니오 | 2차 MVP |
+| 밤의 기록 | 예 | 해몽 신뢰도와 다음날 재방문 보강 |
 
 ## Related
 
@@ -52,4 +52,3 @@ source: docs/manyang-dream-project-spec-updated.md
 
 - [[Morning-Mood-Flow]] — 아침 루프의 제품 기능 (03-Features)
 - [[Dream-Archive-&-Calendar]] — 기록 기반 리텐션 (03-Features)
-

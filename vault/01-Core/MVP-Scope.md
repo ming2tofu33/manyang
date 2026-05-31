@@ -45,7 +45,7 @@ source: docs/manyang-dream-project-spec-updated.md
 - 고급 리포트
 - 임베딩 기반 유사 꿈 검색
 - 많은 고양이 캐릭터
-- 자기 전 꿈 씨앗
+- 자기 전 밤의 기록
 - 고양이방 고도화
 
 ## MVP 루프
@@ -68,4 +68,3 @@ source: docs/manyang-dream-project-spec-updated.md
 
 - [[Phase-Flow]] — MVP를 단계로 쪼갠 실행 흐름 (09-Implementation)
 - [[Screen-Inventory]] — MVP 화면 목록 (08-Design)
-

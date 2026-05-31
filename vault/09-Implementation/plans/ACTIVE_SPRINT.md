@@ -32,7 +32,7 @@ status: active
 | DATA-01 | 백과사전 seed 10개 구현 | doing | P0 | backend seed 구현 완료, 프론트 목록 렌더링 연결 대기 |
 | AI-01 | mock 분석 API 구현 | done | P0 | `POST /api/dreams/analyze`가 mock analyzer 결과 JSON 반환 |
 | FLOW-01 | 입력→결과→저장→기록 루프 | review | P0 | localStorage 루프 구현 완료, 브라우저 클릭 검증 대기 |
-| SEED-01 | 자기 전 꿈 씨앗 화면 | review | P1 | `/seed` 화면, 저장 루프, 홈 진입점 구현 |
+| NIGHT-01 | 자기 전 밤의 기록 화면 | review | P1 | `/night` 화면, 저장 루프, 홈 진입점 구현. `/seed`는 호환 리다이렉트 |
 | ACCESS-01 | Guest/Free/Moon Pass 접근 정책 | todo | P0 | 하위 ACCESS-01A~01G 구현과 검증 완료 |
 | ACCESS-01A | 접근 정책 helper | done | P0 | `access-policy` helper, dev plan simulation, 테스트 구현 |
 | ACCESS-01B | 데일리 해몽 사용 기록 | todo | P0 | 05:00 기준 1일 1회 사용 기록 localStorage 구현 |
@@ -179,7 +179,7 @@ status: active
 - AI-RAG-23: 정상 UTF-8 한국어 입력이 실제 코드 경로에서 매칭되는지 확인했다. `runtime-symbol-matcher`, `structured-dream-analysis`, `mock-analysis` 테스트에 `내 땅에 큰 구렁이와 뱀이 수십 마리 나왔어`, `엘리베이터에 갇혔고 바다를 봤어` 케이스를 추가해 `snake/owned_land/many`, `elevator/sea`가 잡히는 것을 고정했다. 별도 Unicode escape 스모크에서도 같은 결과를 확인했다. 이전 `tsx -` 수동 스모크의 `[]` 결과는 PowerShell stdin이 한글을 `????`로 깨뜨린 입력 경로 문제로 판단했다. `backend` 전체 test/typecheck와 `frontend` analyze route focused test 통과.
 - AI-RAG-24: live quality eval에 RAG candidate boundary와 promotion 기준을 추가했다. `en_rag_candidate_snake_hospital`은 명시된 `Snake`가 잡히면서 semantic candidate인 `Hospital`이 confirmed/symbolReading으로 새지 않는지 검증하고, `en_rag_promotion_train_path`는 semantic chunk와 vector search가 함께 잡은 비민감 `Train`이 confirmed evidence로 승격되는지 검증한다. `en_rag_sensitive_vector_guard`는 민감 상징 자동 승격 방지 케이스로 유지했다. `RagGroundingMetrics`에는 `forbiddenSymbols/forbiddenSymbolHits`를 추가했고, Markdown report도 forbidden symbol hit를 표시한다. `backend` focused quality/RAG/LLM tests, 전체 test, typecheck와 `frontend` analyze route focused test 통과.
 
-- SEED-01: `/seed` 화면과 `manyang:dream-seed` localStorage 저장 구현. `frontend`의 `npm test`, `npm run lint`, `npm run build` 통과. 모바일 브라우저에서 홈 진입, 선택 상태, 100자 제한, 저장, reload persistence, Today nav active 상태 확인.
+- NIGHT-01: `/night` 화면과 `manyang:night-checkin` 저장 구현. 기존 `/seed`는 `/night`로 리다이렉트. 홈 진입, 선택 상태, 100자 제한, 로그인 사용자 저장, 기록 달력, 결과 영수증의 어젯밤 기록 맥락 연결을 확인한다.
 - ACCESS-01A: `frontend/src/lib/access-policy.ts`와 테스트 추가. 실제 `AccessPlan`은 `guest/free_account/moon_pass`만 유지하고, dev override로 세 플랜 시뮬레이션과 daily limit bypass를 지원. `admin` 값은 무시하도록 테스트. `frontend`의 `npm test`, `npm run lint`, `npm run build` 통과.
 - SEO-01: 백과 상세 페이지를 seed 기반 SSG로 전환. `/encyclopedia/[slug]` metadata/canonical/Open Graph, `/sitemap.xml`, `/robots.txt`, app flow noindex 구현. `frontend`의 focused test, `npm test`, `npm run lint`, `npm run build`, `backend`의 `npm test`, `npm run typecheck` 통과. `http://127.0.0.1:3000/encyclopedia/cat`, `/sitemap.xml`, `/robots.txt` 응답 확인.
 - SEO-02: Vercel 환경변수 `NEXT_PUBLIC_SITE_URL=https://manyang.vercel.app` 적용 후 redeploy 완료. 운영 URL에서 `https://manyang.vercel.app/robots.txt`가 canonical sitemap을 가리키고, `https://manyang.vercel.app/sitemap.xml`에 38개 URL이 포함되며 Vercel 임시 deployment 도메인이 제거된 것을 확인. `https://manyang.vercel.app/encyclopedia/cat`은 200 응답, canonical `https://manyang.vercel.app/encyclopedia/cat`, `noindex=false` 확인.
