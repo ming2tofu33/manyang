@@ -3,15 +3,21 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState, useSyncExternalStore } from "react";
-import type { DreamAnalysisResponse, DreamReadingUnavailableReason } from "@manyang/backend";
+import type { DreamAnalysisResponse, DreamNightContext, DreamReadingUnavailableReason } from "@manyang/backend";
 
 import { CatReaderPicker } from "./cat-reader-picker";
 import { DreamLoadingOverlay } from "./dream-loading-overlay";
+import {
+  canRequestReading,
+  getReadingKindForCatReader,
+  hasUsedBasicReadingOnDate,
+} from "@/lib/access-policy";
 import {
   getCatReaderDreamReadingState,
   getCatReaderById,
   getDefaultCatReaderSnapshot,
   getSelectedCatReaderSnapshotFromBrowser,
+  resolveCatReaderForDreamReading,
   subscribeToSelectedCatReader,
   type CatReaderId,
 } from "@/lib/cat-readers";
@@ -28,14 +34,21 @@ import {
 import {
   clearDreamDraftFromBrowser,
   getDreamDraftFromBrowser,
+  getLatestAnalysisSnapshotFromBrowser,
   saveDreamDraftToBrowser,
-  saveDreamRecordToBrowser,
   saveLatestAnalysisToBrowser,
+  subscribeToDreamStorage,
   type DreamUnavailablePayload,
 } from "@/lib/dream-storage";
 import { DREAM_LOADING_MINIMUM_MS } from "@/lib/dream-loading-sequence";
 import { manyangAssets } from "@/lib/manyang-assets";
+import {
+  getNightCheckInSnapshotFromBrowser,
+  isNightCheckInRelatedToDreamDate,
+  type NightCheckInRecord,
+} from "@/lib/night-checkin";
 import { cn, ui } from "@/lib/styles";
+import { useAccessPlan } from "@/lib/use-access-plan";
 
 function getTodayDate(): string {
   const now = new Date();
@@ -62,10 +75,6 @@ type DreamUnavailableApiResponse = {
   safetyNotice?: string;
 };
 
-function createFallbackRecordId(prefix: string): string {
-  return globalThis.crypto?.randomUUID?.() ?? `${prefix}-${Date.now()}`;
-}
-
 function isDreamUnavailableApiResponse(value: unknown): value is DreamUnavailableApiResponse {
   return (
     typeof value === "object" &&
@@ -74,6 +83,19 @@ function isDreamUnavailableApiResponse(value: unknown): value is DreamUnavailabl
     typeof (value as DreamUnavailableApiResponse).reason === "string" &&
     typeof (value as DreamUnavailableApiResponse).retryable === "boolean"
   );
+}
+
+function createDreamNightContext(record: NightCheckInRecord | null, dreamDate: string): DreamNightContext | undefined {
+  if (!record || !isNightCheckInRelatedToDreamDate(record, dreamDate)) {
+    return undefined;
+  }
+
+  return {
+    checkInDate: record.checkInDate,
+    moodLabel: record.moodLabel,
+    conditionLabel: record.conditionLabel,
+    ...(record.note ? { note: record.note } : {}),
+  };
 }
 
 function OptionButton({ option, isSelected, onClick, disabled = false, iconSize = "default" }: OptionButtonProps) {
@@ -110,6 +132,71 @@ function OptionButton({ option, isSelected, onClick, disabled = false, iconSize 
   );
 }
 
+type DreamSubmitButtonProps = {
+  isSubmitting: boolean;
+  isReadingAvailable: boolean;
+  canSubmit?: boolean;
+  submitButtonLabel: string;
+  unavailableLabel: string;
+};
+
+export function DreamSubmitButton({
+  isSubmitting,
+  isReadingAvailable,
+  canSubmit = isReadingAvailable,
+  submitButtonLabel,
+  unavailableLabel,
+}: DreamSubmitButtonProps) {
+  const isPrimaryVisual = canSubmit;
+  const content = (
+    <>
+      <Image
+        src={manyangAssets.buttons.dreammemorySubmit}
+        alt={
+          !canSubmit
+            ? unavailableLabel
+            : isSubmitting
+              ? "고양이가 꿈을 읽는 중"
+              : "해몽 받기"
+        }
+        width={857}
+        height={200}
+        sizes="382px"
+        unoptimized
+        className={cn("manyang-button-glow h-auto w-full", !isPrimaryVisual ? "grayscale-[0.28]" : "")}
+      />
+      <span
+        className={cn(
+          "pointer-events-none absolute inset-0 flex items-center justify-center pb-1 font-semibold tracking-normal text-[#ffc978] [text-shadow:0_2px_2px_rgba(34,10,20,0.88),0_0_14px_rgba(255,198,104,0.26)]",
+          !isPrimaryVisual ? "px-9 text-[1.05rem] leading-tight" : "text-[1.72rem] leading-none",
+        )}
+      >
+        {submitButtonLabel}
+      </span>
+    </>
+  );
+  const className =
+    "relative mx-auto -my-2 mt-0 block w-[92%] max-w-[21rem] px-2 py-0 transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-[#f7d58b] disabled:cursor-not-allowed disabled:opacity-70";
+
+  return (
+    <button
+      type="submit"
+      disabled={isSubmitting || !canSubmit}
+      title={submitButtonLabel}
+      aria-label={
+        !canSubmit
+          ? unavailableLabel
+          : isSubmitting
+            ? "고양이가 꿈을 읽는 중"
+            : "해몽 받기"
+      }
+      className={className}
+    >
+      {content}
+    </button>
+  );
+}
+
 export function DreamEntryForm() {
   const router = useRouter();
   const [initialDraft] = useState(() => getDreamDraftFromBrowser());
@@ -118,6 +205,13 @@ export function DreamEntryForm() {
     getSelectedCatReaderSnapshotFromBrowser,
     getDefaultCatReaderSnapshot,
   );
+  const latestAnalysis = useSyncExternalStore(
+    subscribeToDreamStorage,
+    getLatestAnalysisSnapshotFromBrowser,
+    () => null,
+  );
+  const todayDate = getTodayDate();
+  const { accessPlan, bypassDailyLimit } = useAccessPlan();
   const [dreamText, setDreamText] = useState(initialDraft?.dreamText ?? "");
   const [dreamAtmospheres, setDreamAtmospheres] = useState<string[]>([]);
   const [dreamSensations, setDreamSensations] = useState<string[]>([]);
@@ -127,7 +221,34 @@ export function DreamEntryForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const selectedCatReaderId = draftCatReaderId ?? storedCatReaderId;
   const selectedCatReader = getCatReaderById(selectedCatReaderId);
-  const readingState = getCatReaderDreamReadingState(selectedCatReaderId);
+  const readingState = getCatReaderDreamReadingState(selectedCatReaderId, accessPlan);
+  const readingResolution = resolveCatReaderForDreamReading(selectedCatReaderId, accessPlan);
+  const requestCatReaderId = readingResolution.requestReaderId;
+  const requestCatReader = getCatReaderById(requestCatReaderId);
+  const isFallbackReading = readingResolution.isFallback;
+  const readingKind = getReadingKindForCatReader(requestCatReaderId);
+  const readingGate = canRequestReading({
+    accessPlan,
+    readingKind,
+    hasUsedBasicReadingToday: hasUsedBasicReadingOnDate(latestAnalysis, todayDate),
+    bypassDailyLimit,
+  });
+  const isDailyLimitGate = readingGate.reason === "guest_daily_limit" || readingGate.reason === "free_daily_limit";
+  const isReadingAvailable = readingGate.allowed && (!isFallbackReading || Boolean(readingState.fallbackReaderId));
+  const canSubmitReading = isReadingAvailable || isDailyLimitGate;
+  const unavailableLabel = readingGate.ctaLabel ?? readingState.blockedLabel ?? "지금은 해몽을 받을 수 없어요";
+  const blockedNoticeTitle = isDailyLimitGate ? "오늘의 꿈 영수증은 이미 받았어요" : unavailableLabel;
+  const accessNoticeTitle = isFallbackReading
+    ? (readingResolution.blockedLabel ?? unavailableLabel)
+    : blockedNoticeTitle;
+  const accessNoticeMessage = isFallbackReading
+    ? `무료 체험 해몽은 ${requestCatReader.name}으로 바로 받아볼 수 있어요.`
+    : readingGate.message;
+  const submitButtonLabel = isSubmitting
+      ? "꿈 읽는 중"
+      : isFallbackReading
+        ? `${requestCatReader.name}으로 무료 해몽 받기`
+        : "해몽 받기";
 
   function toggleDreamAtmosphere(label: string): void {
     setDreamAtmospheres((currentAtmospheres) => {
@@ -167,16 +288,24 @@ export function DreamEntryForm() {
       return;
     }
 
-    if (!readingState.isAvailable) {
-      setError(`${readingState.blockedLabel ?? "선택한 고양이"} 아직은 무료 해몽을 받을 수 없어요.`);
+    if (!readingGate.allowed) {
+      setError(readingGate.message ?? unavailableLabel);
+      return;
+    }
+
+    if (!readingState.isAvailable && !isFallbackReading) {
+      setError(unavailableLabel);
       return;
     }
 
     setError("");
     setIsSubmitting(true);
+    if (isFallbackReading) {
+      setDraftCatReaderId(requestCatReaderId);
+    }
 
     try {
-      const dreamDate = getTodayDate();
+      const dreamDate = todayDate;
       const trimmedOtherSensation = otherSensation.trim();
       const sensations = trimmedOtherSensation
         ? [...dreamSensations, trimmedOtherSensation]
@@ -188,11 +317,13 @@ export function DreamEntryForm() {
       const sensationIds = dreamSensationOptions
         .filter((option) => dreamSensations.includes(option.label))
         .map((option) => option.id);
+      const nightContext = createDreamNightContext(getNightCheckInSnapshotFromBrowser(), dreamDate);
       // 요청·저장에 공통으로 쓰는 구조화 감정/감각 신호(재분석 대비).
       const selectedSignals = {
         ...(atmosphereIds.length > 0 ? { dreamAtmospheres: atmosphereIds } : {}),
         ...(sensationIds.length > 0 ? { dreamSensations: sensationIds } : {}),
         ...(trimmedOtherSensation ? { dreamSensationOther: trimmedOtherSensation } : {}),
+        ...(nightContext ? { nightContext } : {}),
       };
 
       const minDelay = new Promise((resolve) => setTimeout(resolve, DREAM_LOADING_MINIMUM_MS));
@@ -207,7 +338,7 @@ export function DreamEntryForm() {
           dreamDate,
           ...(wakeMood ? { wakeMood } : {}),
           ...selectedSignals,
-          catReaderType: selectedCatReaderId,
+          catReaderType: requestCatReaderId,
         }),
       });
 
@@ -220,7 +351,7 @@ export function DreamEntryForm() {
             status: "unavailable",
             dreamText: trimmedDreamText,
             dreamDate,
-            catReaderType: selectedCatReaderId,
+            catReaderType: requestCatReaderId,
             ...(wakeMood ? { wakeMood } : {}),
             ...selectedSignals,
             reason: responseBody.reason,
@@ -232,13 +363,8 @@ export function DreamEntryForm() {
           saveLatestAnalysisToBrowser(unavailablePayload);
           saveDreamDraftToBrowser({
             dreamText: trimmedDreamText,
-            catReaderType: selectedCatReaderId,
+            catReaderType: requestCatReaderId,
             ...(wakeMood ? { wakeMood } : {}),
-          });
-          saveDreamRecordToBrowser({
-            ...unavailablePayload,
-            id: createFallbackRecordId("unavailable-dream"),
-            savedAt: new Date().toISOString(),
           });
           router.push("/result");
           return;
@@ -251,7 +377,7 @@ export function DreamEntryForm() {
       const payload = {
         dreamText: trimmedDreamText,
         dreamDate,
-        catReaderType: selectedCatReaderId,
+        catReaderType: requestCatReaderId,
         ...(wakeMood ? { wakeMood } : {}),
         ...selectedSignals,
         analysis,
@@ -259,11 +385,6 @@ export function DreamEntryForm() {
 
       saveLatestAnalysisToBrowser(payload);
       clearDreamDraftFromBrowser();
-      saveDreamRecordToBrowser({
-        ...payload,
-        id: analysis.dreamId,
-        savedAt: new Date().toISOString(),
-      });
 
       router.push("/result");
     } catch {
@@ -279,7 +400,8 @@ export function DreamEntryForm() {
         key={isSubmitting ? `reading-${selectedCatReaderId}` : "idle-reading"}
         isActive={isSubmitting}
         background={manyangAssets.backgrounds[selectedCatReader.interpretationBackgroundKey]}
-        catImage={manyangAssets.illustrations[selectedCatReader.assetKey]}
+        readerImage={manyangAssets.loadingReaders[selectedCatReader.assetKey]}
+        introImage={manyangAssets.backgrounds[selectedCatReader.interpretationBackgroundKey]}
       />
       <form onSubmit={handleSubmit} className="mt-1 space-y-4 pb-4">
         <section className="flex items-center gap-3">
@@ -310,21 +432,22 @@ export function DreamEntryForm() {
           variant="compact"
         />
 
-        {!readingState.isAvailable ? (
+        {isFallbackReading || !isReadingAvailable ? (
           <div className="rounded-[1rem] border border-[#d799ff]/28 bg-[rgba(24,12,38,0.72)] px-3 py-2 text-[12px] leading-5 text-[#fff3d7]/82">
-            <p className="font-semibold text-[#e7b3ff]">{readingState.blockedLabel}</p>
-            <button
-              type="button"
-              onClick={() => {
-                if (readingState.fallbackReaderId) {
+            <p className="font-semibold text-[#e7b3ff]">{accessNoticeTitle}</p>
+            {accessNoticeMessage ? <p className="mt-1 text-[#fff3d7]/72">{accessNoticeMessage}</p> : null}
+            {readingState.fallbackReaderId ? (
+              <button
+                type="button"
+                onClick={() => {
                   setDraftCatReaderId(readingState.fallbackReaderId);
                   setError("");
-                }
-              }}
-              className="mt-2 rounded-full border border-[#b98255]/48 px-3 py-1.5 text-[12px] font-semibold text-[#f4b65f] transition hover:border-[#d799ff]/60 hover:text-[#ffd98a] focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
-            >
-              검은냥으로 바꾸기
-            </button>
+                }}
+                className="mt-2 rounded-full border border-[#b98255]/48 px-3 py-1.5 text-[12px] font-semibold text-[#f4b65f] transition hover:border-[#d799ff]/60 hover:text-[#ffd98a] focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
+              >
+                검은냥으로 바꾸기
+              </button>
+            ) : null}
           </div>
         ) : null}
 
@@ -423,42 +546,14 @@ export function DreamEntryForm() {
 
         {error ? <p className="px-2 text-sm text-[#ffd98a]">{error}</p> : null}
 
-        <button
-          type="submit"
-          disabled={isSubmitting || !readingState.isAvailable}
-          aria-label={
-            !readingState.isAvailable
-              ? (readingState.blockedLabel ?? "Moon Pass에서 열려요")
-              : isSubmitting
-                ? "고양이가 꿈을 읽는 중"
-                : "해몽 받기"
-          }
-          className="relative mx-auto -my-2 mt-0 block w-full px-3 py-0 transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-[#f7d58b] disabled:cursor-not-allowed disabled:opacity-70"
-        >
-          <Image
-            src={manyangAssets.buttons.dreammemorySubmit}
-            alt={
-              !readingState.isAvailable
-                ? (readingState.blockedLabel ?? "Moon Pass에서 열려요")
-                : isSubmitting
-                  ? "고양이가 꿈을 읽는 중"
-                  : "해몽 받기"
-            }
-            width={857}
-            height={262}
-            sizes="382px"
-            unoptimized
-            className={cn("manyang-button-glow h-auto w-full", !readingState.isAvailable ? "grayscale-[0.28]" : "")}
-          />
-          <span
-            className={cn(
-              "pointer-events-none absolute inset-0 flex items-center justify-center pb-1 font-semibold tracking-normal text-[#ffc978] [text-shadow:0_2px_2px_rgba(34,10,20,0.88),0_0_14px_rgba(255,198,104,0.26)]",
-              !readingState.isAvailable ? "px-9 text-[1.05rem] leading-tight" : "text-[2rem] leading-none",
-            )}
-          >
-            {!readingState.isAvailable ? readingState.blockedLabel : isSubmitting ? "꿈 읽는 중" : "해몽 받기"}
-          </span>
-        </button>
+        <DreamSubmitButton
+          isSubmitting={isSubmitting}
+          isReadingAvailable={isReadingAvailable}
+          canSubmit={canSubmitReading}
+          submitButtonLabel={submitButtonLabel}
+          unavailableLabel={unavailableLabel}
+        />
+
       </form>
     </>
   );

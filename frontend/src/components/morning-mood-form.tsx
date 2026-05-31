@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { FormEvent, type ReactNode, useState, useSyncExternalStore } from "react";
+import { FormEvent, type ReactNode, useEffect, useState, useSyncExternalStore } from "react";
 
 import { AssetImageTextButton, AssetTextButton } from "@/components/asset-primitives";
 import {
@@ -18,6 +18,9 @@ import {
   getPawprintAppDate,
   savePawprintToBrowser,
 } from "@/lib/pawprints";
+import { savePawprintToApi } from "@/lib/routine-record-api";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { mergeRemotePawprintResult } from "@/lib/use-routine-records";
 import {
   morningBodyFeelings,
   morningMoodCopy,
@@ -106,6 +109,10 @@ export function MorningMoodForm() {
   const [thought, setThought] = useState<string | null>(null);
   const [savedRecordOverride, setSavedRecordOverride] = useState<MorningMoodRecord | null>(null);
   const [pawprintCreated, setPawprintCreated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isSavingRoutineRecord, setIsSavingRoutineRecord] = useState(false);
+  const [routineSaveError, setRoutineSaveError] = useState(false);
+  const [showGuestPersistencePrompt, setShowGuestPersistencePrompt] = useState(true);
   const savedRecord =
     savedRecordOverride ?? storedRecords.find((record) => record.moodDate === todayDate) ?? null;
   const activeMood = selectedMood ?? savedRecord?.mood ?? "";
@@ -113,7 +120,34 @@ export function MorningMoodForm() {
   const displayedThought = thought ?? savedRecord?.thought ?? "";
   const hasSavedToday = savedRecord !== null;
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  useEffect(() => {
+    let isMounted = true;
+
+    async function checkSession() {
+      try {
+        const supabase = createSupabaseBrowserClient();
+        const { data } = await supabase.auth.getSession();
+
+        if (isMounted) {
+          setIsAuthenticated(Boolean(data.session));
+          setShowGuestPersistencePrompt(!data.session);
+        }
+      } catch {
+        if (isMounted) {
+          setIsAuthenticated(false);
+          setShowGuestPersistencePrompt(true);
+        }
+      }
+    }
+
+    void checkSession();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const record = createMorningMoodRecord({
@@ -124,20 +158,47 @@ export function MorningMoodForm() {
       moodDate: todayDate,
     });
 
+    if (!isAuthenticated) {
+      setShowGuestPersistencePrompt(true);
+      setPawprintCreated(false);
+      return;
+    }
+
     saveMorningMoodRecordToBrowser(record);
-    const pawprintResult = savePawprintToBrowser(
-      createPawprintRecord({
-        appDate: getPawprintAppDate(),
-        source: "morning_record",
-        sourceId: record.id,
-      }),
-    );
+    const pawprintInput = {
+      appDate: getPawprintAppDate(),
+      source: "morning_record" as const,
+      sourceId: record.id,
+    };
+
+    setIsSavingRoutineRecord(true);
+    setRoutineSaveError(false);
+
+    const pawprintResult = await savePawprintToApi(pawprintInput);
+
+    setIsSavingRoutineRecord(false);
 
     setSavedRecordOverride(record);
     setSelectedMood(record.mood);
     setSelectedBodyFeeling(record.bodyFeeling);
     setThought(record.thought);
-    setPawprintCreated(pawprintResult?.created ?? false);
+
+    if (pawprintResult.status === "unauthenticated") {
+      setIsAuthenticated(false);
+      setShowGuestPersistencePrompt(true);
+      setPawprintCreated(false);
+      return;
+    }
+
+    if (pawprintResult.status === "error") {
+      setRoutineSaveError(true);
+      setPawprintCreated(false);
+      return;
+    }
+
+    mergeRemotePawprintResult(pawprintResult);
+    savePawprintToBrowser(createPawprintRecord(pawprintInput), { isAuthenticated });
+    setPawprintCreated(pawprintResult.created);
   }
 
   return (
@@ -194,7 +255,30 @@ export function MorningMoodForm() {
         <section className="rounded-[1.05rem] border border-[#d799ff]/35 bg-[rgba(25,11,39,0.78)] px-4 py-3 text-sm leading-6 text-[#fff3d7] shadow-[0_0_24px_rgba(164,82,255,0.24)]">
           <p className="font-semibold text-[#ffd98a]">{morningMoodCopy.savedTitle}</p>
           <p className="mt-1 text-[#fff3d7]/78">{morningMoodCopy.savedDescription}</p>
+          {routineSaveError ? <p className="mt-1 text-[#f0bc7d]">발자국 저장이 잠시 지연됐어요. 다시 시도해 주세요.</p> : null}
           {pawprintCreated ? <p className="mt-1 font-semibold text-[#f0bc7d]">오늘의 발자국이 남았어요.</p> : null}
+        </section>
+      ) : null}
+
+      {showGuestPersistencePrompt ? (
+        <section
+          className="rounded-[1.05rem] border border-[#d799ff]/35 bg-[rgba(25,11,39,0.78)] px-4 py-3 text-sm leading-6 text-[#fff3d7] shadow-[0_0_24px_rgba(164,82,255,0.24)]"
+          data-routine-login-cta="pawprint"
+        >
+          <p className="font-semibold text-[#ffd98a]">로그인하면 오늘의 발자국이 기록장에 남아요.</p>
+          <p className="mt-1 text-[#fff3d7]/78">
+            비로그인 상태에서는 발자국을 누적하지 않고, 계정에 로그인하면 달력과 기록장에 남길 수 있어요.
+          </p>
+          <AssetTextButton
+            href="/auth?next=%2Fmorning"
+            frame={manyangAssets.buttons.mediumSecondary}
+            iconSrc={manyangAssets.actionIcons.profile}
+            className="mt-3 max-w-[15rem]"
+            contentClassName="min-h-[3.05rem] px-4 text-sm"
+            iconClassName="h-6 w-6"
+          >
+            Google로 로그인하기
+          </AssetTextButton>
         </section>
       ) : null}
 
@@ -207,8 +291,9 @@ export function MorningMoodForm() {
         className="mx-auto -mt-1 block w-[82%] px-2 py-0"
         imageClassName="manyang-button-glow"
         contentClassName="text-[1.35rem]"
+        disabled={isSavingRoutineRecord}
       >
-        {hasSavedToday ? morningMoodCopy.submitAgain : morningMoodCopy.submit}
+        {isSavingRoutineRecord ? "저장 중" : hasSavedToday ? morningMoodCopy.submitAgain : morningMoodCopy.submit}
       </AssetImageTextButton>
 
       {hasSavedToday ? (

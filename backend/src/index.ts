@@ -5,6 +5,7 @@ export type {
   DreamAnalysisRequest,
   DreamAnalysisResponse,
   DreamCardResponse,
+  DreamNightContext,
   DreamSymbolCategory,
   EncyclopediaEntry,
 } from "./contracts/dream";

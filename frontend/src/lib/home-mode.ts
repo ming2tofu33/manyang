@@ -1,4 +1,5 @@
-import type { DreamSeedRecord } from "./dream-seed";
+import type { NightCheckInRecord } from "./night-checkin";
+import { nightCheckInRoute } from "./night-checkin-options";
 
 export type HomeMode = "morning" | "night";
 
@@ -13,7 +14,7 @@ export type HomeState = {
   primary: HomeAction;
   secondary: HomeAction;
   tertiary: HomeAction;
-  seedBadge: string | null;
+  checkInBadge: string | null;
 };
 
 function formatLocalDate(date: Date): string {
@@ -37,53 +38,53 @@ export function isNightHomeTime(date: Date): boolean {
   return hour >= 19 || hour < 5;
 }
 
-function getSeedBadge(seed: DreamSeedRecord | null): string | null {
-  return seed ? `씨앗: ${seed.intentLabel}` : null;
+function getCheckInBadge(checkIn: NightCheckInRecord | null): string | null {
+  return checkIn ? `밤 기록: ${checkIn.moodLabel} · ${checkIn.conditionLabel}` : null;
 }
 
-function isMorningSeedVisible(date: Date, seed: DreamSeedRecord | null): boolean {
-  if (!seed) {
+function isMorningCheckInVisible(date: Date, checkIn: NightCheckInRecord | null): boolean {
+  if (!checkIn) {
     return false;
   }
 
   const today = formatLocalDate(date);
   const yesterday = getPreviousLocalDate(date);
 
-  return seed.seedDate === today || seed.seedDate === yesterday;
+  return checkIn.checkInDate === today || checkIn.checkInDate === yesterday;
 }
 
-function isTonightSeedVisible(date: Date, seed: DreamSeedRecord | null): boolean {
-  if (!seed) {
+function isTonightCheckInVisible(date: Date, checkIn: NightCheckInRecord | null): boolean {
+  if (!checkIn) {
     return false;
   }
 
-  return seed.seedDate === formatLocalDate(date);
+  return checkIn.checkInDate === formatLocalDate(date);
 }
 
-export function getHomeState(date: Date, seed: DreamSeedRecord | null): HomeState {
+export function getHomeState(date: Date, checkIn: NightCheckInRecord | null): HomeState {
   if (isNightHomeTime(date)) {
-    const hasTonightSeed = isTonightSeedVisible(date, seed);
+    const hasTonightCheckIn = isTonightCheckInVisible(date, checkIn);
 
     return {
       mode: "night",
-      question: hasTonightSeed ? "오늘 밤 씨앗을 심어두었어요" : "오늘 밤 꿈에게 무엇을 물어볼까요?",
-      primary: { label: "꿈 들려주기", href: "/write" },
-      secondary: { label: "꿈 씨앗 심기", href: "/seed" },
+      question: hasTonightCheckIn ? "오늘 밤의 기록을 남겨두었어요" : "오늘 하루의 기분과 컨디션을 남겨볼까요?",
+      primary: { label: "꿈 해몽하기", href: "/write" },
+      secondary: { label: "밤의 기록 남기기", href: nightCheckInRoute },
       tertiary: { label: "오늘 기록 보기", href: "/archive" },
-      seedBadge: hasTonightSeed ? getSeedBadge(seed) : null,
+      checkInBadge: hasTonightCheckIn ? getCheckInBadge(checkIn) : null,
     };
   }
 
-  const hasRecentSeed = isMorningSeedVisible(date, seed);
+  const hasRecentCheckIn = isMorningCheckInVisible(date, checkIn);
 
   return {
     mode: "morning",
-    question: hasRecentSeed
-      ? "어젯밤 심은 꿈 씨앗이 있어요. 꿈에 어떤 장면이 남았나요?"
+    question: hasRecentCheckIn
+      ? "어젯밤의 기록이 있어요. 꿈에 어떤 장면이 남았나요?"
       : "어젯밤 꿈을 기억하나요?",
-    primary: { label: "꿈 들려주기", href: "/write" },
+    primary: { label: "꿈 해몽하기", href: "/write" },
     secondary: { label: "기억나지 않아요", href: "/morning" },
-    tertiary: { label: "오늘 밤 꿈 씨앗 심기", href: "/seed" },
-    seedBadge: hasRecentSeed ? getSeedBadge(seed) : null,
+    tertiary: { label: "오늘 밤 기록 남기기", href: nightCheckInRoute },
+    checkInBadge: hasRecentCheckIn ? getCheckInBadge(checkIn) : null,
   };
 }

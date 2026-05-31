@@ -16,6 +16,13 @@ export type CatReaderResponse = {
   access: CatReaderAccess;
 };
 
+export type DreamNightContext = {
+  checkInDate: string;
+  moodLabel: string;
+  conditionLabel: string;
+  note?: string;
+};
+
 export type EncyclopediaEntry = {
   symbol: string;
   slug: string;
@@ -41,6 +48,8 @@ export type DreamAnalysisRequest = {
   dreamSensations?: string[];
   /** 사용자가 '그 외'에 직접 적은 감각. 약한 신호로 처방 앵커에만 쓰인다. */
   dreamSensationOther?: string;
+  /** 전날 밤 사용자가 남긴 기분/컨디션 기록. 꿈을 정하는 값이 아니라 해몽 맥락으로만 사용한다. */
+  nightContext?: DreamNightContext;
   catReaderType?: CatReaderType;
   locale?: "ko" | "en";
   userTimeZone?: string;

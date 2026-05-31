@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { dreamSeedRoute } from "./dream-seed-options";
+import { legacyDreamSeedRoute, nightCheckInRoute } from "./night-checkin-options";
 import { bottomNavItems, getActiveNavItem } from "./navigation";
 
 describe("bottom navigation", () => {
@@ -21,8 +21,9 @@ describe("bottom navigation", () => {
   it("maps morning mood flow back to today", () => {
     expect(getActiveNavItem("/morning")?.label).toBe("오늘");
   });
-  it("maps dream seed flow back to today", () => {
-    expect(getActiveNavItem(dreamSeedRoute)?.key).toBe("today");
+  it("maps night check-in flow back to today", () => {
+    expect(getActiveNavItem(nightCheckInRoute)?.key).toBe("today");
+    expect(getActiveNavItem(legacyDreamSeedRoute)?.key).toBe("today");
   });
 
   it("marks profile pages as my room", () => {

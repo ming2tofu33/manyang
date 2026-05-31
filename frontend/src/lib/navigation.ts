@@ -1,4 +1,4 @@
-import { dreamSeedRoute } from "./dream-seed-options";
+import { legacyDreamSeedRoute, nightCheckInRoute } from "./night-checkin-options";
 
 export type NavKey = "today" | "write" | "archive" | "encyclopedia" | "profile";
 
@@ -17,7 +17,10 @@ export const bottomNavItems: BottomNavItem[] = [
     href: "/",
     icon: "moon",
     match: (pathname) =>
-      pathname === "/" || pathname.startsWith("/morning") || pathname.startsWith(dreamSeedRoute),
+      pathname === "/" ||
+      pathname.startsWith("/morning") ||
+      pathname.startsWith(nightCheckInRoute) ||
+      pathname.startsWith(legacyDreamSeedRoute),
   },
   {
     key: "write",
