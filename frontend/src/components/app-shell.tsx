@@ -32,7 +32,7 @@ export function AppShell({
   backgroundOverlay,
   backgroundClassName = "object-cover opacity-68",
   scrimClassName = "absolute inset-0 bg-[linear-gradient(180deg,rgba(5,4,11,0.10)_0%,rgba(5,4,11,0.22)_52%,rgba(5,4,11,0.95)_100%)]",
-  bottomScrimClassName = "absolute inset-x-0 bottom-0 h-[42%] bg-[radial-gradient(circle_at_50%_18%,rgba(119,56,173,0.34),transparent_34%),linear-gradient(180deg,transparent,#05040b_70%)]",
+  bottomScrimClassName = "absolute inset-x-0 bottom-0 h-[42%] bg-[linear-gradient(180deg,transparent,#05040b_70%)]",
   title,
   subtitle,
   titleIconSrc,

@@ -1,3 +1,5 @@
+import { isPaidAccessPlan, type AccessPlan } from "./access-policy";
+
 export type StorageLike = {
   getItem(key: string): string | null;
   setItem(key: string, value: string): void;
@@ -89,6 +91,13 @@ export type CatReaderDreamReadingState = {
   fallbackReaderId: CatReaderId | null;
 };
 
+export type CatReaderDreamReadingResolution = {
+  selectedReaderId: CatReaderId;
+  requestReaderId: CatReaderId;
+  isFallback: boolean;
+  blockedLabel: string | null;
+};
+
 let selectedCatReaderSnapshotCache:
   | {
       raw: string | null;
@@ -118,20 +127,60 @@ function normalizeCatReaderId(value: string | undefined | null): CatReaderId | n
   return catReaders.some((reader) => reader.id === value) ? (value as CatReaderId) : null;
 }
 
-export function isCatReaderDreamReadingAvailable(value: string | undefined | null): boolean {
+export function isCatReaderDreamReadingAvailable(
+  value: string | undefined | null,
+  accessPlan: AccessPlan = "guest",
+): boolean {
   const normalizedId = normalizeCatReaderId(value);
 
-  return normalizedId ? freeCatReaders.some((reader) => reader.id === normalizedId) : false;
+  if (!normalizedId) {
+    return false;
+  }
+
+  const reader = getCatReaderById(normalizedId);
+
+  if (reader.access === "annual_premium") {
+    return isPaidAccessPlan(accessPlan);
+  }
+
+  return freeCatReaders.some((freeReader) => freeReader.id === normalizedId);
 }
 
-export function getCatReaderDreamReadingState(value: string | undefined | null): CatReaderDreamReadingState {
+export function getCatReaderDreamReadingState(
+  value: string | undefined | null,
+  accessPlan: AccessPlan = "guest",
+): CatReaderDreamReadingState {
   const reader = getCatReaderById(value);
-  const isAvailable = isCatReaderDreamReadingAvailable(reader.id);
+  const isAvailable = isCatReaderDreamReadingAvailable(reader.id, accessPlan);
 
   return {
     isAvailable,
     blockedLabel: isAvailable ? null : `${reader.name}은 Moon Pass에서 열려요`,
     fallbackReaderId: isAvailable ? null : defaultCatReaderId,
+  };
+}
+
+export function resolveCatReaderForDreamReading(
+  value: string | undefined | null,
+  accessPlan: AccessPlan = "guest",
+): CatReaderDreamReadingResolution {
+  const selectedReader = getCatReaderById(value);
+  const selectedState = getCatReaderDreamReadingState(selectedReader.id, accessPlan);
+
+  if (selectedState.isAvailable || !selectedState.fallbackReaderId) {
+    return {
+      selectedReaderId: selectedReader.id,
+      requestReaderId: selectedReader.id,
+      isFallback: false,
+      blockedLabel: selectedState.blockedLabel,
+    };
+  }
+
+  return {
+    selectedReaderId: selectedReader.id,
+    requestReaderId: selectedState.fallbackReaderId,
+    isFallback: true,
+    blockedLabel: selectedState.blockedLabel,
   };
 }
 

@@ -23,7 +23,8 @@ export function DreamLoadingPageClient() {
     <DreamLoadingOverlay
       isActive
       background={manyangAssets.backgrounds[reader.interpretationBackgroundKey]}
-      catImage={manyangAssets.illustrations[reader.assetKey]}
+      readerImage={manyangAssets.loadingReaders[reader.assetKey]}
+      introImage={manyangAssets.backgrounds[reader.interpretationBackgroundKey]}
     />
   );
 }

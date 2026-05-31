@@ -33,7 +33,6 @@ export function TodayHomeScene() {
       backgroundLayer={
         <HomeCatBackgroundTransition
           background={selectedBackground}
-          readerId={selectedReader.id}
           backgroundClassName={selectedBackgroundClassName}
         />
       }

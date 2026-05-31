@@ -9,6 +9,7 @@ import {
   getSelectedCatReaderId,
   getSelectedCatReaderSnapshot,
   isCatReaderDreamReadingAvailable,
+  resolveCatReaderForDreamReading,
   saveSelectedCatReaderId,
   selectedCatReaderKey,
   type StorageLike,
@@ -84,11 +85,39 @@ describe("cat readers", () => {
     expect(freeCatReaders.map((reader) => reader.id)).toEqual(["black_cat", "white_cat", "cheese_cat"]);
   });
 
-  test("marks only free cat readers as available for MVP dream reading", () => {
+  test("marks only free cat readers as available for guest and free account dream reading", () => {
     expect(isCatReaderDreamReadingAvailable("black_cat")).toBe(true);
     expect(isCatReaderDreamReadingAvailable("white_cat")).toBe(true);
     expect(isCatReaderDreamReadingAvailable("cheese_cat")).toBe(true);
     expect(isCatReaderDreamReadingAvailable("gray_cat")).toBe(false);
+    expect(isCatReaderDreamReadingAvailable("gray_cat", "free_account")).toBe(false);
+  });
+
+  test("allows Moon Pass users to read with gray cat", () => {
+    expect(isCatReaderDreamReadingAvailable("gray_cat", "moon_pass")).toBe(true);
+    expect(getCatReaderDreamReadingState("gray_cat", "moon_pass")).toEqual({
+      isAvailable: true,
+      blockedLabel: null,
+      fallbackReaderId: null,
+    });
+  });
+
+  test("routes guest gray cat dream requests to a free basic reader", () => {
+    expect(resolveCatReaderForDreamReading("gray_cat", "guest")).toEqual({
+      selectedReaderId: "gray_cat",
+      requestReaderId: "black_cat",
+      isFallback: true,
+      blockedLabel: "잿빛냥은 Moon Pass에서 열려요",
+    });
+  });
+
+  test("keeps gray cat dream requests for Moon Pass users", () => {
+    expect(resolveCatReaderForDreamReading("gray_cat", "moon_pass")).toEqual({
+      selectedReaderId: "gray_cat",
+      requestReaderId: "gray_cat",
+      isFallback: false,
+      blockedLabel: null,
+    });
   });
 
   test("describes the premium gray reader dream reading block state", () => {

@@ -30,7 +30,7 @@ describe("EncyclopediaDetailContent", () => {
     expect(markup).toContain("고양이가 다가왔나요");
     expect(markup).toContain("상징 힌트");
     expect(markup).toContain("href=\"/write?symbol=cat\"");
-    expect(markup).toContain("/manyang/ui/buttons/dreammemory-submit-frame.png");
+    expect(markup).toContain("/manyang/ui/buttons/dreammemory-submit-frame-slim.png");
     expect(markup).toContain("href=\"/encyclopedia/darkness\"");
   });
 

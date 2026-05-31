@@ -20,41 +20,26 @@ describe("global animation styles", () => {
   test("defines the home cat transition animation classes and reduced motion fallback", () => {
     expect(globalsCss).toContain(".home-cat-transition-current");
     expect(globalsCss).toContain(".home-cat-transition-previous");
-    expect(globalsCss).toContain(".home-cat-transition-mist-left");
-    expect(globalsCss).toContain(".home-cat-transition-mist-right");
-    expect(globalsCss).toContain(".home-cat-transition-glow");
     expect(globalsCss).toContain(".home-cat-card-glimmer");
     expect(globalsCss).toContain("@keyframes home-cat-current-reveal");
     expect(globalsCss).toContain("@keyframes home-cat-previous-fade");
-    expect(globalsCss).toContain("@keyframes home-cat-mist-left-sweep");
-    expect(globalsCss).toContain("@keyframes home-cat-mist-right-sweep");
-    expect(globalsCss).toContain("@keyframes home-cat-glow-pulse");
     expect(globalsCss).toContain("@keyframes home-cat-card-glimmer");
     expect(globalsCss).toContain("@media (prefers-reduced-motion: reduce)");
   });
 
-  test("uses slower background and mist timing so the cat change does not pop", () => {
-    expect(globalsCss).toContain("home-cat-current-reveal 2400ms");
-    expect(globalsCss).toContain("home-cat-previous-fade 2400ms");
-    expect(globalsCss).toContain("home-cat-mist-left-sweep 2400ms");
-    expect(globalsCss).toContain("home-cat-mist-right-sweep 2400ms");
-    expect(globalsCss).toContain("home-cat-glow-pulse 2400ms");
-    expect(globalsCss).toContain("56% {");
-    expect(globalsCss).toContain("68% {");
-    expect(globalsCss).toContain("opacity: 0.92;");
-    expect(globalsCss).toContain("translate3d(-42%, -50%, 0) scale(1.2)");
+  test("uses a short simple fade for home cat background changes", () => {
+    expect(globalsCss).toContain("home-cat-current-reveal 900ms");
+    expect(globalsCss).toContain("home-cat-previous-fade 900ms");
+    expect(globalsCss).not.toContain("home-cat-mist-left-sweep");
+    expect(globalsCss).not.toContain("home-cat-mist-right-sweep");
+    expect(globalsCss).not.toContain("home-cat-glow-pulse");
   });
 
-  test("uses separated illustrated magic cloud sprites for home cat transitions", () => {
-    expect(globalsCss).toContain("background-image: var(--home-cat-transition-left-image);");
-    expect(globalsCss).toContain("background-image: var(--home-cat-transition-right-image);");
-    expect(globalsCss).toContain(".home-cat-transition-mist-right::before");
-    expect(globalsCss).toContain("width: min(120vw, 720px);");
-    expect(globalsCss).toContain("background-size: 112% auto;");
-    expect(globalsCss).toContain("top: 48%;");
-    expect(getRuleBody(".home-cat-transition-mist-right::before")).not.toContain("scaleX");
-    expect(globalsCss).not.toContain(".home-cat-transition-mist-left::after");
-    expect(globalsCss).not.toContain("--home-cat-transition-cloud-filter");
+  test("does not render illustrated mist or cloud transition styles", () => {
+    expect(globalsCss).not.toContain("home-cat-transition-mist");
+    expect(globalsCss).not.toContain("home-cat-transition-glow");
+    expect(globalsCss).not.toContain("--home-cat-transition-left-image");
+    expect(globalsCss).not.toContain("--home-cat-transition-right-image");
   });
 
   test("keeps home animation layers from pre-promoting filter changes", () => {
@@ -67,15 +52,8 @@ describe("global animation styles", () => {
     expect(getRuleBody(".home-cat-transition-previous")).toContain("will-change: opacity;");
     expect(getRuleBody(".home-cat-transition-previous")).not.toContain("filter");
 
-    expect(getRuleBody(".home-cat-transition-mist-left,\n.home-cat-transition-mist-right,\n.home-cat-transition-glow")).toContain(
-      "will-change: transform, opacity;",
-    );
-    expect(getRuleBody(".home-cat-transition-mist-left,\n.home-cat-transition-mist-right,\n.home-cat-transition-glow")).not.toContain("filter");
-
-    const magicCloudRule = getRuleBody(".home-cat-transition-mist-left,\n.home-cat-transition-mist-right {");
-    expect(magicCloudRule).toContain("isolation: isolate;");
-    expect(magicCloudRule).not.toContain("filter");
-    expect(magicCloudRule).not.toContain("mix-blend-mode");
+    expect(globalsCss).not.toContain("home-cat-transition-mist");
+    expect(globalsCss).not.toContain("home-cat-transition-glow");
   });
 
   test("removes home animation filters and layer hints in reduced motion", () => {
@@ -83,9 +61,6 @@ describe("global animation styles", () => {
       [
         "  .home-cat-transition-current,",
         "  .home-cat-transition-previous,",
-        "  .home-cat-transition-mist-left,",
-        "  .home-cat-transition-mist-right,",
-        "  .home-cat-transition-glow,",
         "  .home-live-effect {",
         "    filter: none !important;",
         "    will-change: auto !important;",
@@ -109,6 +84,17 @@ describe("global animation styles", () => {
     expect(globalsCss).toContain("  .receipt-tag-pop {");
     expect(globalsCss).toContain("    animation: none !important;");
     expect(globalsCss).toContain("    opacity: 1 !important;");
+  });
+
+  test("keeps the sliced receipt paper slide animation free of filter seams", () => {
+    const keyframeStart = globalsCss.indexOf("@keyframes receipt-slide-up");
+    const nextRuleStart = globalsCss.indexOf(".animate-ink-fade", keyframeStart);
+    expect(keyframeStart).toBeGreaterThanOrEqual(0);
+    expect(nextRuleStart).toBeGreaterThan(keyframeStart);
+
+    const slideAnimationBlock = globalsCss.slice(keyframeStart, nextRuleStart);
+
+    expect(slideAnimationBlock).not.toContain("filter:");
   });
 
   test("turns off dream loading motion in reduced motion mode", () => {

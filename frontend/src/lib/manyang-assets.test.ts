@@ -99,6 +99,10 @@ describe("manyang assets", () => {
     expect(manyangAssets.illustrations.whiteCat).toBe("/manyang/references/cat-white-profile.webp");
     expect(manyangAssets.illustrations.cheeseCat).toBe("/manyang/references/cat-cheese-profile.webp");
     expect(manyangAssets.illustrations.grayCat).toBe("/manyang/references/cat-gray-profile.webp");
+    expect(manyangAssets.loadingReaders.blackCat).toBe("/manyang/references/loading-black-cat.webp");
+    expect(manyangAssets.loadingReaders.whiteCat).toBe("/manyang/references/loading-white-cat.webp");
+    expect(manyangAssets.loadingReaders.cheeseCat).toBe("/manyang/references/loading-cheese-cat.webp");
+    expect(manyangAssets.loadingReaders.grayCat).toBe("/manyang/references/loading-gray-cat.webp");
     expect(manyangAssets.orbs.base).toBe("/manyang/orbs/orb-transparent.webp");
     expect(manyangAssets.orbs.one).toBe("/manyang/orbs/orb-1-transparent.webp");
     expect(manyangAssets.orbs.two).toBe("/manyang/orbs/orb-2-transparent.webp");
@@ -124,6 +128,10 @@ describe("manyang assets", () => {
       manyangAssets.illustrations.whiteCat,
       manyangAssets.illustrations.cheeseCat,
       manyangAssets.illustrations.grayCat,
+      manyangAssets.loadingReaders.blackCat,
+      manyangAssets.loadingReaders.whiteCat,
+      manyangAssets.loadingReaders.cheeseCat,
+      manyangAssets.loadingReaders.grayCat,
       manyangAssets.orbs.base,
       manyangAssets.orbs.one,
       manyangAssets.orbs.two,
@@ -152,6 +160,10 @@ describe("manyang assets", () => {
     expect(readImageSize(manyangAssets.illustrations.whiteCatProfile)).toEqual({ width: 1254, height: 1254 });
     expect(readImageSize(manyangAssets.illustrations.cheeseCatProfile)).toEqual({ width: 1254, height: 1254 });
     expect(readImageSize(manyangAssets.illustrations.grayCatProfile)).toEqual({ width: 1254, height: 1254 });
+    expect(readImageSize(manyangAssets.loadingReaders.blackCat)).toEqual({ width: 1254, height: 1254 });
+    expect(readImageSize(manyangAssets.loadingReaders.whiteCat)).toEqual({ width: 1254, height: 1254 });
+    expect(readImageSize(manyangAssets.loadingReaders.cheeseCat)).toEqual({ width: 1254, height: 1254 });
+    expect(readImageSize(manyangAssets.loadingReaders.grayCat)).toEqual({ width: 1254, height: 1254 });
     expect(readImageSize(manyangAssets.orbs.base)).toEqual({ width: 1254, height: 1254 });
     expect(readImageSize(manyangAssets.orbs.one)).toEqual({ width: 1254, height: 1254 });
     expect(readImageSize(manyangAssets.orbs.two)).toEqual({ width: 1254, height: 1254 });
@@ -185,12 +197,18 @@ describe("manyang assets", () => {
       ["/manyang/references/cat-white-profile.png", manyangAssets.illustrations.whiteCatProfile, 0.35],
       ["/manyang/references/cat-cheese-profile.png", manyangAssets.illustrations.cheeseCatProfile, 0.35],
       ["/manyang/references/cat-gray-profile.png", manyangAssets.illustrations.grayCatProfile, 0.35],
+      ["../ref/blackcat.png", manyangAssets.loadingReaders.blackCat, 0.35],
+      ["../ref/whitecat.png", manyangAssets.loadingReaders.whiteCat, 0.35],
+      ["../ref/cheesecat.png", manyangAssets.loadingReaders.cheeseCat, 0.35],
+      ["../ref/graycat.png", manyangAssets.loadingReaders.grayCat, 0.35],
       ["/manyang/orbs/orb-transparent.png", manyangAssets.orbs.base, 0.35],
       ["/manyang/orbs/orb-1-transparent.png", manyangAssets.orbs.one, 0.35],
       ["/manyang/orbs/orb-2-transparent.png", manyangAssets.orbs.two, 0.35],
       ["/manyang/orbs/orb-3-transparent.png", manyangAssets.orbs.three, 0.35],
     ].forEach(([sourceAssetPath, optimizedAssetPath, maxRatio]) => {
-      const sourcePath = publicAssetPath(sourceAssetPath as string);
+      const sourcePath = (sourceAssetPath as string).startsWith("../")
+        ? path.join(process.cwd(), sourceAssetPath as string)
+        : publicAssetPath(sourceAssetPath as string);
       const optimizedPath = publicAssetPath(optimizedAssetPath as string);
 
       expect(statSync(optimizedPath).size).toBeLessThan(statSync(sourcePath).size * (maxRatio as number));
@@ -219,9 +237,9 @@ describe("manyang assets", () => {
   });
 
   test("exposes the reference button image assets used by the home and write flows", () => {
-    expect(manyangAssets.buttons.dreammemoryWrite).toBe("/manyang/ui/buttons/dreammemory-write-frame.png");
+    expect(manyangAssets.buttons.dreammemoryWrite).toBe("/manyang/ui/buttons/dreammemory-write-frame-slim.png");
     expect(manyangAssets.buttons.dreammemoryForgot).toBe("/manyang/ui/buttons/dreammemory-forgot-frame.png");
-    expect(manyangAssets.buttons.dreammemorySubmit).toBe("/manyang/ui/buttons/dreammemory-submit-frame.png");
+    expect(manyangAssets.buttons.dreammemorySubmit).toBe("/manyang/ui/buttons/dreammemory-submit-frame-slim.png");
     expect(manyangAssets.buttons.dreamseed).toBe("/manyang/ui/buttons/dreamseed-frame.png");
     expect(manyangAssets.buttons.dreamseedArchive).toBe("/manyang/ui/buttons/dreamseed-archive-frame.png");
     expect(manyangAssets.buttons.morningPawprint).toBe("/manyang/ui/buttons/morning-pawprint-frame.png");
@@ -234,6 +252,8 @@ describe("manyang assets", () => {
     });
 
     expect(readImageSize(manyangAssets.buttons.compactPrimary)).toEqual({ width: 640, height: 200 });
+    expect(readImageSize(manyangAssets.buttons.dreammemoryWrite)).toEqual({ width: 860, height: 235 });
+    expect(readImageSize(manyangAssets.buttons.dreammemorySubmit)).toEqual({ width: 857, height: 200 });
     expect(readImageSize(manyangAssets.buttons.mediumPrimary)).toEqual({ width: 850, height: 150 });
     expect(readImageSize(manyangAssets.buttons.mediumSecondary)).toEqual({ width: 850, height: 150 });
   });
@@ -249,6 +269,43 @@ describe("manyang assets", () => {
     [
       manyangAssets.footer.frame,
       ...Object.values(manyangAssets.footer.icons),
+    ].forEach((assetPath) => {
+      expect(publicAssetExists(assetPath)).toBe(true);
+    });
+  });
+
+  test("exposes tarot card back and major arcana assets", () => {
+    expect(manyangAssets.tarot.cardBack).toBe("/manyang/tarot/card-back.png");
+    expect(Object.keys(manyangAssets.tarot.major)).toEqual([
+      "fool",
+      "magician",
+      "highPriestess",
+      "empress",
+      "emperor",
+      "hierophant",
+      "lovers",
+      "chariot",
+      "strength",
+      "hermit",
+      "wheelOfFortune",
+      "justice",
+      "hangedMan",
+      "death",
+      "temperance",
+      "devil",
+      "tower",
+      "star",
+      "moon",
+      "sun",
+      "judgement",
+      "world",
+    ]);
+    expect(manyangAssets.tarot.major.fool).toBe("/manyang/tarot/major/00-the-fool.png");
+    expect(manyangAssets.tarot.major.world).toBe("/manyang/tarot/major/21-the-world.png");
+
+    [
+      manyangAssets.tarot.cardBack,
+      ...Object.values(manyangAssets.tarot.major),
     ].forEach((assetPath) => {
       expect(publicAssetExists(assetPath)).toBe(true);
     });
@@ -322,18 +379,4 @@ describe("manyang assets", () => {
     });
   });
 
-  test("exposes optimized home cat transition magic cloud assets", () => {
-    expect(manyangAssets.transitions.catMagicCloudLeft).toBe(
-      "/manyang/ui/transitions/cat-transition-magic-cloud-left.webp",
-    );
-    expect(manyangAssets.transitions.catMagicCloudRight).toBe(
-      "/manyang/ui/transitions/cat-transition-magic-cloud-right.webp",
-    );
-
-    [manyangAssets.transitions.catMagicCloudLeft, manyangAssets.transitions.catMagicCloudRight].forEach((assetPath) => {
-      expect(publicAssetExists(assetPath)).toBe(true);
-      expect(readImageSize(assetPath)).toEqual({ width: 1200, height: 900 });
-      expect(statSync(publicAssetPath(assetPath)).size).toBeLessThan(460_000);
-    });
-  });
 });

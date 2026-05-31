@@ -5,6 +5,7 @@ node_modules/
 ref/
 tmp/
 frontend/test-results/
+frontend/.next-dev-*.log
 manyang-home-primary-button-smaller.png
 
 # OS/editor noise

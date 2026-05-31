@@ -23,6 +23,17 @@ describe("AppShell", () => {
     expect(markup).not.toContain("/_next/image");
   });
 
+  test("does not add the removed purple circular bottom scrim by default", () => {
+    const markup = renderToStaticMarkup(
+      <AppShell showHeader={false}>
+        <div>content</div>
+      </AppShell>,
+    );
+
+    expect(markup).not.toContain("radial-gradient(circle_at_50%_18%");
+    expect(markup).not.toContain("rgba(119,56,173");
+  });
+
   test("uses a custom background layer when provided", () => {
     const markup = renderToStaticMarkup(
       <AppShell
