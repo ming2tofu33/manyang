@@ -25,7 +25,7 @@ source: docs/manyang-dream-project-spec-updated.md
 
 - 해몽 결과가 그럴듯한가?
 - 카드나 영수증이 저장하고 싶은가?
-- 고양이 톤이 부담스럽지 않은가?
+- 고양이 테마/안내 말투가 해몽 신뢰를 해치지 않는가?
 - 운세 앱처럼 흔하게 느껴지지 않는가?
 - 백과사전 근거가 신뢰감을 주는가?
 
@@ -46,4 +46,3 @@ source: docs/manyang-dream-project-spec-updated.md
 ## See Also
 
 - [[Phase-Flow]] — Gate를 Phase에 적용 (09-Implementation)
-

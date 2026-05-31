@@ -41,6 +41,7 @@ status: active
 | ACCESS-01E | 상세 해몽 관심 CTA | todo | P1 | Moon Pass 상세 해몽 관심 CTA와 준비 중 피드백 구현 |
 | ACCESS-01F | 비즈니스 이벤트 로깅 | todo | P1 | `guest_daily_limit_hit`, `guest_login_cta_clicked`, `detailed_reading_interest_clicked` 저장 |
 | ACCESS-01G | 접근 정책 검증 | todo | P0 | focused test, lint, build, backend test/typecheck 통과 |
+| THEME-01 | 고양이 해몽사 → 고양이 테마 전환 | done | P0 | `catReaderType`이 해몽 결과/문체/access를 바꾸지 않고 시각 테마로만 동작 |
 | SEO-01 | 꿈해몽 백과 SEO 기반 | done | P0 | 상징 페이지 metadata, sitemap/robots, noindex 정책 구현 |
 | SEO-02 | 배포 도메인 SEO 고정 | done | P0 | `NEXT_PUBLIC_SITE_URL=https://manyang.vercel.app` 적용, sitemap/robots/canonical 운영 URL 검증 |
 | AI-RAG-01 | 해몽 결과 계약 고정 | done | P0 | [[Dream-Reading-Contracts]]에 1차 분석, RAG 결과, 2차 해몽 JSON 필드와 금지 claim 기준 확정 |
@@ -68,6 +69,8 @@ status: active
 | AI-RAG-22 | RAG 신규 상징 recall 완화 | done | P0 | explicit 상징이 있어도 강한 semantic/vector 신규 상징을 candidate로 노출하고, 비민감 symbol의 semantic+vector agreement만 confirmed로 승격 |
 | AI-RAG-23 | UTF-8 한국어 실입력 회귀 검증 | done | P0 | 정상 한글 입력의 matcher/structure/mock 분석 회귀 테스트 추가, PowerShell stdin 인코딩 오탐과 실제 코드 경로를 분리 확인 |
 | AI-RAG-24 | RAG live quality eval 보강 | done | P0 | candidate-only 상징 누수, semantic+vector promotion, sensitive auto-promotion guard를 live eval 케이스와 metrics로 고정 |
+| I18N-01 | EN front-door 기반 + 엔진 locale 연결 | done | P0 | locale 스토어/사전/훅, API에 locale 전송, EN 고양이 이름(Midnight/Luna/Sol/Ash), 프로필 언어 토글 구현 |
+| I18N-02 | 나머지 UI 문구 EN 이관 | todo | P0 | 아래 I18N 체크리스트의 한국어 잔여 UI 문구를 ko/en 사전 기반으로 전환 |
 
 ## ACCESS-01 Implementation Checklist
 
@@ -84,6 +87,39 @@ status: active
 - [ ] 관심/제한/로그인 CTA 클릭 이벤트 연결
 - [ ] Supabase Auth와 실제 결제는 이번 스프린트에서 제외
 - [ ] `frontend` test/lint/build와 `backend` test/typecheck 검증
+
+## THEME-01 Implementation Checklist
+
+- [x] 고양이 선택 UI 문구를 "해몽사 선택"에서 "테마 선택"으로 변경
+- [x] `gray_cat`이 `detailed` 해몽 권한을 자동 부여하지 않도록 `access-policy` 수정
+- [x] 분석 요청에서 선택 고양이가 LLM persona/prompt 분기로 전달되지 않도록 수정
+- [x] backend `cat-reader-personas` 기반 프롬프트 분기를 제거하거나 공통 persona로 단일화
+- [x] mock analysis의 고양이별 `readerNote` 차이를 제거하고 공통 문구로 고정
+- [x] 결과/로딩/홈/프로필에서는 고양이를 이미지, 배경, 스탬프, 테마 색에만 사용
+- [x] `gray_cat_interest_clicked` 계열 이벤트는 현재 코드에 없음을 확인하고, 추후 도입 시 `premium_cat_theme_interest_clicked`와 `tarot_addon_interest_clicked`로 분리
+- [x] 기존 `cat_reader_type` 저장 필드는 당장 유지하되 의미를 theme id로 제한하고, post-MVP migration을 별도 계획으로 분리
+- [x] 관련 frontend/backend 테스트를 새 정책 기준으로 업데이트
+
+## I18N English Localization Checklist
+
+> 한·영 동시 출시 작업. **해몽 엔진(백과사전/길흉/RAG/프롬프트/안전문구)은 이미 ko/en 이중언어**이고, locale은 프로필의 언어 토글로 선택해 API 요청·UI에 반영된다(기본 ko). 아래는 **아직 한국어로 하드코딩돼 있어 영어로 이관해야 하는 UI 껍데기** 목록이다. 방식: `frontend/src/lib/i18n/messages.ts` 사전에 ko/en 키 추가 → 컴포넌트에서 `useLocale().t(...)`로 치환.
+
+- [x] i18n 기반: `locale` 스토어, `messages` 사전(키 파리티 타입 강제 + `{var}` 인터폴레이션), `useLocale`/`t()`, `LanguageToggle`
+- [x] API 요청에 현재 locale 전송 (`/api/dreams/analyze`)
+- [x] EN 고양이 이름 Midnight/Luna/Sol/Ash + `getCatReaderName(reader, locale)`
+- [x] 프로필 설정에 언어 토글 배치, cat picker의 이름 표시 locale 연동
+- [x] 꿈 입력 폼 제출/빈입력 문구
+- [x] EN matcher 퀵윈: `flying→fly/flew`, `swimming→swim/swims` alias
+- [ ] **분위기/감각 옵션 라벨** (`frontend/src/lib/dream-entry-options.ts` — 현재 한국어 단일)
+- [ ] **꿈 영수증** (`dream-result-receipt.tsx`): 섹션 제목, "테마", 버튼/캡션, 디스클레이머
+- [ ] 공유 이미지 텍스트 (`result-actions.ts`의 "테마: …")
+- [ ] 꿈 입력 폼 잔여 문구: 분위기/감각 섹션 제목·안내, `DreamSubmitButton` aria/alt("고양이가 꿈을 읽는 중" 등)
+- [ ] cat picker의 tag/role/sheet 카피 (`cat-reader-home-copy.ts`, `cat-readers.ts`의 role/shortDescription/ctaLabel)
+- [ ] 접근 게이트 안내/CTA (`access-policy.ts` 반환 문구 → reason 기반 사전 매핑으로 UI에서 현지화)
+- [ ] 하단 네비 라벨 (`bottom-nav`)
+- [ ] 프로필 나머지 섹션 제목/설명(앱 설정/기록 관리/도움말/Moon Pass), 로딩 화면, night 체크인 화면 문구
+- [ ] `<html lang>`과 메타데이터 locale (`layout.tsx` 현재 `ko`/`ko_KR` 고정), `og:locale` 분기
+- [ ] (옵션) 첫 방문 시 브라우저 언어 기반 EN 추천 — 현재는 기본 ko 고정, 토글 수동 전환만
 
 ## AI/RAG Encyclopedia Prep Checklist
 
@@ -198,3 +234,5 @@ status: active
 - FLOW-01: `DreamEntryForm`, `DreamResultReceipt`, `DreamArchiveList`, `dream-storage` 추가. `frontend`의 `npm test`, `npm run lint`, `npm run build` 통과. Browser MCP가 다른 세션 프로필을 사용 중이라 클릭 검증은 대기.
 - Verification: `npm test`, `npm run lint`, `npm run build` 통과.
 - Dev server: `http://127.0.0.1:3000` 응답 확인.
+- I18N-01: 해몽 엔진은 이미 ko/en 이중언어임을 감사로 확인(백과 72심볼 ko/en 패리티, EN fortune·RAG 인덱스·안전문구 존재)하고, 부재하던 프론트 EN front-door를 추가했다. `frontend/src/lib/locale.ts`(localStorage+event+`useSyncExternalStore` 전역 스토어, 기본 ko), `i18n/messages.ts`(키 파리티 타입 강제 + `{var}` 인터폴레이션), `use-locale.ts`(`useLocale`/`t`), `LanguageToggle`를 추가. `dream-entry-form`이 현재 locale을 `/api/dreams/analyze`에 전송하고 제출/빈입력 문구를 `t()`로 이관. EN 고양이 이름 Midnight/Luna/Sol/Ash와 `getCatReaderName(reader, locale)`를 추가해 cat picker 이름이 locale에 따라 전환되고, 프로필 설정에 언어 토글 섹션을 배치. EN matcher 퀵윈으로 `flying→fly/flew`, `swimming→swim/swims` alias 추가. locale/messages/cat-readers/cat-reader-picker/profile-room 테스트와 frontend typecheck 통과. 나머지 UI 껍데기 문구 이관은 I18N-02와 위 I18N 체크리스트로 분리. 커밋: i18n 기반(`feat(i18n): add locale store...`), EN 이름+토글(`feat(i18n): English cat names + language selector...`).
+- B-4(한국어 형태소 서비스): `services/korean-analyzer`(Kiwi warm HTTP, Railpack/Node22, 부팅 시 모델 보장)를 Railway에 배포 완료(`manyang-production.up.railway.app`, `/health`·`/lemmatize` 라이브 스모크 통과), 앱 env `MANYANG_LEMMATIZER_URL` 설정 후 재배포 완료. LLM 경로에서 KO 입력이 형태소 lemma로 보강되며, 서비스 미설정/다운 시 `safeLemmatize`로 폴백.

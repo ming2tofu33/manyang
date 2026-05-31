@@ -23,7 +23,7 @@ source: docs/manyang-dream-project-spec-updated.md
 - 꿈 키워드
 - 짧은 해석
 - 오늘의 작은 처방
-- 해몽사 이름
+- 선택한 고양이 테마 이름
 - 생성 날짜
 
 ## 꿈 영수증
@@ -37,9 +37,11 @@ source: docs/manyang-dream-project-spec-updated.md
 - 날짜와 기분
 - 주요 상징
 - 꿈 분위기
-- 고양이 해석
+- 공통 해몽 요약
 - 오늘의 작은 처방
-- From. 고양이 해몽사
+- 선택한 고양이 테마/스탬프
+
+고양이 테마는 영수증의 색, 도장, 일러스트, 배경에만 영향을 준다. 해몽 본문, 문체, 결론은 고양이에 따라 달라지지 않는다.
 
 ## MVP 구현 방식
 
@@ -57,4 +59,3 @@ source: docs/manyang-dream-project-spec-updated.md
 
 - [[Visual-Direction]] — 영수증/카드 비주얼 방향 (08-Design)
 - [[Database-Schema]] — 저장 데이터 구조 (02-Architecture)
-
