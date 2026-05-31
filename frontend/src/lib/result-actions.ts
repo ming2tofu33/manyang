@@ -1,5 +1,6 @@
 import type { DreamCompletedPayload } from "./dream-storage";
 import { getCatReaderById } from "./cat-readers";
+import type { DailyTarotCardSelection, DailyTarotPosition, DailyTarotReading, TarotOrientation } from "./daily-tarot";
 
 const symbolSlugMap: Record<string, string> = {
   문: "door",
@@ -149,5 +150,87 @@ export function createReceiptSvg(payload: DreamCompletedPayload): string {
   ${renderSvgLines(interpretationLines, 150, 705, 48, "body")}
   <text x="450" y="1080" class="label">오늘의 작은 처방</text>
   ${renderSvgLines(prescriptionLines, 150, 1138, 46, "body")}
+</svg>`;
+}
+
+const tarotOrientationLabels = {
+  upright: "정방향",
+  reversed: "역방향",
+} satisfies Record<TarotOrientation, string>;
+
+const tarotPositionLabels = {
+  today: "오늘",
+  situation: "지금 상태",
+  flow: "이어질 변화",
+  advice: "오늘의 선택",
+} satisfies Record<DailyTarotPosition, string>;
+
+function getTarotReadingCards(reading: DailyTarotReading): DailyTarotCardSelection[] {
+  return reading.cards && reading.cards.length > 0
+    ? reading.cards
+    : [{ position: reading.position, card: reading.card, orientation: reading.orientation }];
+}
+
+function sanitizeFileSegment(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "card";
+}
+
+export function createTarotReadingFileName(reading: DailyTarotReading): string {
+  const primaryCard = getTarotReadingCards(reading)[0]?.card ?? reading.card;
+
+  return `manyang-tarot-${reading.appDate}-${reading.spread}-${sanitizeFileSegment(primaryCard.slug)}.svg`;
+}
+
+export function createTarotReadingShareText(reading: DailyTarotReading): string {
+  const cardLines = getTarotReadingCards(reading).map((selection) => {
+    const cardText = `${selection.card.nameKo} · ${tarotOrientationLabels[selection.orientation]}`;
+
+    return reading.spread === "daily_three_card"
+      ? `${tarotPositionLabels[selection.position]}: ${cardText}`
+      : cardText;
+  });
+
+  return [
+    `오늘의 타로: ${reading.title}`,
+    `카드: ${cardLines.join(" / ")}`,
+    `흐름: ${reading.message}`,
+    `조언: ${reading.advice}`,
+  ].join("\n");
+}
+
+export function createTarotReadingSvg(reading: DailyTarotReading): string {
+  const cardLines = getTarotReadingCards(reading).map((selection) => {
+    const label = reading.spread === "daily_three_card" ? `${tarotPositionLabels[selection.position]} · ` : "";
+
+    return `${label}${selection.card.nameKo} / ${selection.card.nameEn} · ${tarotOrientationLabels[selection.orientation]}`;
+  });
+  const titleLines = wrapText(reading.title, 24).slice(0, 2);
+  const messageLines = wrapText(reading.message, 30).slice(0, 6);
+  const adviceLines = wrapText(reading.advice, 30).slice(0, 4);
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1300" viewBox="0 0 900 1300">
+  <style>
+    .bg { fill: #070511; }
+    .paper { fill: #12091c; stroke: #b98255; stroke-width: 4; }
+    .brand { fill: #f0a23c; font: 700 46px sans-serif; text-anchor: middle; }
+    .title { fill: #ffe7b5; font: 700 42px serif; text-anchor: middle; }
+    .label { fill: #d9b6ff; font: 700 25px sans-serif; text-anchor: middle; }
+    .body { fill: #fff3d7; font: 29px sans-serif; }
+    .meta { fill: #f2c27d; font: 27px sans-serif; text-anchor: middle; }
+  </style>
+  <rect width="900" height="1300" class="bg"/>
+  <text x="450" y="92" class="brand">오늘의 타로</text>
+  <rect x="85" y="140" width="730" height="1040" rx="34" class="paper"/>
+  <text x="450" y="228" class="meta">${escapeXml(reading.appDate)}</text>
+  ${renderSvgLines(titleLines, 450, 315, 50, "title")}
+  <text x="450" y="455" class="label">선택한 카드</text>
+  ${renderSvgLines(cardLines, 150, 520, 48, "body")}
+  <text x="450" y="700" class="label">오늘의 흐름</text>
+  ${renderSvgLines(messageLines, 150, 765, 46, "body")}
+  <text x="450" y="1050" class="label">조언</text>
+  ${renderSvgLines(adviceLines, 150, 1112, 46, "body")}
 </svg>`;
 }

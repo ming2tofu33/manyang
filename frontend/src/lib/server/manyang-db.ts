@@ -9,6 +9,7 @@ import {
 import type { DreamCompletedPayload, DreamRecord } from "@/lib/dream-storage";
 import type { NightCheckInRecord } from "@/lib/night-checkin";
 import type { PawprintInput, PawprintRecord, PawprintSaveResult, PawprintSource } from "@/lib/pawprints";
+import type { DailyTarotReading } from "@/lib/daily-tarot";
 import { getSupabaseDatabaseUrl } from "@/lib/supabase/env";
 
 let manyangPool: Pool | null = null;
@@ -16,6 +17,11 @@ let manyangPool: Pool | null = null;
 export type PersistGuestBasicReadingUsageInput = {
   guestId: string;
   dreamDate: string;
+};
+
+export type PersistCompletedTarotReadingInput = {
+  userId: string;
+  reading: DailyTarotReading;
 };
 
 export function createManyangDbPool(config: PoolConfig = {}): Pool {
@@ -123,6 +129,55 @@ export async function persistGuestBasicReadingUsage(
     `,
     [input.guestId, input.dreamDate],
   );
+}
+
+export async function persistCompletedTarotReading(
+  input: PersistCompletedTarotReadingInput,
+  pool = getManyangDbPool(),
+): Promise<string> {
+  const result = await pool.query<{ id: string }>(
+    `
+      insert into manyang.tarot_readings (
+        user_id,
+        app_date,
+        spread,
+        cards,
+        title,
+        overview,
+        card_readings,
+        advice,
+        raw_reading
+      )
+      values ($1, $2::date, $3, $4::jsonb, $5, $6, $7::jsonb, $8, $9::jsonb)
+      on conflict (user_id, app_date, spread) do update
+        set cards = excluded.cards,
+            title = excluded.title,
+            overview = excluded.overview,
+            card_readings = excluded.card_readings,
+            advice = excluded.advice,
+            raw_reading = excluded.raw_reading,
+            updated_at = now()
+      returning id
+    `,
+    [
+      input.userId,
+      input.reading.appDate,
+      input.reading.spread,
+      JSON.stringify(input.reading.cards ?? []),
+      input.reading.generated?.title ?? input.reading.title,
+      input.reading.generated?.overview ?? input.reading.message,
+      JSON.stringify(input.reading.generated?.cardReadings ?? []),
+      input.reading.generated?.advice ?? input.reading.advice,
+      JSON.stringify(input.reading),
+    ],
+  );
+  const tarotReadingId = result.rows[0]?.id;
+
+  if (!tarotReadingId) {
+    throw new Error("Failed to create manyang tarot reading");
+  }
+
+  return tarotReadingId;
 }
 
 export async function isAdminUser(userId: string, pool = getManyangDbPool()): Promise<boolean> {

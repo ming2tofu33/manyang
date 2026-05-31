@@ -73,6 +73,21 @@ export {
   DREAM_READING_DRAFT_SCHEMA_NAME,
 } from "./services/dream-reading-prompt";
 export type { DreamReadingPrompt, DreamReadingPromptInput } from "./services/dream-reading-prompt";
+export {
+  buildTarotReadingPrompt,
+  TAROT_READING_DRAFT_JSON_SCHEMA,
+  TAROT_READING_DRAFT_SCHEMA_NAME,
+} from "./services/tarot-reading-prompt";
+export type {
+  TarotPromptCard,
+  TarotPromptCardMeaning,
+  TarotReadingOrientation,
+  TarotReadingPosition,
+  TarotReadingPrompt,
+  TarotReadingPromptCardInput,
+  TarotReadingPromptInput,
+  TarotReadingSpread,
+} from "./services/tarot-reading-prompt";
 export { buildDreamRagChunks } from "./services/dream-rag-chunks";
 export type { DreamRagChunk } from "./services/dream-rag-chunks";
 export {
@@ -112,6 +127,15 @@ export type {
   DreamReadingResult,
   DreamReadingUnavailableReason,
 } from "./services/llm-dream-analysis";
+export { generateTarotReadingForUser } from "./services/llm-tarot-reading";
+export type {
+  GenerateTarotReadingOptions,
+  TarotGeneratedCardReading,
+  TarotGeneratedReading,
+  TarotReadingInput,
+  TarotReadingResult,
+  TarotReadingUnavailableReason,
+} from "./services/llm-tarot-reading";
 export {
   LlmProviderTimeoutError,
   LlmProviderConfigurationError,

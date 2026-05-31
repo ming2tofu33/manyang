@@ -5,10 +5,14 @@ import {
   createReceiptFileName,
   createReceiptShareText,
   createReceiptSvg,
+  createTarotReadingFileName,
+  createTarotReadingShareText,
+  createTarotReadingSvg,
   getPrimarySymbolSlug,
   getPrimaryResultSymbolSlug,
 } from "./result-actions";
 import type { DreamCompletedPayload } from "./dream-storage";
+import type { DailyTarotReading } from "./daily-tarot";
 
 function createPayload(): DreamCompletedPayload {
   return {
@@ -52,6 +56,64 @@ function createPayload(): DreamCompletedPayload {
       },
       readerNote: "마냥은 꿈속 상징과 감정의 연결을 같은 기준으로 차분히 정리했어요.",
     },
+  };
+}
+
+function createTarotReading(): DailyTarotReading {
+  const card = {
+    id: 0,
+    roman: "0",
+    slug: "the-fool",
+    nameEn: "THE FOOL",
+    nameKo: "The Fool",
+    image: "/manyang/tarot/major/00-the-fool.png",
+    keywords: ["start", "possibility"],
+    visualSymbols: ["small bag"],
+    mood: "Bright beginning.",
+    upright: {
+      summary: "New beginning",
+      dailyFlow: "A small attempt may shift the day.",
+      advice: "Check the basics first.",
+    },
+    reversed: {
+      summary: "Rushed start",
+      dailyFlow: "Slow down before moving.",
+      advice: "Make one safety check first.",
+    },
+    contexts: {
+      love: "New feeling",
+      career: "New project",
+      money: "Watch impulse spending",
+      general: "Possibility",
+    },
+  };
+
+  return {
+    id: "daily-tarot-daily_one_card-2026-06-01",
+    spread: "daily_one_card",
+    source: "llm",
+    appDate: "2026-06-01",
+    selectedAt: "2026-06-01T00:00:00.000Z",
+    card,
+    orientation: "upright",
+    position: "today",
+    cards: [{ position: "today", orientation: "upright", card }],
+    generated: {
+      title: "A small first step opens the day",
+      overview: "The selected Fool card is read as a day where a light first step matters.",
+      cardReadings: [
+        {
+          position: "today",
+          heading: "Today",
+          reading: "The upright Fool points to a beginning.",
+        },
+      ],
+      advice: "Choose one small action.",
+    },
+    keywords: ["start", "possibility"],
+    title: "A small first step opens the day",
+    message: "The selected Fool card is read as a day where a light first step matters.",
+    advice: "Choose one small action.",
   };
 }
 
@@ -107,5 +169,29 @@ describe("result action helpers", () => {
     expect(svg).toContain("테마: 하얀냥");
     expect(svg).toContain("공통 해몽");
     expect(svg).toContain("준비물 하나만 먼저 확인해보자냥.");
+  });
+
+  test("creates a stable tarot reading svg filename", () => {
+    expect(createTarotReadingFileName(createTarotReading())).toBe(
+      "manyang-tarot-2026-06-01-daily_one_card-the-fool.svg",
+    );
+  });
+
+  test("creates tarot share text with card, orientation, and advice", () => {
+    const text = createTarotReadingShareText(createTarotReading());
+
+    expect(text).toContain("오늘의 타로");
+    expect(text).toContain("The Fool · 정방향");
+    expect(text).toContain("A small first step opens the day");
+    expect(text).toContain("Choose one small action.");
+  });
+
+  test("creates a tarot svg image document", () => {
+    const svg = createTarotReadingSvg(createTarotReading());
+
+    expect(svg).toContain("<svg");
+    expect(svg).toContain("A small first step opens");
+    expect(svg).toContain("THE FOOL");
+    expect(svg).toContain("Choose one small action.");
   });
 });

@@ -41,6 +41,47 @@ function createReading(
   });
 }
 
+function createGeneratedReading(
+  appDate: string,
+  spread: DailyTarotReading["spread"] = "daily_one_card",
+): DailyTarotReading {
+  const base = createReading(appDate);
+  const situationCard = getTarotMajorCardById(1);
+  const flowCard = getTarotMajorCardById(2);
+  const adviceCard = getTarotMajorCardById(3);
+
+  if (!situationCard || !flowCard || !adviceCard) {
+    throw new Error("Missing tarot test cards");
+  }
+
+  const cards =
+    spread === "daily_three_card"
+      ? [
+          { position: "situation" as const, card: situationCard, orientation: "upright" as const },
+          { position: "flow" as const, card: flowCard, orientation: "reversed" as const },
+          { position: "advice" as const, card: adviceCard, orientation: "upright" as const },
+        ]
+      : [{ position: "today" as const, card: base.card, orientation: base.orientation }];
+
+  return {
+    ...base,
+    id: `daily-tarot-${spread}-${appDate}`,
+    spread,
+    source: "llm",
+    cards,
+    generated: {
+      title: spread === "daily_three_card" ? "세 장이 보여주는 오늘의 흐름" : "오늘의 한 장이 건네는 흐름",
+      overview: "LLM이 선택된 카드와 방향을 기준으로 생성한 오늘의 타로 해석입니다.",
+      cardReadings: cards.map((selection) => ({
+        position: selection.position,
+        heading: selection.position === "today" ? "오늘의 핵심" : selection.position,
+        reading: `${selection.card.nameKo} ${selection.orientation} 해석입니다.`,
+      })),
+      advice: "오늘은 카드가 보여준 흐름을 작은 행동 하나로 옮겨 보세요.",
+    },
+  };
+}
+
 function installBrowserWindow(storage = createMemoryStorage()) {
   const listeners = new Map<string, Set<EventListener>>();
   const addEventListener = vi.fn((type: string, listener: EventListener) => {
@@ -111,6 +152,13 @@ describe("daily tarot draw logic", () => {
     expect(createDailyTarotOptions("2026-05-31")).toEqual(createDailyTarotOptions("2026-05-31"));
   });
 
+  test("uses the full major arcana deck by default", () => {
+    const options = createDailyTarotOptions("2026-05-31");
+
+    expect(options).toHaveLength(22);
+    expect(new Set(options.map((option) => option.cardId)).size).toBe(22);
+  });
+
   test("creates a reversed daily tarot reading from an option", () => {
     const card = getTarotMajorCardById(18);
 
@@ -166,7 +214,7 @@ describe("daily tarot draw logic", () => {
 
   test("saves and reads a daily tarot reading by app date", () => {
     const storage = createMemoryStorage();
-    const reading = createReading("2026-05-31");
+    const reading = createGeneratedReading("2026-05-31");
 
     saveDailyTarotReading(storage, reading);
 
@@ -176,12 +224,13 @@ describe("daily tarot draw logic", () => {
 
   test("stores newest first and replaces the same app date", () => {
     const storage = createMemoryStorage();
-    const first = createReading("2026-05-30", { selectedAt: "2026-05-30T09:30:00.000Z" });
-    const second = createReading("2026-05-31", { selectedAt: "2026-05-31T09:30:00.000Z" });
-    const replacement = createReading("2026-05-30", {
-      orientation: "upright",
+    const first = createGeneratedReading("2026-05-30");
+    const second = createGeneratedReading("2026-05-31");
+    const replacement = {
+      ...createGeneratedReading("2026-05-30"),
+      orientation: "upright" as const,
       selectedAt: "2026-05-30T10:30:00.000Z",
-    });
+    };
 
     saveDailyTarotReading(storage, first);
     saveDailyTarotReading(storage, second);
@@ -191,6 +240,19 @@ describe("daily tarot draw logic", () => {
     expect(getDailyTarotReading(storage, "2026-05-30")).toEqual(replacement);
   });
 
+  test("stores one-card and three-card generated readings for the same app date", () => {
+    const storage = createMemoryStorage();
+    const oneCard = createGeneratedReading("2026-05-31", "daily_one_card");
+    const threeCard = createGeneratedReading("2026-05-31", "daily_three_card");
+
+    saveDailyTarotReading(storage, oneCard);
+    saveDailyTarotReading(storage, threeCard);
+
+    expect(getDailyTarotReading(storage, "2026-05-31", "daily_one_card")).toEqual(oneCard);
+    expect(getDailyTarotReading(storage, "2026-05-31", "daily_three_card")).toEqual(threeCard);
+    expect(JSON.parse(storage.getItem(dailyTarotStorageKey) ?? "[]")).toEqual([threeCard, oneCard]);
+  });
+
   test("returns null for malformed stored JSON", () => {
     const storage = createMemoryStorage({ [dailyTarotStorageKey]: "{not-json" });
 
@@ -198,7 +260,7 @@ describe("daily tarot draw logic", () => {
   });
 
   test("ignores valid JSON entries with invalid daily tarot shapes", () => {
-    const validReading = createReading("2026-05-31");
+    const validReading = createGeneratedReading("2026-05-31");
     const storage = createMemoryStorage({
       [dailyTarotStorageKey]: JSON.stringify([null, 1, { appDate: "2026-05-31" }, validReading]),
     });
@@ -207,13 +269,22 @@ describe("daily tarot draw logic", () => {
   });
 
   test("drops invalid stored entries when saving a reading", () => {
-    const validReading = createReading("2026-05-31");
+    const validReading = createGeneratedReading("2026-05-31");
     const storage = createMemoryStorage({
       [dailyTarotStorageKey]: JSON.stringify([null, 1, { appDate: "2026-05-30" }]),
     });
 
     expect(() => saveDailyTarotReading(storage, validReading)).not.toThrow();
     expect(JSON.parse(storage.getItem(dailyTarotStorageKey) ?? "[]")).toEqual([validReading]);
+  });
+
+  test("does not treat local fallback-shaped readings as completed stored tarot readings", () => {
+    const localReading = createReading("2026-05-31");
+    const storage = createMemoryStorage({
+      [dailyTarotStorageKey]: JSON.stringify([localReading]),
+    });
+
+    expect(getDailyTarotReading(storage, "2026-05-31")).toBeNull();
   });
 
   test("exports daily tarot storage constants", () => {
@@ -224,7 +295,7 @@ describe("daily tarot draw logic", () => {
 
 describe("daily tarot browser helpers", () => {
   test("no-op safely when window is undefined", () => {
-    const reading = createReading("2026-05-31");
+    const reading = createGeneratedReading("2026-05-31");
     const unsubscribe = subscribeToDailyTarot(vi.fn());
 
     expect(getDailyTarotReadingFromBrowser("2026-05-31")).toBeNull();
@@ -235,7 +306,7 @@ describe("daily tarot browser helpers", () => {
 
   test("no-ops safely when browser localStorage is unavailable", () => {
     const { dispatchEvent } = installBrowserWindowWithThrowingLocalStorage();
-    const reading = createReading("2026-05-31");
+    const reading = createGeneratedReading("2026-05-31");
 
     expect(getDailyTarotReadingFromBrowser("2026-05-31")).toBeNull();
     expect(() => saveDailyTarotReadingToBrowser(reading)).not.toThrow();
@@ -244,7 +315,7 @@ describe("daily tarot browser helpers", () => {
 
   test("reads and saves through browser localStorage", () => {
     const { storage } = installBrowserWindow();
-    const reading = createReading("2026-05-31");
+    const reading = createGeneratedReading("2026-05-31");
 
     saveDailyTarotReading(storage, reading);
 
@@ -254,7 +325,7 @@ describe("daily tarot browser helpers", () => {
 
   test("dispatches the custom event on browser save", () => {
     const { dispatchEvent } = installBrowserWindow();
-    const reading = createReading("2026-05-31");
+    const reading = createGeneratedReading("2026-05-31");
 
     saveDailyTarotReadingToBrowser(reading);
 

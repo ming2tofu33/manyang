@@ -1,47 +1,70 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, describe, expect, it } from "vitest";
+
 import { dailyTarotStorageKey, type DailyTarotReading, type StorageLike } from "@/lib/daily-tarot";
 
-import { DailyTarotClient, getStableDailyTarotReadingSnapshot } from "./daily-tarot-client";
+import { DailyTarotClient, DailyTarotLoadingPanel, getStableDailyTarotReadingSnapshot } from "./daily-tarot-client";
+
+const foolCard = {
+  id: 0,
+  roman: "0",
+  slug: "the-fool",
+  nameEn: "THE FOOL",
+  nameKo: "The Fool",
+  image: "/manyang/tarot/major/00-the-fool.png",
+  keywords: ["start", "possibility"],
+  visualSymbols: ["small bag"],
+  mood: "Bright beginning.",
+  upright: {
+    summary: "New beginning",
+    dailyFlow: "A small attempt may shift the day.",
+    advice: "Check the basics first.",
+  },
+  reversed: {
+    summary: "Rushed start",
+    dailyFlow: "Slow down before moving.",
+    advice: "Make one safety check first.",
+  },
+  contexts: {
+    love: "New feeling",
+    career: "New project",
+    money: "Watch impulse spending",
+    general: "Possibility",
+  },
+};
 
 const foolReading = {
-  id: "daily-tarot-2026-05-31",
+  id: "daily-tarot-daily_one_card-2026-05-31",
   spread: "daily_one_card",
+  source: "llm",
   appDate: "2026-05-31",
   selectedAt: "2026-05-31T00:00:00.000Z",
-  card: {
-    id: 0,
-    roman: "0",
-    slug: "the-fool",
-    nameEn: "THE FOOL",
-    nameKo: "바보",
-    image: "/manyang/tarot/major/00-the-fool.png",
-    keywords: ["시작", "가능성"],
-    visualSymbols: ["작은 보따리"],
-    mood: "밝고 가벼운 출발의 분위기입니다.",
-    upright: {
-      summary: "새로운 시작",
-      dailyFlow: "작은 시도가 방향을 바꿀 수 있습니다.",
-      advice: "기본 준비를 확인하세요.",
-    },
-    reversed: {
-      summary: "성급함",
-      dailyFlow: "속도를 늦추는 편이 좋습니다.",
-      advice: "안전장치를 먼저 세우세요.",
-    },
-    contexts: {
-      love: "새로운 감각",
-      career: "새 프로젝트",
-      money: "충동 지출 주의",
-      general: "가능성",
-    },
-  },
+  card: foolCard,
   orientation: "upright",
   position: "today",
-  keywords: ["시작", "가능성"],
-  title: "새로운 시작",
-  message: "작은 시도가 방향을 바꿀 수 있습니다.",
-  advice: "기본 준비를 확인하세요.",
+  cards: [
+    {
+      position: "today",
+      orientation: "upright",
+      card: foolCard,
+    },
+  ],
+  generated: {
+    title: "A small first step opens the day",
+    overview: "The selected Fool card is read as a day where a light first step matters more than waiting for perfect certainty.",
+    cardReadings: [
+      {
+        position: "today",
+        heading: "Today",
+        reading: "The upright Fool points to a beginning that becomes useful once it is tested gently in real life.",
+      },
+    ],
+    advice: "Choose one small action and review the result before deciding the next step.",
+  },
+  keywords: ["start", "possibility"],
+  title: "A small first step opens the day",
+  message: "The selected Fool card is read as a day where a light first step matters more than waiting for perfect certainty.",
+  advice: "Choose one small action and review the result before deciding the next step.",
 } satisfies DailyTarotReading;
 
 function createMemoryStorage(initialEntries: Record<string, string> = {}): StorageLike {
@@ -71,24 +94,96 @@ afterEach(() => {
 });
 
 describe("DailyTarotClient", () => {
-  it("renders the draw-ready state with generic face-down options", () => {
+  it("renders the draw-ready state with spread choices and generic face-down options", () => {
     const markup = renderToStaticMarkup(<DailyTarotClient appDate="2026-05-31" initialReading={null} />);
 
     expect(markup).toContain('data-daily-tarot-state="draw-ready"');
-    expect(markup).toContain("마음이 닿는 뒷면");
-    expect(markup).toContain("정방향 카드 선택지");
-    expect(markup).toContain("역방향 카드 선택지");
+    expect(markup).toContain("오늘의 한 장");
+    expect(markup).toContain("3장 리딩");
+    expect(markup).toContain('data-daily-tarot-premium-tag="moon-pass"');
+    expect(markup).toContain("Moon Pass");
+    expect(markup).toContain('data-daily-tarot-deck');
+    expect(markup).toContain("mx-[-2.5rem] h-[23rem]");
+    expect(markup).toContain("w-[9.25rem]");
+    expect(markup).toContain("22장 메이저 아르카나 덱");
+    expect(markup).toContain("중앙 카드");
+    expect(markup).toContain("이전 카드");
+    expect(markup).toContain("다음 카드");
   });
 
-  it("renders an existing initial reading as the result without hidden options", () => {
+  it("renders an existing LLM reading as the result without hidden options", () => {
     const markup = renderToStaticMarkup(
       <DailyTarotClient appDate="2026-05-31" initialReading={foolReading} />,
     );
 
     expect(markup).toContain('data-daily-tarot-state="result"');
-    expect(markup).toContain("바보");
-    expect(markup).toContain("정방향");
+    expect(markup).toContain('data-daily-tarot-result-card-size="large"');
+    expect(markup).toContain('data-daily-tarot-zoom-trigger="true"');
+    expect(markup).toContain('class="w-full text-center"');
+    expect(markup).toContain("The Fool");
+    expect(markup).toContain("A small first step opens the day");
+    expect(markup).toContain("Today");
+    expect(markup).toContain("The upright Fool points to a beginning");
+    expect(markup).toContain('data-daily-tarot-result-actions="true"');
+    expect(markup).toContain("저장하기");
+    expect(markup).toContain("공유하기");
+    expect(markup).not.toContain("오늘 ·");
+    expect(markup).toContain("3장 리딩");
+    expect(markup).toContain('data-daily-tarot-premium-tag="moon-pass"');
+    expect(markup).toContain("Moon Pass");
     expect(markup).not.toContain("data-daily-tarot-option");
+  });
+
+  it("cleans provider artifacts from displayed generated copy", () => {
+    const artifactReading = {
+      ...foolReading,
+      generated: {
+        ...foolReading.generated,
+        cardReadings: foolReading.generated.cardReadings.map((cardReading) => ({
+          ...cardReading,
+          reading: `${cardReading.reading} }} PMID:}`,
+        })),
+        advice: `${foolReading.generated.advice} }} PMID:}`,
+      },
+      advice: `${foolReading.advice} }} PMID:}`,
+    } satisfies DailyTarotReading;
+
+    const markup = renderToStaticMarkup(
+      <DailyTarotClient appDate="2026-05-31" initialReading={artifactReading} />,
+    );
+
+    expect(markup).not.toContain("PMID");
+    expect(markup).not.toContain("}}");
+  });
+
+  it("renders a focused loading panel while the LLM reading is generated", () => {
+    const markup = renderToStaticMarkup(
+      <DailyTarotLoadingPanel selections={foolReading.cards ?? []} />,
+    );
+
+    expect(markup).toContain('data-daily-tarot-loading="true"');
+    expect(markup).toContain("해석을 완성하고 있어요");
+    expect(markup).toContain("The Fool");
+    expect(markup).toContain("정방향");
+  });
+
+  it("does not render local fallback-shaped readings as completed results", () => {
+    const localReading = {
+      ...foolReading,
+      source: "local" as const,
+      generated: undefined,
+      cards: undefined,
+      title: "Local fallback title",
+      message: "Local fallback message",
+      advice: "Local fallback advice",
+    };
+    const markup = renderToStaticMarkup(
+      <DailyTarotClient appDate="2026-05-31" initialReading={localReading} />,
+    );
+
+    expect(markup).toContain('data-daily-tarot-state="draw-ready"');
+    expect(markup).not.toContain('data-daily-tarot-state="result"');
+    expect(markup).not.toContain("Local fallback title");
   });
 
   it("keeps browser snapshots referentially stable while storage is unchanged", () => {
@@ -118,6 +213,6 @@ describe("DailyTarotClient", () => {
 
     expect(markup).toContain('data-daily-tarot-state="draw-ready"');
     expect(markup).not.toContain('data-daily-tarot-state="result"');
-    expect(markup).not.toContain("바보");
+    expect(markup).not.toContain("The Fool");
   });
 });
