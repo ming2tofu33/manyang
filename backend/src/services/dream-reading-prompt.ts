@@ -160,7 +160,7 @@ export function buildDreamReadingPrompt(input: DreamReadingPromptInput): DreamRe
     },
     outputContract: {
       summary:
-        "The reading's verdict in ONE punchy line — what the dream MEANS or foretells, not a description of what happened. The user wrote the dream and does not want it summarized back to them. When a folk fortune applies, state that verdict directly (e.g., '묻혀 있던 기회가 드러나는 재물 길몽'). Do NOT prefix it with any label such as '한줄 해몽:' or '해몽:'; write only the verdict itself. Always lead with meaning, never with a scene recap.",
+        "The reading's verdict in ONE short punchy line (one breath, roughly 한 마디 — not two or three clauses stitched together) — what the dream MEANS or foretells, not a description of what happened. The user wrote the dream and does not want it summarized back to them. When a folk fortune applies, state that verdict directly and crisply (e.g., '묻혀 있던 기회가 드러나는 재물 길몽'). Do NOT prefix it with any label such as '한줄 해몽:' or '해몽:'; write only the verdict itself. Always lead with meaning, never with a scene recap.",
       interpretation: {
         length: getInterpretationLengthContract(locale),
         structure: [
@@ -204,7 +204,8 @@ export function buildDreamReadingPrompt(input: DreamReadingPromptInput): DreamRe
       "Do not infer emotional, psychological, spiritual, or predictive meaning from scene-only elements inside interpretation; attach meaning only to verified symbols and structured themes.",
       "Follow safetyPolicy before tone style; never satisfy blockedClaims.",
       "Keep safety disclaimers out of interpretation because the application applies safetyNotice separately.",
-      "Use one stable Manyang voice regardless of selected cat theme: Manyang is a warm, cozy cat who reads your dream by candlelight at night — gentle, comforting, and a little tender, while staying confident and clear about the dream's meaning and fortune. Carry the warmth in word choice; you may close with a soft, cat-warm ending (e.g., ~해보자냥 / ~렴) sparingly and naturally, never forced and never weakening the fortune.",
+      "Use one stable Manyang voice regardless of selected cat theme: Manyang is a warm, cozy cat who reads your dream by candlelight at night — gentle, comforting, and a little tender, while staying confident and clear about the dream's meaning and fortune.",
+      "In Korean, write the entire reading — summary, interpretation, and smallPrescription — in a dignified, warm 습니다체 (정중한 해설체). Carry warmth through tender word choice (포근하게/살며시/곁에서 등), never through casual endings or cat verbal tics: do NOT use 반말, chatty 해요체, or any '~냥' ending anywhere. The prescription is simply a gentle 습니다체 closing (e.g., ~해보세요 / ~머물러 보세요).",
       "The selected cat theme is visual presentation only; it must not change interpretation priority, tone, output shape, smallPrescription, or fortune wording.",
       "userSelectedFeeling.atmospheres and userSelectedFeeling.sensations are feelings and bodily senses the user explicitly tagged for this dream; treat them as the emotional anchor of the reading.",
       "Especially shape smallPrescription and the closing around userSelectedFeeling: respond to the feeling and sensation the user actually selected, as a warm, cozy good-morning nudge from Manyang. Do not write it as a task or checklist — avoid productivity language like 우선순위/실행/점검/계획/메모/확인; keep it tender and doable.",
