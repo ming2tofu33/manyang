@@ -117,11 +117,37 @@ describe("DreamResultReceipt", () => {
     expect(markup).toContain("height:calc(var(--receipt-paper-width) * 384 / 771 + 2px)");
   });
 
-  it("keeps a reserved blank area near the bottom for a future cat stamp asset", () => {
+  it("prints the selected cat reader stamp in the reserved area near the receipt bottom", () => {
     const markup = renderToStaticMarkup(<DreamResultReceipt />);
 
     expect(markup).toContain("data-receipt-stamp-space=\"true\"");
-    expect(markup).toContain("min-height:calc(var(--receipt-paper-width) * 192 / 771)");
+    expect(markup).toContain("min-height:calc(var(--receipt-paper-width) * 230 / 771)");
+    expect(markup).toContain("data-receipt-stamp=\"true\"");
+    expect(markup).toContain("data-receipt-stamp-reader=\"black_cat\"");
+    expect(markup).toContain("/manyang/receipts/stamps/stamp-black-cat-seal.png");
+    expect(markup).toContain("receipt-stamp-print");
+    expect(markup).toContain("animation-delay:3920ms");
+  });
+
+  it("uses the matching stamp asset for non-default cat readers", () => {
+    const basePayload = createLongReceiptPayload();
+    const payload = {
+      ...basePayload,
+      catReaderType: "gray_cat" as const,
+      analysis: {
+        ...basePayload.analysis,
+        reader: {
+          id: "gray_cat",
+          name: "잿빛냥",
+          access: "annual_premium" as const,
+        },
+      },
+    };
+    const markup = renderToStaticMarkup(<DreamResultReceipt payloadOverride={payload} />);
+
+    expect(markup).toContain("data-receipt-stamp-reader=\"gray_cat\"");
+    expect(markup).toContain("/manyang/receipts/stamps/stamp-gray-cat-seal.png");
+    expect(markup).not.toContain("/manyang/receipts/stamps/stamp-black-cat-seal.png");
   });
 
   it("keeps the inner text column away from the receipt side pattern", () => {
@@ -190,6 +216,7 @@ describe("DreamResultReceipt", () => {
     expect(markup).toContain("2026.05.24");
     expect(markup).toContain("불안함");
     expect(markup).toContain("검은냥 테마");
+    expect(markup).not.toContain("밤하늘 테마");
     expect(markup).not.toContain("From. 검은냥");
     expect(markup).toContain("receipt-tag-pop");
     expect(markup).toContain("data-receipt-symbol-tags=\"true\"");

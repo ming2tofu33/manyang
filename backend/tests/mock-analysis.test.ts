@@ -60,7 +60,7 @@ describe("analyzeDream", () => {
     expect(result.emotions).not.toContain("분위기: 슬픔, 평온함 / 감각: 선명함");
     expect(result.emotions.every((emotion) => !emotion.includes("분위기:"))).toBe(true);
     // 구조화된 분위기 정서는 정상적으로 들어온다.
-    expect(result.emotions).toEqual(expect.arrayContaining(["슬픔", "평온"]));
+    expect(result.emotions).toEqual(expect.arrayContaining(["슬픔", "평온함"]));
   });
 
   test("adds a safety notice for medical prediction requests", () => {

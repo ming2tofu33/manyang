@@ -12,6 +12,7 @@ import {
   getReadingKindForCatReader,
   hasUsedBasicReadingOnDate,
 } from "@/lib/access-policy";
+import { getManyangAppDate } from "@/lib/app-date";
 import { useLocale } from "@/lib/use-locale";
 import {
   getCatReaderDreamReadingState,
@@ -50,15 +51,6 @@ import {
 } from "@/lib/night-checkin";
 import { cn, ui } from "@/lib/styles";
 import { useAccessPlan } from "@/lib/use-access-plan";
-
-function getTodayDate(): string {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-}
 
 type OptionButtonProps = {
   option: DreamEntryOption;
@@ -211,7 +203,7 @@ export function DreamEntryForm() {
     getLatestAnalysisSnapshotFromBrowser,
     () => null,
   );
-  const todayDate = getTodayDate();
+  const todayDate = getManyangAppDate();
   const { accessPlan, bypassDailyLimit } = useAccessPlan();
   const { locale, t } = useLocale();
   const [dreamText, setDreamText] = useState(initialDraft?.dreamText ?? "");
@@ -489,7 +481,7 @@ export function DreamEntryForm() {
               선택하지 않아도 괜찮고, 최대 {dreamAtmosphereMaxSelection}개까지 고를 수 있어요.
             </p>
           </div>
-          <div className="grid grid-cols-4 gap-2">
+          <div data-dream-atmosphere-grid="true" className="grid grid-cols-3 gap-2">
             {dreamAtmosphereOptions.map((option) => {
               const isSelected = dreamAtmospheres.includes(option.label);
 
@@ -516,7 +508,7 @@ export function DreamEntryForm() {
               선택하지 않아도 괜찮고, 최대 {dreamSensationMaxSelection}개까지 고를 수 있어요.
             </p>
           </div>
-          <div className="grid grid-cols-4 gap-2">
+          <div data-dream-sensation-grid="true" className="grid grid-cols-3 gap-2">
             {dreamSensationOptions.map((option) => {
               const isSelected = dreamSensations.includes(option.label);
 

@@ -5,6 +5,7 @@ import { FormEvent, useEffect, useState, useSyncExternalStore } from "react";
 import { Battery, CloudMoon, Heart, Moon, Smile, Sparkles, type LucideIcon } from "lucide-react";
 
 import { AssetTextButton } from "@/components/asset-primitives";
+import { getManyangAppDate } from "@/lib/app-date";
 import { manyangAssets } from "@/lib/manyang-assets";
 import {
   createNightCheckInRecord,
@@ -48,15 +49,6 @@ const conditionIcons: Record<NightCheckInConditionId, LucideIcon> = {
   okay: Smile,
 };
 
-function getTodayDate(): string {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-}
-
 type OptionButtonProps = {
   label: string;
   icon: LucideIcon;
@@ -93,7 +85,7 @@ export function NightCheckInForm() {
   const [isSavingRoutineRecord, setIsSavingRoutineRecord] = useState(false);
   const [routineSaveError, setRoutineSaveError] = useState(false);
   const [showGuestPersistencePrompt, setShowGuestPersistencePrompt] = useState(true);
-  const todayDate = getTodayDate();
+  const todayDate = getManyangAppDate();
   const savedCheckIn = savedCheckInOverride ?? storedCheckIn;
   const hasSavedCheckInToday = savedCheckIn?.checkInDate === todayDate;
   const activeMoodId = selectedMoodId ?? (hasSavedCheckInToday ? savedCheckIn.moodId : defaultNightCheckInMood.id);

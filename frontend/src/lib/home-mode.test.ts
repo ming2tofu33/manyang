@@ -16,20 +16,24 @@ function createNightCheckIn(checkInDate: string): NightCheckInRecord {
 }
 
 describe("home mode", () => {
-  test("uses night check-in copy and route during night time", () => {
+  test("removes the night check-in CTA from night home state", () => {
     const state = getHomeState(new Date("2026-05-31T22:00:00"), null);
 
     expect(state.mode).toBe("night");
-    expect(state.question).toBe("오늘 하루의 기분과 컨디션을 남겨볼까요?");
-    expect(state.secondary).toEqual({ label: "밤의 기록 남기기", href: "/night" });
-    expect(JSON.stringify(state)).not.toMatch(/씨앗|심기|seed/);
+    expect(state.question).toBe("오늘 하루를 비춰줄 단서를 찾아볼까요?");
+    expect(state.primary).toEqual({ label: "꿈 들려주기", href: "/write" });
+    expect(state.secondary).toBeNull();
+    expect(state.tertiary).toBeNull();
+    expect(JSON.stringify(state)).not.toMatch(/씨앗|seed|밤의 기록 남기기|오늘 밤 기록 남기기/);
   });
 
-  test("shows last night's check-in context in the morning", () => {
+  test("shows last night's check-in context in the morning without a night check-in shortcut", () => {
     const state = getHomeState(new Date("2026-05-31T08:00:00"), createNightCheckIn("2026-05-30"));
 
     expect(state.question).toBe("어젯밤의 기록이 있어요. 꿈에 어떤 장면이 남았나요?");
-    expect(state.tertiary).toEqual({ label: "오늘 밤 기록 남기기", href: "/night" });
+    expect(state.primary).toEqual({ label: "꿈 들려주기", href: "/write" });
+    expect(state.secondary).toEqual({ label: "기억나지 않아요", href: "/morning" });
+    expect(state.tertiary).toBeNull();
     expect(state.checkInBadge).toBe("밤 기록: 편안함 · 괜찮음");
   });
 });

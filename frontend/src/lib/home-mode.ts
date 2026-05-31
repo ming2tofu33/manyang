@@ -1,5 +1,4 @@
 import type { NightCheckInRecord } from "./night-checkin";
-import { nightCheckInRoute } from "./night-checkin-options";
 
 export type HomeMode = "morning" | "night";
 
@@ -12,8 +11,8 @@ export type HomeState = {
   mode: HomeMode;
   question: string;
   primary: HomeAction;
-  secondary: HomeAction;
-  tertiary: HomeAction;
+  secondary: HomeAction | null;
+  tertiary: HomeAction | null;
   checkInBadge: string | null;
 };
 
@@ -67,10 +66,10 @@ export function getHomeState(date: Date, checkIn: NightCheckInRecord | null): Ho
 
     return {
       mode: "night",
-      question: hasTonightCheckIn ? "오늘 밤의 기록을 남겨두었어요" : "오늘 하루의 기분과 컨디션을 남겨볼까요?",
-      primary: { label: "꿈 해몽하기", href: "/write" },
-      secondary: { label: "밤의 기록 남기기", href: nightCheckInRoute },
-      tertiary: { label: "오늘 기록 보기", href: "/archive" },
+      question: hasTonightCheckIn ? "오늘 밤의 기록을 남겨두었어요" : "오늘 하루를 비춰줄 단서를 찾아볼까요?",
+      primary: { label: "꿈 들려주기", href: "/write" },
+      secondary: null,
+      tertiary: null,
       checkInBadge: hasTonightCheckIn ? getCheckInBadge(checkIn) : null,
     };
   }
@@ -82,9 +81,9 @@ export function getHomeState(date: Date, checkIn: NightCheckInRecord | null): Ho
     question: hasRecentCheckIn
       ? "어젯밤의 기록이 있어요. 꿈에 어떤 장면이 남았나요?"
       : "어젯밤 꿈을 기억하나요?",
-    primary: { label: "꿈 해몽하기", href: "/write" },
+    primary: { label: "꿈 들려주기", href: "/write" },
     secondary: { label: "기억나지 않아요", href: "/morning" },
-    tertiary: { label: "오늘 밤 기록 남기기", href: nightCheckInRoute },
+    tertiary: null,
     checkInBadge: hasRecentCheckIn ? getCheckInBadge(checkIn) : null,
   };
 }

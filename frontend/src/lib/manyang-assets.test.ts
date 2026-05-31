@@ -64,11 +64,47 @@ function readWebpSizeFromFile(filePath: string): { width: number; height: number
   throw new Error(`Unsupported WebP file: ${filePath}`);
 }
 
+function readJpegSizeFromFile(filePath: string): { width: number; height: number } {
+  const jpeg = readFileSync(filePath);
+
+  if (jpeg[0] !== 0xff || jpeg[1] !== 0xd8) {
+    throw new Error(`Not a JPEG file: ${filePath}`);
+  }
+
+  let offset = 2;
+  const sizeMarkers = new Set([0xc0, 0xc1, 0xc2, 0xc3, 0xc5, 0xc6, 0xc7, 0xc9, 0xca, 0xcb, 0xcd, 0xce, 0xcf]);
+
+  while (offset + 4 < jpeg.length) {
+    if (jpeg[offset] !== 0xff) {
+      offset += 1;
+      continue;
+    }
+
+    const marker = jpeg[offset + 1];
+    const length = jpeg.readUInt16BE(offset + 2);
+
+    if (sizeMarkers.has(marker)) {
+      return {
+        height: jpeg.readUInt16BE(offset + 5),
+        width: jpeg.readUInt16BE(offset + 7),
+      };
+    }
+
+    offset += 2 + length;
+  }
+
+  throw new Error(`Unsupported JPEG file: ${filePath}`);
+}
+
 function readImageSize(assetPath: string): { width: number; height: number } {
   const filePath = publicAssetPath(assetPath);
 
   if (assetPath.endsWith(".webp")) {
     return readWebpSizeFromFile(filePath);
+  }
+
+  if (assetPath.endsWith(".jpg") || assetPath.endsWith(".jpeg")) {
+    return readJpegSizeFromFile(filePath);
   }
 
   return readPngSizeFromFile(filePath);
@@ -90,6 +126,18 @@ describe("manyang assets", () => {
     expect(manyangAssets.backgrounds.cheeseCatInterpretation).toBe("/manyang/backgrounds/interpretation-cheese-cat.webp");
     expect(manyangAssets.backgrounds.grayCatInterpretation).toBe("/manyang/backgrounds/interpretation-gray-cat.webp");
     expect(manyangAssets.illustrations.dreamseed).toBe("/manyang/backgrounds/dreamseed.webp");
+    expect(manyangAssets.illustrations.dreamseedByCat.blackCat).toBe(
+      "/manyang/backgrounds/dreamseed-background-black-cat-v2.png",
+    );
+    expect(manyangAssets.illustrations.dreamseedByCat.whiteCat).toBe(
+      "/manyang/backgrounds/dreamseed-background-white-cat-v2.png",
+    );
+    expect(manyangAssets.illustrations.dreamseedByCat.cheeseCat).toBe(
+      "/manyang/backgrounds/dreamseed-background-cheese-cat-v3.png",
+    );
+    expect(manyangAssets.illustrations.dreamseedByCat.grayCat).toBe(
+      "/manyang/backgrounds/dreamseed-background-gray-cat-v2.png",
+    );
     expect(manyangAssets.illustrations.morning).toBe("/manyang/backgrounds/morning-illustration.webp");
     expect(manyangAssets.illustrations.blackCatProfile).toBe("/manyang/references/cat-black-profile.webp");
     expect(manyangAssets.illustrations.whiteCatProfile).toBe("/manyang/references/cat-white-profile.webp");
@@ -107,6 +155,10 @@ describe("manyang assets", () => {
     expect(manyangAssets.orbs.one).toBe("/manyang/orbs/orb-1-transparent.webp");
     expect(manyangAssets.orbs.two).toBe("/manyang/orbs/orb-2-transparent.webp");
     expect(manyangAssets.orbs.three).toBe("/manyang/orbs/orb-3-transparent.webp");
+    expect(manyangAssets.receiptStamps.blackCat).toBe("/manyang/receipts/stamps/stamp-black-cat-seal.png");
+    expect(manyangAssets.receiptStamps.whiteCat).toBe("/manyang/receipts/stamps/stamp-white-cat-seal.png");
+    expect(manyangAssets.receiptStamps.cheeseCat).toBe("/manyang/receipts/stamps/stamp-cheese-cat-seal.png");
+    expect(manyangAssets.receiptStamps.grayCat).toBe("/manyang/receipts/stamps/stamp-gray-cat-seal.png");
 
     [
       manyangAssets.backgrounds.blackCatHome,
@@ -119,6 +171,10 @@ describe("manyang assets", () => {
       manyangAssets.backgrounds.cheeseCatInterpretation,
       manyangAssets.backgrounds.grayCatInterpretation,
       manyangAssets.illustrations.dreamseed,
+      manyangAssets.illustrations.dreamseedByCat.blackCat,
+      manyangAssets.illustrations.dreamseedByCat.whiteCat,
+      manyangAssets.illustrations.dreamseedByCat.cheeseCat,
+      manyangAssets.illustrations.dreamseedByCat.grayCat,
       manyangAssets.illustrations.morning,
       manyangAssets.illustrations.blackCatProfile,
       manyangAssets.illustrations.whiteCatProfile,
@@ -136,6 +192,10 @@ describe("manyang assets", () => {
       manyangAssets.orbs.one,
       manyangAssets.orbs.two,
       manyangAssets.orbs.three,
+      manyangAssets.receiptStamps.blackCat,
+      manyangAssets.receiptStamps.whiteCat,
+      manyangAssets.receiptStamps.cheeseCat,
+      manyangAssets.receiptStamps.grayCat,
     ].forEach((assetPath) => {
       expect(publicAssetExists(assetPath)).toBe(true);
     });
@@ -143,7 +203,7 @@ describe("manyang assets", () => {
 
   test("keeps cat home backgrounds at their reference sizes", () => {
     expect(readImageSize(manyangAssets.backgrounds.blackCatHome)).toEqual({ width: 853, height: 1844 });
-    expect(readImageSize(manyangAssets.backgrounds.whiteCatHome)).toEqual({ width: 896, height: 1755 });
+    expect(readImageSize(manyangAssets.backgrounds.whiteCatHome)).toEqual({ width: 853, height: 1844 });
     expect(readImageSize(manyangAssets.backgrounds.cheeseCatHome)).toEqual({ width: 852, height: 1846 });
     expect(readImageSize(manyangAssets.backgrounds.grayCatHome)).toEqual({ width: 853, height: 1844 });
   });
@@ -155,6 +215,10 @@ describe("manyang assets", () => {
     expect(readImageSize(manyangAssets.backgrounds.cheeseCatInterpretation)).toEqual({ width: 941, height: 1672 });
     expect(readImageSize(manyangAssets.backgrounds.grayCatInterpretation)).toEqual({ width: 852, height: 1846 });
     expect(readImageSize(manyangAssets.illustrations.dreamseed)).toEqual({ width: 1254, height: 1254 });
+    expect(readImageSize(manyangAssets.illustrations.dreamseedByCat.blackCat)).toEqual({ width: 1254, height: 1254 });
+    expect(readImageSize(manyangAssets.illustrations.dreamseedByCat.whiteCat)).toEqual({ width: 1254, height: 1254 });
+    expect(readImageSize(manyangAssets.illustrations.dreamseedByCat.cheeseCat)).toEqual({ width: 1254, height: 1254 });
+    expect(readImageSize(manyangAssets.illustrations.dreamseedByCat.grayCat)).toEqual({ width: 1254, height: 1254 });
     expect(readImageSize(manyangAssets.illustrations.morning)).toEqual({ width: 1254, height: 1254 });
     expect(readImageSize(manyangAssets.illustrations.blackCatProfile)).toEqual({ width: 1254, height: 1254 });
     expect(readImageSize(manyangAssets.illustrations.whiteCatProfile)).toEqual({ width: 1254, height: 1254 });
@@ -168,6 +232,10 @@ describe("manyang assets", () => {
     expect(readImageSize(manyangAssets.orbs.one)).toEqual({ width: 1254, height: 1254 });
     expect(readImageSize(manyangAssets.orbs.two)).toEqual({ width: 1254, height: 1254 });
     expect(readImageSize(manyangAssets.orbs.three)).toEqual({ width: 1254, height: 1254 });
+    expect(readImageSize(manyangAssets.receiptStamps.blackCat)).toEqual({ width: 1254, height: 1254 });
+    expect(readImageSize(manyangAssets.receiptStamps.whiteCat)).toEqual({ width: 1254, height: 1254 });
+    expect(readImageSize(manyangAssets.receiptStamps.cheeseCat)).toEqual({ width: 1254, height: 1254 });
+    expect(readImageSize(manyangAssets.receiptStamps.grayCat)).toEqual({ width: 1254, height: 1254 });
   });
 
   test("uses optimized WebP home backgrounds that are smaller than their source PNGs", () => {
@@ -213,6 +281,13 @@ describe("manyang assets", () => {
 
       expect(statSync(optimizedPath).size).toBeLessThan(statSync(sourcePath).size * (maxRatio as number));
     });
+  });
+
+  test("exposes the black cat social preview image for shared links", () => {
+    expect(manyangAssets.social.sharePreview).toBe("/manyang/social/og-blackcat.jpg");
+    expect(publicAssetExists(manyangAssets.social.sharePreview)).toBe(true);
+    expect(readImageSize(manyangAssets.social.sharePreview)).toEqual({ width: 1200, height: 1200 });
+    expect(statSync(publicAssetPath(manyangAssets.social.sharePreview)).size).toBeLessThan(500_000);
   });
 
   test("uses the latest reference white cat home background", () => {

@@ -86,18 +86,25 @@ export type FortuneReading = {
 
 // 분위기 옵션 id → 정서 라벨(현지화). frontend/src/lib/dream-entry-options.ts와 동기화.
 const ATMOSPHERE_EMOTION: Record<string, { ko: string; en: string }> = {
-  calm: { ko: "평온", en: "calm" },
+  calm: { ko: "평온함", en: "calm" },
   warm: { ko: "따뜻함", en: "warmth" },
   excited: { ko: "설렘", en: "excitement" },
   wistful: { ko: "그리움", en: "longing" },
-  anxious: { ko: "불안", en: "anxiety" },
-  fearful: { ko: "두려움", en: "fear" },
   sad: { ko: "슬픔", en: "sadness" },
+  lonely: { ko: "쓸쓸함", en: "loneliness" },
+  anxious: { ko: "불안함", en: "anxiety" },
+  fearful: { ko: "두려움", en: "fear" },
+  stifling: { ko: "답답함", en: "feeling stifled" },
+  unfamiliar: { ko: "낯섦", en: "unfamiliarity" },
+  eerie: { ko: "묘함", en: "eeriness" },
+  mystical: { ko: "신비함", en: "mystery" },
+  hazy: { ko: "흐릿함", en: "haziness" },
+  complex: { ko: "복잡함", en: "complexity" },
+  unpleasant: { ko: "불쾌함", en: "discomfort" },
+  // Deprecated ids kept so older saved drafts still produce meaningful labels.
   angry: { ko: "분노", en: "anger" },
   ashamed: { ko: "부끄러움", en: "shame" },
-  stifling: { ko: "답답함", en: "feeling stifled" },
   confused: { ko: "혼란", en: "confusion" },
-  eerie: { ko: "묘함", en: "eeriness" },
 };
 
 // 감각 옵션 id → 감각 라벨(현지화) + 연결되는 KB 심볼(약한 검색 신호용).
@@ -126,12 +133,16 @@ const ATMOSPHERE_TONE: Record<string, "positive" | "negative"> = {
   calm: "positive",
   warm: "positive",
   excited: "positive",
+  mystical: "positive",
   anxious: "negative",
   fearful: "negative",
   sad: "negative",
+  lonely: "negative",
   angry: "negative",
   ashamed: "negative",
   stifling: "negative",
+  complex: "negative",
+  unpleasant: "negative",
 };
 const SENSATION_TONE: Record<string, "positive" | "negative"> = {
   warmth: "positive",
@@ -143,7 +154,7 @@ const SENSATION_TONE: Record<string, "positive" | "negative"> = {
   falling: "negative",
 };
 // 확신도를 낮추는(양면으로 끄는) 신호.
-const LOW_CERTAINTY_ATMOSPHERES = new Set(["confused", "eerie"]);
+const LOW_CERTAINTY_ATMOSPHERES = new Set(["confused", "eerie", "unfamiliar", "hazy", "complex"]);
 
 function countToneSignals(
   atmosphereIds: string[] | undefined,

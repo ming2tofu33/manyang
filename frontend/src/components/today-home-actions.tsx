@@ -4,13 +4,6 @@ import Link from "next/link";
 import { useEffect, useState, useSyncExternalStore } from "react";
 
 import { AssetImageTextButton } from "./asset-primitives";
-import { CatReaderPicker } from "./cat-reader-picker";
-import {
-  getDefaultCatReaderSnapshot,
-  getSelectedCatReaderSnapshotFromBrowser,
-  saveSelectedCatReaderIdToBrowser,
-  subscribeToSelectedCatReader,
-} from "@/lib/cat-readers";
 import {
   homeActionGroupClassName,
   homeActionRootClassName,
@@ -36,7 +29,7 @@ export function PrimaryDreamButton() {
       imageClassName="manyang-button-glow"
       contentClassName="pb-0.5 text-[1.42rem]"
     >
-      꿈 해몽하기
+      꿈 들려주기
     </AssetImageTextButton>
   );
 }
@@ -47,7 +40,7 @@ function SecondaryForgotLink() {
       href="/morning"
       className="mx-auto mt-0.5 block w-fit rounded-full px-3 py-1 text-[13px] font-semibold text-[#f2c27d] underline decoration-[#f2c27d]/45 underline-offset-4 [text-shadow:0_0_12px_rgba(0,0,0,0.8)] transition hover:text-[#ffd98a] focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
     >
-      기억 나지 않아요
+      기억나지 않아요
     </Link>
   );
 }
@@ -68,30 +61,8 @@ function DailyTarotButton() {
   );
 }
 
-function NightCheckInButton() {
-  return (
-    <AssetImageTextButton
-      href="/night"
-      frame={manyangAssets.buttons.dreamseed}
-      width={852}
-      height={300}
-      sizes="250px"
-      className="mx-auto -my-1 block w-[60%] max-w-[240px] px-2 py-0"
-      imageClassName="manyang-button-glow-soft"
-      contentClassName="pb-0.5 text-[1.12rem]"
-    >
-      밤의 기록 남기기
-    </AssetImageTextButton>
-  );
-}
-
 export function TodayHomeActions() {
   const checkIn = useSyncExternalStore(subscribeToNightCheckIn, getNightCheckInSnapshotFromBrowser, () => null);
-  const selectedCatReaderId = useSyncExternalStore(
-    subscribeToSelectedCatReader,
-    getSelectedCatReaderSnapshotFromBrowser,
-    getDefaultCatReaderSnapshot,
-  );
   const [currentDate, setCurrentDate] = useState<Date | null>(getCurrentDateSnapshot);
 
   useEffect(() => {
@@ -122,16 +93,9 @@ export function TodayHomeActions() {
         ) : null}
       </div>
 
-      <CatReaderPicker
-        value={selectedCatReaderId}
-        onChange={saveSelectedCatReaderIdToBrowser}
-        className="mx-auto w-[82%] max-w-[330px]"
-      />
-
       <div className={cn(isNight ? nightHomeActionGroupClassName : homeActionGroupClassName)}>
         <PrimaryDreamButton />
         <DailyTarotButton />
-        {isNight ? <NightCheckInButton /> : null}
         {isNight ? null : <SecondaryForgotLink />}
       </div>
     </div>

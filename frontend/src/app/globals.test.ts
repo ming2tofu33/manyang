@@ -79,9 +79,12 @@ describe("global animation styles", () => {
     expect(globalsCss).toContain("animation: receipt-title-fade 2400ms cubic-bezier(0.22, 1, 0.36, 1) forwards;");
     expect(globalsCss).toContain(".receipt-tag-pop");
     expect(globalsCss).toContain("@keyframes receipt-tag-pop");
+    expect(globalsCss).toContain(".receipt-stamp-print");
+    expect(globalsCss).toContain("@keyframes receipt-stamp-print");
     expect(globalsCss).toContain("  .receipt-stream-word {");
     expect(globalsCss).toContain("  .animate-receipt-title-fade,");
-    expect(globalsCss).toContain("  .receipt-tag-pop {");
+    expect(globalsCss).toContain("  .receipt-tag-pop,");
+    expect(globalsCss).toContain("  .receipt-stamp-print {");
     expect(globalsCss).toContain("    animation: none !important;");
     expect(globalsCss).toContain("    opacity: 1 !important;");
   });

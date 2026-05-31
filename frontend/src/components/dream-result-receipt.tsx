@@ -7,7 +7,7 @@ import { Fragment, useEffect, useState, useSyncExternalStore } from "react";
 
 import { AssetTextButton } from "@/components/asset-primitives";
 import { ReceiptSaveCta } from "@/components/receipt-save-cta";
-import { getCatReaderById } from "@/lib/cat-readers";
+import { getCatReaderById, type CatReader } from "@/lib/cat-readers";
 import { DREAM_READING_DISCLAIMER } from "@/lib/disclaimer";
 import {
   getLatestAnalysisSnapshotFromBrowser,
@@ -98,9 +98,16 @@ const receiptBottomHeight = 384;
 const receiptTotalHeight = receiptTopHeight + receiptMiddleHeight + receiptBottomHeight;
 const receiptContentTopOffset = 360;
 const receiptContentBottomInset = 104;
-const receiptStampSpaceHeight = 192;
+const receiptStampSpaceHeight = 230;
 const receiptPaperWidth = "min(calc(100vw - 32px), 372px)";
 const receiptSliceSeamOverlapPx = 2;
+
+const receiptStampImageSrcByAssetKey = {
+  blackCat: manyangAssets.receiptStamps.blackCat,
+  whiteCat: manyangAssets.receiptStamps.whiteCat,
+  cheeseCat: manyangAssets.receiptStamps.cheeseCat,
+  grayCat: manyangAssets.receiptStamps.grayCat,
+} satisfies Record<CatReader["assetKey"], string>;
 
 function getReceiptSliceHeight(height: number, adjustmentPx = 0): string {
   const base = `var(--receipt-paper-width) * ${height} / ${receiptOriginalWidth}`;
@@ -150,6 +157,7 @@ const receiptTitleDelayMs = 900;
 const receiptMetaDelayMs = 4300;
 const receiptTagStartDelayMs = 5050;
 const receiptTagStepMs = 110;
+const receiptStampDelayMs = receiptPaperSettledDelayMs + 420;
 const receiptInterpretationStartDelayMs = 6200;
 const receiptTextGapMs = 260;
 const receiptWordBloomMs = 1300;
@@ -297,6 +305,7 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
 
   const { analysis } = payload;
   const reader = getCatReaderById(payload.catReaderType ?? analysis.reader?.id);
+  const receiptStampSrc = receiptStampImageSrcByAssetKey[reader.assetKey];
   const displayMood = payload.wakeMood ?? analysis.emotions[0] ?? "기록 없음";
   const remoteRelatedCheckIn =
     routineSource === "server"
@@ -536,10 +545,23 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
             ) : null}
             <div
               aria-hidden="true"
-              className="mt-7 shrink-0"
+              className="relative mt-6 flex shrink-0 items-center justify-center"
               data-receipt-stamp-space="true"
               style={receiptStampSpaceStyle}
-            />
+            >
+              <Image
+                src={receiptStampSrc}
+                alt=""
+                width={1254}
+                height={1254}
+                sizes="132px"
+                unoptimized
+                data-receipt-stamp="true"
+                data-receipt-stamp-reader={reader.id}
+                className="receipt-stamp-print pointer-events-none h-[7.4rem] w-[7.4rem] object-contain mix-blend-multiply"
+                style={createReceiptDelayStyle(receiptStampDelayMs)}
+              />
+            </div>
           </div>
         </section>
       </div>

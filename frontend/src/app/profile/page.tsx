@@ -19,7 +19,8 @@ export default function ProfilePage() {
       title="내 꿈방"
       subtitle="나와 앱 설정을 관리하는 공간"
       titleIconSrc={manyangAssets.icons.profile}
-      rightAction="settings"
+      leftAction="none"
+      rightAction="none"
     >
       <div className="mt-4 pb-5">
         <ProfileRoom />

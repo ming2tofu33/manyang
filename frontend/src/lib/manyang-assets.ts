@@ -12,6 +12,12 @@ export const manyangAssets = {
   },
   illustrations: {
     dreamseed: "/manyang/backgrounds/dreamseed.webp",
+    dreamseedByCat: {
+      blackCat: "/manyang/backgrounds/dreamseed-background-black-cat-v2.png",
+      whiteCat: "/manyang/backgrounds/dreamseed-background-white-cat-v2.png",
+      cheeseCat: "/manyang/backgrounds/dreamseed-background-cheese-cat-v3.png",
+      grayCat: "/manyang/backgrounds/dreamseed-background-gray-cat-v2.png",
+    },
     morning: "/manyang/backgrounds/morning-illustration.webp",
     blackcatProfile: "/manyang/references/blackcat-profile-transparent.png",
     blackCatProfile: "/manyang/references/cat-black-profile.webp",
@@ -29,11 +35,20 @@ export const manyangAssets = {
     cheeseCat: "/manyang/references/loading-cheese-cat.webp",
     grayCat: "/manyang/references/loading-gray-cat.webp",
   },
+  social: {
+    sharePreview: "/manyang/social/og-blackcat.jpg",
+  },
   orbs: {
     base: "/manyang/orbs/orb-transparent.webp",
     one: "/manyang/orbs/orb-1-transparent.webp",
     two: "/manyang/orbs/orb-2-transparent.webp",
     three: "/manyang/orbs/orb-3-transparent.webp",
+  },
+  receiptStamps: {
+    blackCat: "/manyang/receipts/stamps/stamp-black-cat-seal.png",
+    whiteCat: "/manyang/receipts/stamps/stamp-white-cat-seal.png",
+    cheeseCat: "/manyang/receipts/stamps/stamp-cheese-cat-seal.png",
+    grayCat: "/manyang/receipts/stamps/stamp-gray-cat-seal.png",
   },
   tarot: {
     cardBack: "/manyang/tarot/card-back.png",

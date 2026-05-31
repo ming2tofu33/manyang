@@ -49,6 +49,7 @@ describe("POST /api/dreams/analyze", () => {
   const originalAllowMockAnalysis = process.env.MANYANG_ALLOW_MOCK_ANALYSIS;
 
   afterEach(() => {
+    vi.useRealTimers();
     if (originalMode === undefined) {
       delete process.env.MANYANG_ANALYSIS_MODE;
     } else {
@@ -403,6 +404,41 @@ describe("POST /api/dreams/analyze", () => {
       {
         guestId,
         dreamDate: "2026-05-30",
+      },
+    ]);
+  });
+
+  test("uses the Korea midnight app date when the client omits dreamDate", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-05-31T15:00:00.000Z"));
+
+    const guestId = "00000000-0000-4000-8000-0000000000cc";
+    const checkedDates: string[] = [];
+    const persistedGuestUsage: unknown[] = [];
+    const response = await handleDreamAnalyzeRequest(
+      createJsonRequest({
+        dreamText: "I dreamed that a snake appeared in my room.",
+        catReaderType: "black_cat",
+      }),
+      {
+        getAuthenticatedUserId: async () => null,
+        createGuestId: () => guestId,
+        hasCompletedGuestBasicReadingOnDate: async (_guestId, dreamDate) => {
+          checkedDates.push(dreamDate);
+          return false;
+        },
+        persistGuestBasicReadingUsage: async (input) => {
+          persistedGuestUsage.push(input);
+        },
+      },
+    );
+
+    expect(response.status).toBe(200);
+    expect(checkedDates).toEqual(["2026-06-01"]);
+    expect(persistedGuestUsage).toEqual([
+      {
+        guestId,
+        dreamDate: "2026-06-01",
       },
     ]);
   });

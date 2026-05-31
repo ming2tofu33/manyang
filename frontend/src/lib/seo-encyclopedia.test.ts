@@ -5,6 +5,7 @@ import {
   createSymbolCanonicalPath,
   createSymbolSeoDescription,
   createSymbolSeoTitle,
+  getSiteUrl,
   getIndexableEncyclopediaEntries,
 } from "./seo-encyclopedia";
 
@@ -36,5 +37,29 @@ describe("seo encyclopedia helpers", () => {
     ] as EncyclopediaEntry[];
 
     expect(getIndexableEncyclopediaEntries(entries)).toEqual([catEntry]);
+  });
+
+  it("defaults to the current production site URL", () => {
+    const publicSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+    const vercelUrl = process.env.VERCEL_URL;
+
+    delete process.env.NEXT_PUBLIC_SITE_URL;
+    process.env.VERCEL_URL = "temporary-preview.vercel.app";
+
+    try {
+      expect(getSiteUrl()).toBe("https://manyang.vercel.app");
+    } finally {
+      if (publicSiteUrl === undefined) {
+        delete process.env.NEXT_PUBLIC_SITE_URL;
+      } else {
+        process.env.NEXT_PUBLIC_SITE_URL = publicSiteUrl;
+      }
+
+      if (vercelUrl === undefined) {
+        delete process.env.VERCEL_URL;
+      } else {
+        process.env.VERCEL_URL = vercelUrl;
+      }
+    }
   });
 });

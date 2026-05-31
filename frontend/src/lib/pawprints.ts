@@ -1,3 +1,5 @@
+import { getManyangAppDate } from "./app-date";
+
 export type StorageLike = {
   getItem(key: string): string | null;
   setItem(key: string, value: string): void;
@@ -29,8 +31,6 @@ export type PawprintPersistenceInput = {
 export const pawprintRecordsKey = "manyang:pawprints";
 export const pawprintChangedEvent = "manyang:pawprints-changed";
 
-const pawprintTimeZone = "Asia/Seoul";
-const pawprintDayBoundaryHours = 5;
 const emptyPawprintRecords: PawprintRecord[] = [];
 
 let pawprintSnapshotCache:
@@ -66,18 +66,6 @@ function notifyPawprintsChanged(): void {
   }
 }
 
-function formatAppDate(date: Date): string {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    day: "2-digit",
-    month: "2-digit",
-    timeZone: pawprintTimeZone,
-    year: "numeric",
-  }).formatToParts(date);
-  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
-
-  return `${values.year}-${values.month}-${values.day}`;
-}
-
 function getUniqueAppDates(records: PawprintRecord[]): Set<string> {
   return new Set(records.map((record) => record.appDate));
 }
@@ -93,9 +81,7 @@ function shiftAppDate(appDate: string, dayDelta: number): string {
 }
 
 export function getPawprintAppDate(date = new Date()): string {
-  const shiftedDate = new Date(date.getTime() - pawprintDayBoundaryHours * 60 * 60 * 1000);
-
-  return formatAppDate(shiftedDate);
+  return getManyangAppDate(date);
 }
 
 export function createPawprintRecord(input: PawprintInput): PawprintRecord {

@@ -29,11 +29,17 @@ describe("cat readers", () => {
   test("defines the MVP cat reader set", () => {
     expect(catReaders.map((reader) => reader.id)).toEqual(["black_cat", "white_cat", "cheese_cat", "gray_cat"]);
     expect(catReaders.map((reader) => reader.name)).toEqual(["검은냥", "하얀냥", "치즈냥", "잿빛냥"]);
+    expect(catReaders.map((reader) => reader.ctaLabel)).toEqual([
+      "검은냥 테마로 남기기",
+      "하얀냥 테마로 남기기",
+      "치즈냥 테마로 남기기",
+      "잿빛냥 테마로 남기기",
+    ]);
     expect(catReaders.map((reader) => reader.role)).toEqual([
-      "기본 밤하늘 테마",
-      "부드러운 달빛 테마",
-      "따뜻한 노을 테마",
-      "달빛 서재 테마",
+      "밤하늘 테마",
+      "달빛 테마",
+      "노을 테마",
+      "타로 테마",
     ]);
     expect(catReaders.map((reader) => reader.shortDescription)).toEqual([
       "깊은 밤하늘과 촛불 무드",

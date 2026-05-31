@@ -19,6 +19,7 @@ type AppShellProps = {
   subtitle?: string;
   titleIconSrc?: string;
   backHref?: string;
+  leftAction?: "bell" | "none";
   rightAction?: "settings" | "share" | "calendar" | "book" | "none";
   showHeader?: boolean;
   showBottomNav?: boolean;
@@ -37,6 +38,7 @@ export function AppShell({
   subtitle,
   titleIconSrc,
   backHref,
+  leftAction = "bell",
   rightAction = "settings",
   showHeader = true,
   showBottomNav = true,
@@ -88,8 +90,10 @@ export function AppShell({
                   label="뒤로 가기"
                   size="header"
                 />
-              ) : (
+              ) : leftAction === "bell" ? (
                 <AssetIconButton src={manyangAssets.actionIcons.bell} label="알림" size="header" />
+              ) : (
+                <span className="h-11 w-11 shrink-0" aria-hidden="true" />
               )}
 
               {title ? (

@@ -23,6 +23,27 @@ describe("DreamEntryForm", () => {
     expect(markup).not.toContain("h-[0.95rem] w-[0.95rem]");
   });
 
+  it("renders dream sensations as a compact 3 column grid after the atmosphere grid", () => {
+    const markup = renderToStaticMarkup(<DreamEntryForm />);
+    const atmosphereGridIndex = markup.indexOf('data-dream-atmosphere-grid="true"');
+    const sensationGridIndex = markup.indexOf('data-dream-sensation-grid="true"');
+    const sensationOtherIndex = markup.indexOf('id="dream-sensation-other"');
+    const sensationMarkup = markup.slice(sensationGridIndex, sensationOtherIndex);
+
+    expect(atmosphereGridIndex).toBeGreaterThan(-1);
+    expect(sensationGridIndex).toBeGreaterThan(atmosphereGridIndex);
+    expect(sensationMarkup).toContain("grid-cols-3");
+    expect(sensationMarkup).not.toContain("grid-cols-4");
+    expect(sensationMarkup).toContain("떨어짐");
+    expect(sensationMarkup).toContain("떠다님");
+    expect(sensationMarkup).toContain("쫓김");
+    expect(sensationMarkup).toContain("갇힘");
+    expect(markup).not.toContain("떨어지는 느낌");
+    expect(markup).not.toContain("떠다니는 느낌");
+    expect(markup).not.toContain("쫓기는 느낌");
+    expect(markup).not.toContain("갇힌 느낌");
+  });
+
   it("renders the submit button without extra vertical frame padding", () => {
     const markup = renderToStaticMarkup(<DreamEntryForm />);
 
@@ -49,7 +70,7 @@ describe("DreamEntryForm", () => {
         isReadingAvailable={false}
         canSubmit
         submitButtonLabel="해몽 받기"
-        unavailableLabel="오늘의 꿈 영수증은 이미 받았어요"
+        unavailableLabel="오늘은 꿈 영수증을 이미 받았어요"
       />,
     );
 
@@ -57,7 +78,7 @@ describe("DreamEntryForm", () => {
     expect(markup).toContain("해몽 받기");
     expect(markup).toContain("<button");
     expect(markup).not.toContain('href="/auth?next=%2Fwrite"');
-    expect(markup).not.toContain("<button type=\"submit\" disabled");
-    expect(markup).not.toContain("disabled=\"\"");
+    expect(markup).not.toContain('<button type="submit" disabled');
+    expect(markup).not.toContain('disabled=""');
   });
 });

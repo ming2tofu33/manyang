@@ -4,6 +4,7 @@ import Image from "next/image";
 import { FormEvent, type ReactNode, useEffect, useState, useSyncExternalStore } from "react";
 
 import { AssetImageTextButton, AssetTextButton } from "@/components/asset-primitives";
+import { getManyangAppDate } from "@/lib/app-date";
 import {
   createMorningMoodRecord,
   getEmptyMorningMoodRecordsSnapshot,
@@ -30,15 +31,6 @@ import { manyangAssets } from "@/lib/manyang-assets";
 import { cn, ui } from "@/lib/styles";
 
 type IconName = keyof typeof manyangAssets.semanticIcons;
-
-function getTodayDate(): string {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-}
 
 type ChoiceChipProps = {
   label: string;
@@ -103,7 +95,7 @@ export function MorningMoodForm() {
     getMorningMoodRecordsSnapshotFromBrowser,
     getEmptyMorningMoodRecordsSnapshot,
   );
-  const todayDate = getTodayDate();
+  const todayDate = getManyangAppDate();
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [selectedBodyFeeling, setSelectedBodyFeeling] = useState<string | null>(null);
   const [thought, setThought] = useState<string | null>(null);

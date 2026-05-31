@@ -33,8 +33,11 @@ describe("CatReaderPicker", () => {
       <CatReaderPicker value="gray_cat" onChange={() => undefined} variant="compact" />,
     );
 
+    expect(markup).toContain("꿈 영수증 테마");
+    expect(markup).not.toContain("이번 꿈 영수증 테마");
     expect(markup).toContain("잿빛냥");
-    expect(markup).toContain("달빛 서재 테마");
+    expect(markup).toContain("타로 테마");
+    expect(markup).not.toContain("타로 테마 테마");
     expect(markup).not.toContain("disabled");
     expect(markup).toContain("Moon Pass");
   });

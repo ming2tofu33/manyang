@@ -4,7 +4,13 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 import { catReaderPickerSheetCopy, getCatReaderHomeCopy } from "@/lib/cat-reader-home-copy";
-import { catReaders, getCatReaderById, getCatReaderName, type CatReader, type CatReaderId } from "@/lib/cat-readers";
+import {
+  catReaders,
+  getCatReaderById,
+  getCatReaderName,
+  type CatReader,
+  type CatReaderId,
+} from "@/lib/cat-readers";
 import { manyangAssets } from "@/lib/manyang-assets";
 import { cn } from "@/lib/styles";
 import { useLocale } from "@/lib/use-locale";
@@ -27,6 +33,7 @@ export const homeCatBackgroundChangeDelayMs = 280;
 export function CatReaderPicker({ value, onChange, variant = "home", className, heading }: CatReaderPickerProps) {
   const { locale, t } = useLocale();
   const selectedReader = getCatReaderById(value);
+  const selectedReaderName = getCatReaderName(selectedReader, locale);
   const selectedReaderCopy = getCatReaderHomeCopy(selectedReader.id);
   const isCompact = variant === "compact";
   const [isHomeSheetOpen, setIsHomeSheetOpen] = useState(false);
@@ -113,7 +120,7 @@ export function CatReaderPicker({ value, onChange, variant = "home", className, 
               ) : null}
             </span>
             <span className="mt-1 block truncate text-[0.94rem] font-semibold leading-tight text-[#ffd98a]">
-              {t("picker.saveWithTheme", { name: getCatReaderName(selectedReader, locale) })}
+              {t("picker.saveWithTheme", { name: selectedReaderName })}
             </span>
             <span className="mt-0.5 block truncate text-[11px] leading-4 text-[#fff3d7]/72">
               {selectedReaderCopy.line}
@@ -189,7 +196,9 @@ export function CatReaderPicker({ value, onChange, variant = "home", className, 
                       </span>
                       <span className="min-w-0">
                         <span className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5">
-                          <span className="shrink-0 text-[12px] font-semibold text-[#ffd98a]">{getCatReaderName(reader, locale)}</span>
+                          <span className="shrink-0 text-[12px] font-semibold text-[#ffd98a]">
+                            {getCatReaderName(reader, locale)}
+                          </span>
                           <span className="shrink-0 rounded-full border border-[#b98255]/30 bg-[#1b1028]/64 px-1.5 py-0.5 text-[8px] font-semibold text-[#f0bc7d]">
                             {readerCopy.tag}
                           </span>
@@ -239,10 +248,10 @@ export function CatReaderPicker({ value, onChange, variant = "home", className, 
         </span>
         <div className="min-w-0 flex-1">
           <p className="text-[12px] font-semibold text-[#f0bc7d]">
-            {heading ?? (isCompact ? "이번 꿈 영수증 테마" : "오늘 꿈 영수증 테마")}
+            {heading ?? (isCompact ? "꿈 영수증 테마" : "오늘 꿈 영수증 테마")}
           </p>
           <h2 className={cn("flex min-w-0 items-center gap-2 font-semibold text-[#ffd98a]", isCompact ? "text-[1rem]" : "text-[1.12rem]")}>
-            <span className="truncate">{getCatReaderName(selectedReader, locale)}</span>
+            <span className="truncate">{selectedReaderName}</span>
             <span className="shrink-0 rounded-full border border-[#b98255]/35 bg-[#1b1028]/70 px-2 py-0.5 text-[10px] font-semibold text-[#f0bc7d]">
               {selectedReader.role}
             </span>
@@ -281,7 +290,9 @@ export function CatReaderPicker({ value, onChange, variant = "home", className, 
                   className="scale-110 object-contain transition group-hover:scale-125"
                 />
               </span>
-              <span className="mt-1 block truncate text-[11px] font-semibold text-[#ffd98a]">{getCatReaderName(reader, locale)}</span>
+              <span className="mt-1 block truncate text-[11px] font-semibold text-[#ffd98a]">
+                {getCatReaderName(reader, locale)}
+              </span>
               <span className="mt-0.5 block truncate text-[9px] font-semibold text-[#f0bc7d]">{reader.role}</span>
               {reader.lockedLabel ? (
                 <span className="mt-0.5 block truncate text-[9px] font-semibold text-[#f0bc7d]">Moon Pass</span>

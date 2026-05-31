@@ -31,6 +31,7 @@ import {
   getReadingKindForCatReader,
   type AccessPlan,
 } from "@/lib/access-policy";
+import { getManyangAppDate } from "@/lib/app-date";
 import { getAuthenticatedAccessPlan, getAuthenticatedUserId } from "@/lib/supabase/server";
 import type { PersistCompletedDreamReadingInput } from "@/lib/manyang-dream-records";
 
@@ -429,7 +430,7 @@ function createUnavailablePayload(
 }
 
 function getDefaultDreamDate(): string {
-  return new Date().toISOString().slice(0, 10);
+  return getManyangAppDate();
 }
 
 async function getDefaultAccessPlanForUser(userId: string | null): Promise<AccessPlan> {

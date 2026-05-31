@@ -14,35 +14,42 @@ describe("dream entry options", () => {
     expect(dreamEntryMaxLength).toBe(1000);
   });
 
-  test("defines the final dream atmosphere options in display order", () => {
+  test("defines the final dream atmosphere options in a 3 by 5 display order", () => {
     expect(dreamAtmosphereOptions.map((option) => option.label)).toEqual([
       "평온함",
       "따뜻함",
       "설렘",
       "그리움",
+      "슬픔",
+      "쓸쓸함",
       "불안함",
       "두려움",
-      "슬픔",
-      "분노",
-      "부끄러움",
       "답답함",
-      "혼란스러움",
+      "낯섦",
       "묘함",
+      "신비함",
+      "흐릿함",
+      "복잡함",
+      "불쾌함",
     ]);
+    expect(dreamAtmosphereOptions).toHaveLength(15);
+    expect(dreamAtmosphereOptions.map((option) => option.label)).not.toContain("혼란스러움");
   });
 
-  test("defines the final dream sensation options in display order", () => {
+  test("defines compact dream sensation options in a 3 by 3 display order", () => {
     expect(dreamSensationOptions.map((option) => option.label)).toEqual([
       "선명함",
       "흐릿함",
       "무거움",
-      "갇힌 느낌",
-      "떨어지는 느낌",
-      "떠다니는 느낌",
-      "쫓기는 느낌",
+      "갇힘",
+      "떨어짐",
+      "떠다님",
+      "쫓김",
       "차가움",
-      "온기",
+      "따뜻함",
     ]);
+    expect(dreamSensationOptions).toHaveLength(9);
+    expect(dreamSensationOptions.map((option) => option.label).some((label) => label.includes("느낌"))).toBe(false);
   });
 
   test("limits dream atmospheres and sensations to two choices each", () => {
@@ -51,8 +58,8 @@ describe("dream entry options", () => {
   });
 
   test("combines optional dream atmosphere and sensations into the existing wakeMood field", () => {
-    expect(createDreamMoodLabel(["슬픔", "평온함"], ["선명함", "갇힌 느낌"])).toBe(
-      "분위기: 슬픔, 평온함 / 감각: 선명함, 갇힌 느낌",
+    expect(createDreamMoodLabel(["슬픔", "쓸쓸함"], ["선명함", "갇힘"])).toBe(
+      "분위기: 슬픔, 쓸쓸함 / 감각: 선명함, 갇힘",
     );
     expect(createDreamMoodLabel([], [])).toBeUndefined();
   });

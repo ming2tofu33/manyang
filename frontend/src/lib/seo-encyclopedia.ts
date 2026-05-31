@@ -1,7 +1,7 @@
 import { encyclopediaEntries, type EncyclopediaEntry } from "@manyang/backend";
 
 export const siteName = "마냥 꿈해몽";
-export const defaultSiteUrl = "https://manyang-dream.vercel.app";
+export const defaultSiteUrl = "https://manyang.vercel.app";
 
 function stripTrailingSlash(value: string): string {
   return value.replace(/\/+$/, "");
@@ -27,9 +27,8 @@ function getAndParticle(value: string): "과" | "와" {
 
 export function getSiteUrl(): string {
   const publicSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-  const vercelSiteUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null;
 
-  return stripTrailingSlash(publicSiteUrl ?? vercelSiteUrl ?? defaultSiteUrl);
+  return stripTrailingSlash(publicSiteUrl ?? defaultSiteUrl);
 }
 
 export function createSymbolSeoTitle(entry: EncyclopediaEntry): string {

@@ -48,12 +48,16 @@ describe("pawprint storage", () => {
     expect(canPersistPawprint({ isAuthenticated: true })).toBe(true);
   });
 
-  test("uses the previous app date before the 05:00 boundary", () => {
-    expect(getPawprintAppDate(new Date("2026-05-25T04:59:00+09:00"))).toBe("2026-05-24");
+  test("uses the previous app date before the midnight boundary", () => {
+    expect(getPawprintAppDate(new Date("2026-05-24T23:59:00+09:00"))).toBe("2026-05-24");
   });
 
-  test("uses the current app date from the 05:00 boundary", () => {
-    expect(getPawprintAppDate(new Date("2026-05-25T05:00:00+09:00"))).toBe("2026-05-25");
+  test("uses the current app date from the midnight boundary", () => {
+    expect(getPawprintAppDate(new Date("2026-05-25T00:00:00+09:00"))).toBe("2026-05-25");
+  });
+
+  test("keeps early morning activity on the current app date", () => {
+    expect(getPawprintAppDate(new Date("2026-05-25T04:59:00+09:00"))).toBe("2026-05-25");
   });
 
   test("creates a pawprint record", () => {

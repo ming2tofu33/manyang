@@ -168,14 +168,35 @@ describe("analyzeDreamStructure", () => {
 
     expect(analysis.inferredEmotions).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ label: "불안", source: "selectedMood" }),
+        expect.objectContaining({ label: "불안함", source: "selectedMood" }),
         expect.objectContaining({ label: "그리움", source: "selectedMood" }),
       ]),
     );
-    expect(analysis.selectedAtmosphereLabels).toEqual(["불안", "그리움"]);
-    expect(analysis.themeQueries).toEqual(expect.arrayContaining(["불안", "그리움"]));
+    expect(analysis.selectedAtmosphereLabels).toEqual(["불안함", "그리움"]);
+    expect(analysis.themeQueries).toEqual(expect.arrayContaining(["불안함", "그리움"]));
     expect(analysis.selectedSensationLabels).toEqual(["떨어지는 느낌", "쫓기는 느낌"]);
     expect(analysis.literalQueries).toEqual(expect.arrayContaining(["떨어지는", "쫓기는"]));
+  });
+
+  test("turns the expanded atmosphere ids into user-facing Korean labels", () => {
+    const analysis = analyzeDreamStructure({
+      dreamText: "복도를 걷다가 창밖의 빛을 보았다.",
+      locale: "ko",
+      dreamAtmospheres: ["lonely", "unfamiliar", "mystical", "hazy", "complex", "unpleasant"],
+    });
+
+    expect(analysis.selectedAtmosphereLabels).toEqual(["쓸쓸함", "낯섦", "신비함", "흐릿함", "복잡함", "불쾌함"]);
+    expect(analysis.themeQueries).toEqual(
+      expect.arrayContaining(["쓸쓸함", "낯섦", "신비함", "흐릿함", "복잡함", "불쾌함"]),
+    );
+    expect(analysis.inferredEmotions).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ label: "쓸쓸함", source: "selectedMood" }),
+        expect.objectContaining({ label: "불쾌함", source: "selectedMood" }),
+      ]),
+    );
+    expect(analysis.readingTone).toBe("heavy");
+    expect(analysis.readingCertainty).toBe("low");
   });
 
   test("adds the free-text sensation to selected labels but not to search queries", () => {
