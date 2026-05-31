@@ -12,6 +12,7 @@ import {
   getReadingKindForCatReader,
   hasUsedBasicReadingOnDate,
 } from "@/lib/access-policy";
+import { useLocale } from "@/lib/use-locale";
 import {
   getCatReaderDreamReadingState,
   getCatReaderById,
@@ -212,6 +213,7 @@ export function DreamEntryForm() {
   );
   const todayDate = getTodayDate();
   const { accessPlan, bypassDailyLimit } = useAccessPlan();
+  const { locale, t } = useLocale();
   const [dreamText, setDreamText] = useState(initialDraft?.dreamText ?? "");
   const [dreamAtmospheres, setDreamAtmospheres] = useState<string[]>([]);
   const [dreamSensations, setDreamSensations] = useState<string[]>([]);
@@ -244,10 +246,10 @@ export function DreamEntryForm() {
     ? `선택한 ${selectedCatReader.name} 테마로 기본 꿈 영수증을 만들 수 있어요.`
     : readingGate.message;
   const submitButtonLabel = isSubmitting
-      ? "꿈 읽는 중"
+      ? t("dreamEntry.submitting")
       : isFallbackReading
         ? `${selectedCatReader.name} 테마로 해몽 받기`
-        : "해몽 받기";
+        : t("dreamEntry.submit");
 
   function toggleDreamAtmosphere(label: string): void {
     setDreamAtmospheres((currentAtmospheres) => {
@@ -283,7 +285,7 @@ export function DreamEntryForm() {
     const trimmedDreamText = dreamText.trim();
 
     if (!trimmedDreamText) {
-      setError("꿈 내용을 한 문장이라도 적어주세요.");
+      setError(t("dreamEntry.emptyError"));
       return;
     }
 
@@ -335,6 +337,7 @@ export function DreamEntryForm() {
         body: JSON.stringify({
           dreamText: trimmedDreamText,
           dreamDate,
+          locale,
           ...(wakeMood ? { wakeMood } : {}),
           ...selectedSignals,
           catReaderType: requestCatReaderId,

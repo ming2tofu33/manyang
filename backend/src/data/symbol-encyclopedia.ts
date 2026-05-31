@@ -3687,7 +3687,7 @@ export const symbolEntries: SymbolEntry[] = [
     }),
     en: localized({
       label: "Flying",
-      aliases: ["flying", "flying in the sky", "floating", "levitating", "flight"],
+      aliases: ["flying", "fly", "flew", "flying in the sky", "floating", "levitating", "flight"],
       searchText: "flying, flying in the sky, floating, levitating, freedom, perspective, escape, ambition",
       coreMeanings: ["freedom", "perspective", "escape", "ambition"],
       lightReadings: ["wanting a wider view", "feeling a way out of tight conditions"],
@@ -3743,7 +3743,7 @@ export const symbolEntries: SymbolEntry[] = [
     }),
     en: localized({
       label: "Swimming",
-      aliases: ["swimming", "swam", "swimming underwater", "floating", "drowning"],
+      aliases: ["swimming", "swim", "swims", "swam", "swimming underwater", "floating", "drowning"],
       searchText: "swimming, swimming underwater, floating, drowning, emotional navigation, effort, flow, survival",
       coreMeanings: ["emotional navigation", "effort", "flow", "staying afloat"],
       lightReadings: ["finding direction inside emotion", "strength to move with a flow"],
