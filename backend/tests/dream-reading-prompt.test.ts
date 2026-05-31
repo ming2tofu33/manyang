@@ -31,7 +31,7 @@ describe("buildDreamReadingPrompt", () => {
       };
     };
 
-    expect(prompt.instructions).toContain("Use one stable Manyang reading voice regardless of selected cat theme.");
+    expect(prompt.instructions).toContain("Use one stable Manyang voice regardless of selected cat theme");
     expect(prompt.instructions).not.toContain("readerPersona");
     expect(prompt.instructions).not.toContain("White Cat");
     expect(payload.request?.catReaderType).toBeUndefined();
