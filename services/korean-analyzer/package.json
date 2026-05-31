@@ -6,7 +6,8 @@
   "description": "Warm Korean morphological analyzer (Kiwi) served over HTTP for the dream matcher.",
   "scripts": {
     "fetch-model": "node scripts/fetch-model.mjs",
-    "start": "node src/server.mjs"
+    "start": "node src/server.mjs",
+    "smoke": "node scripts/smoke.mjs"
   },
   "dependencies": {
     "kiwi-nlp": "^0.23.0",
