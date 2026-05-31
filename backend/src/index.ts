@@ -144,12 +144,13 @@ export type {
   ThemeSignal,
 } from "./services/structured-dream-analysis";
 export { safeLemmatize } from "./services/korean-lemmatizer";
-export type { KoreanLemmatizer } from "./services/korean-lemmatizer";
+export type { Lemmatizer, KoreanLemmatizer } from "./services/korean-lemmatizer";
 export {
   createKoreanLemmatizerFromEnv,
   HttpKoreanLemmatizer,
 } from "./services/http-korean-lemmatizer";
 export type { HttpKoreanLemmatizerOptions } from "./services/http-korean-lemmatizer";
+export { createEnglishLemmatizer, EnglishLemmatizer } from "./services/english-lemmatizer";
 export {
   classifyRetrievalMatch,
   MATCH_TYPE_BASE_SCORES,
