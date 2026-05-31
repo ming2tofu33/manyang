@@ -1018,9 +1018,9 @@ export const symbolEntries: SymbolEntry[] = [
       lightReadings: ["한 단계씩 감당하는 흐름", "현재 위치를 확인하는 장면"],
       shadowReadings: ["끝이 보이지 않는 부담", "오르내림에 지치는 감각"],
       sceneModifiers: {
-        goingUp: modifier("더 높은 기준이나 다음 단계로 향하는 장면", ["올라", "위로", "오르는"], 0.78),
-        goingDown: modifier("더 깊은 감정이나 기반으로 내려가는 장면", ["내려", "아래로", "내려가는"], 0.76),
-        endless: modifier("과정이 끝나지 않는 듯한 부담", ["끝없는", "계속", "너무 긴"], 0.82),
+        goingUp: modifier("더 높은 기준이나 다음 단계로 향하는 장면", ["올라", "위로", "오르는"], 0.78, "auspicious"),
+        goingDown: modifier("더 깊은 감정이나 기반으로 내려가는 장면", ["내려", "아래로", "내려가는"], 0.76, "cautious"),
+        endless: modifier("과정이 끝나지 않는 듯한 부담", ["끝없는", "계속", "너무 긴"], 0.82, "cautious"),
       },
       contextQuestions: ["계단을 올라갔나요, 내려갔나요?", "계단의 끝이 보였나요?"],
       metaphorHooks: ["한 칸씩 바뀌는 마음", "끝을 알 수 없는 층계"],
@@ -1028,6 +1028,11 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["오늘 해야 할 일을 가장 작은 한 단계로 쪼개보세요."],
       safeReading: "계단은 결과보다 단계와 과정, 현재 위치를 보여주는 상징으로 읽을 수 있어요.",
       avoidExpressions: ["승진한다", "운이 떨어진다"],
+      fortune: {
+        valence: "conditional",
+        auspicious: "전통적으로 계단을 오르는 꿈은 한 단계 올라서는 발전·승진의 길조로 여겨졌다.",
+        cautious: "계단을 내려가거나 끝없이 이어지는 계단은 잠시 흐름이 더디거나 물러서는 국면을 살피라는 환기로 여겨졌다.",
+      },
     }),
     en: localized({
       label: "Stairs",
@@ -1037,9 +1042,9 @@ export const symbolEntries: SymbolEntry[] = [
       lightReadings: ["moving one step at a time", "checking where you are in a process"],
       shadowReadings: ["pressure from a process that feels endless", "fatigue around climbing or descending"],
       sceneModifiers: {
-        goingUp: modifier("moving toward a higher standard or next stage", ["going up", "climbing", "upstairs"], 0.78),
-        goingDown: modifier("moving into a deeper feeling or foundation", ["going down", "downstairs", "descending"], 0.76),
-        endless: modifier("a process feeling like it has no end", ["endless stairs", "kept climbing", "too many steps"], 0.82),
+        goingUp: modifier("moving toward a higher standard or next stage", ["going up", "climbing", "upstairs"], 0.78, "auspicious"),
+        goingDown: modifier("moving into a deeper feeling or foundation", ["going down", "downstairs", "descending"], 0.76, "cautious"),
+        endless: modifier("a process feeling like it has no end", ["endless stairs", "kept climbing", "too many steps"], 0.82, "cautious"),
       },
       contextQuestions: ["Were you going up or down?", "Could you see where the stairs ended?"],
       metaphorHooks: ["a mind changing one step at a time", "levels of a process"],
@@ -1047,6 +1052,11 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["Break one task into its smallest next step today."],
       safeReading: "Stairs often point to stages, effort, and where you are in a process.",
       avoidExpressions: ["you will be promoted", "your luck is falling"],
+      fortune: {
+        valence: "conditional",
+        auspicious: "Climbing stairs was traditionally read as moving up a step — progress or promotion.",
+        cautious: "Going down or endless stairs was a gentle nudge that the flow may be slowing or stepping back.",
+      },
     }),
   }),
   activeSymbol({
@@ -1476,9 +1486,9 @@ export const symbolEntries: SymbolEntry[] = [
       lightReadings: ["쌓였던 감정이 부드럽게 흘러나오는 장면", "긴장이 조금 씻기는 흐름"],
       shadowReadings: ["기분이 가라앉는 감각", "젖은 채 버티는 피로"],
       sceneModifiers: {
-        heavyRain: modifier("감정의 양이 커져 압도되는 장면", ["폭우", "장대비", "많이 내"], 0.82),
-        gentleRain: modifier("기분이 천천히 풀리는 장면", ["보슬비", "가랑비", "조용히"], 0.68),
-        drenched: modifier("감정에 젖어 있는 듯한 상태", ["젖었", "흠뻑", "젖은"], 0.78),
+        heavyRain: modifier("감정의 양이 커져 압도되는 장면", ["폭우", "장대비", "많이 내"], 0.82, "cautious"),
+        gentleRain: modifier("기분이 천천히 풀리는 장면", ["보슬비", "가랑비", "조용히"], 0.68, "auspicious"),
+        drenched: modifier("감정에 젖어 있는 듯한 상태", ["젖었", "흠뻑", "젖은"], 0.78, "cautious"),
       },
       contextQuestions: ["비를 맞고 있었나요, 바라보고 있었나요?", "비가 시원했나요, 무겁게 느껴졌나요?"],
       metaphorHooks: ["밖으로 내리는 마음", "젖은 하루의 결"],
@@ -1486,6 +1496,11 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["오늘 흘려보내고 싶은 감정 하나를 적어보세요."],
       safeReading: "비는 감정 배출과 씻김, 기분의 완화를 보여주는 장면으로 읽을 수 있어요.",
       avoidExpressions: ["슬픈 일이 생긴다", "재물이 들어온다"],
+      fortune: {
+        valence: "conditional",
+        auspicious: "전통적으로 알맞게 내리는 단비는 갈증을 풀고 땅을 적셔 재물을 부르는 길조로 여겨졌다.",
+        cautious: "폭우나 흠뻑 젖는 비는 잠시 감정이나 일이 과하게 몰리는 것을 살피라는 환기로 여겨졌다.",
+      },
     }),
     en: localized({
       label: "Rain",
@@ -1495,9 +1510,9 @@ export const symbolEntries: SymbolEntry[] = [
       lightReadings: ["feelings moving out gently", "tension being washed through"],
       shadowReadings: ["a mood feeling heavy", "fatigue from staying wet inside a feeling"],
       sceneModifiers: {
-        heavyRain: modifier("emotion becoming large enough to overwhelm", ["heavy rain", "storm", "pouring"], 0.82),
-        gentleRain: modifier("a mood slowly softening", ["gentle rain", "drizzle", "quiet rain"], 0.68),
-        drenched: modifier("being soaked in a feeling", ["drenched", "soaked", "wet clothes"], 0.78),
+        heavyRain: modifier("emotion becoming large enough to overwhelm", ["heavy rain", "storm", "pouring"], 0.82, "cautious"),
+        gentleRain: modifier("a mood slowly softening", ["gentle rain", "drizzle", "quiet rain"], 0.68, "auspicious"),
+        drenched: modifier("being soaked in a feeling", ["drenched", "soaked", "wet clothes"], 0.78, "cautious"),
       },
       contextQuestions: ["Were you standing in the rain or watching it?", "Did the rain feel relieving or heavy?"],
       metaphorHooks: ["feeling falling outward", "the grain of a wet day"],
@@ -1505,6 +1520,11 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["Write one feeling you want to let pass through today."],
       safeReading: "Rain can point to emotional release, cleansing, and the way a mood moves through you.",
       avoidExpressions: ["something sad will happen", "money will arrive"],
+      fortune: {
+        valence: "conditional",
+        auspicious: "In Korean tradition, a gentle, timely rain was read as relief and fortune watering the ground.",
+        cautious: "A downpour or being drenched was a nudge to watch for things piling up too fast — never a prediction of misfortune.",
+      },
     }),
   }),
   activeSymbol({
@@ -1532,8 +1552,8 @@ export const symbolEntries: SymbolEntry[] = [
       lightReadings: ["넓은 가능성을 바라보는 흐름", "감정의 깊이를 인정하는 장면"],
       shadowReadings: ["감정의 규모에 압도되는 상태", "어디까지 깊은지 모르는 불안"],
       sceneModifiers: {
-        calmSea: modifier("큰 감정이 조용히 펼쳐진 장면", ["잔잔한", "고요한", "평온한"], 0.72),
-        roughSea: modifier("감정의 규모와 변동이 커진 장면", ["거친", "폭풍", "높은 파도"], 0.84),
+        calmSea: modifier("큰 감정이 조용히 펼쳐진 장면", ["잔잔한", "고요한", "평온한"], 0.72, "auspicious"),
+        roughSea: modifier("감정의 규모와 변동이 커진 장면", ["거친", "폭풍", "높은 파도"], 0.84, "cautious"),
         shore: modifier("큰 감정 앞에서 아직 경계에 머무는 장면", ["해변", "해안", "모래사장"], 0.72),
       },
       contextQuestions: ["바다는 잔잔했나요, 거칠었나요?", "바다에 들어갔나요, 해변에서 바라봤나요?"],
@@ -1542,6 +1562,11 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["오늘 감당하기 큰 감정을 작게 이름 붙여보세요."],
       safeReading: "바다는 개인 감정보다 큰 흐름, 무의식적 감각, 넓은 가능성으로 읽을 수 있어요.",
       avoidExpressions: ["큰돈이 들어온다", "위험한 일이 생긴다"],
+      fortune: {
+        valence: "conditional",
+        auspicious: "전통적으로 잔잔하고 맑은 바다는 큰 기회와 넓은 가능성이 열리는 길조로 여겨졌다.",
+        cautious: "거칠고 폭풍이 이는 바다는 감정이나 상황의 규모에 잠시 휩쓸리지 않도록 살피라는 환기로 여겨졌다.",
+      },
     }),
     en: localized({
       label: "Sea",
@@ -1551,8 +1576,8 @@ export const symbolEntries: SymbolEntry[] = [
       lightReadings: ["facing a wide field of possibility", "honoring emotional depth"],
       shadowReadings: ["feeling overwhelmed by emotional scale", "anxiety around depth you cannot measure"],
       sceneModifiers: {
-        calmSea: modifier("large emotion spread quietly", ["calm sea", "peaceful ocean", "still water"], 0.72),
-        roughSea: modifier("emotional scale and change increasing", ["rough sea", "stormy ocean", "huge waves"], 0.84),
+        calmSea: modifier("large emotion spread quietly", ["calm sea", "peaceful ocean", "still water"], 0.72, "auspicious"),
+        roughSea: modifier("emotional scale and change increasing", ["rough sea", "stormy ocean", "huge waves"], 0.84, "cautious"),
         shore: modifier("staying at the edge of a large feeling", ["beach", "shore", "sand"], 0.72),
       },
       contextQuestions: ["Was the sea calm or rough?", "Were you in the water or watching from the shore?"],
@@ -1561,6 +1586,11 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["Give a large feeling a small name today."],
       safeReading: "The sea can point to vast feeling, the unconscious, and possibility that feels larger than you.",
       avoidExpressions: ["a lot of money is coming", "something dangerous will happen"],
+      fortune: {
+        valence: "conditional",
+        auspicious: "A calm, clear sea was traditionally read as wide opportunity and possibility opening up.",
+        cautious: "A rough or stormy sea was a nudge not to be swept up by the scale of a feeling or situation.",
+      },
     }),
   }),
   activeSymbol({
@@ -4037,9 +4067,9 @@ export const symbolEntries: SymbolEntry[] = [
       lightReadings: ["더 넓은 시야를 얻기 위해 오르는 장면", "큰 과제를 꾸준히 마주하는 마음"],
       shadowReadings: ["과제가 너무 크게 느껴지는 부담", "올라가야 한다는 압박"],
       sceneModifiers: {
-        climbing: modifier("목표를 향해 꾸준히 오르는 과정", ["오르", "등산", "올라"], 0.78),
-        summit: modifier("시야가 넓어지거나 성취감을 확인하는 장면", ["정상", "꼭대기", "위"], 0.76),
-        steep: modifier("과제의 난도가 크게 느껴지는 장면", ["가파", "험한", "높은"], 0.84),
+        climbing: modifier("목표를 향해 꾸준히 오르는 과정", ["오르", "등산", "올라"], 0.78, "auspicious"),
+        summit: modifier("시야가 넓어지거나 성취감을 확인하는 장면", ["정상", "꼭대기", "위"], 0.76, "auspicious"),
+        steep: modifier("과제의 난도가 크게 느껴지는 장면", ["가파", "험한", "높은"], 0.84, "cautious"),
       },
       contextQuestions: ["산을 오르고 있었나요, 바라보고 있었나요?", "정상에 도착했나요?"],
       metaphorHooks: ["높이 놓인 과제", "오를수록 넓어지는 시야"],
@@ -4047,6 +4077,11 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["큰 목표를 오늘 올라갈 수 있는 작은 구간으로 나눠보세요."],
       safeReading: "산은 큰 도전, 안정감, 시야, 오름의 과정을 보여주는 상징일 수 있어요.",
       avoidExpressions: ["반드시 성공한다", "귀인이 온다"],
+      fortune: {
+        valence: "conditional",
+        auspicious: "전통적으로 산을 오르거나 정상에 이르는 꿈은 성취와 귀인의 도움이 따르는 길조로 여겨졌다.",
+        cautious: "오르기 힘든 가파른 산은 지금 과제의 무게를 잠시 가늠해 보라는 환기로 여겨졌다.",
+      },
     }),
     en: localized({
       label: "Mountain",
@@ -4056,9 +4091,9 @@ export const symbolEntries: SymbolEntry[] = [
       lightReadings: ["climbing toward a wider view", "meeting a large task with steadiness"],
       shadowReadings: ["a task feeling too large", "pressure to keep climbing"],
       sceneModifiers: {
-        climbing: modifier("steady movement toward a goal", ["climbing", "hiking", "going up"], 0.78),
-        summit: modifier("wider perspective or achievement becoming visible", ["summit", "top", "peak"], 0.76),
-        steep: modifier("the challenge feeling difficult or demanding", ["steep", "rough", "high"], 0.84),
+        climbing: modifier("steady movement toward a goal", ["climbing", "hiking", "going up"], 0.78, "auspicious"),
+        summit: modifier("wider perspective or achievement becoming visible", ["summit", "top", "peak"], 0.76, "auspicious"),
+        steep: modifier("the challenge feeling difficult or demanding", ["steep", "rough", "high"], 0.84, "cautious"),
       },
       contextQuestions: ["Were you climbing or only looking at it?", "Did you reach the summit?"],
       metaphorHooks: ["a task placed high", "a view widening as you climb"],
@@ -4066,6 +4101,11 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["Turn one large goal into a smaller climb for today."],
       safeReading: "A mountain can symbolize challenge, stability, perspective, and the process of ascent.",
       avoidExpressions: ["success is guaranteed", "a powerful helper will come"],
+      fortune: {
+        valence: "conditional",
+        auspicious: "Climbing a mountain or reaching its summit was traditionally read as achievement and helpful people arriving.",
+        cautious: "A steep, hard-to-climb mountain was a nudge to weigh the size of a current task.",
+      },
     }),
   }),
   activeSymbol({
@@ -4093,9 +4133,9 @@ export const symbolEntries: SymbolEntry[] = [
       lightReadings: ["천천히 자라는 힘을 확인하는 장면", "기반을 더 깊게 내리려는 마음"],
       shadowReadings: ["성장이 멈춘 듯한 답답함", "뿌리가 약하다고 느끼는 불안"],
       sceneModifiers: {
-        growing: modifier("시간이 걸리지만 자라고 있는 가능성", ["자라", "새싹", "커"], 0.78),
-        dryTree: modifier("돌봄이나 생기가 부족하다고 느끼는 장면", ["마른", "죽은", "시든"], 0.84),
-        bigTree: modifier("오래된 기반이나 큰 지지감이 드러난 장면", ["큰 나무", "거목", "오래된"], 0.76),
+        growing: modifier("시간이 걸리지만 자라고 있는 가능성", ["자라", "새싹", "커"], 0.78, "auspicious"),
+        dryTree: modifier("돌봄이나 생기가 부족하다고 느끼는 장면", ["마른", "죽은", "시든"], 0.84, "cautious"),
+        bigTree: modifier("오래된 기반이나 큰 지지감이 드러난 장면", ["큰 나무", "거목", "오래된"], 0.76, "auspicious"),
       },
       contextQuestions: ["나무는 싱싱했나요, 말라 있었나요?", "나무는 어디에 뿌리내리고 있었나요?"],
       metaphorHooks: ["천천히 자라는 마음", "뿌리를 내리는 시간"],
@@ -4103,6 +4143,11 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["빨리 결과를 내기보다 오래 돌볼 일 하나를 정해보세요."],
       safeReading: "나무는 성장, 뿌리, 안정감, 시간이 필요한 변화를 보여주는 상징일 수 있어요.",
       avoidExpressions: ["재물이 자란다", "가문 운이 오른다"],
+      fortune: {
+        valence: "conditional",
+        auspicious: "전통적으로 크고 무성하거나 잘 자라는 나무는 번성과 든든한 기반을 뜻하는 길조로 여겨졌다.",
+        cautious: "마르거나 시든 나무는 돌봄이나 생기가 부족한 곳을 살피라는 환기로 여겨졌다.",
+      },
     }),
     en: localized({
       label: "Tree",
@@ -4112,9 +4157,9 @@ export const symbolEntries: SymbolEntry[] = [
       lightReadings: ["recognizing slow growth", "wanting deeper roots"],
       shadowReadings: ["feeling growth has stalled", "anxiety that roots are weak"],
       sceneModifiers: {
-        growing: modifier("possibility growing over time", ["growing", "sprout", "getting bigger"], 0.78),
-        dryTree: modifier("life or care feeling insufficient", ["dry tree", "dead tree", "withered"], 0.84),
-        bigTree: modifier("old support or strong foundation appearing", ["big tree", "ancient tree", "huge tree"], 0.76),
+        growing: modifier("possibility growing over time", ["growing", "sprout", "getting bigger"], 0.78, "auspicious"),
+        dryTree: modifier("life or care feeling insufficient", ["dry tree", "dead tree", "withered"], 0.84, "cautious"),
+        bigTree: modifier("old support or strong foundation appearing", ["big tree", "ancient tree", "huge tree"], 0.76, "auspicious"),
       },
       contextQuestions: ["Was the tree alive or dry?", "Where was it rooted?"],
       metaphorHooks: ["a mind growing slowly", "time taking root"],
@@ -4122,6 +4167,11 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["Choose one thing worth caring for slowly rather than rushing."],
       safeReading: "A tree can symbolize growth, roots, stability, and changes that need time.",
       avoidExpressions: ["wealth will grow", "family fortune will rise"],
+      fortune: {
+        valence: "conditional",
+        auspicious: "A large, lush, or growing tree was traditionally read as flourishing and a solid foundation.",
+        cautious: "A dry or withered tree was a nudge toward a place that needs care or fresh energy.",
+      },
     }),
   }),
   activeSymbol({
