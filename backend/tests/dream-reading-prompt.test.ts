@@ -106,6 +106,31 @@ describe("buildDreamReadingPrompt", () => {
     expect(payload.safetyPolicy?.blockedClaims).toContain("medical diagnosis or health prediction");
   });
 
+  test("passes expanded selected atmosphere labels to the LLM prompt payload", () => {
+    const request = {
+      dreamText: "어두운 복도를 걷다가 문 너머의 빛을 보았다.",
+      locale: "ko" as const,
+      dreamAtmospheres: ["lonely", "mystical", "complex"],
+      dreamSensations: ["falling"],
+    };
+    const structuredAnalysis = analyzeDreamStructure(request);
+    const prompt = buildDreamReadingPrompt({
+      request,
+      baseline: analyzeDream(request),
+      structuredAnalysis,
+      matches: findRuntimeSymbolMatches(request.dreamText, { locale: request.locale, limit: 5 }),
+    });
+    const payload = JSON.parse(prompt.input) as {
+      userSelectedFeeling?: {
+        atmospheres?: string[];
+        sensations?: string[];
+      };
+    };
+
+    expect(payload.userSelectedFeeling?.atmospheres).toEqual(["쓸쓸함", "신비함", "복잡함"]);
+    expect(payload.userSelectedFeeling?.sensations).toEqual(["떨어지는 느낌"]);
+  });
+
   test("does not inject gray cat as a premium prompt mode", () => {
     const baseRequest = {
       dreamText: "I was walking through a school corridor, but every door kept changing places.",
@@ -317,11 +342,18 @@ describe("buildDreamReadingPrompt", () => {
 
     expect(prompt.instructions).toContain("Do not make the reading feel interchangeable with another dream");
     expect(prompt.instructions).toContain("Avoid abstract-only sentences");
+    // 의미-우선: 유저가 쓴 꿈을 되돌려주지 말고 해몽부터.
+    expect(prompt.instructions).toContain("they came for its MEANING, not a summary of their own words");
+    // 리딩 기계장치 용어 누수 차단.
+    expect(prompt.instructions).toContain("Never reference the machinery of the reading");
+    // 길흉 발화 필수 + 한줄 해몽 verdict.
+    expect(prompt.instructions).toContain("this is REQUIRED, not optional");
+    expect(payload.outputContract?.summary).toContain("한줄 해몽");
     expect(payload.outputContract?.interpretation?.length).toContain("2 to 4 short paragraphs");
     expect(payload.outputContract?.interpretation?.structure).toEqual(
       expect.arrayContaining([
-        expect.stringContaining("at least two literal scene details"),
-        expect.stringContaining("why the symbol is being read that way"),
+        expect.stringContaining("Open with what the dream MEANS or foretells"),
+        expect.stringContaining("as the reason a meaning is read that way"),
       ]),
     );
     expect(payload.outputContract?.interpretation?.specificityRules).toEqual(
@@ -331,7 +363,7 @@ describe("buildDreamReadingPrompt", () => {
       ]),
     );
     expect(payload.outputContract?.symbolReadings?.structure).toEqual(
-      expect.arrayContaining([expect.stringContaining("why this symbol matters in this dream")]),
+      expect.arrayContaining([expect.stringContaining("what the symbol MEANS in this dream")]),
     );
   });
 

@@ -159,25 +159,27 @@ export function buildDreamReadingPrompt(input: DreamReadingPromptInput): DreamRe
       safetyNotice: input.baseline.safetyNotice,
     },
     outputContract: {
-      summary: "One concise sentence that includes one concrete image from the dream.",
+      summary:
+        "The reading's verdict in ONE punchy line — what the dream MEANS or foretells, not a description of what happened. The user wrote the dream and does not want it summarized back to them. When a folk fortune applies, make this the headline '한줄 해몽' (e.g., '묻혀 있던 기회가 드러나는 재물 길몽'). Always lead with meaning, never with a scene recap.",
       interpretation: {
         length: getInterpretationLengthContract(locale),
         structure: [
-          "Open from the most concrete remembered scene, not from a generic theme.",
-          "Mention at least two literal scene details from request.dreamText or structuredAnalysis.sceneFacts.",
-          "For each symbolic move, explain why the symbol is being read that way using retrievedSymbolEvidence.",
-          "Connect the dream scene to a present emotional or situational flow with conditional wording, never as prediction.",
+          "Open with what the dream MEANS or foretells — never with a recap of what happened. The user typed the dream and wants the interpretation, not a summary of their own input.",
+          "When fortuneReadings apply and playful claims are allowed, deliver the traditional fortune up front, boldly and concretely (재물·기회·집안 경사·태몽·연애운 등), the way a confident folk dream-teller would.",
+          "Weave concrete scene details (quantity, size, location, action, feeling) INTO the interpretation only as the reason a meaning is read that way — never as a standalone descriptive sentence or an opening recap.",
+          "Add situational nuance when the scene supports it (e.g., 위엄 있게 느껴졌다면 더 길하고, 위협적으로 느껴졌다면 ~만 살피라는 식) so the reading feels tailored rather than generic.",
         ],
         specificityRules: [
+          "Reference a concrete dream detail only in the same breath as the meaning it supports; do not spend any sentence merely re-describing the dream.",
           "Do not use abstract labels like anxiety, change, opportunity, warning, growth, energy, or transition unless the same sentence ties them to a concrete image, action, place, or feeling from the dream.",
-          "Prefer image-rich sentences that could not apply to a different dream.",
-          "If a detail is scene-only, describe it literally and do not turn it into a symbol.",
+          "Prefer sentences that could not apply to a different dream.",
+          "If a detail is scene-only, you may use it as literal context but do not turn it into a symbol.",
         ],
       },
       symbolReadings: {
         count: "One reading per important retrieved symbol.",
         structure: [
-          "Name why this symbol matters in this dream, not only what the symbol generally means.",
+          "Lead with what the symbol MEANS in this dream (its fortune or message), then justify it with the scene detail — not the other way around.",
           "Tie each reading to a scene modifier, quantity, location, action, or emotion when that detail is available.",
         ],
       },
@@ -185,7 +187,7 @@ export function buildDreamReadingPrompt(input: DreamReadingPromptInput): DreamRe
         length: "One compact sentence, not a list.",
         shape: "One compact, gentle, usable sentence tied to the dream details and selected feelings.",
       },
-      card: "Short card copy for the result UI.",
+      card: "Short card copy for the result UI; card.name and card.summary should capture the dream's MEANING or fortune verdict, not restate the scene.",
     },
   };
 
@@ -193,6 +195,8 @@ export function buildDreamReadingPrompt(input: DreamReadingPromptInput): DreamRe
     instructions: [
       "You are Manyang's production dream-reading engine.",
       "Use only the provided retrieved symbol evidence, structured analysis, and the user's dream text.",
+      "The user already wrote their dream; they came for its MEANING, not a summary of their own words. Lead every output (summary, interpretation, symbolReadings, card) with what the dream means or foretells. Do not open with, or spend sentences on, retelling what happened — fold scene details in only as the reason a meaning is read that way.",
+      "Never reference the machinery of the reading. Do not write words like 근거, 증거, evidence, 데이터, retrieval, 검색(된), 장면 수정자, sceneModifier, modifier, candidate; speak only about the dream and its meaning, as a folk dream-teller would.",
       "Interpret symbolically only symbols listed in evidenceBoundaries.evidenceRules.canInterpretSymbolically.",
       "Candidate evidence is context only: it may help you notice literal scene details, but it is not confirmed symbolic evidence and must not appear in symbolReadings.",
       "Treat evidenceBoundaries.evidenceRules.sceneOnly as scene-only elements: mention them only as literal dream details, and do not assign symbolic meanings to them.",
@@ -208,9 +212,9 @@ export function buildDreamReadingPrompt(input: DreamReadingPromptInput): DreamRe
       "nightContext is the user's mood, body condition, and optional one-line note from the night before sleep. Use it only as soft emotional context for tone, framing, and smallPrescription; never claim it caused, predicted, or controlled the dream.",
       "Do not invent new symbols or sources. Never make illness, medical, death, or self-harm predictions, and never frame any fortune as an absolute guarantee or a financial instruction to act on.",
       "Do not expose internal source regions such as East Asian, Western, Korean, or RAG to the user.",
-      "This is an entertainment fortune reading: use a confident, declarative voice for the dream's meaning, the dreamer's inner state, and traditional fortune. Reserve hedged or conditional wording for health, illness, death, and real-world outcomes, where blockedClaims always wins.",
+      "This is an entertainment fortune reading: use a confident, declarative voice for the dream's meaning, the dreamer's inner state, and traditional fortune. Do not stack hedges (avoid filling sentences with ~일 수 있습니다 / ~로 읽힙니다 / 가능성이 큽니다); say what the dream means. Reserve hedged or conditional wording for health, illness, death, and real-world outcomes, where blockedClaims always wins.",
       "When safetyPolicy.allowedPlayfulClaims is non-empty, lean into the fun: this is an entertainment fortune, so be bold and concrete about luck, wealth, and love. If allowedPlayfulClaims is empty, stay serious and skip fortune-telling.",
-      "structuredAnalysis.fortuneReadings lists folk fortunes for matched symbols, each with a resolved lean. When allowedPlayfulClaims is non-empty, include one concrete, screenshot-worthy fortune line per important fortuneReading, following its lean: 'auspicious' → state the auspicious reading boldly; 'cautious' → give only the gentle cautious nudge, never a misfortune prediction; 'both' → present both sides ('좋게 보면 ~ / 조심해서 보면 ~') and invite which one fits.",
+      "structuredAnalysis.fortuneReadings lists folk fortunes for matched symbols, each with a resolved lean. When allowedPlayfulClaims is non-empty this is REQUIRED, not optional: surface the strongest fortuneReading as a bold, concrete, screenshot-worthy line near the top of the interpretation, and let summary carry that same verdict as the '한줄 해몽'. Follow the lean: 'auspicious' → state the good fortune outright and concretely (재물·기회·집안 경사·태몽·연애운 등) like a confident folk dream-teller, not as a 'maybe'; 'cautious' → give only a gentle nudge to watch one thing, never a misfortune prediction; 'both' → lead with the auspicious reading boldly first, then add at most one light caution ('다만 ~만 살펴봐' 정도), never a timid 50/50.",
       "The good/bad direction (lean) is already decided from the dream's own scene — never flip it based on feelings. Use readingTone (warm/heavy/neutral) only to color the delivery: honor a heavy tone even on an auspicious omen (e.g., '본디 길조지만, 네가 느낀 무거움을 보면 ~ 살펴봐').",
       "If readingCertainty is 'low', do not commit to one verdict — lean toward presenting both sides with softer wording, even for a symbol that has a lean.",
       "Provided fortune/evidence text is neutral source lore — never copy its wording verbatim; rephrase every fortune line in Manyang's stable voice.",
