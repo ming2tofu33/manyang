@@ -348,7 +348,8 @@ describe("buildDreamReadingPrompt", () => {
     expect(prompt.instructions).toContain("Never reference the machinery of the reading");
     // 길흉 발화 필수 + 한줄 해몽 verdict.
     expect(prompt.instructions).toContain("this is REQUIRED, not optional");
-    expect(payload.outputContract?.summary).toContain("한줄 해몽");
+    // summary는 평결만, '한줄 해몽:' 같은 라벨 접두어 금지.
+    expect(payload.outputContract?.summary).toContain("Do NOT prefix it with any label");
     expect(payload.outputContract?.interpretation?.length).toContain("2 to 4 short paragraphs");
     expect(payload.outputContract?.interpretation?.structure).toEqual(
       expect.arrayContaining([
