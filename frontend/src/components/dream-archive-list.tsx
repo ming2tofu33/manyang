@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSyncExternalStore } from "react";
 
+import { ArchiveLoginGate } from "@/components/archive-login-gate";
 import { AssetIconButton, AssetTextButton } from "@/components/asset-primitives";
 import { createArchiveTimeline, type ArchiveTimelineItem } from "@/lib/archive-records";
 import {
@@ -13,25 +14,10 @@ import {
   subscribeToSelectedCatReader,
   type CatReaderId,
 } from "@/lib/cat-readers";
-import {
-  getDreamSeedRecordsSnapshotFromBrowser,
-  getEmptyDreamSeedRecordsSnapshot,
-  subscribeToDreamSeed,
-} from "@/lib/dream-seed";
-import {
-  deleteDreamRecordToBrowser,
-  getDreamRecordsSnapshotFromBrowser,
-  getEmptyDreamRecordsSnapshot,
-  restoreDreamRecordAsLatestAnalysisToBrowser,
-  subscribeToDreamStorage,
-} from "@/lib/dream-storage";
 import { manyangAssets } from "@/lib/manyang-assets";
-import {
-  getEmptyPawprintSnapshot,
-  getPawprintSnapshotFromBrowser,
-  subscribeToPawprints,
-} from "@/lib/pawprints";
 import { cn, ui } from "@/lib/styles";
+import { useArchiveDreamRecords } from "@/lib/use-archive-dream-records";
+import { useRoutineRecords } from "@/lib/use-routine-records";
 
 const archiveYear = 2026;
 const archiveMonth = 5;
@@ -39,7 +25,7 @@ const archiveMonth = 5;
 const timelineIcons: Record<ArchiveTimelineItem["type"], string> = {
   dream: manyangAssets.semanticIcons.moon,
   pawprint: manyangAssets.semanticIcons.paw,
-  seed: manyangAssets.semanticIcons.sparkles,
+  night_checkin: manyangAssets.semanticIcons.sparkles,
 };
 
 function formatArchiveDate(date: string): string {
@@ -97,21 +83,9 @@ export function DreamRecordActions({
 
 export function DreamArchiveList() {
   const router = useRouter();
-  const dreamRecords = useSyncExternalStore(
-    subscribeToDreamStorage,
-    getDreamRecordsSnapshotFromBrowser,
-    getEmptyDreamRecordsSnapshot,
-  );
-  const pawprints = useSyncExternalStore(
-    subscribeToPawprints,
-    getPawprintSnapshotFromBrowser,
-    getEmptyPawprintSnapshot,
-  );
-  const seedRecords = useSyncExternalStore(
-    subscribeToDreamSeed,
-    getDreamSeedRecordsSnapshotFromBrowser,
-    getEmptyDreamSeedRecordsSnapshot,
-  );
+  const { dreamRecords, deleteDreamRecord, isLoadingServerRecords, openDreamRecord, source } =
+    useArchiveDreamRecords();
+  const { pawprints, nightCheckInRecords, source: routineSource } = useRoutineRecords();
   const selectedCatReaderId = useSyncExternalStore(
     subscribeToSelectedCatReader,
     getSelectedCatReaderSnapshotFromBrowser,
@@ -119,8 +93,8 @@ export function DreamArchiveList() {
   );
   const timeline = createArchiveTimeline({
     dreamRecords,
-    pawprints,
-    seedRecords,
+    pawprints: source === "server" && routineSource === "server" ? pawprints : [],
+    nightCheckInRecords: source === "server" && routineSource === "server" ? nightCheckInRecords : [],
     year: archiveYear,
     month: archiveMonth,
   });
@@ -135,7 +109,7 @@ export function DreamArchiveList() {
     );
 
     if (confirmed) {
-      deleteDreamRecordToBrowser(item.dreamRecordId);
+      void deleteDreamRecord(item.dreamRecordId);
     }
   }
 
@@ -144,11 +118,24 @@ export function DreamArchiveList() {
       return;
     }
 
-    const restored = restoreDreamRecordAsLatestAnalysisToBrowser(item.dreamRecordId);
+    const record = dreamRecords.find((dreamRecord) => dreamRecord.id === item.dreamRecordId);
 
-    if (restored) {
+    if (record && openDreamRecord(record)) {
       router.push("/result");
     }
+  }
+
+  if (isLoadingServerRecords) {
+    return (
+      <section className={cn(ui.panel, "space-y-3 p-5 text-center")}>
+        <p className={cn("text-lg font-semibold text-[#ffd98a]", ui.textGlow)}>꿈 기록장을 여는 중이에요</p>
+        <p className="text-sm leading-6 text-[#fff3d7]/76">계정에 저장된 꿈 영수증을 확인하고 있어요.</p>
+      </section>
+    );
+  }
+
+  if (source === "guest") {
+    return <ArchiveLoginGate />;
   }
 
   if (timeline.length === 0) {

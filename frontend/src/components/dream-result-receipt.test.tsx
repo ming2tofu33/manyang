@@ -68,6 +68,14 @@ function createSafetyNoticeReceiptPayload(): DreamCompletedPayload {
   };
 }
 
+function getReceiptTextFrameClassName(markup: string, label: string): string {
+  const match = markup.match(new RegExp(`<p id="receipt-text-${label}" class="([^"]+)"`));
+
+  expect(match?.[1]).toBeDefined();
+
+  return match?.[1] ?? "";
+}
+
 describe("DreamResultReceipt", () => {
   it("uses sliced receipt assets at runtime instead of stretching a single receipt image", () => {
     const markup = renderToStaticMarkup(<DreamResultReceipt />);
@@ -95,6 +103,18 @@ describe("DreamResultReceipt", () => {
     expect(markup).not.toContain("pb-[96px]");
     expect(markup).toContain("padding-top:calc(var(--receipt-paper-width) * 360 / 771)");
     expect(markup).toContain("padding-bottom:calc(var(--receipt-paper-width) * 104 / 771)");
+  });
+
+  it("overlaps the sliced paper seams so the receipt does not reveal gaps while sliding", () => {
+    const markup = renderToStaticMarkup(<DreamResultReceipt />);
+
+    expect(markup).toContain("data-receipt-paper-slice=\"top\"");
+    expect(markup).toContain("data-receipt-paper-slice=\"middle\"");
+    expect(markup).toContain("data-receipt-paper-slice=\"bottom\"");
+    expect(markup).toContain("height:calc(var(--receipt-paper-width) * 626 / 771 + 2px)");
+    expect(markup).toContain("top:calc(var(--receipt-paper-width) * 626 / 771 - 2px)");
+    expect(markup).toContain("bottom:calc(var(--receipt-paper-width) * 384 / 771 - 2px)");
+    expect(markup).toContain("height:calc(var(--receipt-paper-width) * 384 / 771 + 2px)");
   });
 
   it("keeps a reserved blank area near the bottom for a future cat stamp asset", () => {
@@ -193,18 +213,25 @@ describe("DreamResultReceipt", () => {
     expect(markup).not.toContain("data-receipt-result-actions=\"true\" style=\"animation-delay:9000ms\"");
   });
 
-  it("bounds long LLM receipt sections without truncating the saved interpretation text", () => {
+  it("lets long LLM receipt sections expand the receipt instead of clipping generated text", () => {
     const payload = createLongReceiptPayload();
     const markup = renderToStaticMarkup(<DreamResultReceipt payloadOverride={payload} />);
+    const textFrameClassNames = [
+      getReceiptTextFrameClassName(markup, "interpretation"),
+      getReceiptTextFrameClassName(markup, "reader-note"),
+      getReceiptTextFrameClassName(markup, "small-prescription"),
+    ];
 
     expect(markup).toContain("data-receipt-text-frame=\"interpretation\"");
-    expect(markup).toContain("max-h-[22rem]");
-    expect(markup).toContain("overflow-hidden");
+    for (const className of textFrameClassNames) {
+      expect(className).toContain("overflow-visible");
+      expect(className).not.toContain("max-h-[");
+      expect(className).not.toContain("overflow-hidden");
+    }
     expect(markup).not.toContain("overflow-y-auto");
     expect(markup).not.toContain("[scrollbar-width:thin]");
     expect(markup).toContain("data-receipt-overflow-guard=\"true\"");
-    expect(markup).toContain("data-receipt-expand-control=\"interpretation\"");
-    expect(markup).toContain("해석 전체 보기");
+    expect(markup).not.toContain("data-receipt-expand-control=");
     expect(markup).toContain("긴 해석 문장 40은 영수증 안에서 전부 보존되지만 표시 높이는 보호되어야 합니다.");
     expect(markup).not.toContain("line-clamp");
   });

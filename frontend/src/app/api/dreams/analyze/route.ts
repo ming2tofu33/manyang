@@ -1,6 +1,7 @@
 import {
   analyzeDream,
   createOpenAIEmbeddingsProviderFromEnv,
+  createKoreanLemmatizerFromEnv,
   createOpenAIResponsesProviderFromEnv,
   DEFAULT_LLM_PROVIDER_TIMEOUT_MS,
   EmbeddingProviderConfigurationError,
@@ -10,21 +11,49 @@ import {
   type AnalyzeDreamWithLlmOptions,
   type CatReaderType,
   type DreamAnalysisRequest,
+  type DreamAnalysisResponse,
   type DreamReadingResult,
   type DreamReadingUnavailableReason,
 } from "@manyang/backend";
+import { randomUUID } from "node:crypto";
+
+import {
+  hasCompletedBasicReadingForUserOnDate,
+  hasCompletedGuestBasicReadingOnDate,
+  isAdminUser as isAdminUserFromDb,
+  persistCompletedDreamReading,
+  persistGuestBasicReadingUsage,
+  type PersistGuestBasicReadingUsageInput,
+} from "@/lib/server/manyang-db";
+import {
+  canRequestReading,
+  getReadingKindForCatReader,
+  type AccessPlan,
+} from "@/lib/access-policy";
+import { getAuthenticatedAccessPlan, getAuthenticatedUserId } from "@/lib/supabase/server";
+import type { PersistCompletedDreamReadingInput } from "@/lib/manyang-dream-records";
+
+export const runtime = "nodejs";
 
 type EnvLike = Record<string, string | undefined>;
 const MIN_LLM_TIMEOUT_MS = 1_000;
 const MAX_LLM_TIMEOUT_MS = 60_000;
 export const DREAM_ANALYZE_MAX_DREAM_TEXT_LENGTH = 1000;
 const OPTIONAL_TEXT_MAX_LENGTH = 160;
+const NIGHT_CONTEXT_NOTE_MAX_LENGTH = 100;
 const TIME_ZONE_MAX_LENGTH = 80;
 const FEELING_IDS_MAX_ITEMS = 4;
 const FEELING_ID_MAX_LENGTH = 32;
 const FEELING_OTHER_MAX_LENGTH = 30;
 const validLocales = new Set(["ko", "en"]);
 const validCatReaderTypes = new Set(["black_cat", "white_cat", "cheese_cat", "gray_cat"]);
+const guestIdCookieName = "manyang_guest_id";
+const guestIdCookieMaxAgeSeconds = 60 * 60 * 24 * 400;
+
+type GuestSession = {
+  guestId: string;
+  shouldSetCookie: boolean;
+};
 
 type DreamAnalyzeValidationResult =
   | {
@@ -36,8 +65,93 @@ type DreamAnalyzeValidationResult =
       error: string;
     };
 
+type NightContextValidationResult =
+  | {
+      ok: true;
+      value?: DreamAnalysisRequest["nightContext"];
+    }
+  | {
+      ok: false;
+      error: string;
+    };
+
+export type DreamAnalyzeRouteDependencies = {
+  getAuthenticatedUserId?: () => Promise<string | null>;
+  getAccessPlanForUser?: (userId: string | null) => Promise<AccessPlan>;
+  isAdminUser?: (userId: string) => Promise<boolean>;
+  hasCompletedBasicReadingForUserOnDate?: (userId: string, dreamDate: string) => Promise<boolean>;
+  hasCompletedGuestBasicReadingOnDate?: (guestId: string, dreamDate: string) => Promise<boolean>;
+  persistCompletedDreamReading?: (input: PersistCompletedDreamReadingInput) => Promise<unknown>;
+  persistGuestBasicReadingUsage?: (input: PersistGuestBasicReadingUsageInput) => Promise<unknown>;
+  createGuestId?: () => string;
+};
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isValidGuestId(value: string | undefined): value is string {
+  return Boolean(
+    value &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value),
+  );
+}
+
+function getRequestCookie(request: Request, cookieName: string): string | undefined {
+  const cookieHeader = request.headers.get("cookie");
+
+  if (!cookieHeader) {
+    return undefined;
+  }
+
+  for (const cookiePart of cookieHeader.split(";")) {
+    const [name, ...valueParts] = cookiePart.trim().split("=");
+
+    if (name === cookieName) {
+      return valueParts.join("=");
+    }
+  }
+
+  return undefined;
+}
+
+function resolveGuestSession(request: Request, createGuestId: () => string): GuestSession {
+  const existingGuestId = getRequestCookie(request, guestIdCookieName);
+
+  if (isValidGuestId(existingGuestId)) {
+    return {
+      guestId: existingGuestId,
+      shouldSetCookie: false,
+    };
+  }
+
+  return {
+    guestId: createGuestId(),
+    shouldSetCookie: true,
+  };
+}
+
+function createGuestIdCookie(guestId: string, env: EnvLike = process.env): string {
+  return [
+    `${guestIdCookieName}=${guestId}`,
+    "Path=/",
+    `Max-Age=${guestIdCookieMaxAgeSeconds}`,
+    "HttpOnly",
+    "SameSite=Lax",
+    env.NODE_ENV === "production" ? "Secure" : "",
+  ]
+    .filter(Boolean)
+    .join("; ");
+}
+
+function createJsonResponse(body: unknown, init?: ResponseInit, guestSession?: GuestSession | null): Response {
+  const response = Response.json(body, init);
+
+  if (guestSession?.shouldSetCookie) {
+    response.headers.append("set-cookie", createGuestIdCookie(guestSession.guestId));
+  }
+
+  return response;
 }
 
 function optionalIdArrayField(
@@ -103,6 +217,54 @@ function optionalStringField(
   }
 
   return { ok: true, value: trimmed };
+}
+
+function validateNightContext(value: unknown): NightContextValidationResult {
+  if (value === undefined) {
+    return { ok: true };
+  }
+
+  if (!isRecord(value)) {
+    return { ok: false, error: "nightContext must be an object" };
+  }
+
+  if (typeof value.checkInDate !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value.checkInDate)) {
+    return { ok: false, error: "nightContext.checkInDate must use YYYY-MM-DD" };
+  }
+
+  if (typeof value.moodLabel !== "string") {
+    return { ok: false, error: "nightContext.moodLabel must be a string" };
+  }
+
+  const moodLabel = value.moodLabel.trim();
+  if (moodLabel.length === 0 || moodLabel.length > OPTIONAL_TEXT_MAX_LENGTH) {
+    return { ok: false, error: `nightContext.moodLabel must be 1 to ${OPTIONAL_TEXT_MAX_LENGTH} characters` };
+  }
+
+  if (typeof value.conditionLabel !== "string") {
+    return { ok: false, error: "nightContext.conditionLabel must be a string" };
+  }
+
+  const conditionLabel = value.conditionLabel.trim();
+  if (conditionLabel.length === 0 || conditionLabel.length > OPTIONAL_TEXT_MAX_LENGTH) {
+    return { ok: false, error: `nightContext.conditionLabel must be 1 to ${OPTIONAL_TEXT_MAX_LENGTH} characters` };
+  }
+
+  if (value.note !== undefined && typeof value.note !== "string") {
+    return { ok: false, error: "nightContext.note must be a string" };
+  }
+
+  const note = typeof value.note === "string" ? value.note.trim().slice(0, NIGHT_CONTEXT_NOTE_MAX_LENGTH) : "";
+
+  return {
+    ok: true,
+    value: {
+      checkInDate: value.checkInDate,
+      moodLabel,
+      conditionLabel,
+      ...(note ? { note } : {}),
+    },
+  };
 }
 
 export function validateDreamAnalyzeRequestBody(body: unknown): DreamAnalyzeValidationResult {
@@ -174,6 +336,11 @@ export function validateDreamAnalyzeRequestBody(body: unknown): DreamAnalyzeVali
     return dreamSensationOther;
   }
 
+  const nightContext = validateNightContext(body.nightContext);
+  if (!nightContext.ok) {
+    return nightContext;
+  }
+
   return {
     ok: true,
     value: {
@@ -184,6 +351,7 @@ export function validateDreamAnalyzeRequestBody(body: unknown): DreamAnalyzeVali
       ...(dreamAtmospheres.value ? { dreamAtmospheres: dreamAtmospheres.value } : {}),
       ...(dreamSensations.value ? { dreamSensations: dreamSensations.value } : {}),
       ...(dreamSensationOther.value ? { dreamSensationOther: dreamSensationOther.value } : {}),
+      ...(nightContext.value ? { nightContext: nightContext.value } : {}),
       ...(body.catReaderType ? { catReaderType: body.catReaderType as CatReaderType } : {}),
       ...(body.locale ? { locale: body.locale as "ko" | "en" } : {}),
       ...(userTimeZone.value ? { userTimeZone: userTimeZone.value } : {}),
@@ -211,6 +379,18 @@ export function resolveDreamLlmTimeoutMs(env: EnvLike = process.env): number {
   }
 
   return Math.min(MAX_LLM_TIMEOUT_MS, Math.max(MIN_LLM_TIMEOUT_MS, Math.round(configuredTimeoutMs)));
+}
+
+export function shouldAllowMockDreamAnalysis(env: EnvLike = process.env): boolean {
+  if (env.MANYANG_ANALYSIS_MODE === "llm") {
+    return false;
+  }
+
+  if (env.NODE_ENV === "production") {
+    return env.MANYANG_ALLOW_MOCK_ANALYSIS === "1";
+  }
+
+  return true;
 }
 
 async function createVectorAnalysisOptions(
@@ -243,7 +423,92 @@ function createUnavailablePayload(
   };
 }
 
-export async function POST(request: Request): Promise<Response> {
+function getDefaultDreamDate(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+async function getDefaultAccessPlanForUser(userId: string | null): Promise<AccessPlan> {
+  if (!userId) {
+    return "guest";
+  }
+
+  return getAuthenticatedAccessPlan();
+}
+
+async function getDefaultIsAdminUser(userId: string): Promise<boolean> {
+  try {
+    return await isAdminUserFromDb(userId);
+  } catch {
+    return false;
+  }
+}
+
+async function persistCompletedReadingForAuthenticatedUser(
+  userId: string | null,
+  requestBody: DreamAnalysisRequest,
+  analysis: DreamAnalysisResponse,
+  dependencies: Required<DreamAnalyzeRouteDependencies>,
+): Promise<boolean> {
+  if (!userId) {
+    return false;
+  }
+
+  try {
+    await dependencies.persistCompletedDreamReading({
+      userId,
+      dreamText: requestBody.dreamText,
+      dreamDate: requestBody.dreamDate ?? getDefaultDreamDate(),
+      ...(requestBody.catReaderType ? { catReaderType: requestBody.catReaderType } : {}),
+      ...(requestBody.wakeMood ? { wakeMood: requestBody.wakeMood } : {}),
+      ...(requestBody.dreamAtmospheres ? { dreamAtmospheres: requestBody.dreamAtmospheres } : {}),
+      ...(requestBody.dreamSensations ? { dreamSensations: requestBody.dreamSensations } : {}),
+      ...(requestBody.dreamSensationOther ? { dreamSensationOther: requestBody.dreamSensationOther } : {}),
+      analysis,
+    });
+
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function persistGuestBasicReadingUsageBestEffort(
+  guestSession: GuestSession | null,
+  dreamDate: string,
+  dependencies: Required<DreamAnalyzeRouteDependencies>,
+): Promise<boolean> {
+  if (!guestSession) {
+    return false;
+  }
+
+  try {
+    await dependencies.persistGuestBasicReadingUsage({
+      guestId: guestSession.guestId,
+      dreamDate,
+    });
+
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function handleDreamAnalyzeRequest(
+  request: Request,
+  dependencies: DreamAnalyzeRouteDependencies = {},
+): Promise<Response> {
+  const resolvedDependencies: Required<DreamAnalyzeRouteDependencies> = {
+    getAuthenticatedUserId,
+    getAccessPlanForUser: getDefaultAccessPlanForUser,
+    isAdminUser: getDefaultIsAdminUser,
+    hasCompletedBasicReadingForUserOnDate,
+    hasCompletedGuestBasicReadingOnDate,
+    persistCompletedDreamReading,
+    persistGuestBasicReadingUsage,
+    createGuestId: randomUUID,
+    ...dependencies,
+  };
+
   try {
     let body: unknown;
 
@@ -259,6 +524,42 @@ export async function POST(request: Request): Promise<Response> {
       return Response.json({ error: validatedBody.error }, { status: 400 });
     }
 
+    const userId = await resolvedDependencies.getAuthenticatedUserId();
+    const accessPlan = await resolvedDependencies.getAccessPlanForUser(userId);
+    const isAdmin = userId ? await resolvedDependencies.isAdminUser(userId) : false;
+    const readingKind = getReadingKindForCatReader(validatedBody.value.catReaderType);
+    const dreamDate = validatedBody.value.dreamDate ?? getDefaultDreamDate();
+    const guestSession = !userId && readingKind === "basic"
+      ? resolveGuestSession(request, resolvedDependencies.createGuestId)
+      : null;
+    const hasUsedBasicReadingToday =
+      isAdmin
+        ? false
+        : userId && readingKind === "basic"
+        ? await resolvedDependencies.hasCompletedBasicReadingForUserOnDate(userId, dreamDate)
+        : guestSession
+          ? await resolvedDependencies.hasCompletedGuestBasicReadingOnDate(guestSession.guestId, dreamDate)
+        : false;
+    const readingGate = canRequestReading({
+      accessPlan,
+      readingKind,
+      hasUsedBasicReadingToday,
+      bypassAccessGate: isAdmin,
+    });
+
+    if (!readingGate.allowed) {
+      return createJsonResponse(
+        {
+          error: "dream reading is locked",
+          reason: readingGate.reason,
+          ctaLabel: readingGate.ctaLabel,
+          message: readingGate.message,
+        },
+        { status: 403 },
+        guestSession,
+      );
+    }
+
     let provider: ReturnType<typeof createOpenAIResponsesProviderFromEnv>;
 
     try {
@@ -267,37 +568,61 @@ export async function POST(request: Request): Promise<Response> {
       if (error instanceof LlmProviderConfigurationError) {
         const safetyNotice = analyzeDream(validatedBody.value).safetyNotice;
 
-        return Response.json(createUnavailablePayload("provider_missing", false, safetyNotice), { status: 503 });
+        return createJsonResponse(createUnavailablePayload("provider_missing", false, safetyNotice), { status: 503 }, guestSession);
       }
 
       throw error;
     }
 
+    if (!provider && !shouldAllowMockDreamAnalysis()) {
+      const safetyNotice = analyzeDream(validatedBody.value).safetyNotice;
+
+      return createJsonResponse(createUnavailablePayload("provider_missing", false, safetyNotice), { status: 503 }, guestSession);
+    }
+
     const vectorOptions = provider ? await createVectorAnalysisOptions(validatedBody.value.locale) : {};
+    const lemmatizer = provider ? createKoreanLemmatizerFromEnv(process.env) : undefined;
     if (provider) {
       const result = await generateDreamReadingForUser(validatedBody.value, {
         provider,
         providerTimeoutMs: resolveDreamLlmTimeoutMs(),
         ...vectorOptions,
+        ...(lemmatizer ? { lemmatizer } : {}),
       });
 
       if (result.status === "unavailable") {
-        return Response.json(createUnavailablePayload(result.reason, result.retryable, result.safetyNotice), { status: 503 });
+        return createJsonResponse(
+          createUnavailablePayload(result.reason, result.retryable, result.safetyNotice),
+          { status: 503 },
+          guestSession,
+        );
       }
 
-      return Response.json(result.response);
+      await persistCompletedReadingForAuthenticatedUser(userId, validatedBody.value, result.response, resolvedDependencies);
+      await persistGuestBasicReadingUsageBestEffort(guestSession, dreamDate, resolvedDependencies);
+
+      return createJsonResponse(result.response, undefined, guestSession);
     }
 
-    return Response.json(analyzeDream(validatedBody.value));
+    const analysis = analyzeDream(validatedBody.value);
+
+    await persistCompletedReadingForAuthenticatedUser(userId, validatedBody.value, analysis, resolvedDependencies);
+    await persistGuestBasicReadingUsageBestEffort(guestSession, dreamDate, resolvedDependencies);
+
+    return createJsonResponse(analysis, undefined, guestSession);
   } catch (error) {
     if (error instanceof LlmProviderConfigurationError || error instanceof EmbeddingProviderConfigurationError) {
-      return Response.json(createUnavailablePayload("provider_missing", false), { status: 503 });
+      return createJsonResponse(createUnavailablePayload("provider_missing", false), { status: 503 });
     }
 
     if (error instanceof Error && error.message === "dreamText is required") {
-      return Response.json({ error: error.message }, { status: 400 });
+      return createJsonResponse({ error: error.message }, { status: 400 });
     }
 
-    return Response.json({ error: "failed to analyze dream" }, { status: 500 });
+    return createJsonResponse({ error: "failed to analyze dream" }, { status: 500 });
   }
+}
+
+export async function POST(request: Request): Promise<Response> {
+  return handleDreamAnalyzeRequest(request);
 }

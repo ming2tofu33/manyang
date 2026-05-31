@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useSyncExternalStore } from "react";
 
+import { AccountStatusCard } from "@/components/account-status-card";
 import { CatReaderPicker } from "@/components/cat-reader-picker";
 import {
   getCatReaderById,
@@ -11,6 +12,7 @@ import {
   saveSelectedCatReaderIdToBrowser,
   subscribeToSelectedCatReader,
 } from "@/lib/cat-readers";
+import { DREAM_READING_DISCLAIMER } from "@/lib/disclaimer";
 import { manyangAssets } from "@/lib/manyang-assets";
 import { cn, ui } from "@/lib/styles";
 
@@ -24,7 +26,7 @@ type ProfileSetting = {
 const profileSettings: ProfileSetting[] = [
   {
     title: "알림 설정",
-    description: "아침 기록, 밤 씨앗, 주간 리포트 알림",
+    description: "아침 기록, 밤의 기록, 주간 리포트 알림",
     icon: "notifications",
   },
   {
@@ -95,6 +97,8 @@ export function ProfileRoom() {
         </div>
       </section>
 
+      <AccountStatusCard />
+
       <CatReaderPicker
         value={selectedCatReaderId}
         onChange={saveSelectedCatReaderIdToBrowser}
@@ -138,7 +142,7 @@ export function ProfileRoom() {
       </section>
 
       <section className="rounded-[1rem] border border-[#7c4a38]/56 bg-[rgba(7,6,17,0.68)] px-4 py-3 text-[12px] leading-5 text-[#f0bc7d]/88">
-        마냥 꿈해몽의 해석은 오락과 자기 성찰을 위한 감성 리딩입니다. 의학적, 심리학적 진단이나 전문 상담을 대체하지 않습니다.
+        {DREAM_READING_DISCLAIMER}
       </section>
     </div>
   );

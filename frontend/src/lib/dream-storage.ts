@@ -1,4 +1,4 @@
-import type { DreamAnalysisResponse, DreamReadingUnavailableReason } from "@manyang/backend";
+import type { DreamAnalysisResponse, DreamNightContext, DreamReadingUnavailableReason } from "@manyang/backend";
 import type { CatReaderId } from "./cat-readers";
 
 export type StorageLike = {
@@ -12,6 +12,7 @@ export type DreamFeelingSignals = {
   dreamAtmospheres?: string[];
   dreamSensations?: string[];
   dreamSensationOther?: string;
+  nightContext?: DreamNightContext;
 };
 
 export type DreamCompletedPayload = DreamFeelingSignals & {
@@ -185,6 +186,14 @@ function createLatestAnalysisPayloadFromRecord(record: DreamRecord): LatestAnaly
   };
 }
 
+export function saveDreamRecordAsLatestAnalysis(storage: StorageLike, record: DreamRecord): LatestAnalysisPayload {
+  const payload = createLatestAnalysisPayloadFromRecord(record);
+
+  saveLatestAnalysis(storage, payload);
+
+  return payload;
+}
+
 export function restoreDreamRecordAsLatestAnalysis(storage: StorageLike, recordId: string): LatestAnalysisPayload | null {
   const record = getDreamRecords(storage).find((storedRecord) => storedRecord.id === recordId);
 
@@ -310,6 +319,19 @@ export function restoreDreamRecordAsLatestAnalysisToBrowser(recordId: string): b
   }
 
   return restoredPayload !== null;
+}
+
+export function saveDreamRecordAsLatestAnalysisToBrowser(record: DreamRecord): boolean {
+  const storage = getBrowserStorage();
+
+  if (!storage) {
+    return false;
+  }
+
+  saveDreamRecordAsLatestAnalysis(storage, record);
+  notifyDreamStorageChanged();
+
+  return true;
 }
 
 export function deleteDreamRecordToBrowser(recordId: string): void {

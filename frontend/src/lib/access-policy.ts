@@ -4,7 +4,16 @@ export type StorageLike = {
   removeItem(key: string): void;
 };
 
+export type MinimalAccessSession = {
+  user?: {
+    id?: string | null;
+    app_metadata?: Record<string, unknown> | null;
+    user_metadata?: Record<string, unknown> | null;
+  } | null;
+} | null;
+
 export type AccessPlan = "guest" | "free_account" | "moon_pass";
+export type AccessRole = "user" | "admin";
 export type ReadingKind = "basic" | "detailed";
 export type ReadingGateReason = "allowed" | "guest_daily_limit" | "free_daily_limit" | "detailed_locked";
 
@@ -19,6 +28,7 @@ export type ReadingGateInput = {
   readingKind: ReadingKind;
   hasUsedBasicReadingToday: boolean;
   bypassDailyLimit?: boolean;
+  bypassAccessGate?: boolean;
 };
 
 export type ReadingGateResult = {
@@ -27,6 +37,12 @@ export type ReadingGateResult = {
   ctaLabel: string | null;
   message: string | null;
 };
+
+export type DreamReadingUsageLike = {
+  status?: string;
+  dreamDate?: string;
+  catReaderType?: string;
+} | null;
 
 export const devAccessPlanKey = "manyang:dev-access-plan";
 export const devBypassDailyLimitKey = "manyang:dev-bypass-daily-limit";
@@ -46,8 +62,8 @@ const disabledDevOverride: DevAccessOverride = {
   bypassDailyLimit: false,
 };
 
-function normalizeAccessPlan(value: string | null | undefined): AccessPlan | null {
-  return accessPlans.includes(value as AccessPlan) ? (value as AccessPlan) : null;
+function normalizeAccessPlan(value: unknown): AccessPlan | null {
+  return typeof value === "string" && accessPlans.includes(value as AccessPlan) ? (value as AccessPlan) : null;
 }
 
 function isDevOverrideEnvironment(environment: string | undefined): boolean {
@@ -58,11 +74,41 @@ export function getDefaultAccessPlan(): AccessPlan {
   return "guest";
 }
 
+export function getAccessPlanForSession(session: MinimalAccessSession): AccessPlan {
+  if (!session?.user?.id) {
+    return "guest";
+  }
+
+  const metadataPlan =
+    normalizeAccessPlan(session.user.app_metadata?.manyang_access_plan) ??
+    normalizeAccessPlan(session.user.app_metadata?.access_plan) ??
+    normalizeAccessPlan(session.user.user_metadata?.manyang_access_plan) ??
+    normalizeAccessPlan(session.user.user_metadata?.access_plan);
+
+  return metadataPlan ?? "free_account";
+}
+
 export function isPaidAccessPlan(accessPlan: AccessPlan): boolean {
   return accessPlan === "moon_pass";
 }
 
+export function getReadingKindForCatReader(catReaderId: string | null | undefined): ReadingKind {
+  return catReaderId === "gray_cat" ? "detailed" : "basic";
+}
+
+export function hasUsedBasicReadingOnDate(payload: DreamReadingUsageLike, date: string): boolean {
+  if (!payload || payload.status === "unavailable" || payload.dreamDate !== date) {
+    return false;
+  }
+
+  return getReadingKindForCatReader(payload.catReaderType) === "basic";
+}
+
 export function canRequestReading(input: ReadingGateInput): ReadingGateResult {
+  if (input.bypassAccessGate === true) {
+    return allowedResult;
+  }
+
   if (input.readingKind === "detailed") {
     if (input.accessPlan === "moon_pass") {
       return allowedResult;
@@ -71,7 +117,7 @@ export function canRequestReading(input: ReadingGateInput): ReadingGateResult {
     return {
       allowed: false,
       reason: "detailed_locked",
-      ctaLabel: "Moon Pass로 상세 해몽 열기",
+      ctaLabel: "깊은 꿈을 더 깊게 읽기",
       message: "상징별 세부 해석, 감정 흐름, 잿빛냥 꿈+타로 리딩은 Moon Pass에서 열려요.",
     };
   }
@@ -84,7 +130,7 @@ export function canRequestReading(input: ReadingGateInput): ReadingGateResult {
     return {
       allowed: false,
       reason: "guest_daily_limit",
-      ctaLabel: "로그인하고 매일 기록하기",
+      ctaLabel: "로그인하고 매일 꿈 기록 남기기",
       message: "오늘의 무료 꿈 영수증은 이미 받았어요. 로그인하면 매일 꿈 기록을 이어갈 수 있어요.",
     };
   }
@@ -105,8 +151,7 @@ export function getDevAccessOverride(
     return disabledDevOverride;
   }
 
-  const storedPlan = storage.getItem(devAccessPlanKey);
-  const simulatedPlan = normalizeAccessPlan(storedPlan);
+  const simulatedPlan = normalizeAccessPlan(storage.getItem(devAccessPlanKey));
 
   if (!simulatedPlan) {
     return disabledDevOverride;

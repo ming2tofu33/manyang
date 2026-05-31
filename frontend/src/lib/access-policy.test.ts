@@ -4,9 +4,12 @@ import {
   canRequestReading,
   devAccessPlanKey,
   devBypassDailyLimitKey,
+  getAccessPlanForSession,
   getDefaultAccessPlan,
   getDevAccessOverride,
   getEffectiveAccessPlan,
+  getReadingKindForCatReader,
+  hasUsedBasicReadingOnDate,
   isPaidAccessPlan,
   type StorageLike,
 } from "./access-policy";
@@ -26,10 +29,32 @@ describe("access policy", () => {
     expect(getDefaultAccessPlan()).toBe("guest");
   });
 
+  test("maps auth session state to product access plans", () => {
+    expect(getAccessPlanForSession(null)).toBe("guest");
+    expect(getAccessPlanForSession({ user: { id: "user-1" } })).toBe("free_account");
+    expect(
+      getAccessPlanForSession({
+        user: {
+          id: "user-1",
+          app_metadata: {
+            manyang_access_plan: "moon_pass",
+          },
+        },
+      }),
+    ).toBe("moon_pass");
+  });
+
   test("treats only Moon Pass as paid access", () => {
     expect(isPaidAccessPlan("guest")).toBe(false);
     expect(isPaidAccessPlan("free_account")).toBe(false);
     expect(isPaidAccessPlan("moon_pass")).toBe(true);
+  });
+
+  test("maps gray cat to detailed reading and other cats to basic reading", () => {
+    expect(getReadingKindForCatReader("black_cat")).toBe("basic");
+    expect(getReadingKindForCatReader("white_cat")).toBe("basic");
+    expect(getReadingKindForCatReader("cheese_cat")).toBe("basic");
+    expect(getReadingKindForCatReader("gray_cat")).toBe("detailed");
   });
 
   test("allows a guest basic reading before the daily reading is used", () => {
@@ -57,7 +82,7 @@ describe("access policy", () => {
     ).toEqual({
       allowed: false,
       reason: "guest_daily_limit",
-      ctaLabel: "로그인하고 매일 기록하기",
+      ctaLabel: "로그인하고 매일 꿈 기록 남기기",
       message: "오늘의 무료 꿈 영수증은 이미 받았어요. 로그인하면 매일 꿈 기록을 이어갈 수 있어요.",
     });
   });
@@ -100,7 +125,7 @@ describe("access policy", () => {
     ).toEqual({
       allowed: false,
       reason: "detailed_locked",
-      ctaLabel: "Moon Pass로 상세 해몽 열기",
+      ctaLabel: "깊은 꿈을 더 깊게 읽기",
       message: "상징별 세부 해석, 감정 흐름, 잿빛냥 꿈+타로 리딩은 Moon Pass에서 열려요.",
     });
 
@@ -114,6 +139,37 @@ describe("access policy", () => {
       allowed: false,
       reason: "detailed_locked",
     });
+  });
+
+  test("detects only completed basic readings as today's basic reading usage", () => {
+    expect(
+      hasUsedBasicReadingOnDate(
+        {
+          dreamDate: "2026-05-30",
+          catReaderType: "black_cat",
+        },
+        "2026-05-30",
+      ),
+    ).toBe(true);
+    expect(
+      hasUsedBasicReadingOnDate(
+        {
+          status: "unavailable",
+          dreamDate: "2026-05-30",
+          catReaderType: "black_cat",
+        },
+        "2026-05-30",
+      ),
+    ).toBe(false);
+    expect(
+      hasUsedBasicReadingOnDate(
+        {
+          dreamDate: "2026-05-30",
+          catReaderType: "gray_cat",
+        },
+        "2026-05-30",
+      ),
+    ).toBe(false);
   });
 
   test("uses dev access override to simulate a valid product plan outside production", () => {
@@ -181,6 +237,22 @@ describe("access policy", () => {
     ).toMatchObject({
       allowed: false,
       reason: "detailed_locked",
+    });
+  });
+
+  test("can bypass every reading gate for server-trusted admin testing", () => {
+    expect(
+      canRequestReading({
+        accessPlan: "free_account",
+        readingKind: "detailed",
+        hasUsedBasicReadingToday: true,
+        bypassAccessGate: true,
+      }),
+    ).toEqual({
+      allowed: true,
+      reason: "allowed",
+      ctaLabel: null,
+      message: null,
     });
   });
 });

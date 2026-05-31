@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 
 import * as pawprints from "./pawprints";
 import {
+  canPersistPawprint,
   countMonthlyPawprints,
   createPawprintRecord,
   getCurrentPawprintStreak,
@@ -39,6 +40,14 @@ function createRecords(appDates: string[]): PawprintRecord[] {
 }
 
 describe("pawprint storage", () => {
+  test("does not persist pawprints for guests", () => {
+    expect(canPersistPawprint({ isAuthenticated: false })).toBe(false);
+  });
+
+  test("allows pawprints for authenticated users", () => {
+    expect(canPersistPawprint({ isAuthenticated: true })).toBe(true);
+  });
+
   test("uses the previous app date before the 05:00 boundary", () => {
     expect(getPawprintAppDate(new Date("2026-05-25T04:59:00+09:00"))).toBe("2026-05-24");
   });
@@ -140,6 +149,7 @@ describe("pawprint storage", () => {
 
   test("exposes only daily trace and streak helpers", () => {
     expect(Object.keys(pawprints).sort()).toEqual([
+      "canPersistPawprint",
       "countMonthlyPawprints",
       "createPawprintRecord",
       "getCurrentPawprintStreak",

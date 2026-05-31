@@ -1,8 +1,8 @@
-import type { DreamSeedRecord } from "./dream-seed";
 import type { DreamRecord } from "./dream-storage";
+import type { NightCheckInRecord } from "./night-checkin";
 import type { PawprintRecord, PawprintSource } from "./pawprints";
 
-export type ArchiveTimelineItemType = "dream" | "pawprint" | "seed";
+export type ArchiveTimelineItemType = "dream" | "pawprint" | "night_checkin";
 
 export type ArchiveTimelineItem = {
   id: string;
@@ -69,7 +69,7 @@ export function countMonthlyDreamSymbols(records: DreamRecord[], year: number, m
 export function createArchiveTimeline(input: {
   dreamRecords: DreamRecord[];
   pawprints: PawprintRecord[];
-  seedRecords: DreamSeedRecord[];
+  nightCheckInRecords: NightCheckInRecord[];
   year: number;
   month: number;
 }): ArchiveTimelineItem[] {
@@ -96,18 +96,18 @@ export function createArchiveTimeline(input: {
       sortAt: record.createdAt,
     }));
 
-  const seedItems = input.seedRecords
-    .filter((record) => isInMonth(record.seedDate, input.year, input.month))
+  const nightCheckInItems = input.nightCheckInRecords
+    .filter((record) => isInMonth(record.checkInDate, input.year, input.month))
     .map<ArchiveTimelineItem>((record) => ({
-      id: `seed-${record.seedDate}`,
-      type: "seed",
-      date: record.seedDate,
-      title: "꿈 씨앗",
-      meta: joinMeta([record.intentLabel, record.atmosphere]),
+      id: `night-checkin-${record.checkInDate}`,
+      type: "night_checkin",
+      date: record.checkInDate,
+      title: "밤의 기록",
+      meta: joinMeta([record.moodLabel, record.conditionLabel]),
       sortAt: record.savedAt,
     }));
 
-  return [...dreamItems, ...pawprintItems, ...seedItems].sort((left, right) => {
+  return [...dreamItems, ...pawprintItems, ...nightCheckInItems].sort((left, right) => {
     const dateOrder = right.date.localeCompare(left.date);
 
     if (dateOrder !== 0) {

@@ -4,8 +4,8 @@ import {
   archiveCalendarDateGridStyle,
   archiveCalendarDayCellClassName,
   archiveCalendarDreamIconClassName,
+  archiveCalendarNightCheckInIconClassName,
   archiveCalendarPawprintIconClassName,
-  archiveCalendarSeedIconClassName,
 } from "./archive-calendar-layout";
 
 describe("archive calendar layout", () => {
@@ -29,8 +29,8 @@ describe("archive calendar layout", () => {
     expect(archiveCalendarPawprintIconClassName).toContain("h-3");
   });
 
-  it("positions seed markers beside pawprint markers", () => {
-    expect(archiveCalendarSeedIconClassName).toContain("top-[2.6rem]");
-    expect(archiveCalendarSeedIconClassName).toContain("h-3");
+  it("positions night check-in markers beside pawprint markers", () => {
+    expect(archiveCalendarNightCheckInIconClassName).toContain("top-[2.6rem]");
+    expect(archiveCalendarNightCheckInIconClassName).toContain("h-3");
   });
 });

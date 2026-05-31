@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { useSyncExternalStore } from "react";
 
 import {
   countMonthlyDreamRecords,
@@ -12,29 +11,16 @@ import {
   archiveCalendarDateGridStyle,
   archiveCalendarDayCellClassName,
   archiveCalendarDreamIconClassName,
+  archiveCalendarNightCheckInIconClassName,
   archiveCalendarPawprintIconClassName,
-  archiveCalendarSeedIconClassName,
 } from "@/lib/archive-calendar-layout";
 import { getMonthGrid } from "@/lib/calendar";
-import {
-  countMonthlyDreamSeeds,
-  getDreamSeedRecordsSnapshotFromBrowser,
-  getEmptyDreamSeedRecordsSnapshot,
-  subscribeToDreamSeed,
-} from "@/lib/dream-seed";
-import {
-  getDreamRecordsSnapshotFromBrowser,
-  getEmptyDreamRecordsSnapshot,
-  subscribeToDreamStorage,
-} from "@/lib/dream-storage";
 import { manyangAssets } from "@/lib/manyang-assets";
-import {
-  countMonthlyPawprints,
-  getEmptyPawprintSnapshot,
-  getPawprintSnapshotFromBrowser,
-  subscribeToPawprints,
-} from "@/lib/pawprints";
+import { countMonthlyNightCheckIns } from "@/lib/night-checkin";
+import { countMonthlyPawprints } from "@/lib/pawprints";
 import { cn } from "@/lib/styles";
+import { useArchiveDreamRecords } from "@/lib/use-archive-dream-records";
+import { useRoutineRecords } from "@/lib/use-routine-records";
 
 const archiveYear = 2026;
 const archiveMonth = 5;
@@ -70,28 +56,17 @@ function ArchiveSummaryCard({ icon, label, value, accentClassName }: ArchiveSumm
 }
 
 export function ArchiveCalendar() {
-  const dreamRecords = useSyncExternalStore(
-    subscribeToDreamStorage,
-    getDreamRecordsSnapshotFromBrowser,
-    getEmptyDreamRecordsSnapshot,
-  );
-  const pawprints = useSyncExternalStore(
-    subscribeToPawprints,
-    getPawprintSnapshotFromBrowser,
-    getEmptyPawprintSnapshot,
-  );
-  const seedRecords = useSyncExternalStore(
-    subscribeToDreamSeed,
-    getDreamSeedRecordsSnapshotFromBrowser,
-    getEmptyDreamSeedRecordsSnapshot,
-  );
+  const { dreamRecords, isLoadingServerRecords, source } = useArchiveDreamRecords();
+  const { pawprints, nightCheckInRecords, source: routineSource } = useRoutineRecords();
 
   const dreamDays = new Set<number>();
   const pawprintDays = new Set<number>();
-  const seedDays = new Set<number>();
+  const nightCheckInDays = new Set<number>();
+  const visiblePawprints = source === "server" && routineSource === "server" ? pawprints : [];
+  const visibleNightCheckInRecords = source === "server" && routineSource === "server" ? nightCheckInRecords : [];
   const monthlyDreams = countMonthlyDreamRecords(dreamRecords, archiveYear, archiveMonth);
-  const monthlyPawprints = countMonthlyPawprints(pawprints, archiveYear, archiveMonth);
-  const monthlySeeds = countMonthlyDreamSeeds(seedRecords, archiveYear, archiveMonth);
+  const monthlyPawprints = countMonthlyPawprints(visiblePawprints, archiveYear, archiveMonth);
+  const monthlyNightCheckIns = countMonthlyNightCheckIns(visibleNightCheckInRecords, archiveYear, archiveMonth);
   const monthlySymbols = countMonthlyDreamSymbols(dreamRecords, archiveYear, archiveMonth);
 
   for (const record of dreamRecords) {
@@ -102,7 +77,7 @@ export function ArchiveCalendar() {
     }
   }
 
-  for (const pawprint of pawprints) {
+  for (const pawprint of visiblePawprints) {
     const day = getDayInMonth(pawprint.appDate, archiveYear, archiveMonth);
 
     if (day) {
@@ -110,11 +85,11 @@ export function ArchiveCalendar() {
     }
   }
 
-  for (const seed of seedRecords) {
-    const day = getDayInMonth(seed.seedDate, archiveYear, archiveMonth);
+  for (const checkIn of visibleNightCheckInRecords) {
+    const day = getDayInMonth(checkIn.checkInDate, archiveYear, archiveMonth);
 
     if (day) {
-      seedDays.add(day);
+      nightCheckInDays.add(day);
     }
   }
 
@@ -125,8 +100,8 @@ export function ArchiveCalendar() {
         <ArchiveSummaryCard icon={manyangAssets.semanticIcons.paw} label="발자국 기록" value={monthlyPawprints} />
         <ArchiveSummaryCard
           icon={manyangAssets.semanticIcons.sparkles}
-          label="꿈 씨앗"
-          value={monthlySeeds}
+          label="밤의 기록"
+          value={monthlyNightCheckIns}
         />
         <ArchiveSummaryCard icon={manyangAssets.semanticIcons.crystalBall} label="이번 달 상징" value={monthlySymbols} />
       </div>
@@ -151,8 +126,8 @@ export function ArchiveCalendar() {
           {calendarCells.map((day, index) => {
             const hasDream = day ? dreamDays.has(day) : false;
             const hasPawprint = day ? pawprintDays.has(day) : false;
-            const hasSeed = day ? seedDays.has(day) : false;
-            const hasActivity = hasDream || hasPawprint || hasSeed;
+            const hasNightCheckIn = day ? nightCheckInDays.has(day) : false;
+            const hasActivity = hasDream || hasPawprint || hasNightCheckIn;
 
             return (
               <span key={`${day ?? "blank"}-${index}`} className={archiveCalendarDayCellClassName}>
@@ -192,8 +167,8 @@ export function ArchiveCalendar() {
                         />
                       </span>
                     ) : null}
-                    {hasSeed ? (
-                      <span className={archiveCalendarSeedIconClassName}>
+                    {hasNightCheckIn ? (
+                      <span className={archiveCalendarNightCheckInIconClassName}>
                         <Image
                           src={manyangAssets.semanticIcons.sparkles}
                           alt=""
@@ -212,6 +187,12 @@ export function ArchiveCalendar() {
           })}
         </div>
       </div>
+
+      {source === "guest" && !isLoadingServerRecords ? (
+        <p className="mx-auto max-w-[382px] rounded-[1rem] border border-[#7c4a38]/45 bg-[rgba(5,4,12,0.58)] px-4 py-3 text-center text-sm leading-6 text-[#fff3d7]/74">
+          로그인하면 꿈 영수증이 이 달력에 차곡차곡 남아요.
+        </p>
+      ) : null}
     </section>
   );
 }

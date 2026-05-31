@@ -1,8 +1,8 @@
 "use client";
 
-import type { DreamAnalysisResponse, DreamReadingUnavailableReason } from "@manyang/backend";
+import type { DreamAnalysisRequest, DreamAnalysisResponse, DreamReadingUnavailableReason } from "@manyang/backend";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSyncExternalStore } from "react";
 
 import { AppShell } from "@/components/app-shell";
@@ -12,12 +12,12 @@ import { getCatReaderById } from "@/lib/cat-readers";
 import {
   getLatestAnalysisSnapshotFromBrowser,
   saveDreamDraftToBrowser,
-  saveDreamRecordToBrowser,
   saveLatestAnalysisToBrowser,
   subscribeToDreamStorage,
   type DreamUnavailablePayload,
 } from "@/lib/dream-storage";
 import { manyangAssets } from "@/lib/manyang-assets";
+import { saveLatestDreamToArchive, type SaveLatestDreamToArchiveResult } from "@/lib/save-latest-dream";
 
 type DreamUnavailableApiResponse = {
   status: "unavailable";
@@ -27,8 +27,25 @@ type DreamUnavailableApiResponse = {
   safetyNotice?: string;
 };
 
-function createFallbackRecordId(prefix: string): string {
-  return globalThis.crypto?.randomUUID?.() ?? `${prefix}-${Date.now()}`;
+type SaveLatestStatus = "idle" | "saving" | SaveLatestDreamToArchiveResult["status"];
+type RetryDreamAnalyzeRequestBody = DreamAnalysisRequest & {
+  dreamText: string;
+  dreamDate: string;
+};
+
+export function createRetryDreamAnalyzeRequestBody(
+  unavailablePayload: DreamUnavailablePayload,
+): RetryDreamAnalyzeRequestBody {
+  return {
+    dreamText: unavailablePayload.dreamText,
+    dreamDate: unavailablePayload.dreamDate,
+    ...(unavailablePayload.wakeMood ? { wakeMood: unavailablePayload.wakeMood } : {}),
+    ...(unavailablePayload.catReaderType ? { catReaderType: unavailablePayload.catReaderType } : {}),
+    ...(unavailablePayload.dreamAtmospheres ? { dreamAtmospheres: unavailablePayload.dreamAtmospheres } : {}),
+    ...(unavailablePayload.dreamSensations ? { dreamSensations: unavailablePayload.dreamSensations } : {}),
+    ...(unavailablePayload.dreamSensationOther ? { dreamSensationOther: unavailablePayload.dreamSensationOther } : {}),
+    ...(unavailablePayload.nightContext ? { nightContext: unavailablePayload.nightContext } : {}),
+  };
 }
 
 function isDreamUnavailableApiResponse(value: unknown): value is DreamUnavailableApiResponse {
@@ -41,10 +58,36 @@ function isDreamUnavailableApiResponse(value: unknown): value is DreamUnavailabl
   );
 }
 
-export function DreamResultPageClient() {
+function getSaveLatestStatusMessage(status: SaveLatestStatus): string {
+  if (status === "saving") {
+    return "꿈 영수증을 달력에 남기는 중이에요.";
+  }
+
+  if (status === "saved") {
+    return "이 꿈을 달력과 기록장에 남겼어요.";
+  }
+
+  if (status === "not_completed") {
+    return "저장할 완료된 꿈 영수증을 찾지 못했어요.";
+  }
+
+  if (status === "unauthenticated") {
+    return "로그인이 확인되지 않았어요. 다시 로그인하면 이 꿈을 남길 수 있어요.";
+  }
+
+  if (status === "error") {
+    return "꿈 영수증을 저장하지 못했어요. 잠시 후 다시 시도해 주세요.";
+  }
+
+  return "";
+}
+
+export function DreamResultPageClient({ shouldSaveLatest = false }: { shouldSaveLatest?: boolean }) {
   const router = useRouter();
   const [isRetrying, setIsRetrying] = useState(false);
   const [retryError, setRetryError] = useState("");
+  const [saveLatestStatus, setSaveLatestStatus] = useState<SaveLatestStatus>("idle");
+  const saveLatestAttemptedRef = useRef(false);
   const payload = useSyncExternalStore(
     subscribeToDreamStorage,
     getLatestAnalysisSnapshotFromBrowser,
@@ -53,6 +96,24 @@ export function DreamResultPageClient() {
   const reader = getCatReaderById(
     payload?.catReaderType ?? (payload?.status === "unavailable" ? undefined : payload?.analysis.reader?.id),
   );
+  const saveLatestStatusMessage = getSaveLatestStatusMessage(saveLatestStatus);
+
+  useEffect(() => {
+    if (!shouldSaveLatest || saveLatestAttemptedRef.current || !payload) {
+      return;
+    }
+
+    saveLatestAttemptedRef.current = true;
+    setSaveLatestStatus("saving");
+
+    void saveLatestDreamToArchive(payload).then((result) => {
+      setSaveLatestStatus(result.status);
+
+      if (result.status === "saved") {
+        router.replace("/result");
+      }
+    });
+  }, [payload, router, shouldSaveLatest]);
 
   async function retryUnavailableReading(unavailablePayload: DreamUnavailablePayload) {
     if (isRetrying) {
@@ -63,36 +124,24 @@ export function DreamResultPageClient() {
     setIsRetrying(true);
 
     try {
+      const retryRequestBody = createRetryDreamAnalyzeRequestBody(unavailablePayload);
       const response = await fetch("/api/dreams/analyze", {
         method: "POST",
         headers: {
           "content-type": "application/json",
         },
-        body: JSON.stringify({
-          dreamText: unavailablePayload.dreamText,
-          dreamDate: unavailablePayload.dreamDate,
-          ...(unavailablePayload.wakeMood ? { wakeMood: unavailablePayload.wakeMood } : {}),
-          ...(unavailablePayload.catReaderType ? { catReaderType: unavailablePayload.catReaderType } : {}),
-        }),
+        body: JSON.stringify(retryRequestBody),
       });
       const body = (await response.json()) as unknown;
 
       if (response.ok) {
         const analysis = body as DreamAnalysisResponse;
         const completedPayload = {
-          dreamText: unavailablePayload.dreamText,
-          dreamDate: unavailablePayload.dreamDate,
-          ...(unavailablePayload.catReaderType ? { catReaderType: unavailablePayload.catReaderType } : {}),
-          ...(unavailablePayload.wakeMood ? { wakeMood: unavailablePayload.wakeMood } : {}),
+          ...retryRequestBody,
           analysis,
         };
 
         saveLatestAnalysisToBrowser(completedPayload);
-        saveDreamRecordToBrowser({
-          ...completedPayload,
-          id: analysis.dreamId,
-          savedAt: new Date().toISOString(),
-        });
         return;
       }
 
@@ -106,11 +155,6 @@ export function DreamResultPageClient() {
         };
 
         saveLatestAnalysisToBrowser(nextUnavailablePayload);
-        saveDreamRecordToBrowser({
-          ...nextUnavailablePayload,
-          id: createFallbackRecordId("unavailable-dream"),
-          savedAt: new Date().toISOString(),
-        });
         setRetryError("아직 꿈을 끝까지 읽지 못했어요. 잠시 뒤 다시 불러볼 수 있어요.");
         return;
       }
@@ -142,6 +186,11 @@ export function DreamResultPageClient() {
       rightAction={payload?.status === "unavailable" ? "none" : "share"}
       showBottomNav={false}
     >
+      {saveLatestStatusMessage ? (
+        <section className="mx-1 mb-3 rounded-[1rem] border border-[#b98255]/48 bg-[rgba(7,6,18,0.78)] px-4 py-3 text-center text-sm font-semibold leading-6 text-[#ffd98a] shadow-[0_0_24px_rgba(0,0,0,0.24)] ring-1 ring-[#d799ff]/10">
+          {saveLatestStatusMessage}
+        </section>
+      ) : null}
       {payload?.status === "unavailable" ? (
         <DreamUnavailableResult
           payload={payload}

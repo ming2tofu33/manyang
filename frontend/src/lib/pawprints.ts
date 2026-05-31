@@ -22,6 +22,10 @@ export type PawprintSaveResult = {
   record: PawprintRecord;
 };
 
+export type PawprintPersistenceInput = {
+  isAuthenticated: boolean;
+};
+
 export const pawprintRecordsKey = "manyang:pawprints";
 export const pawprintChangedEvent = "manyang:pawprints-changed";
 
@@ -100,6 +104,10 @@ export function createPawprintRecord(input: PawprintInput): PawprintRecord {
     id: `pawprint-${input.appDate}`,
     createdAt: new Date().toISOString(),
   };
+}
+
+export function canPersistPawprint(input: PawprintPersistenceInput): boolean {
+  return input.isAuthenticated;
 }
 
 export function getPawprints(storage: StorageLike): PawprintRecord[] {
@@ -182,7 +190,14 @@ export function getEmptyPawprintSnapshot(): PawprintRecord[] {
   return emptyPawprintRecords;
 }
 
-export function savePawprintToBrowser(record: PawprintRecord): PawprintSaveResult | null {
+export function savePawprintToBrowser(
+  record: PawprintRecord,
+  persistence: PawprintPersistenceInput = { isAuthenticated: false },
+): PawprintSaveResult | null {
+  if (!canPersistPawprint(persistence)) {
+    return null;
+  }
+
   const storage = getBrowserStorage();
 
   if (!storage) {

@@ -1,7 +1,8 @@
-import { afterEach, describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 import {
   DREAM_ANALYZE_MAX_DREAM_TEXT_LENGTH,
+  handleDreamAnalyzeRequest,
   POST,
   resolveDreamLlmTimeoutMs,
   resolveDreamRagVectorIndexPath,
@@ -13,6 +14,17 @@ function createJsonRequest(body: unknown): Request {
     method: "POST",
     headers: {
       "content-type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+}
+
+function createJsonRequestWithCookie(body: unknown, cookie: string): Request {
+  return new Request("http://localhost/api/dreams/analyze", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      cookie,
     },
     body: JSON.stringify(body),
   });
@@ -33,6 +45,7 @@ describe("POST /api/dreams/analyze", () => {
   const originalApiKey = process.env.OPENAI_API_KEY;
   const originalBaseUrl = process.env.OPENAI_BASE_URL;
   const originalLlmTimeoutMs = process.env.MANYANG_LLM_TIMEOUT_MS;
+  const originalAllowMockAnalysis = process.env.MANYANG_ALLOW_MOCK_ANALYSIS;
 
   afterEach(() => {
     if (originalMode === undefined) {
@@ -58,16 +71,28 @@ describe("POST /api/dreams/analyze", () => {
     } else {
       process.env.MANYANG_LLM_TIMEOUT_MS = originalLlmTimeoutMs;
     }
+
+    if (originalAllowMockAnalysis === undefined) {
+      delete process.env.MANYANG_ALLOW_MOCK_ANALYSIS;
+    } else {
+      process.env.MANYANG_ALLOW_MOCK_ANALYSIS = originalAllowMockAnalysis;
+    }
+
+    vi.unstubAllEnvs();
   });
 
   test("returns a mock dream analysis response", async () => {
-    const response = await POST(
+    const response = await handleDreamAnalyzeRequest(
       createJsonRequest({
         dreamText: "학교 복도에서 교실을 찾는데 문이 계속 바뀌었어요.",
         dreamDate: "2026-05-24",
         wakeMood: "anxious",
         catReaderType: "white_cat",
       }),
+      {
+        hasCompletedGuestBasicReadingOnDate: async () => false,
+        persistGuestBasicReadingUsage: async () => undefined,
+      },
     );
 
     expect(response.status).toBe(200);
@@ -83,6 +108,262 @@ describe("POST /api/dreams/analyze", () => {
     expect(body.readingBasis.usedSymbols).toEqual(expect.arrayContaining(["학교", "복도", "문", "찾기"]));
     expect(body.summary).toContain("꿈");
     expect(body.card.name).toContain("밤");
+  });
+
+  test("does not expose mock analysis as a production dream reading unless explicitly allowed", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    process.env.MANYANG_ANALYSIS_MODE = "mock";
+    delete process.env.MANYANG_ALLOW_MOCK_ANALYSIS;
+
+    const response = await handleDreamAnalyzeRequest(
+      createJsonRequest({
+        dreamText: "I dreamed that a snake appeared in my room.",
+        locale: "en",
+      }),
+      {
+        hasCompletedGuestBasicReadingOnDate: async () => false,
+        persistGuestBasicReadingUsage: async () => undefined,
+      },
+    );
+
+    expect(response.status).toBe(503);
+    await expect(response.json()).resolves.toMatchObject({
+      status: "unavailable",
+      error: "dream reading is unavailable",
+      reason: "provider_missing",
+      retryable: false,
+    });
+  });
+
+  test("persists a completed reading for an authenticated user without requiring client-side DB access", async () => {
+    const persistedInputs: unknown[] = [];
+    const response = await handleDreamAnalyzeRequest(
+      createJsonRequest({
+        dreamText: "I dreamed that a snake appeared in my room.",
+        dreamDate: "2026-05-30",
+        wakeMood: "curious",
+        catReaderType: "white_cat",
+        dreamAtmospheres: ["anxious"],
+        dreamSensations: ["falling"],
+        dreamSensationOther: "warm hands",
+      }),
+      {
+        getAuthenticatedUserId: async () => "00000000-0000-4000-8000-000000000001",
+        hasCompletedBasicReadingForUserOnDate: async () => false,
+        persistCompletedDreamReading: async (input) => {
+          persistedInputs.push(input);
+        },
+      },
+    );
+
+    expect(response.status).toBe(200);
+    const analysis = await response.json();
+
+    expect(persistedInputs).toHaveLength(1);
+    expect(persistedInputs[0]).toMatchObject({
+      userId: "00000000-0000-4000-8000-000000000001",
+      dreamText: "I dreamed that a snake appeared in my room.",
+      dreamDate: "2026-05-30",
+      catReaderType: "white_cat",
+      wakeMood: "curious",
+      dreamAtmospheres: ["anxious"],
+      dreamSensations: ["falling"],
+      dreamSensationOther: "warm hands",
+      analysis: {
+        dreamId: analysis.dreamId,
+      },
+    });
+  });
+
+  test("still returns the completed reading when authenticated archive persistence fails", async () => {
+    const response = await handleDreamAnalyzeRequest(
+      createJsonRequest({
+        dreamText: "I dreamed that a snake appeared in my room.",
+        dreamDate: "2026-05-30",
+        catReaderType: "white_cat",
+      }),
+      {
+        getAuthenticatedUserId: async () => "00000000-0000-4000-8000-000000000001",
+        hasCompletedBasicReadingForUserOnDate: async () => false,
+        persistCompletedDreamReading: async () => {
+          throw new Error("database temporarily unavailable");
+        },
+      },
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      dreamId: expect.any(String),
+      reader: {
+        id: "white_cat",
+      },
+    });
+  });
+
+  test("rejects Moon Pass-only detailed readings before analysis work starts", async () => {
+    const persistCompletedDreamReading = vi.fn();
+    const response = await handleDreamAnalyzeRequest(
+      createJsonRequest({
+        dreamText: "I dreamed that a snake appeared in my room.",
+        dreamDate: "2026-05-30",
+        catReaderType: "gray_cat",
+      }),
+      {
+        getAuthenticatedUserId: async () => null,
+        persistCompletedDreamReading,
+      },
+    );
+
+    expect(response.status).toBe(403);
+    await expect(response.json()).resolves.toMatchObject({
+      error: "dream reading is locked",
+      reason: "detailed_locked",
+      ctaLabel: "깊은 꿈을 더 깊게 읽기",
+    });
+    expect(persistCompletedDreamReading).not.toHaveBeenCalled();
+  });
+
+  test("allows detailed readings when the server access plan is Moon Pass", async () => {
+    const getAccessPlanForUser = vi.fn(async () => "moon_pass" as const);
+    const response = await handleDreamAnalyzeRequest(
+      createJsonRequest({
+        dreamText: "I dreamed that a snake appeared in my room.",
+        dreamDate: "2026-05-30",
+        catReaderType: "gray_cat",
+      }),
+      {
+        getAuthenticatedUserId: async () => "00000000-0000-4000-8000-000000000001",
+        getAccessPlanForUser,
+        hasCompletedBasicReadingForUserOnDate: async () => false,
+        persistCompletedDreamReading: async () => undefined,
+      },
+    );
+
+    expect(response.status).toBe(200);
+    expect(getAccessPlanForUser).toHaveBeenCalledWith("00000000-0000-4000-8000-000000000001");
+  });
+
+  test("allows an admin to request a detailed reading without Moon Pass access", async () => {
+    const response = await handleDreamAnalyzeRequest(
+      createJsonRequest({
+        dreamText: "I dreamed of a gray hallway and a door.",
+        dreamDate: "2026-05-30",
+        catReaderType: "gray_cat",
+      }),
+      {
+        getAuthenticatedUserId: async () => "00000000-0000-4000-8000-000000000001",
+        getAccessPlanForUser: async () => "free_account",
+        isAdminUser: async () => true,
+        persistCompletedDreamReading: async () => undefined,
+      },
+    );
+
+    expect(response.status).toBe(200);
+  });
+
+  test("rejects a second authenticated basic reading on the same date before analysis work starts", async () => {
+    const persistCompletedDreamReading = vi.fn();
+    const response = await handleDreamAnalyzeRequest(
+      createJsonRequest({
+        dreamText: "I dreamed that a snake appeared in my room.",
+        dreamDate: "2026-05-30",
+        catReaderType: "black_cat",
+      }),
+      {
+        getAuthenticatedUserId: async () => "00000000-0000-4000-8000-000000000001",
+        getAccessPlanForUser: async () => "free_account",
+        hasCompletedBasicReadingForUserOnDate: async () => true,
+        persistCompletedDreamReading,
+      },
+    );
+
+    expect(response.status).toBe(403);
+    await expect(response.json()).resolves.toMatchObject({
+      error: "dream reading is locked",
+      reason: "free_daily_limit",
+    });
+    expect(persistCompletedDreamReading).not.toHaveBeenCalled();
+  });
+
+  test("allows an admin to request another basic reading on the same date", async () => {
+    const response = await handleDreamAnalyzeRequest(
+      createJsonRequest({
+        dreamText: "I dreamed that a snake appeared in my room.",
+        dreamDate: "2026-05-30",
+        catReaderType: "black_cat",
+      }),
+      {
+        getAuthenticatedUserId: async () => "00000000-0000-4000-8000-000000000001",
+        getAccessPlanForUser: async () => "free_account",
+        isAdminUser: async () => true,
+        hasCompletedBasicReadingForUserOnDate: async () => true,
+        persistCompletedDreamReading: async () => undefined,
+      },
+    );
+
+    expect(response.status).toBe(200);
+  });
+
+  test("rejects a second guest basic reading on the same date before analysis work starts", async () => {
+    const persistGuestBasicReadingUsage = vi.fn();
+    const guestId = "00000000-0000-4000-8000-0000000000aa";
+    const response = await handleDreamAnalyzeRequest(
+      createJsonRequestWithCookie(
+        {
+          dreamText: "I dreamed that a snake appeared in my room.",
+          dreamDate: "2026-05-30",
+          catReaderType: "black_cat",
+        },
+        `manyang_guest_id=${guestId}`,
+      ),
+      {
+        getAuthenticatedUserId: async () => null,
+        hasCompletedGuestBasicReadingOnDate: async (receivedGuestId, dreamDate) => {
+          expect(receivedGuestId).toBe(guestId);
+          expect(dreamDate).toBe("2026-05-30");
+          return true;
+        },
+        persistGuestBasicReadingUsage,
+      },
+    );
+
+    expect(response.status).toBe(403);
+    await expect(response.json()).resolves.toMatchObject({
+      error: "dream reading is locked",
+      reason: "guest_daily_limit",
+    });
+    expect(persistGuestBasicReadingUsage).not.toHaveBeenCalled();
+  });
+
+  test("sets a guest cookie and records guest usage after a successful guest basic reading", async () => {
+    const guestId = "00000000-0000-4000-8000-0000000000bb";
+    const persistedGuestUsage: unknown[] = [];
+    const response = await handleDreamAnalyzeRequest(
+      createJsonRequest({
+        dreamText: "I dreamed that a snake appeared in my room.",
+        dreamDate: "2026-05-30",
+        catReaderType: "black_cat",
+      }),
+      {
+        getAuthenticatedUserId: async () => null,
+        createGuestId: () => guestId,
+        hasCompletedGuestBasicReadingOnDate: async () => false,
+        persistGuestBasicReadingUsage: async (input) => {
+          persistedGuestUsage.push(input);
+        },
+      },
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("set-cookie")).toContain(`manyang_guest_id=${guestId}`);
+    expect(response.headers.get("set-cookie")).toContain("HttpOnly");
+    expect(response.headers.get("set-cookie")).toContain("SameSite=Lax");
+    expect(persistedGuestUsage).toEqual([
+      {
+        guestId,
+        dreamDate: "2026-05-30",
+      },
+    ]);
   });
 
   test("returns 400 when dreamText is empty", async () => {
@@ -200,15 +481,55 @@ describe("POST /api/dreams/analyze", () => {
     ).toBe(false);
   });
 
+  test("accepts sanitized night check-in context", () => {
+    const result = validateDreamAnalyzeRequestBody({
+      dreamText: "A dream.",
+      nightContext: {
+        checkInDate: "2026-05-30",
+        moodLabel: "  편안함  ",
+        conditionLabel: "괜찮음",
+        note: "  잠들기 전 마음이 차분했다.  ",
+      },
+    });
+
+    expect(result).toEqual({
+      ok: true,
+      value: {
+        dreamText: "A dream.",
+        nightContext: {
+          checkInDate: "2026-05-30",
+          moodLabel: "편안함",
+          conditionLabel: "괜찮음",
+          note: "잠들기 전 마음이 차분했다.",
+        },
+      },
+    });
+
+    expect(
+      validateDreamAnalyzeRequestBody({
+        dreamText: "A dream.",
+        nightContext: {
+          checkInDate: "bad-date",
+          moodLabel: "편안함",
+          conditionLabel: "괜찮음",
+        },
+      }).ok,
+    ).toBe(false);
+  });
+
   test("returns 503 when LLM mode is enabled without a server API key", async () => {
     process.env.MANYANG_ANALYSIS_MODE = "llm";
     delete process.env.OPENAI_API_KEY;
 
-    const response = await POST(
+    const response = await handleDreamAnalyzeRequest(
       createJsonRequest({
         dreamText: "I dreamed that a snake appeared in my room.",
         locale: "en",
       }),
+      {
+        hasCompletedGuestBasicReadingOnDate: async () => false,
+        persistGuestBasicReadingUsage: async () => undefined,
+      },
     );
 
     expect(response.status).toBe(503);
@@ -225,11 +546,15 @@ describe("POST /api/dreams/analyze", () => {
     process.env.OPENAI_API_KEY = "test-key";
     process.env.OPENAI_BASE_URL = "http://127.0.0.1:9";
 
-    const response = await POST(
+    const response = await handleDreamAnalyzeRequest(
       createJsonRequest({
         dreamText: "I dreamed that a snake appeared in my room.",
         locale: "en",
       }),
+      {
+        hasCompletedGuestBasicReadingOnDate: async () => false,
+        persistGuestBasicReadingUsage: async () => undefined,
+      },
     );
 
     expect(response.status).toBe(503);

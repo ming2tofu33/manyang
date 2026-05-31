@@ -9,6 +9,8 @@ describe("ProfileRoom", () => {
 
     expect(markup).toContain("도민님");
     expect(markup).toContain("Moon Guest");
+    expect(markup).toContain('data-account-status-card="guest"');
+    expect(markup).toContain("아직 임시 손님 모드예요");
     expect(markup).toContain("대표 해몽사 설정");
     expect(markup).toContain("알림 설정");
     expect(markup).toContain("잠금과 프라이버시");

@@ -13,5 +13,5 @@ export const archiveCalendarDreamIconClassName =
 export const archiveCalendarPawprintIconClassName =
   "absolute left-1/2 top-[2.62rem] h-3 w-3 -translate-x-1/2";
 
-export const archiveCalendarSeedIconClassName =
+export const archiveCalendarNightCheckInIconClassName =
   "absolute left-[calc(50%+0.54rem)] top-[2.6rem] h-3 w-3 -translate-x-1/2";

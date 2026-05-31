@@ -10,6 +10,7 @@ import {
   restoreDreamRecordAsLatestAnalysis,
   saveDreamRecord,
   saveDreamDraft,
+  saveDreamRecordAsLatestAnalysis,
   saveLatestAnalysis,
   type DreamCompletedPayload,
   type DreamRecord,
@@ -209,6 +210,28 @@ describe("dream storage helpers", () => {
       analysis: first.analysis,
     });
     expect(restoreDreamRecordAsLatestAnalysis(storage, "missing")).toBeNull();
+  });
+
+  test("saves a provided dream record as the latest analysis payload", () => {
+    const storage = createMemoryStorage();
+    const record: CompletedDreamRecord = {
+      id: "server-record",
+      savedAt: "2026-05-24T00:00:00.000Z",
+      ...createPayload(),
+    };
+
+    expect(saveDreamRecordAsLatestAnalysis(storage, record)).toEqual({
+      dreamText: record.dreamText,
+      dreamDate: record.dreamDate,
+      wakeMood: record.wakeMood,
+      analysis: record.analysis,
+    });
+    expect(getLatestAnalysis(storage)).toEqual({
+      dreamText: record.dreamText,
+      dreamDate: record.dreamDate,
+      wakeMood: record.wakeMood,
+      analysis: record.analysis,
+    });
   });
 
   test("keeps dream records unchanged when deleting a missing record", () => {

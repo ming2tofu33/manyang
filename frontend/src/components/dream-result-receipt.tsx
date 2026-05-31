@@ -3,31 +3,36 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { CSSProperties } from "react";
-import { Fragment, useState, useSyncExternalStore } from "react";
+import { Fragment, useEffect, useState, useSyncExternalStore } from "react";
 
 import { AssetTextButton } from "@/components/asset-primitives";
+import { ReceiptSaveCta } from "@/components/receipt-save-cta";
 import { getCatReaderById } from "@/lib/cat-readers";
-import {
-  getDreamSeedSnapshotFromBrowser,
-  isDreamSeedRelatedToDreamDate,
-  subscribeToDreamSeed,
-} from "@/lib/dream-seed";
+import { DREAM_READING_DISCLAIMER } from "@/lib/disclaimer";
 import {
   getLatestAnalysisSnapshotFromBrowser,
   type DreamCompletedPayload,
 } from "@/lib/dream-storage";
 import { manyangAssets } from "@/lib/manyang-assets";
 import {
+  getNightCheckInSnapshotFromBrowser,
+  isNightCheckInRelatedToDreamDate,
+  subscribeToNightCheckIn,
+} from "@/lib/night-checkin";
+import {
   createPawprintRecord,
   getPawprintAppDate,
   savePawprintToBrowser,
 } from "@/lib/pawprints";
+import { savePawprintToApi } from "@/lib/routine-record-api";
 import {
   createResultEncyclopediaHref,
   createReceiptFileName,
   createReceiptShareText,
   createReceiptSvg,
 } from "@/lib/result-actions";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { mergeRemotePawprintResult, useRoutineRecords } from "@/lib/use-routine-records";
 
 const fallbackPayload: DreamCompletedPayload = {
   dreamText: "복도를 맨발로 빠르게 달렸어요. 누군가 뒤에서 부르는 것 같았지만 멈추지 않았어요.",
@@ -95,9 +100,17 @@ const receiptContentTopOffset = 360;
 const receiptContentBottomInset = 104;
 const receiptStampSpaceHeight = 192;
 const receiptPaperWidth = "min(calc(100vw - 32px), 372px)";
+const receiptSliceSeamOverlapPx = 2;
 
-function getReceiptSliceHeight(height: number): string {
-  return `calc(var(--receipt-paper-width) * ${height} / ${receiptOriginalWidth})`;
+function getReceiptSliceHeight(height: number, adjustmentPx = 0): string {
+  const base = `var(--receipt-paper-width) * ${height} / ${receiptOriginalWidth}`;
+
+  if (adjustmentPx === 0) {
+    return `calc(${base})`;
+  }
+
+  const operator = adjustmentPx > 0 ? "+" : "-";
+  return `calc(${base} ${operator} ${Math.abs(adjustmentPx)}px)`;
 }
 
 const receiptPaperStyle = {
@@ -106,12 +119,12 @@ const receiptPaperStyle = {
 } as CSSProperties;
 
 const receiptTopStyle: CSSProperties = {
-  height: getReceiptSliceHeight(receiptTopHeight),
+  height: getReceiptSliceHeight(receiptTopHeight, receiptSliceSeamOverlapPx),
 };
 
 const receiptMiddleStyle: CSSProperties = {
-  top: getReceiptSliceHeight(receiptTopHeight),
-  bottom: getReceiptSliceHeight(receiptBottomHeight),
+  top: getReceiptSliceHeight(receiptTopHeight, -receiptSliceSeamOverlapPx),
+  bottom: getReceiptSliceHeight(receiptBottomHeight, -receiptSliceSeamOverlapPx),
   minHeight: getReceiptSliceHeight(receiptMiddleHeight),
   backgroundImage: "url(/manyang/receipts/empty-middle.webp)",
   backgroundPosition: "top center",
@@ -120,7 +133,7 @@ const receiptMiddleStyle: CSSProperties = {
 };
 
 const receiptBottomStyle: CSSProperties = {
-  height: getReceiptSliceHeight(receiptBottomHeight),
+  height: getReceiptSliceHeight(receiptBottomHeight, receiptSliceSeamOverlapPx),
 };
 
 const receiptContentStyle: CSSProperties = {
@@ -214,38 +227,8 @@ function createReceiptDelayStyle(delayMs: number): CSSProperties {
   };
 }
 
-function shouldShowReceiptExpandControl(text: string, label: string): boolean {
-  const wordCount = createReceiptStreamingWords(text).length;
-
-  if (label === "interpretation") {
-    return wordCount > 110;
-  }
-
-  if (label === "reader-note") {
-    return wordCount > 64;
-  }
-
-  return wordCount > 42;
-}
-
-function getReceiptExpandControlText(label: string, isExpanded: boolean): string {
-  if (label === "reader-note") {
-    return isExpanded ? "고양이 메모 접기" : "고양이 메모 전체 보기";
-  }
-
-  if (label === "small-prescription") {
-    return isExpanded ? "작은 처방 접기" : "작은 처방 전체 보기";
-  }
-
-  return isExpanded ? "해석 접기" : "해석 전체 보기";
-}
-
-function getReceiptGuardedTextClassName(baseClassName: string, maxHeightClassName: string, isExpanded: boolean): string {
-  if (isExpanded) {
-    return `${baseClassName} overflow-visible`;
-  }
-
-  return `${baseClassName} ${maxHeightClassName} overflow-hidden`;
+function getReceiptGuardedTextClassName(baseClassName: string): string {
+  return `${baseClassName} overflow-visible`;
 }
 
 function ReceiptStreamingText({
@@ -254,19 +237,14 @@ function ReceiptStreamingText({
   startDelayMs,
   className,
   overflowGuard = false,
-  isExpanded = false,
-  onToggleExpanded,
 }: {
   text: string;
   label: string;
   startDelayMs: number;
   className: string;
   overflowGuard?: boolean;
-  isExpanded?: boolean;
-  onToggleExpanded?: () => void;
 }) {
   const words = createReceiptStreamingWords(text);
-  const showExpandControl = overflowGuard && onToggleExpanded && shouldShowReceiptExpandControl(text, label);
   const textFrameId = `receipt-text-${label}`;
 
   return (
@@ -293,18 +271,6 @@ function ReceiptStreamingText({
           ))}
         </span>
       </p>
-      {showExpandControl ? (
-        <button
-          type="button"
-          aria-controls={textFrameId}
-          aria-expanded={isExpanded}
-          className="mt-2 self-start text-[12px] font-semibold text-[#7b5536] underline decoration-[#7b5536]/35 underline-offset-4"
-          data-receipt-expand-control={label}
-          onClick={onToggleExpanded}
-        >
-          {getReceiptExpandControlText(label, isExpanded)}
-        </button>
-      ) : null}
     </>
   );
 }
@@ -319,9 +285,12 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
     getLatestAnalysisSnapshotFromBrowser,
     () => null,
   );
-  const storedSeed = useSyncExternalStore(subscribeToDreamSeed, getDreamSeedSnapshotFromBrowser, () => null);
+  const storedCheckIn = useSyncExternalStore(subscribeToNightCheckIn, getNightCheckInSnapshotFromBrowser, () => null);
+  const { nightCheckInRecords: remoteNightCheckInRecords, source: routineSource } = useRoutineRecords();
   const [pawprintCreated, setPawprintCreated] = useState(false);
-  const [expandedReceiptTextLabels, setExpandedReceiptTextLabels] = useState<Record<string, boolean>>({});
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showPawprintLoginPrompt, setShowPawprintLoginPrompt] = useState(false);
+  const [pawprintSaveError, setPawprintSaveError] = useState(false);
   const completedStoredPayload = storedPayload?.status === "unavailable" ? null : storedPayload;
   const hasStoredPayload = completedStoredPayload !== null;
   const payload = payloadOverride ?? completedStoredPayload ?? fallbackPayload;
@@ -329,7 +298,13 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
   const { analysis } = payload;
   const reader = getCatReaderById(payload.catReaderType ?? analysis.reader?.id);
   const displayMood = payload.wakeMood ?? analysis.emotions[0] ?? "기록 없음";
-  const relatedSeed = isDreamSeedRelatedToDreamDate(storedSeed, payload.dreamDate) ? storedSeed : null;
+  const remoteRelatedCheckIn =
+    routineSource === "server"
+      ? remoteNightCheckInRecords.find((checkInRecord) => isNightCheckInRelatedToDreamDate(checkInRecord, payload.dreamDate)) ?? null
+      : null;
+  const relatedCheckIn =
+    remoteRelatedCheckIn ??
+    (isNightCheckInRelatedToDreamDate(storedCheckIn, payload.dreamDate) ? storedCheckIn : null);
   const symbolBasisItems = getSymbolBasisItems(analysis);
   const readerNoteStartDelayMs =
     receiptInterpretationStartDelayMs + getReceiptStreamingDurationMs(analysis.interpretation) + receiptTextGapMs;
@@ -341,15 +316,65 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
     9000,
   );
 
-  function isReceiptTextExpanded(label: string): boolean {
-    return Boolean(expandedReceiptTextLabels[label]);
-  }
+  useEffect(() => {
+    let isMounted = true;
 
-  function toggleReceiptText(label: string) {
-    setExpandedReceiptTextLabels((current) => ({
-      ...current,
-      [label]: !current[label],
-    }));
+    async function checkSession() {
+      try {
+        const supabase = createSupabaseBrowserClient();
+        const { data } = await supabase.auth.getSession();
+
+        if (isMounted) {
+          setIsAuthenticated(Boolean(data.session));
+        }
+      } catch {
+        if (isMounted) {
+          setIsAuthenticated(false);
+        }
+      }
+    }
+
+    void checkSession();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  async function saveReceiptPawprint() {
+    const pawprintInput = {
+      appDate: getPawprintAppDate(),
+      source: "receipt_saved" as const,
+      sourceId: analysis.dreamId,
+    };
+
+    setPawprintSaveError(false);
+
+    if (!isAuthenticated) {
+      setPawprintCreated(false);
+      setShowPawprintLoginPrompt(true);
+      return;
+    }
+
+    const pawprintResult = await savePawprintToApi(pawprintInput);
+
+    if (pawprintResult.status === "unauthenticated") {
+      setIsAuthenticated(false);
+      setPawprintCreated(false);
+      setShowPawprintLoginPrompt(true);
+      return;
+    }
+
+    if (pawprintResult.status === "error") {
+      setPawprintCreated(false);
+      setPawprintSaveError(true);
+      return;
+    }
+
+    mergeRemotePawprintResult(pawprintResult);
+    savePawprintToBrowser(createPawprintRecord(pawprintInput), { isAuthenticated });
+    setPawprintCreated(pawprintResult.created);
+    setShowPawprintLoginPrompt(false);
   }
 
   function handleDownload() {
@@ -363,14 +388,7 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
     anchor.click();
     URL.revokeObjectURL(url);
 
-    const pawprintResult = savePawprintToBrowser(
-      createPawprintRecord({
-        appDate: getPawprintAppDate(),
-        source: "receipt_saved",
-        sourceId: analysis.dreamId,
-      }),
-    );
-    setPawprintCreated(pawprintResult?.created ?? false);
+    void saveReceiptPawprint();
   }
 
   async function handleShare() {
@@ -402,29 +420,38 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 drop-shadow-[0_18px_60px_rgba(0,0,0,0.38)]"
           >
-            <div className="absolute inset-x-0 top-0" style={receiptTopStyle}>
+            <div
+              className="absolute inset-x-0 top-0"
+              data-receipt-paper-slice="top"
+              style={receiptTopStyle}
+            >
               <Image
                 src="/manyang/receipts/empty-top.webp"
                 alt=""
                 fill
                 sizes="372px"
                 unoptimized
-                className="object-contain"
+                className="object-fill"
               />
             </div>
             <div
               className="absolute inset-x-0"
+              data-receipt-paper-slice="middle"
               data-receipt-paper-middle="true"
               style={receiptMiddleStyle}
             />
-            <div className="absolute inset-x-0 bottom-0" style={receiptBottomStyle}>
+            <div
+              className="absolute inset-x-0 bottom-0"
+              data-receipt-paper-slice="bottom"
+              style={receiptBottomStyle}
+            >
               <Image
                 src="/manyang/receipts/empty-bottom.webp"
                 alt=""
                 fill
                 sizes="372px"
                 unoptimized
-                className="object-contain"
+                className="object-fill"
               />
             </div>
           </div>
@@ -476,12 +503,8 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
               startDelayMs={receiptInterpretationStartDelayMs}
               className={getReceiptGuardedTextClassName(
                 "mt-6 pr-1 text-[15px] leading-7 text-[#2f2117]",
-                "max-h-[22rem]",
-                isReceiptTextExpanded("interpretation"),
               )}
               overflowGuard
-              isExpanded={isReceiptTextExpanded("interpretation")}
-              onToggleExpanded={() => toggleReceiptText("interpretation")}
             />
             {analysis.readerNote ? (
               <ReceiptStreamingText
@@ -490,12 +513,8 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
                 startDelayMs={readerNoteStartDelayMs}
                 className={getReceiptGuardedTextClassName(
                   "mt-4 rounded-[0.85rem] border border-[#8b6345]/24 bg-[#d9b984]/36 px-3 py-2 text-[14px] leading-6 text-[#3b2819]",
-                  "max-h-[14rem]",
-                  isReceiptTextExpanded("reader-note"),
                 )}
                 overflowGuard
-                isExpanded={isReceiptTextExpanded("reader-note")}
-                onToggleExpanded={() => toggleReceiptText("reader-note")}
               />
             ) : null}
             <ReceiptStreamingText
@@ -504,12 +523,8 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
               startDelayMs={prescriptionStartDelayMs}
               className={getReceiptGuardedTextClassName(
                 "mt-5 border-t border-[#8b6345]/30 pr-1 pt-5 text-[15px] leading-7 text-[#2f2117]",
-                "max-h-[12rem]",
-                isReceiptTextExpanded("small-prescription"),
               )}
               overflowGuard
-              isExpanded={isReceiptTextExpanded("small-prescription")}
-              onToggleExpanded={() => toggleReceiptText("small-prescription")}
             />
             {analysis.safetyNotice ? (
               <p
@@ -528,7 +543,7 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
           </div>
         </section>
       </div>
-      {relatedSeed ? (
+      {relatedCheckIn ? (
         <section
           className="animate-ink-fade rounded-[1.1rem] border border-[#b98255]/45 bg-[rgba(7,6,18,0.76)] px-4 py-3 text-sm leading-6 text-[#fff3d7] shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md"
           style={createReceiptDelayStyle(afterReceiptTextDelayMs)}
@@ -537,14 +552,14 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
             <span className="relative h-5 w-5">
               <Image src={manyangAssets.semanticIcons.star} alt="" fill sizes="20px" unoptimized className="object-contain" />
             </span>
-            어젯밤의 꿈 씨앗
+            어젯밤의 기록
           </p>
           <p className="mt-1 text-[#fff3d7]/84">
-            {relatedSeed.intentLabel} · {relatedSeed.atmosphere}
+            {relatedCheckIn.moodLabel} · {relatedCheckIn.conditionLabel}
           </p>
-          {relatedSeed.note ? (
+          {relatedCheckIn.note ? (
             <p className="mt-1 rounded-[0.8rem] border border-[#7c4a38]/55 bg-[rgba(5,4,12,0.58)] px-3 py-2 text-[#d8c7bc]">
-              {relatedSeed.note}
+              {relatedCheckIn.note}
             </p>
           ) : null}
         </section>
@@ -573,6 +588,18 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
           공유하기
         </AssetTextButton>
       </div>
+      <ReceiptSaveCta />
+      {showPawprintLoginPrompt ? (
+        <section
+          className="animate-ink-fade rounded-[1.1rem] border border-[#b98255]/45 bg-[rgba(7,6,18,0.76)] px-4 py-3 text-sm leading-6 text-[#fff3d7] shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md"
+          data-routine-login-cta="receipt-pawprint"
+        >
+          <p className="font-semibold text-[#ffd98a]">로그인하면 저장한 영수증도 발자국으로 남아요.</p>
+          <p className="mt-1 text-[#fff3d7]/78">
+            이미지는 저장됐고, 계정에 로그인하면 이런 기록을 달력에 모을 수 있어요.
+          </p>
+        </section>
+      ) : null}
       <details
         className="group animate-ink-fade overflow-hidden rounded-[1.15rem] border border-[#b98255]/52 bg-[rgba(7,6,18,0.78)] shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md"
         data-symbol-basis-panel="true"
@@ -617,9 +644,16 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
         </div>
       </details>
       {pawprintCreated ? <p className="text-center text-sm font-semibold text-[#f0bc7d]">오늘의 발자국이 남았어요.</p> : null}
+      {pawprintSaveError ? <p className="text-center text-sm text-[#f0bc7d]">발자국 저장이 잠시 지연됐어요. 다시 시도해 주세요.</p> : null}
       {hasStoredPayload ? (
         <p className="text-center text-sm text-[#f0bc7d]/82">이 꿈은 기록에 자동으로 남겨졌어요.</p>
       ) : null}
+      <p
+        className="px-2 pt-1 text-center text-[11px] leading-5 text-[#f0bc7d]/64"
+        data-dream-reading-disclaimer="true"
+      >
+        {DREAM_READING_DISCLAIMER}
+      </p>
     </div>
   );
 }

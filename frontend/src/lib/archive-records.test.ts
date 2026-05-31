@@ -7,7 +7,7 @@ import {
   getDayInMonth,
 } from "./archive-records";
 import type { DreamRecord } from "./dream-storage";
-import type { DreamSeedRecord } from "./dream-seed";
+import type { NightCheckInRecord } from "./night-checkin";
 import type { PawprintRecord } from "./pawprints";
 
 function createDreamRecord(input: {
@@ -73,19 +73,20 @@ function createPawprint(input: {
   };
 }
 
-function createSeed(input: {
-  seedDate: string;
-  intentLabel?: string;
-  atmosphere?: string;
+function createNightCheckIn(input: {
+  checkInDate: string;
+  moodLabel?: string;
+  conditionLabel?: string;
   savedAt?: string;
-}): DreamSeedRecord {
+}): NightCheckInRecord {
   return {
-    intentId: "question",
-    intentLabel: input.intentLabel ?? "힌트가 필요해",
-    atmosphere: input.atmosphere ?? "조용한",
+    moodId: "calm",
+    moodLabel: input.moodLabel ?? "편안함",
+    conditionId: "okay",
+    conditionLabel: input.conditionLabel ?? "괜찮음",
     note: "",
-    seedDate: input.seedDate,
-    savedAt: input.savedAt ?? `${input.seedDate}T08:00:00.000Z`,
+    checkInDate: input.checkInDate,
+    savedAt: input.savedAt ?? `${input.checkInDate}T08:00:00.000Z`,
   };
 }
 
@@ -107,7 +108,7 @@ describe("archive records", () => {
     expect(countMonthlyDreamSymbols(records, 2026, 5)).toBe(3);
   });
 
-  test("creates a descending monthly timeline from dreams, pawprints, and seeds", () => {
+  test("creates a descending monthly timeline from dreams, pawprints, and night check-ins", () => {
     const timeline = createArchiveTimeline({
       dreamRecords: [
         createDreamRecord({
@@ -118,16 +119,16 @@ describe("archive records", () => {
         }),
       ],
       pawprints: [createPawprint({ appDate: "2026-05-25", source: "receipt_saved" })],
-      seedRecords: [createSeed({ seedDate: "2026-05-23", intentLabel: "꿈에게 맡길래", atmosphere: "편안한" })],
+      nightCheckInRecords: [createNightCheckIn({ checkInDate: "2026-05-23", moodLabel: "편안함", conditionLabel: "괜찮음" })],
       year: 2026,
       month: 5,
     });
 
-    expect(timeline.map((item) => item.type)).toEqual(["pawprint", "dream", "seed"]);
+    expect(timeline.map((item) => item.type)).toEqual(["pawprint", "dream", "night_checkin"]);
     expect(timeline).toMatchObject([
       { date: "2026-05-25", title: "발자국 기록", meta: "꿈 영수증 저장" },
       { date: "2026-05-24", title: "복도를 달린 꿈", meta: "복도 · 신발" },
-      { date: "2026-05-23", title: "꿈 씨앗", meta: "꿈에게 맡길래 · 편안한" },
+      { date: "2026-05-23", title: "밤의 기록", meta: "편안함 · 괜찮음" },
     ]);
   });
 });
