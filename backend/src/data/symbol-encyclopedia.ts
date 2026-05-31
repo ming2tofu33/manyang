@@ -3626,15 +3626,15 @@ export const symbolEntries: SymbolEntry[] = [
     },
     ko: localized({
       label: "떨어짐",
-      aliases: ["떨어짐", "떨어지는 꿈", "추락", "낙하", "넘어지는 꿈"],
+      aliases: ["떨어짐", "떨어지는", "떨어지", "떨어질", "떨어졌", "추락", "낙하", "넘어지는 꿈"],
       searchText: "떨어짐, 떨어지는 꿈, 추락, 낙하, 넘어지는 꿈, 통제감 상실, 불안정, 두려움, 중심 잃음",
       coreMeanings: ["통제감 상실", "불안정", "두려움", "중심 잃음"],
       lightReadings: ["잡고 있던 것을 내려놓아야 하는 감각", "중심을 다시 잡으려는 신호"],
       shadowReadings: ["상황이 내 손을 벗어나는 불안", "지지 기반이 사라지는 느낌"],
       sceneModifiers: {
-        fromHeight: modifier("높은 기대나 위치에서 흔들리는 불안이 큰 장면", ["높은", "절벽", "옥상"], 0.86),
-        endless: modifier("불안이 끝나지 않는 것처럼 느껴지는 장면", ["끝없이", "계속", "바닥이 없"], 0.84),
-        landingSafe: modifier("불안 속에서도 다시 안정될 가능성이 보이는 장면", ["착지", "괜찮", "살았"], 0.72),
+        fromHeight: modifier("높은 기대나 위치에서 흔들리는 불안이 큰 장면", ["높은", "절벽", "옥상"], 0.86, "cautious"),
+        endless: modifier("불안이 끝나지 않는 것처럼 느껴지는 장면", ["끝없이", "계속", "바닥이 없"], 0.84, "cautious"),
+        landingSafe: modifier("불안 속에서도 다시 안정되거나 다시 떠오르는 장면", ["착지", "괜찮", "살았", "다시 떠", "날아올"], 0.72, "auspicious"),
       },
       contextQuestions: ["어디에서 떨어졌나요?", "떨어진 뒤 다쳤나요, 멀쩡했나요?"],
       metaphorHooks: ["발밑이 사라지는 순간", "중심을 다시 찾는 낙하"],
@@ -3642,18 +3642,25 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["요즘 통제하려다 더 불안해진 일이 있는지 적어보세요."],
       safeReading: "떨어지는 꿈은 실패 예고보다 통제감, 지지 기반, 불안정함을 보여주는 상징일 수 있어요.",
       avoidExpressions: ["실패한다", "사고가 난다"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "떨어지다가 멈추거나 다시 떠올라 무사히 착지하는 꿈은 흔들리던 중심을 다시 잡고 위기를 딛는 전환으로 보기도 했다.",
+        cautious:
+          "높은 곳에서 계속 떨어지는 꿈은 발 디딘 자리나 통제감이 잠시 흔들린다는 부드러운 환기로 여겨졌다.",
+      },
     }),
     en: localized({
       label: "Falling",
-      aliases: ["falling", "fall", "falling down", "plummeting", "tripping"],
+      aliases: ["falling", "fall", "fell", "falling down", "plummeting", "tripping"],
       searchText: "falling, falling down, plummeting, tripping, loss of control, instability, fear, loss of support",
       coreMeanings: ["loss of control", "instability", "fear", "loss of support"],
       lightReadings: ["recognizing what cannot be held tightly", "a signal to regain center"],
       shadowReadings: ["anxiety that a situation is slipping away", "support disappearing beneath you"],
       sceneModifiers: {
-        fromHeight: modifier("anxiety around high expectations or position", ["from height", "cliff", "roof"], 0.86),
-        endless: modifier("fear feeling like it has no landing point", ["endless fall", "kept falling", "no bottom"], 0.84),
-        landingSafe: modifier("possibility of stabilizing despite fear", ["landed safely", "was okay", "survived"], 0.72),
+        fromHeight: modifier("anxiety around high expectations or position", ["from height", "cliff", "roof"], 0.86, "cautious"),
+        endless: modifier("fear feeling like it has no landing point", ["endless fall", "kept falling", "no bottom"], 0.84, "cautious"),
+        landingSafe: modifier("stabilizing or rising again despite the fear", ["landed safely", "was okay", "survived", "rose again", "flew up"], 0.72, "auspicious"),
       },
       contextQuestions: ["Where did you fall from?", "Were you hurt after landing?"],
       metaphorHooks: ["the moment ground disappears", "falling while searching for center"],
@@ -3661,6 +3668,13 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["Write one situation where trying to control everything increases anxiety."],
       safeReading: "Falling can symbolize instability, loss of control, and fear rather than failure prediction.",
       avoidExpressions: ["you will fail", "an accident will happen"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "Falling that stops, recovers, or turns into rising again was read as regaining a shaken center and getting through a wobble.",
+        cautious:
+          "Falling endlessly from a height was taken as a gentle nudge that your footing or sense of control feels shaky for now.",
+      },
     }),
   }),
   activeSymbol({
@@ -3682,15 +3696,15 @@ export const symbolEntries: SymbolEntry[] = [
     },
     ko: localized({
       label: "날기",
-      aliases: ["날기", "나는 꿈", "하늘을 나는 꿈", "비행", "공중에 뜸"],
+      aliases: ["날기", "나는 꿈", "하늘을 날", "날아", "날았", "날아올", "비행", "공중에 뜸", "떠서", "떠올라"],
       searchText: "날기, 나는 꿈, 하늘을 나는 꿈, 공중에 뜸, 자유, 시야, 벗어남, 높은 목표",
       coreMeanings: ["자유", "시야", "벗어남", "높은 목표"],
       lightReadings: ["상황을 더 넓게 보고 싶은 마음", "답답한 조건에서 벗어나려는 감각"],
       shadowReadings: ["현실에서 떨어져 있고 싶은 회피감", "높이 올라갈수록 생기는 불안"],
       sceneModifiers: {
-        easyFlight: modifier("자유와 가능성이 자연스럽게 느껴지는 장면", ["자유롭게", "쉽게", "편하게"], 0.76),
+        easyFlight: modifier("자유와 가능성이 자연스럽게 느껴지는 장면", ["자유롭게", "쉽게", "편하게"], 0.76, "auspicious"),
         unableToControl: modifier("자유롭지만 방향을 잡기 어려운 장면", ["조절", "마음대로", "흔들"], 0.82),
-        fallingAfter: modifier("올라간 뒤 다시 불안정해지는 장면", ["떨어", "추락", "내려"], 0.84),
+        fallingAfter: modifier("올라간 뒤 다시 불안정해지는 장면", ["떨어", "추락", "내려"], 0.84, "cautious"),
       },
       contextQuestions: ["나는 동안 자유로웠나요, 불안했나요?", "어디에서 벗어나고 싶었나요?"],
       metaphorHooks: ["땅에서 잠시 떨어진 마음", "높이 올라간 시야"],
@@ -3698,6 +3712,11 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["지금 상황을 한 걸음 떨어져 보면 무엇이 달라지는지 적어보세요."],
       safeReading: "나는 꿈은 성공 예고보다 자유, 시야, 벗어나고 싶은 감각을 보여줄 수 있어요.",
       avoidExpressions: ["반드시 성공한다", "모든 것을 떠나라"],
+      fortune: {
+        valence: "auspicious",
+        auspicious:
+          "몸이 떠올라 하늘을 나는 꿈은 전통적으로 억눌렸던 자리에서 벗어나 더 높이 비상하고 시야가 트이는 자유·해방의 길몽으로 풀려왔다.",
+      },
     }),
     en: localized({
       label: "Flying",
@@ -3717,6 +3736,11 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["Write what changes when you look at the situation from one step away."],
       safeReading: "Flying can symbolize freedom, perspective, escape, and ambition rather than guaranteed success.",
       avoidExpressions: ["you will succeed", "leave everything behind"],
+      fortune: {
+        valence: "auspicious",
+        auspicious:
+          "Lifting off and flying through the sky has traditionally been read as an auspicious sign of breaking free from what held you down and rising to a wider view.",
+      },
     }),
   }),
   activeSymbol({
