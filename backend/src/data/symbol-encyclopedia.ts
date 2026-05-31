@@ -233,6 +233,13 @@ export const symbolEntries: SymbolEntry[] = [
         smallPrescriptions: ["오늘은 내가 책임지고 있다고 느끼는 영역 하나를 가볍게 정리해보세요."],
         safeReading: "우리 땅은 내가 지키고 가꾸는 기반이나 생활 영역으로 읽을 수 있어요.",
         avoidExpressions: ["부동산 운이 오른다", "땅과 재산이 늘어난다", "가족에게 일이 생긴다"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "내 땅이나 너른 땅이 보이는 꿈은 전통적으로 단단한 기반과 재물·터전이 넓어지는 길몽으로 풀려왔다.",
+        cautious:
+          "땅이 갈라지거나 꺼지는 꿈은 발 디딘 기반을 한 번 점검하라는 환기로 보기도 했다.",
+      },
       }),
       en: localized({
         label: "My Land",
@@ -252,6 +259,13 @@ export const symbolEntries: SymbolEntry[] = [
         smallPrescriptions: ["Tidy or name one area of life that feels like your responsibility today."],
         safeReading: "Owned land can point to your foundation, territory, or the part of life you feel responsible for tending.",
         avoidExpressions: ["you will gain property", "your family will face an event", "money is coming through land"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "Seeing your own or a wide stretch of land has traditionally been read as a sign of solid ground and growing wealth and footing.",
+        cautious:
+          "Land cracking or sinking was taken as a nudge to check the ground you stand on.",
+      },
       }),
     },
   },
@@ -747,6 +761,13 @@ export const symbolEntries: SymbolEntry[] = [
         smallPrescriptions: ["오늘은 바로 반응하지 말고 한 번 더 관찰한 뒤 답해보세요."],
         safeReading: "고양이는 직감과 독립성, 섬세한 거리감을 표현하는 상징으로 읽을 수 있어요.",
         avoidExpressions: ["검은 고양이는 불길하다", "누군가 배신한다"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "꿈에 정답게 다가오는 고양이는 곁에 좋은 인연이나 영민한 도움이 깃든다는 신호로 보기도 했다.",
+        cautious:
+          "할퀴거나 사납게 구는 고양이 꿈은 가까운 사람과의 구설이나 신경 쓸 일을 한 번 살피라는 환기로 여겨졌다.",
+      },
       }),
       en: localized({
         label: "Cat",
@@ -766,6 +787,13 @@ export const symbolEntries: SymbolEntry[] = [
         smallPrescriptions: ["Before responding today, observe once more than usual."],
         safeReading: "A cat can point to intuition, independence, and a careful sense of distance.",
         avoidExpressions: ["a black cat is unlucky", "someone will betray you"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "A cat coming to you affectionately was read as good company or clever help arriving at your side.",
+        cautious:
+          "A scratching or hostile cat was a nudge to check for gossip or friction with someone close.",
+      },
       }),
     },
   },
@@ -972,6 +1000,13 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["막힌 일 하나에 필요한 조건을 하나만 적어보세요."],
       safeReading: "열쇠는 닫힌 장면을 여는 조건이나 해결 실마리로 읽을 수 있어요.",
       avoidExpressions: ["문제가 반드시 해결된다", "큰 기회가 열린다"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "열쇠를 얻거나 자물쇠를 여는 꿈은 전통적으로 막혔던 일이 풀리고 새 기회의 문이 열리는 길몽으로 보았다.",
+        cautious:
+          "열쇠를 잃어버리는 꿈은 잡을 수 있던 기회나 해법을 한 번 더 챙겨보라는 신호로 여겨졌다.",
+      },
     }),
     en: localized({
       label: "Key",
@@ -991,6 +1026,13 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["Write one condition needed for something that feels blocked."],
       safeReading: "A key can point to access, permission, or a condition that makes movement possible.",
       avoidExpressions: ["your problem will definitely be solved", "a huge opportunity will open"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "Getting a key or opening a lock has traditionally been read as a stuck matter loosening and a door of opportunity opening.",
+        cautious:
+          "Losing a key was a sign to look once more after a chance or solution within reach.",
+      },
     }),
   }),
   activeSymbol({
@@ -1262,6 +1304,13 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["오늘 움직이기 전에 필요한 준비 하나만 확인해보세요."],
       safeReading: "신발은 움직일 준비와 현실에 적응하는 방식을 보여주는 상징으로 읽을 수 있어요.",
       avoidExpressions: ["여행을 간다", "일이 막힌다"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "새 신발을 얻거나 신는 꿈은 전통적으로 새 인연·자리·동행이 들어오는 길몽으로 보았다.",
+        cautious:
+          "신발을 잃거나 짝이 안 맞는 꿈은 함께 가던 관계나 자리에 변화가 올 수 있으니 한 번 살피라는 신호로 여겨졌다.",
+      },
     }),
     en: localized({
       label: "Shoes",
@@ -1281,6 +1330,13 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["Check one thing you need before taking the next step today."],
       safeReading: "Shoes can point to readiness, movement, and how you meet the ground of daily life.",
       avoidExpressions: ["you will travel", "your work will be blocked"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "Getting or wearing new shoes was traditionally read as a new bond, place, or companion coming in.",
+        cautious:
+          "Losing shoes or a mismatched pair was a sign that a companion or position may be changing — worth a look.",
+      },
     }),
   }),
   activeSymbol({
@@ -2157,6 +2213,13 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["관계에서 지금 가장 필요한 말 하나를 적어보세요."],
       safeReading: "연인은 실제 관계의 결론보다 친밀감, 약속, 기대, 거리 조율을 비추는 상징으로 읽을 수 있어요.",
       avoidExpressions: ["헤어지게 된다", "상대가 배신한다", "결혼하게 된다"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "연인과 다정한 꿈은 전통적으로 관계에 온기가 더해지고 연애운이 살아나는 길조로 보았다.",
+        cautious:
+          "다투거나 멀어지는 꿈은 마음속 서운함을 한 번 들여다보라는 부드러운 신호일 수 있다.",
+      },
     }),
     en: localized({
       label: "Partner",
@@ -2176,6 +2239,13 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["Write one sentence you wish could be said clearly in the relationship."],
       safeReading: "A partner can symbolize intimacy, commitment, expectation, desire, and the need to adjust distance.",
       avoidExpressions: ["you will break up", "they will betray you", "you will get married"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "A tender dream with a partner was read as warmth returning to the bond and love-luck reviving.",
+        cautious:
+          "Quarreling or drifting apart can be a soft nudge to look at a hurt you have been carrying.",
+      },
     }),
   }),
   activeSymbol({
@@ -2213,6 +2283,13 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["그 사람 자체보다 그 시절의 내가 무엇을 원했는지 적어보세요."],
       safeReading: "전 연인은 재회 예고보다 과거 감정, 비교, 정리되지 않은 마음을 비추는 상징일 수 있어요.",
       avoidExpressions: ["재회한다", "상대가 아직 좋아한다", "다시 연락해야 한다"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "옛 연인 꿈은 전통적으로 지난 인연에서 남은 마음이 정리되어 가는 신호, 혹은 새 인연이 들어올 자리가 생긴다는 뜻으로도 보았다.",
+        cautious:
+          "자꾸 떠오르는 옛 연인 꿈은 아직 매듭짓지 못한 감정을 부드럽게 돌아보라는 환기로 여겨졌다.",
+      },
     }),
     en: localized({
       label: "Ex-Partner",
@@ -2232,6 +2309,13 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["Write what your past self wanted then, separate from what you want now."],
       safeReading: "An ex-partner can point to memory, comparison, unfinished feeling, or a need for closure.",
       avoidExpressions: ["they will return", "they still love you", "you should contact them"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "A dream of an ex has traditionally been read as leftover feelings from a past bond settling, or room opening for a new one.",
+        cautious:
+          "An ex who keeps appearing is a gentle nudge to look kindly at a feeling not yet resolved.",
+      },
     }),
   }),
   activeSymbol({
@@ -2327,6 +2411,11 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["끝났다고 인정하고 싶은 일 하나를 조용히 적어보세요."],
       safeReading: "장례식은 실제 장례 예고가 아니라 끝맺음, 애도, 정리, 관계 속 작별의 감각을 보여줄 수 있어요.",
       avoidExpressions: ["장례가 생긴다", "누가 죽는다", "불길한 꿈이다"],
+      fortune: {
+        valence: "auspicious",
+        auspicious:
+          "장례를 치르는 꿈은 전통적으로 묵은 것이 정리되고 경사나 재물이 들어오는 역몽 길조로 풀려왔다.",
+      },
     }),
     en: localized({
       label: "Funeral",
@@ -2346,6 +2435,11 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["Name one thing you may be ready to acknowledge as over."],
       safeReading: "A funeral can symbolize closure, grief, public goodbye, or ritualized transition, not a literal prediction.",
       avoidExpressions: ["a funeral will happen", "someone will die", "this is an omen"],
+      fortune: {
+        valence: "auspicious",
+        auspicious:
+          "Holding a funeral has traditionally been read as a reversal omen — old things cleared away and good news or wealth coming in.",
+      },
     }),
   }),
   activeSymbol({
@@ -2383,6 +2477,11 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["키우고 싶은 작은 계획 하나를 무리하지 않는 크기로 적어보세요."],
       safeReading: "아기는 임신 예고로 단정하기보다 새 시작, 취약함, 돌봄이 필요한 가능성으로 읽는 편이 안전해요.",
       avoidExpressions: ["임신한다", "태몽이다", "아이가 생긴다"],
+      fortune: {
+        valence: "auspicious",
+        auspicious:
+          "꿈에 나온 아기는 전통적으로 새로운 시작이나 곧 자라날 좋은 일, 태몽으로도 풀려온 길몽이다.",
+      },
     }),
     en: localized({
       label: "Baby",
@@ -2402,6 +2501,11 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["Write one tiny next step for a new thing you want to protect."],
       safeReading: "A baby is safest to read as new beginning, vulnerability, care, and potential, not as a pregnancy prediction.",
       avoidExpressions: ["you will get pregnant", "this means a baby is coming", "this is a pregnancy dream"],
+      fortune: {
+        valence: "auspicious",
+        auspicious:
+          "A baby in a dream has traditionally been read as a fresh start or good things about to grow, and as 태몽 lore.",
+      },
     }),
   }),
   activeSymbol({
@@ -2440,6 +2544,11 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["임신 여부가 현실 걱정이라면 꿈보다 실제 확인을 우선하고, 해석은 상징으로만 남겨두세요."],
       safeReading: "임신은 실제 임신이나 태몽으로 단정하지 않고, 안에서 자라는 가능성이나 사적인 변화를 비추는 상징으로 다뤄야 해요.",
       avoidExpressions: ["임신했다", "태몽이다", "아이가 생긴다"],
+      fortune: {
+        valence: "auspicious",
+        auspicious:
+          "임신과 관련된 꿈은 전통적으로 새 생명이나 새로운 시작을 알리는 태몽으로도 즐겨 풀려온 길몽이다.",
+      },
     }),
     en: localized({
       label: "Pregnancy",
@@ -2459,6 +2568,11 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["If pregnancy is a real concern, prioritize a real-world check and treat the dream as symbolic only."],
       safeReading: "Pregnancy imagery should not be treated as a literal claim; it can symbolize hidden growth, potential, or private change.",
       avoidExpressions: ["you are pregnant", "this means pregnancy", "a baby is coming"],
+      fortune: {
+        valence: "auspicious",
+        auspicious:
+          "Dreams around pregnancy have long been enjoyed as 태몽 (conception-dream) lore — a sign of new life or a fresh beginning.",
+      },
     }),
   }),
   activeSymbol({
@@ -2496,6 +2610,13 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["오늘은 쌓인 부담 하나를 아주 작게 정리해보세요."],
       safeReading: "변기나 화장실은 배출, 해소, 사생활, 노출 불안을 상징할 수 있으며 더럽거나 나쁜 꿈으로 단정할 필요는 없어요.",
       avoidExpressions: ["더러운 꿈이다", "재물이 들어온다", "수치스러운 일이 생긴다"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "화장실에서 시원하게 일을 보는 꿈은 똥꿈처럼 전통적으로 묵은 것이 빠져나가고 재물·해소가 따르는 길몽으로 보았다.",
+        cautious:
+          "변기가 막히거나 더러워 곤란한 꿈은 한동안 풀리지 않던 일을 한 번 들여다보라는 신호로 여겨졌다.",
+      },
     }),
     en: localized({
       label: "Toilet",
@@ -2515,6 +2636,13 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["Clear one small piece of built-up pressure today."],
       safeReading: "A toilet can symbolize release, relief, privacy, or fear of exposure without making the dream shameful.",
       avoidExpressions: ["this is dirty", "money will come", "something humiliating will happen"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "Relieving yourself comfortably in a toilet was read, like a feces dream, as old things passing out and resource and relief following.",
+        cautious:
+          "A clogged or filthy toilet was taken as a sign to look once at something that has been stuck for a while.",
+      },
     }),
   }),
   activeSymbol({
@@ -3000,7 +3128,7 @@ export const symbolEntries: SymbolEntry[] = [
     },
     ko: localized({
       label: "치아",
-      aliases: ["치아", "이빨", "이가 빠지는 꿈", "앞니", "어금니"],
+      aliases: ["치아", "이빨", "이가 빠지", "이 빠지", "이빨 빠지", "이가 흔들", "이가 빠지는 꿈", "앞니", "어금니"],
       searchText: "치아, 이빨, 이가 빠지는 꿈, 앞니, 어금니, 말, 자신감, 외모, 손실 불안, 취약함",
       coreMeanings: ["자신감", "말", "외모", "손실 불안"],
       lightReadings: ["말이나 표현을 더 조심스럽게 다루려는 마음", "겉으로 보이는 자신감을 점검하는 장면"],
@@ -3016,6 +3144,13 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["치아나 건강 걱정이 현실로 남는다면 실제 검진을 우선하고, 꿈은 상징으로만 보세요."],
       safeReading: "치아 꿈은 사망이나 질병 예고가 아니라 자신감, 말, 외모, 손실 불안을 비추는 상징으로 다루는 것이 안전해요.",
       avoidExpressions: ["누가 죽는다", "가족에게 일이 생긴다", "병이 생긴다"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "이가 새로 나거나 더 튼튼해지는 꿈은 묵은 걱정이 정리되고 새 기운이 드는 변화로 보기도 했다.",
+        cautious:
+          "이가 빠지는 꿈은 전통적으로 가까운 사람에 대한 걱정이나 구설을 한 번 살피라는 환기로 여겨졌다.",
+      },
     }),
     en: localized({
       label: "Teeth",
@@ -3035,6 +3170,13 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["If dental or health worry remains after waking, prioritize a real check and keep interpretation symbolic."],
       safeReading: "Teeth dreams should not be read as death or illness omens; they can symbolize confidence, speech, appearance, or loss anxiety.",
       avoidExpressions: ["someone will die", "your family is in danger", "you are sick"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "Teeth growing in or getting stronger was read as old worries clearing and fresh energy arriving.",
+        cautious:
+          "A tooth falling out was traditionally a gentle nudge to check a worry about someone close, or some idle gossip.",
+      },
     }),
   }),
   activeSymbol({
@@ -3586,6 +3728,11 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["요즘 참아온 감정을 판단하지 말고 이름만 붙여보세요."],
       safeReading: "울음은 좋은 일/나쁜 일 예고보다 감정 해소, 슬픔, 안도의 흐름으로 읽을 수 있어요.",
       avoidExpressions: ["좋은 일이 생긴다", "슬픈 일이 생긴다"],
+      fortune: {
+        valence: "auspicious",
+        auspicious:
+          "꿈에서 우는 것은 전통적으로 쌓였던 근심이 씻겨 내려가고 마음이 후련해지는 길몽으로 풀려왔다.",
+      },
     }),
     en: localized({
       label: "Crying",
@@ -3605,6 +3752,11 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["Name one feeling you have been holding back without judging it."],
       safeReading: "Crying can symbolize emotional release, grief, relief, or overwhelm, not a fixed omen.",
       avoidExpressions: ["good news will come", "sadness will happen"],
+      fortune: {
+        valence: "auspicious",
+        auspicious:
+          "Crying in a dream has long been read as an auspicious sign of pent-up worry washing away and the heart feeling lighter.",
+      },
     }),
   }),
   activeSymbol({
@@ -3834,6 +3986,13 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["진짜로 싸우기 전, 내가 지키고 싶은 경계를 한 문장으로 써보세요."],
       safeReading: "싸움은 실제 다툼 예고보다 갈등, 경계, 분노, 자기주장의 신호로 읽을 수 있어요.",
       avoidExpressions: ["싸움이 생긴다", "관계가 끝난다"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "꿈에서 다투거나 싸우는 것은 전통적으로 쌓인 감정이 풀리고 막혔던 관계나 일이 도리어 화해·해소로 가는 역몽 길조로 보았다.",
+        cautious:
+          "다툼이 끝나지 않고 험하게 이어지는 꿈은 가까운 관계의 긴장을 한 번 부드럽게 살피라는 신호일 수 있다.",
+      },
     }),
     en: localized({
       label: "Fighting",
@@ -3853,6 +4012,13 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["Before acting, write one boundary you want to protect."],
       safeReading: "Fighting can symbolize conflict, boundary, anger, and assertion rather than predicting a real fight.",
       avoidExpressions: ["you will fight with someone", "the relationship will end"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "Quarreling or fighting in a dream was traditionally a reversal omen — pent-up feeling releasing and a stuck relationship or matter turning toward reconciliation.",
+        cautious:
+          "A fight that drags on harshly can be a gentle nudge to ease tension in a close relationship.",
+      },
     }),
   }),
   activeSymbol({
@@ -3890,6 +4056,13 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["가장 피하고 싶은 일을 오늘 5분만 들여다보세요."],
       safeReading: "쫓기는 꿈은 실제 위험 예고가 아니라 압박, 회피, 급박함을 보여주는 상징일 수 있어요.",
       avoidExpressions: ["위험한 일이 생긴다", "누군가 해치려 한다"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "쫓기다가 따돌리거나 무사히 벗어나는 꿈은 압박을 끝내 이겨내고 한 고비를 넘는 흐름으로 보기도 했다.",
+        cautious:
+          "쫓기는 꿈은 전통적으로 미뤄둔 일이나 마주하기 부담스러운 무언가가 마음을 누르고 있다는 부드러운 신호로 여겨졌다.",
+      },
     }),
     en: localized({
       label: "Being Chased",
@@ -3909,6 +4082,13 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["Look at the most avoided task for just five minutes today."],
       safeReading: "Being chased can symbolize pressure, avoidance, threat feeling, and urgency, not literal danger.",
       avoidExpressions: ["danger will happen", "someone is after you"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "Shaking off a pursuer or getting away safely was read as finally overcoming pressure and getting past a hurdle.",
+        cautious:
+          "Being chased was traditionally a gentle sign that something postponed or hard to face is weighing on you.",
+      },
     }),
   }),
   activeSymbol({
@@ -3946,6 +4126,13 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["평가받는 느낌이 드는 일을 실제 준비 단계로 쪼개보세요."],
       safeReading: "시험은 합격/불합격 예고보다 평가 불안, 준비 상태, 기준을 비추는 상징일 수 있어요.",
       avoidExpressions: ["합격한다", "떨어진다"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "시험을 치르거나 통과하는 꿈은 전통적으로 곧 닥칠 관문을 무사히 넘고 인정받을 기운으로 보기도 했다.",
+        cautious:
+          "시험에 늦거나 답을 못 쓰는 꿈은 스스로를 너무 몰아세우고 있지는 않은지 한 번 돌아보라는 환기다.",
+      },
     }),
     en: localized({
       label: "Exam",
@@ -3965,6 +4152,13 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["Break one evaluation pressure into a concrete preparation step."],
       safeReading: "An exam can symbolize evaluation, readiness, standards, and performance anxiety, not pass/fail prediction.",
       avoidExpressions: ["you will pass", "you will fail"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "Taking or passing an exam was read as clearing an upcoming gate safely and being recognized.",
+        cautious:
+          "Being late to an exam or unable to answer is a nudge to notice if you are pushing yourself too hard.",
+      },
     }),
   }),
   activeSymbol({
@@ -4003,6 +4197,13 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["요즘 내가 공식화해야 한다고 느끼는 약속이나 역할이 있는지 적어보세요."],
       safeReading: "결혼식은 실제 결혼 예고가 아니라 약속, 결합, 공개적 역할, 기대를 비추는 상징일 수 있어요.",
       avoidExpressions: ["결혼한다", "관계가 결정된다", "파혼한다"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "결혼식 꿈은 전통적으로 새로운 결합과 경사, 인생의 큰 전환을 알리는 길몽으로 풀려왔다.",
+        cautious:
+          "결혼이 어그러지거나 마음이 무거운 꿈은 곧 다가올 변화 앞의 망설임을 비추는 것으로 보기도 했다.",
+      },
     }),
     en: localized({
       label: "Wedding",
@@ -4022,6 +4223,13 @@ export const symbolEntries: SymbolEntry[] = [
       smallPrescriptions: ["Name one commitment or role you feel pressured to formalize."],
       safeReading: "A wedding can symbolize commitment, union, public role, and expectation, not a literal relationship outcome.",
       avoidExpressions: ["you will get married", "the relationship is decided", "you will break up"],
+      fortune: {
+        valence: "conditional",
+        auspicious:
+          "A wedding dream has traditionally been read as a joyful sign of new union and a large turning point in life.",
+        cautious:
+          "A wedding going wrong or feeling heavy can mirror hesitation before a coming change.",
+      },
     }),
   }),
   activeSymbol({
