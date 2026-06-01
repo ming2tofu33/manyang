@@ -146,4 +146,24 @@ describe("findRuntimeSymbolMatches", () => {
       expect(ids("바람이 세게 불었어")).not.toContain("fire");
     });
   });
+
+  describe("synonym alias coverage", () => {
+    const ids = (text: string) => findRuntimeSymbolMatches(text, { locale: "ko", limit: 6 }).map((m) => m.entryId);
+
+    test("resolves common synonyms to their canonical symbol", () => {
+      expect(ids("남편이 나왔어")).toContain("partner");
+      expect(ids("아내가 나왔어")).toContain("partner");
+      expect(ids("금전이 들어왔어")).toContain("money");
+      expect(ids("폭포를 봤어")).toContain("water");
+      expect(ids("호수가 펼쳐졌어")).toContain("water");
+      expect(ids("쓰나미가 왔어")).toContain("flood");
+      expect(ids("수능을 봤어")).toContain("exam");
+      expect(ids("면접을 봤어")).toContain("exam");
+      expect(ids("택시를 탔어")).toContain("car");
+      expect(ids("혼례를 올렸어")).toContain("wedding");
+      expect(ids("응급실에 갔어")).toContain("hospital");
+      expect(ids("조상님이 나왔어")).toContain("ancestor");
+      expect(ids("임종을 지켰어")).toContain("death");
+    });
+  });
 });

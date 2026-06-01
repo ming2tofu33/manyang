@@ -672,7 +672,7 @@ export const symbolEntries: SymbolEntry[] = [
     locales: {
       ko: localized({
         label: "물",
-        aliases: ["물", "강물", "물속", "파도", "웅덩이"],
+        aliases: ["물", "강물", "물속", "파도", "웅덩이", "폭포", "호수"],
         searchText: "물, 강물, 물속, 파도, 감정 흐름, 정화, 압도감, 잠김, 흘려보냄",
         coreMeanings: ["감정 흐름", "정화", "무의식적 감각", "압도감"],
         lightReadings: ["감정을 흘려보내는 과정", "묵은 기분이 씻기는 느낌"],
@@ -696,7 +696,7 @@ export const symbolEntries: SymbolEntry[] = [
       }),
       en: localized({
         label: "Water",
-        aliases: ["water", "underwater", "wave", "puddle", "stream of water"],
+        aliases: ["water", "underwater", "wave", "puddle", "stream of water", "waterfall", "lake"],
         searchText: "water, underwater, wave, emotion, flow, cleansing, overwhelm, submerged",
         coreMeanings: ["emotional flow", "cleansing", "unconscious feeling", "overwhelm"],
         lightReadings: ["a process of letting feelings move", "an old mood being washed through"],
@@ -1669,7 +1669,7 @@ export const symbolEntries: SymbolEntry[] = [
     },
     ko: localized({
       label: "병원",
-      aliases: ["병원", "진료실", "의사", "간호사", "입원"],
+      aliases: ["병원", "진료실", "의사", "간호사", "입원", "응급실"],
       searchText: "병원, 진료실, 의사, 간호사, 입원, 회복 욕구, 돌봄, 취약함, 진단 불안",
       coreMeanings: ["회복 욕구", "돌봄", "취약함", "진단 불안"],
       lightReadings: ["돌봄이 필요한 상태를 인정하는 흐름", "무리한 부분을 점검하려는 장면"],
@@ -2197,7 +2197,7 @@ export const symbolEntries: SymbolEntry[] = [
     },
     ko: localized({
       label: "연인",
-      aliases: ["연인", "애인", "배우자", "남자친구", "여자친구"],
+      aliases: ["연인", "애인", "배우자", "남편", "아내", "남자친구", "여자친구"],
       searchText: "연인, 애인, 배우자, 남자친구, 여자친구, 친밀감, 약속, 욕구, 관계의 거리, 함께 사는 리듬",
       coreMeanings: ["친밀감", "약속", "욕구", "관계 조율"],
       lightReadings: ["가까워지고 싶은 마음", "관계 안에서 안정감을 확인하려는 장면"],
@@ -2223,7 +2223,7 @@ export const symbolEntries: SymbolEntry[] = [
     }),
     en: localized({
       label: "Partner",
-      aliases: ["partner", "lover", "boyfriend", "girlfriend", "spouse"],
+      aliases: ["partner", "lover", "boyfriend", "girlfriend", "spouse", "husband", "wife"],
       searchText: "partner, lover, spouse, boyfriend, girlfriend, intimacy, commitment, desire, boundaries, relationship distance",
       coreMeanings: ["intimacy", "commitment", "desire", "relationship negotiation"],
       lightReadings: ["wanting closeness or reassurance", "checking emotional steadiness in a bond"],
@@ -2338,7 +2338,7 @@ export const symbolEntries: SymbolEntry[] = [
     },
     ko: localized({
       label: "죽음",
-      aliases: ["죽음", "죽는 꿈", "사망", "죽었다", "죽은 사람"],
+      aliases: ["죽음", "죽는 꿈", "사망", "죽었다", "죽은 사람", "임종"],
       searchText: "죽음, 죽는 꿈, 사망, 죽었다, 끝남, 전환, 상실 불안, 놓아보내기, 변화의 문턱",
       coreMeanings: ["끝남", "전환", "상실 불안", "놓아보내기"],
       lightReadings: ["오래 붙잡은 것을 정리하려는 마음", "한 단계가 끝나고 다른 국면으로 넘어가는 장면"],
@@ -2357,7 +2357,7 @@ export const symbolEntries: SymbolEntry[] = [
     }),
     en: localized({
       label: "Death",
-      aliases: ["death", "dying", "dead", "someone died", "my death"],
+      aliases: ["death", "dying", "dead", "someone died", "my death", "passing away"],
       searchText: "death, dying, dead, ending, transition, fear of loss, release, threshold of change",
       coreMeanings: ["ending", "transition", "fear of loss", "release"],
       lightReadings: ["the mind preparing to end an old phase", "movement from one state into another"],
@@ -2720,7 +2720,7 @@ export const symbolEntries: SymbolEntry[] = [
     },
     ko: localized({
       label: "자동차",
-      aliases: ["자동차", "차", "운전", "차를 타는 꿈", "차 사고"],
+      aliases: ["자동차", "차", "운전", "차를 타는 꿈", "차 사고", "택시", "승용차"],
       searchText: "자동차, 차, 운전, 차를 타는 꿈, 이동, 방향, 통제감, 속도, 내 삶의 운전대",
       coreMeanings: ["방향", "통제감", "속도", "자기 주도성"],
       lightReadings: ["내 방향을 직접 잡으려는 마음", "앞으로 나아갈 힘이 생긴 장면"],
@@ -2739,7 +2739,7 @@ export const symbolEntries: SymbolEntry[] = [
     }),
     en: localized({
       label: "Car",
-      aliases: ["car", "driving", "vehicle", "car accident", "passenger"],
+      aliases: ["car", "driving", "vehicle", "car accident", "passenger", "taxi"],
       searchText: "car, driving, vehicle, passenger, accident, direction, control, speed, personal agency",
       coreMeanings: ["direction", "control", "pace", "personal agency"],
       lightReadings: ["wanting to steer your own direction", "having energy to move forward"],
@@ -3001,7 +3001,7 @@ export const symbolEntries: SymbolEntry[] = [
     },
     ko: localized({
       label: "돈",
-      aliases: ["돈", "현금", "지폐", "동전", "돈을 받는 꿈"],
+      aliases: ["돈", "현금", "지폐", "동전", "금전", "재물", "돈을 받는 꿈"],
       searchText: "돈, 현금, 지폐, 동전, 돈을 받는 꿈, 자원, 가치, 안정감, 교환, 부족함, 금전 불안",
       coreMeanings: ["자원", "가치", "안정감", "교환"],
       lightReadings: ["내가 가진 자원과 가치를 확인하는 장면", "필요한 것을 주고받는 감각"],
@@ -3027,7 +3027,7 @@ export const symbolEntries: SymbolEntry[] = [
     }),
     en: localized({
       label: "Money",
-      aliases: ["money", "cash", "coins", "bills", "receiving money"],
+      aliases: ["money", "cash", "coins", "bills", "wealth", "receiving money"],
       searchText: "money, cash, coins, bills, receiving money, resources, value, security, exchange, scarcity anxiety",
       coreMeanings: ["resource", "value", "security", "exchange"],
       lightReadings: ["checking what resources and value you have", "sensing what needs to be exchanged"],
@@ -4110,7 +4110,7 @@ export const symbolEntries: SymbolEntry[] = [
     },
     ko: localized({
       label: "시험",
-      aliases: ["시험", "시험 보는 꿈", "시험지", "문제 풀기", "평가"],
+      aliases: ["시험", "시험 보는 꿈", "시험지", "문제 풀기", "평가", "수능", "면접"],
       searchText: "시험, 시험 보는 꿈, 시험지, 문제 풀기, 평가, 준비, 성과, 기준, 부담감",
       coreMeanings: ["평가", "준비", "성과", "기준"],
       lightReadings: ["내 준비 상태를 점검하려는 장면", "기준 앞에서 실력을 확인하고 싶은 마음"],
@@ -4136,7 +4136,7 @@ export const symbolEntries: SymbolEntry[] = [
     }),
     en: localized({
       label: "Exam",
-      aliases: ["exam", "test", "taking a test", "exam paper", "quiz"],
+      aliases: ["exam", "test", "taking a test", "exam paper", "quiz", "interview"],
       searchText: "exam, test, taking a test, exam paper, evaluation, preparation, performance, standard, pressure",
       coreMeanings: ["evaluation", "preparation", "performance", "standard"],
       lightReadings: ["checking readiness", "wanting to know how you perform against a standard"],
@@ -4181,7 +4181,7 @@ export const symbolEntries: SymbolEntry[] = [
     },
     ko: localized({
       label: "결혼식",
-      aliases: ["결혼식", "결혼하는 꿈", "웨딩드레스", "신랑", "신부"],
+      aliases: ["결혼식", "결혼하는 꿈", "웨딩드레스", "신랑", "신부", "혼례", "예식장"],
       searchText: "결혼식, 결혼하는 꿈, 웨딩드레스, 신랑, 신부, 약속, 결합, 공개적 역할, 기대, 부담",
       coreMeanings: ["약속", "결합", "공개적 역할", "기대"],
       lightReadings: ["어떤 책임이나 관계를 공식화하려는 마음", "서로 다른 부분을 하나로 묶으려는 장면"],
@@ -4207,7 +4207,7 @@ export const symbolEntries: SymbolEntry[] = [
     }),
     en: localized({
       label: "Wedding",
-      aliases: ["wedding", "getting married", "bride", "groom", "wedding dress"],
+      aliases: ["wedding", "getting married", "bride", "groom", "wedding dress", "ceremony"],
       searchText: "wedding, getting married, bride, groom, wedding dress, commitment, union, public role, expectation",
       coreMeanings: ["commitment", "union", "public role", "expectation"],
       lightReadings: ["wanting to formalize a responsibility or bond", "joining different parts into one shape"],
@@ -5258,7 +5258,7 @@ export const symbolEntries: SymbolEntry[] = [
     },
     ko: localized({
       label: "홍수",
-      aliases: ["홍수", "물난리", "물이 불어", "불어나", "범람", "잠기", "잠겨", "잠겼", "휩쓸", "물바다"],
+      aliases: ["홍수", "물난리", "물이 불어", "불어나", "범람", "잠기", "잠겨", "잠겼", "휩쓸", "물바다", "쓰나미", "해일", "침수"],
       searchText: "홍수, 물난리, 물이 불어나는 꿈, 범람, 잠김, 휩쓸림, 큰 변화, 재물, 감정, 압도",
       coreMeanings: ["불어남", "큰 변화", "압도감"],
       lightReadings: ["맑은 물이 크게 불어 기운과 자원이 차오르는 흐름", "큰 흐름을 타고 한 단계 넘어가는 장면"],
@@ -5284,7 +5284,7 @@ export const symbolEntries: SymbolEntry[] = [
     }),
     en: localized({
       label: "Flood",
-      aliases: ["flood", "flooding", "rising water", "overflow", "deluge"],
+      aliases: ["flood", "flooding", "rising water", "overflow", "deluge", "tsunami"],
       searchText: "flood, flooding, rising water, overflow, deluge, swept away, big change, wealth, emotion, overwhelm",
       coreMeanings: ["overflow", "big change", "overwhelm"],
       lightReadings: ["clear water rising as energy and resources fill up", "riding a large current up to the next stage"],
@@ -5329,7 +5329,7 @@ export const symbolEntries: SymbolEntry[] = [
     },
     ko: localized({
       label: "조상",
-      aliases: ["조상", "돌아가신", "할아버지", "할머니", "선조", "제사"],
+      aliases: ["조상", "조상님", "돌아가신", "할아버지", "할머니", "선조", "제사"],
       searchText: "조상, 돌아가신 분, 할아버지, 할머니, 선조, 제사, 도움, 길조, 뿌리, 메시지, 그리움",
       coreMeanings: ["도움", "뿌리", "복", "그리움"],
       lightReadings: ["뿌리로부터 보살핌이나 지혜를 받는 느낌", "든든한 기운이 곁에 서는 장면"],
