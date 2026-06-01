@@ -101,6 +101,12 @@ const acceptedSymbolIds = [
   "cave",
   "book",
   "war",
+  "chicken",
+  "accident",
+  "ring",
+  "earthquake",
+  "song",
+  "photo",
 ];
 
 const phase2BatchSymbolIds = [
@@ -188,6 +194,9 @@ const allowedAliasCollisions = new Set([
   "en:lost:lost_item,searching",
   "ko:파도:sea,water",
   "en:shower:bathroom,rain",
+  "ko:금반지:gold,ring",
+  "en:goldring:gold,ring",
+  "en:caraccident:accident,car",
 ]);
 
 function normalizeAlias(alias: string): string {
