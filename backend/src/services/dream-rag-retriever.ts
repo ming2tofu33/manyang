@@ -14,6 +14,8 @@ import type { StructuredDreamAnalysis } from "./structured-dream-analysis";
 export type RetrieveDreamEvidenceInput = {
   dreamText: string;
   locale?: SupportedLocale;
+  /** 형태소 분석기가 돌려준 어간 목록(있으면 explicit 매처에 합쳐 활용형 매칭을 보강한다). */
+  lemmas?: string[];
   structuredAnalysis?: StructuredDreamAnalysis;
   vectorMatches?: DreamVectorSearchResult[];
   includeChunkMatches?: boolean;
@@ -479,7 +481,11 @@ function promoteSemanticVectorAgreement(
 export function retrieveDreamEvidenceSet(input: RetrieveDreamEvidenceInput): DreamEvidenceSet {
   const locale = input.locale ?? "ko";
   const limit = input.limit ?? 5;
-  const explicitMatches = findRuntimeSymbolMatches(input.dreamText, { locale, limit });
+  const explicitMatches = findRuntimeSymbolMatches(input.dreamText, {
+    locale,
+    limit,
+    ...(input.lemmas ? { lemmas: input.lemmas } : {}),
+  });
   const explicitIds = new Set(explicitMatches.map((match) => match.entryId));
   const queryTokens = usefulTokens(queryTextFrom(input));
   const rawChunkMatches = input.includeChunkMatches === false

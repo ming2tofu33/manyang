@@ -86,11 +86,35 @@ function isTokenMatch(alias: string, token: string): boolean {
   return allowedSuffixes.some((allowedSuffix) => suffix === allowedSuffix);
 }
 
+// 구문 별칭("A B C")은 각 단어가 순서대로(사이에 다른 단어가 끼어도) 토큰에 나타나면 매치한다.
+// "이가 빠지는 꿈"이 "이가 우수수 빠지는 꿈을"에도 걸리도록 — 연속 부분문자열 매칭의 빈틈을 메운다.
+function phraseMatchesInOrder(words: string[], tokens: string[]): boolean {
+  let wordIndex = 0;
+
+  for (const token of tokens) {
+    const word = words[wordIndex];
+
+    if (word !== undefined && isTokenMatch(word, token)) {
+      wordIndex += 1;
+
+      if (wordIndex === words.length) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 function aliasMatches(alias: string, tokens: string[], compactText: string): boolean {
   const normalizedAlias = normalize(alias);
 
   if (normalizedAlias.includes(" ")) {
-    return compactText.includes(compact(normalizedAlias));
+    if (compactText.includes(compact(normalizedAlias))) {
+      return true;
+    }
+
+    return phraseMatchesInOrder(normalizedAlias.split(/\s+/).filter(Boolean), tokens);
   }
 
   return tokens.some((token) => isTokenMatch(normalizedAlias, token));
@@ -135,6 +159,8 @@ export type RuntimeSymbolMatch = {
 export type RuntimeSymbolMatchOptions = {
   locale?: SupportedLocale;
   limit?: number;
+  /** 형태소 분석기가 돌려준 어간 목록(있으면 토큰에 합쳐 활용형 매칭을 보강한다). */
+  lemmas?: string[];
 };
 
 function sceneModifierMatches(entry: RuntimeSymbolEntry, tokens: string[], compactText: string): string[] {
@@ -161,7 +187,7 @@ function rankReasonFor(matchType: RetrievalMatchType, matchedText: string[], mod
 export function findRuntimeSymbolMatches(text: string, options: RuntimeSymbolMatchOptions = {}): RuntimeSymbolMatch[] {
   const locale = options.locale ?? "ko";
   const limit = options.limit ?? 5;
-  const tokens = tokenize(text);
+  const tokens = [...tokenize(text), ...(options.lemmas ?? []).map(normalize)];
   const compactText = compact(text);
 
   return getRuntimeSymbolEntries(locale)

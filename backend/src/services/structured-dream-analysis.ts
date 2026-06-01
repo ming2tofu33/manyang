@@ -422,6 +422,25 @@ function tokenMatchesTerm(term: string, token: string): boolean {
   return false;
 }
 
+// 구문 별칭("A B C")의 각 단어가 순서대로(사이에 다른 단어가 끼어도) 토큰에 나타나면 매치.
+function phraseMatchesInOrder(words: string[], tokens: string[]): boolean {
+  let wordIndex = 0;
+
+  for (const token of tokens) {
+    const word = words[wordIndex];
+
+    if (word !== undefined && tokenMatchesTerm(word, token)) {
+      wordIndex += 1;
+
+      if (wordIndex === words.length) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 function termMatchesText(term: string, normalizedText: string, tokens: string[]): boolean {
   const normalizedTerm = normalize(term);
   const termKey = compact(normalizedTerm);
@@ -436,6 +455,11 @@ function termMatchesText(term: string, normalizedText: string, tokens: string[])
     if (textKey.includes(termKey)) {
       return true;
     }
+  }
+
+  // 연속 매칭이 실패해도, 구문 단어들이 순서대로 토큰에 있으면 매치(중간에 부사 등이 끼는 경우).
+  if (normalizedTerm.includes(" ") && phraseMatchesInOrder(normalizedTerm.split(/\s+/).filter(Boolean), tokens)) {
+    return true;
   }
 
   return tokens.some((token) => tokenMatchesTerm(normalizedTerm, token));

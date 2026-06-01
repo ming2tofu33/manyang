@@ -395,6 +395,7 @@ async function generateLlmDreamResponse(
           locale,
           structuredAnalysis,
           limit: 5,
+          ...(lemmas.length > 0 ? { lemmas } : {}),
           embeddingProvider: options.embeddingProvider,
           vectorIndex: options.vectorIndex,
         })
@@ -403,6 +404,7 @@ async function generateLlmDreamResponse(
           locale,
           structuredAnalysis,
           limit: 5,
+          ...(lemmas.length > 0 ? { lemmas } : {}),
         });
   const matches = evidenceSet.confirmedEvidence;
   const evidenceGate = buildEvidenceGate({
