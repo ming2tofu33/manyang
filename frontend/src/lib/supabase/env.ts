@@ -5,9 +5,12 @@ export type SupabaseBrowserConfig = {
   publishableKey: string;
 };
 
-export function getSupabaseBrowserConfig(env: EnvLike = process.env): SupabaseBrowserConfig {
-  const url = env.NEXT_PUBLIC_SUPABASE_URL;
-  const publishableKey = env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+const publicSupabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const publicSupabasePublishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
+export function getSupabaseBrowserConfig(env?: EnvLike): SupabaseBrowserConfig {
+  const url = env?.NEXT_PUBLIC_SUPABASE_URL ?? publicSupabaseUrl;
+  const publishableKey = env?.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? publicSupabasePublishableKey;
 
   if (!url || !publishableKey) {
     throw new Error("Supabase browser configuration is missing");
