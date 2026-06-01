@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useSyncExternalStore } from "react";
 
 import { AssetTextButton } from "@/components/asset-primitives";
 import {
@@ -11,11 +10,6 @@ import {
   getArchiveRecordViewById,
   type ArchiveRecordView,
 } from "@/lib/archive-record-view";
-import {
-  getEmptyMorningMoodRecordsSnapshot,
-  getMorningMoodRecordsSnapshotFromBrowser,
-  subscribeToMorningMood,
-} from "@/lib/morning-mood";
 import { manyangAssets } from "@/lib/manyang-assets";
 import { cn, ui } from "@/lib/styles";
 import { useArchiveDreamRecords } from "@/lib/use-archive-dream-records";
@@ -150,12 +144,7 @@ export function RoutineRecordDetailContent({
 export function ArchiveRecordDetailClient({ recordId }: { recordId: string }) {
   const router = useRouter();
   const { dreamRecords, isLoadingServerRecords, openDreamRecord, source } = useArchiveDreamRecords();
-  const { pawprints, nightCheckInRecords, isLoadingRoutineRecords } = useRoutineRecords();
-  const morningMoodRecords = useSyncExternalStore(
-    subscribeToMorningMood,
-    getMorningMoodRecordsSnapshotFromBrowser,
-    getEmptyMorningMoodRecordsSnapshot,
-  );
+  const { pawprints, morningMoodRecords, nightCheckInRecords, isLoadingRoutineRecords } = useRoutineRecords();
   const visiblePawprints = pawprints;
   const visibleNightCheckInRecords = nightCheckInRecords;
   const views = createArchiveRecordViews({

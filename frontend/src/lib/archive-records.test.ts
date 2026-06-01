@@ -131,4 +131,31 @@ describe("archive records", () => {
       { date: "2026-05-23", title: "밤의 기록", meta: "편안함 · 괜찮음" },
     ]);
   });
+
+  test("handles legacy dream records without analysis symbols", () => {
+    const legacyRecord = createDreamRecord({
+      id: "legacy-dream",
+      dreamDate: "2026-05-24",
+      summary: "legacy summary",
+    });
+
+    delete (legacyRecord.analysis as Partial<typeof legacyRecord.analysis>).symbols;
+
+    expect(countMonthlyDreamSymbols([legacyRecord], 2026, 5)).toBe(0);
+    expect(
+      createArchiveTimeline({
+        dreamRecords: [legacyRecord],
+        pawprints: [],
+        nightCheckInRecords: [],
+        year: 2026,
+        month: 5,
+      }),
+    ).toMatchObject([
+      {
+        type: "dream",
+        title: "legacy summary",
+        meta: "",
+      },
+    ]);
+  });
 });

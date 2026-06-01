@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSyncExternalStore } from "react";
 
-import { AssetIconButton, AssetTextButton } from "@/components/asset-primitives";
+import { AssetIconButton } from "@/components/asset-primitives";
 import {
   createArchiveRecordViews,
   getFeaturedDreamRecordView,
@@ -19,11 +19,6 @@ import {
   subscribeToSelectedCatReader,
   type CatReaderId,
 } from "@/lib/cat-readers";
-import {
-  getEmptyMorningMoodRecordsSnapshot,
-  getMorningMoodRecordsSnapshotFromBrowser,
-  subscribeToMorningMood,
-} from "@/lib/morning-mood";
 import { manyangAssets } from "@/lib/manyang-assets";
 import { cn, ui } from "@/lib/styles";
 import { useArchiveDreamRecords } from "@/lib/use-archive-dream-records";
@@ -34,6 +29,42 @@ const recordTypeIcons: Record<ArchiveRecordView["type"], string> = {
   pawprint: manyangAssets.semanticIcons.paw,
   night_checkin: manyangAssets.semanticIcons.sparkles,
 };
+
+type RecentArchiveSlotDefinition = {
+  type: ArchiveRecordView["type"];
+  label: string;
+  emptyTitle: string;
+  emptySummary: string;
+  ctaLabel: string;
+  href: string;
+};
+
+const recentArchiveSlots: RecentArchiveSlotDefinition[] = [
+  {
+    type: "dream",
+    label: "꿈 해몽 기록",
+    emptyTitle: "아직 해몽한 꿈이 없어요",
+    emptySummary: "꿈을 들려주면 영수증으로 남겨둘게요.",
+    ctaLabel: "꿈 들려주기",
+    href: "/write",
+  },
+  {
+    type: "pawprint",
+    label: "꿈 발자국",
+    emptyTitle: "오늘의 발자국이 비어 있어요",
+    emptySummary: "꿈이 흐릿해도 아침 느낌은 남길 수 있어요.",
+    ctaLabel: "발자국 남기기",
+    href: "/morning",
+  },
+  {
+    type: "night_checkin",
+    label: "밤의 기록",
+    emptyTitle: "아직 밤의 기록이 없어요",
+    emptySummary: "잠들기 전 마음을 짧게 남겨둘까요?",
+    ctaLabel: "밤의 기록 남기기",
+    href: "/night",
+  },
+];
 
 function formatArchiveDate(date: string): string {
   return date.replaceAll("-", ".");
@@ -217,6 +248,28 @@ function RecentArchiveRecordItem({
   );
 }
 
+function RecentArchiveEmptySlot({ slot }: { slot: RecentArchiveSlotDefinition }) {
+  return (
+    <Link
+      href={slot.href}
+      className="group flex min-h-[5.1rem] w-full items-center gap-3 rounded-[1rem] border border-dashed border-[#7c4a38]/46 bg-[rgba(10,8,21,0.34)] px-3 py-2.5 text-left shadow-[inset_0_1px_0_rgba(255,226,176,0.035)] transition hover:border-[#ffd08a]/55 hover:bg-[rgba(20,11,34,0.56)] focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
+      data-empty-recent-archive-slot={slot.type}
+    >
+      <span className="opacity-58 transition group-hover:opacity-80">
+        <ArchiveRecordIcon type={slot.type} />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="text-[12px] font-semibold text-[#f0bc7d]/72">{slot.label}</span>
+        <span className="mt-0.5 block text-[0.95rem] font-semibold leading-6 text-[#ffd98a]/88">{slot.emptyTitle}</span>
+        <span className="mt-0.5 block text-[12px] leading-5 text-[#fff3d7]/58">{slot.emptySummary}</span>
+      </span>
+      <span className="shrink-0 text-[12px] font-semibold text-[#f0bc7d] transition group-hover:text-[#ffd98a]">
+        {slot.ctaLabel} ›
+      </span>
+    </Link>
+  );
+}
+
 export function RecentArchiveRecords({
   views,
   onOpenDream,
@@ -226,9 +279,7 @@ export function RecentArchiveRecords({
   onOpenDream: (view: ArchiveRecordView) => void;
   selectedCatReaderId: CatReaderId;
 }) {
-  if (views.length === 0) {
-    return null;
-  }
+  const viewsByType = new Map(views.map((view) => [view.type, view]));
 
   return (
     <section className={cn(ui.panel, "relative overflow-hidden p-4")} data-recent-archive-records="true">
@@ -242,9 +293,15 @@ export function RecentArchiveRecords({
         </Link>
       </header>
       <div className="space-y-2">
-        {views.map((view) => (
-          <RecentArchiveRecordItem key={view.id} view={view} onOpenDream={onOpenDream} />
-        ))}
+        {recentArchiveSlots.map((slot) => {
+          const view = viewsByType.get(slot.type);
+
+          return view ? (
+            <RecentArchiveRecordItem key={view.id} view={view} onOpenDream={onOpenDream} />
+          ) : (
+            <RecentArchiveEmptySlot key={`empty-${slot.type}`} slot={slot} />
+          );
+        })}
       </div>
       <ArchiveCatGuide selectedCatReaderId={selectedCatReaderId} />
     </section>
@@ -254,12 +311,7 @@ export function RecentArchiveRecords({
 export function DreamArchiveList() {
   const router = useRouter();
   const { dreamRecords, isLoadingServerRecords, openDreamRecord, source } = useArchiveDreamRecords();
-  const { pawprints, nightCheckInRecords, isLoadingRoutineRecords } = useRoutineRecords();
-  const morningMoodRecords = useSyncExternalStore(
-    subscribeToMorningMood,
-    getMorningMoodRecordsSnapshotFromBrowser,
-    getEmptyMorningMoodRecordsSnapshot,
-  );
+  const { pawprints, morningMoodRecords, nightCheckInRecords, isLoadingRoutineRecords } = useRoutineRecords();
   const selectedCatReaderId = useSyncExternalStore(
     subscribeToSelectedCatReader,
     getSelectedCatReaderSnapshotFromBrowser,
@@ -275,7 +327,6 @@ export function DreamArchiveList() {
   });
   const featuredDreamRecord = getFeaturedDreamRecordView(views);
   const recentRecords = getRecentArchiveRecordViews(views, 3);
-  const hasAnyArchiveRecords = dreamRecords.length + visiblePawprints.length + visibleNightCheckInRecords.length > 0;
   const isLoadingArchive = (isLoadingServerRecords || (source === "server" && isLoadingRoutineRecords)) && views.length === 0;
 
   function handleOpenReceipt(view: ArchiveRecordView) {
@@ -291,39 +342,6 @@ export function DreamArchiveList() {
       <section className={cn(ui.panel, "space-y-3 p-5 text-center")}>
         <p className={cn("text-lg font-semibold text-[#ffd98a]", ui.textGlow)}>기록함을 여는 중이에요</p>
         <p className="text-sm leading-6 text-[#fff3d7]/76">계정에 저장된 꿈 영수증과 하루의 흔적을 확인하고 있어요.</p>
-      </section>
-    );
-  }
-
-  if (views.length === 0) {
-    const reader = getCatReaderById(selectedCatReaderId);
-
-    return (
-      <section className={cn(ui.panel, "space-y-4 p-5 text-center")}>
-        <span className="relative mx-auto block h-14 w-14">
-          <Image
-            src={manyangAssets.illustrations[reader.assetKey]}
-            alt={`${reader.name} 기록 안내`}
-            fill
-            sizes="56px"
-            unoptimized
-            className="scale-110 object-contain drop-shadow-[0_0_18px_rgba(215,153,255,0.28)]"
-          />
-        </span>
-        <p className="text-lg font-semibold text-[#ffd98a]">
-          {hasAnyArchiveRecords ? "아직 보여줄 기록이 없어요" : "아직 남긴 기록이 없어요"}
-        </p>
-        <p className="text-sm leading-6 text-[#fff3d7]/76">꿈을 들려주거나 하루의 흔적을 남기면 이곳에 차곡차곡 모여요.</p>
-        <AssetTextButton
-          href="/write"
-          frame={manyangAssets.buttons.mediumSecondary}
-          iconSrc={manyangAssets.actionIcons.pencil}
-          className="mx-auto max-w-[15rem]"
-          contentClassName="min-h-[3.2rem] px-4 text-base"
-          iconClassName="h-6 w-6"
-        >
-          꿈 들려주기
-        </AssetTextButton>
       </section>
     );
   }

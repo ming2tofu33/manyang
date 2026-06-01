@@ -175,4 +175,61 @@ describe("archive record view", () => {
     expect(getRecentArchiveRecordViews(views, 2)).toHaveLength(2);
     expect(getArchiveRecordViewById(views, "night-2026-05-24")?.type).toBe("night_checkin");
   });
+
+  test("selects one recent representative from each archive record type", () => {
+    const views = createArchiveRecordViews({
+      dreamRecords: [
+        createDreamRecord({ id: "older-dream", dreamDate: "2026-05-29" }),
+        createDreamRecord({ id: "newer-dream", dreamDate: "2026-05-30" }),
+      ],
+      pawprints: [
+        createPawprint({ appDate: "2026-05-27", sourceId: "morning-2026-05-27" }),
+        createPawprint({ appDate: "2026-05-24", sourceId: "morning-2026-05-24" }),
+      ],
+      nightCheckInRecords: [
+        createNightCheckIn({ checkInDate: "2026-05-26" }),
+        createNightCheckIn({ checkInDate: "2026-05-23" }),
+      ],
+      morningMoodRecords: [
+        createMorningMood({ moodDate: "2026-05-27" }),
+        createMorningMood({ moodDate: "2026-05-24" }),
+      ],
+    });
+
+    expect(getRecentArchiveRecordViews(views, 3).map((view) => view.id)).toEqual([
+      "dream-newer-dream",
+      "pawprint-2026-05-27",
+      "night-2026-05-26",
+    ]);
+  });
+
+  test("handles legacy dream records that are missing analysis array fields", () => {
+    const legacyRecord = createDreamRecord({
+      id: "legacy-dream",
+      dreamDate: "2026-05-27",
+      summary: "legacy summary",
+    });
+    const legacyAnalysis = legacyRecord.analysis as Partial<typeof legacyRecord.analysis>;
+
+    delete legacyAnalysis.symbols;
+    delete legacyAnalysis.symbolReadings;
+    delete legacyAnalysis.emotions;
+    delete legacyAnalysis.themes;
+
+    const views = createArchiveRecordViews({
+      dreamRecords: [legacyRecord],
+      pawprints: [],
+      nightCheckInRecords: [],
+      morningMoodRecords: [],
+    });
+
+    expect(views).toHaveLength(1);
+    expect(views[0]).toMatchObject({
+      type: "dream",
+      title: "legacy summary",
+      tags: [],
+      metaParts: [],
+    });
+    expect(filterArchiveRecordViews(views, { query: "legacy", type: "dream" })).toHaveLength(1);
+  });
 });

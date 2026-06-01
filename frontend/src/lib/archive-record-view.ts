@@ -39,6 +39,8 @@ export type ArchiveRecordFilterInput = {
   type: ArchiveRecordFilterType;
 };
 
+const recentArchiveRecordTypeOrder: ArchiveRecordViewType[] = ["dream", "pawprint", "night_checkin"];
+
 const pawprintSourceLabels: Record<PawprintSource, string> = {
   forgotten_dream: "기억나지 않는 꿈",
   morning_record: "아침 기록",
@@ -57,6 +59,40 @@ function createSearchText(parts: Array<string | string[] | null | undefined>): s
     .toLocaleLowerCase("ko-KR");
 }
 
+type DreamCompletedRecord = Extract<DreamRecord, { analysis: unknown }>;
+type DreamAnalysisStringArrayKey = "symbols" | "emotions" | "themes";
+type DreamSymbolReading = DreamCompletedRecord["analysis"]["symbolReadings"][number];
+
+function compactStringArray(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string" && item.length > 0) : [];
+}
+
+function getDreamAnalysisStringArray(record: DreamRecord, key: DreamAnalysisStringArrayKey): string[] {
+  if (record.status === "unavailable") {
+    return [];
+  }
+
+  return compactStringArray((record.analysis as Partial<Record<DreamAnalysisStringArrayKey, unknown>>)[key]);
+}
+
+function getDreamSymbolReadings(record: DreamRecord): DreamSymbolReading[] {
+  if (record.status === "unavailable") {
+    return [];
+  }
+
+  const readings = (record.analysis as Partial<{ symbolReadings: unknown }>).symbolReadings;
+
+  if (!Array.isArray(readings)) {
+    return [];
+  }
+
+  return readings.filter((reading): reading is DreamSymbolReading => {
+    const partialReading = reading as Partial<DreamSymbolReading> | null;
+
+    return typeof partialReading?.reading === "string";
+  });
+}
+
 function getDreamRecordTitle(record: DreamRecord): string {
   return record.status === "unavailable" ? "읽지 못한 꿈" : record.analysis.summary;
 }
@@ -70,11 +106,15 @@ function getDreamRecordSummary(record: DreamRecord): string {
 }
 
 function createDreamRecordView(record: DreamRecord): ArchiveRecordView {
-  const tags = record.status === "unavailable" ? [] : record.analysis.symbols.slice(0, 5);
+  const symbols = getDreamAnalysisStringArray(record, "symbols");
+  const emotions = getDreamAnalysisStringArray(record, "emotions");
+  const themes = getDreamAnalysisStringArray(record, "themes");
+  const symbolReadingTexts = getDreamSymbolReadings(record).map((reading) => reading.reading);
+  const tags = symbols.slice(0, 5);
   const metaParts =
     record.status === "unavailable"
       ? ["해몽 실패"]
-      : compactTextParts([record.analysis.emotions[0], record.analysis.themes[0]]);
+      : compactTextParts([emotions[0], themes[0]]);
   const title = getDreamRecordTitle(record);
   const summary = getDreamRecordSummary(record);
 
@@ -95,7 +135,7 @@ function createDreamRecordView(record: DreamRecord): ArchiveRecordView {
       record.dreamText,
       tags,
       metaParts,
-      record.status === "unavailable" ? record.reason : record.analysis.symbolReadings.map((reading) => reading.reading),
+      record.status === "unavailable" ? record.reason : symbolReadingTexts,
     ]),
     raw: {
       dreamRecord: record,
@@ -195,7 +235,21 @@ export function getFeaturedDreamRecordView(views: ArchiveRecordView[]): ArchiveR
 }
 
 export function getRecentArchiveRecordViews(views: ArchiveRecordView[], limit = 3): ArchiveRecordView[] {
-  return views.slice(0, limit);
+  const selectedViews: ArchiveRecordView[] = [];
+
+  for (const type of recentArchiveRecordTypeOrder) {
+    const view = views.find((candidate) => candidate.type === type);
+
+    if (view) {
+      selectedViews.push(view);
+    }
+
+    if (selectedViews.length >= limit) {
+      break;
+    }
+  }
+
+  return selectedViews;
 }
 
 export function getArchiveRecordViewById(views: ArchiveRecordView[], recordId: string): ArchiveRecordView | null {

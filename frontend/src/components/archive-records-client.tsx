@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useSyncExternalStore } from "react";
+import { useState } from "react";
 
 import {
   createArchiveRecordViews,
@@ -11,11 +11,6 @@ import {
   type ArchiveRecordFilterType,
   type ArchiveRecordView,
 } from "@/lib/archive-record-view";
-import {
-  getEmptyMorningMoodRecordsSnapshot,
-  getMorningMoodRecordsSnapshotFromBrowser,
-  subscribeToMorningMood,
-} from "@/lib/morning-mood";
 import { manyangAssets } from "@/lib/manyang-assets";
 import { cn, ui } from "@/lib/styles";
 import { useArchiveDreamRecords } from "@/lib/use-archive-dream-records";
@@ -158,12 +153,8 @@ export function ArchiveRecordsClient() {
   const [query, setQuery] = useState("");
   const [selectedType, setSelectedType] = useState<ArchiveRecordFilterType>("all");
   const { dreamRecords, isLoadingServerRecords, openDreamRecord, source } = useArchiveDreamRecords();
-  const { pawprints, nightCheckInRecords, source: routineSource, isLoadingRoutineRecords } = useRoutineRecords();
-  const morningMoodRecords = useSyncExternalStore(
-    subscribeToMorningMood,
-    getMorningMoodRecordsSnapshotFromBrowser,
-    getEmptyMorningMoodRecordsSnapshot,
-  );
+  const { pawprints, morningMoodRecords, nightCheckInRecords, source: routineSource, isLoadingRoutineRecords } =
+    useRoutineRecords();
   const visiblePawprints = pawprints;
   const visibleNightCheckInRecords = nightCheckInRecords;
   const views = createArchiveRecordViews({

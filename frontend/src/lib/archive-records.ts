@@ -32,6 +32,18 @@ function joinMeta(parts: string[]): string {
   return parts.filter(Boolean).join(" · ");
 }
 
+function compactStringArray(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string" && item.length > 0) : [];
+}
+
+function getDreamAnalysisSymbols(record: DreamRecord): string[] {
+  if (record.status === "unavailable") {
+    return [];
+  }
+
+  return compactStringArray((record.analysis as Partial<{ symbols: unknown }>).symbols);
+}
+
 export function getDayInMonth(date: string, year: number, month: number): number | null {
   const [dateYear, dateMonth, dateDay] = date.split("-").map(Number);
 
@@ -54,11 +66,7 @@ export function countMonthlyDreamSymbols(records: DreamRecord[], year: number, m
       continue;
     }
 
-    if (record.status === "unavailable") {
-      continue;
-    }
-
-    for (const symbol of record.analysis.symbols) {
+    for (const symbol of getDreamAnalysisSymbols(record)) {
       symbols.add(symbol);
     }
   }
@@ -80,7 +88,7 @@ export function createArchiveTimeline(input: {
       type: "dream",
       date: record.dreamDate,
       title: record.status === "unavailable" ? "읽지 못한 꿈" : record.analysis.summary,
-      meta: record.status === "unavailable" ? "다시 불러볼 수 있어요" : joinMeta(record.analysis.symbols.slice(0, 3)),
+      meta: record.status === "unavailable" ? "다시 불러볼 수 있어요" : joinMeta(getDreamAnalysisSymbols(record).slice(0, 3)),
       sortAt: record.savedAt,
       dreamRecordId: record.id,
     }));
