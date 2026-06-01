@@ -125,4 +125,25 @@ describe("findRuntimeSymbolMatches", () => {
     expect(matches.find((match) => match.entryId === "elevator")?.matchedText).toContain("엘리베이터");
     expect(matches.find((match) => match.entryId === "sea")?.matchedText).toContain("바다");
   });
+
+  describe("monosyllabic-homonym guard", () => {
+    const ids = (text: string) => findRuntimeSymbolMatches(text, { locale: "ko", limit: 8 }).map((m) => m.entryId);
+
+    test("matches the single-syllable nouns in their real noun forms", () => {
+      expect(ids("말을 타고 달렸어")).toContain("horse");
+      expect(ids("별이 가득했어")).toContain("star");
+      expect(ids("불이 났어")).toContain("fire");
+      expect(ids("손을 다쳤어")).toContain("hand");
+      expect(ids("발이 무거웠어")).toContain("foot");
+    });
+
+    test("does not wake them on homonyms formed by a guarded suffix", () => {
+      // 말로(by words)/말도(idiom), 별로(adverb)/별도(separately), 불었어(불다 "to blow")
+      expect(ids("말로 설명했어")).not.toContain("horse");
+      expect(ids("말도 안 되는 일이야")).not.toContain("horse");
+      expect(ids("별로 안 좋았어")).not.toContain("star");
+      expect(ids("별도로 챙겼어")).not.toContain("star");
+      expect(ids("바람이 세게 불었어")).not.toContain("fire");
+    });
+  });
 });
