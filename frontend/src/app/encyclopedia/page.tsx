@@ -1,4 +1,3 @@
-import { encyclopediaEntries } from "@manyang/backend";
 import type { Metadata } from "next";
 
 import { AppShell } from "@/components/app-shell";
@@ -30,7 +29,7 @@ export default function EncyclopediaPage() {
       subtitle="궁금한 꿈의 상징을 찾아보세요"
       backHref="/"
     >
-      <EncyclopediaContent entries={getIndexableEncyclopediaEntries(encyclopediaEntries).slice(0, 12)} />
+      <EncyclopediaContent entries={getIndexableEncyclopediaEntries().slice(0, 12)} />
     </AppShell>
   );
 }

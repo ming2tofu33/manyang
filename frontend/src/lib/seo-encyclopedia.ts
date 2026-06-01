@@ -1,4 +1,4 @@
-import { encyclopediaEntries, type EncyclopediaEntry } from "@manyang/backend";
+import { getEncyclopediaEntriesForLocale, type EncyclopediaEntry } from "@manyang/backend";
 
 export const siteName = "마냥 꿈해몽";
 export const defaultSiteUrl = "https://manyang.vercel.app";
@@ -46,6 +46,8 @@ export function createSymbolCanonicalPath(entry: EncyclopediaEntry): string {
   return `/encyclopedia/${entry.slug}`;
 }
 
-export function getIndexableEncyclopediaEntries(entries: EncyclopediaEntry[] = encyclopediaEntries): EncyclopediaEntry[] {
+export function getIndexableEncyclopediaEntries(
+  entries: EncyclopediaEntry[] = getEncyclopediaEntriesForLocale("ko"),
+): EncyclopediaEntry[] {
   return entries.filter((entry) => entry.symbol.trim().length > 0 && entry.slug.trim().length > 0);
 }

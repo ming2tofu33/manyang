@@ -1,4 +1,4 @@
-import { encyclopediaEntries } from "@manyang/backend";
+import { getEncyclopediaEntriesForLocale } from "@manyang/backend";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -13,6 +13,9 @@ import {
   getSiteUrl,
   siteName,
 } from "@/lib/seo-encyclopedia";
+
+// 브라우즈/SEO도 해몽 엔진의 런타임 심볼(72개)을 단일 소스로 쓴다.
+const encyclopediaEntries = getEncyclopediaEntriesForLocale("ko");
 
 type EncyclopediaDetailPageProps = {
   params: Promise<{
