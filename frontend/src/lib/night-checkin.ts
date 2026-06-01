@@ -1,3 +1,4 @@
+import { getManyangAppDate, getManyangAppHour, shiftManyangAppDate } from "./app-date";
 import { nightCheckInNoteMaxLength } from "./night-checkin-options";
 
 export type StorageLike = {
@@ -119,8 +120,16 @@ export function createNightCheckInRecord(input: NightCheckInInput): NightCheckIn
   };
 }
 
+export function getNightCheckInAppDate(date = new Date()): string {
+  const appDate = getManyangAppDate(date);
+
+  return getManyangAppHour(date) < 5 ? shiftManyangAppDate(appDate, -1) : appDate;
+}
+
 export function canPersistNightCheckIn(input: NightCheckInPersistenceInput): boolean {
-  return input.isAuthenticated;
+  void input;
+
+  return true;
 }
 
 export function getNightCheckIn(storage: StorageLike): NightCheckInRecord | null {

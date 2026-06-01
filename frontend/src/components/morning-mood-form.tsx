@@ -27,21 +27,19 @@ import {
   morningMoodCopy,
   morningMoodOptions,
 } from "@/lib/morning-mood-options";
-import { manyangAssets } from "@/lib/manyang-assets";
+import { manyangAssets, type KeywordIconName } from "@/lib/manyang-assets";
 import { cn, ui } from "@/lib/styles";
-
-type IconName = keyof typeof manyangAssets.semanticIcons;
 
 type ChoiceChipProps = {
   label: string;
-  icon: string;
+  icon: KeywordIconName;
   isSelected: boolean;
   onClick: () => void;
   compact?: boolean;
 };
 
 function ChoiceChip({ label, icon, isSelected, onClick, compact = false }: ChoiceChipProps) {
-  const iconSrc = manyangAssets.semanticIcons[icon as IconName] ?? manyangAssets.semanticIcons.paw;
+  const iconSrc = manyangAssets.keywordIcons[icon];
 
   return (
     <button
@@ -56,8 +54,8 @@ function ChoiceChip({ label, icon, isSelected, onClick, compact = false }: Choic
           : "",
       )}
     >
-      <span className="relative h-[18px] w-[18px] shrink-0">
-        <Image src={iconSrc} alt="" fill sizes="18px" unoptimized className="object-contain opacity-90" />
+      <span className="relative h-[23px] w-[23px] shrink-0">
+        <Image src={iconSrc} alt="" fill sizes="26px" unoptimized className="object-contain opacity-90" />
       </span>
       <span>{label}</span>
     </button>
@@ -66,11 +64,12 @@ function ChoiceChip({ label, icon, isSelected, onClick, compact = false }: Choic
 
 type PanelProps = {
   title: string;
+  iconSrc: string;
   children: ReactNode;
   className?: string;
 };
 
-function Panel({ title, children, className }: PanelProps) {
+function Panel({ title, iconSrc, children, className }: PanelProps) {
   return (
     <section
       className={cn(
@@ -80,7 +79,7 @@ function Panel({ title, children, className }: PanelProps) {
     >
       <div className="mb-2 flex items-center justify-center gap-2 text-[#ffd98a]">
         <span className="relative h-5 w-5">
-          <Image src={manyangAssets.semanticIcons.paw} alt="" fill sizes="20px" unoptimized className="object-contain opacity-90" />
+          <Image src={iconSrc} alt="" fill sizes="20px" unoptimized className="object-contain opacity-90" />
         </span>
         <h2 className={cn("text-[1.05rem] font-semibold", ui.textGlow)}>{title}</h2>
       </div>
@@ -150,18 +149,24 @@ export function MorningMoodForm() {
       moodDate: todayDate,
     });
 
-    if (!isAuthenticated) {
-      setShowGuestPersistencePrompt(true);
-      setPawprintCreated(false);
-      return;
-    }
-
     saveMorningMoodRecordToBrowser(record);
     const pawprintInput = {
       appDate: getPawprintAppDate(),
       source: "morning_record" as const,
       sourceId: record.id,
     };
+    const localPawprintResult = savePawprintToBrowser(createPawprintRecord(pawprintInput), { isAuthenticated });
+
+    setSavedRecordOverride(record);
+    setSelectedMood(record.mood);
+    setSelectedBodyFeeling(record.bodyFeeling);
+    setThought(record.thought);
+
+    if (!isAuthenticated) {
+      setShowGuestPersistencePrompt(true);
+      setPawprintCreated(Boolean(localPawprintResult?.created));
+      return;
+    }
 
     setIsSavingRoutineRecord(true);
     setRoutineSaveError(false);
@@ -170,15 +175,10 @@ export function MorningMoodForm() {
 
     setIsSavingRoutineRecord(false);
 
-    setSavedRecordOverride(record);
-    setSelectedMood(record.mood);
-    setSelectedBodyFeeling(record.bodyFeeling);
-    setThought(record.thought);
-
     if (pawprintResult.status === "unauthenticated") {
       setIsAuthenticated(false);
       setShowGuestPersistencePrompt(true);
-      setPawprintCreated(false);
+      setPawprintCreated(Boolean(localPawprintResult?.created));
       return;
     }
 
@@ -189,7 +189,6 @@ export function MorningMoodForm() {
     }
 
     mergeRemotePawprintResult(pawprintResult);
-    savePawprintToBrowser(createPawprintRecord(pawprintInput), { isAuthenticated });
     setPawprintCreated(pawprintResult.created);
   }
 
@@ -197,8 +196,8 @@ export function MorningMoodForm() {
     <form onSubmit={handleSubmit} className="mt-0 space-y-2.5 pb-5">
       <section className="h-[13rem]" aria-hidden="true" />
 
-      <Panel title={morningMoodCopy.moodTitle}>
-        <div className="grid grid-cols-4 gap-1.5">
+      <Panel title={morningMoodCopy.moodTitle} iconSrc={manyangAssets.sectionIcons.morningMood}>
+        <div className="grid grid-cols-3 gap-1.5">
           {morningMoodOptions.map((mood) => (
             <ChoiceChip
               key={mood.label}
@@ -211,7 +210,7 @@ export function MorningMoodForm() {
         </div>
       </Panel>
 
-      <Panel title={morningMoodCopy.bodyTitle}>
+      <Panel title={morningMoodCopy.bodyTitle} iconSrc={manyangAssets.sectionIcons.bodyCondition}>
         <div className="grid grid-cols-3 gap-1.5">
           {morningBodyFeelings.map((feeling) => (
             <ChoiceChip
@@ -226,7 +225,7 @@ export function MorningMoodForm() {
         </div>
       </Panel>
 
-      <Panel title={`${morningMoodCopy.thoughtTitle} (선택)`} className="space-y-2">
+      <Panel title={`${morningMoodCopy.thoughtTitle} (선택)`} iconSrc={manyangAssets.sectionIcons.oneLineNote} className="space-y-2">
         <div className="relative">
           <input
             id="morning-thought"
@@ -238,7 +237,7 @@ export function MorningMoodForm() {
             className={cn(ui.field, "h-14 rounded-[0.95rem] px-4 pr-16 text-[15px]")}
           />
           <span className="pointer-events-none absolute right-4 top-1/2 h-6 w-6 -translate-y-1/2">
-            <Image src={manyangAssets.semanticIcons.feather} alt="" fill sizes="24px" unoptimized className="object-contain opacity-60" />
+            <Image src={manyangAssets.sectionIcons.oneLineNote} alt="" fill sizes="24px" unoptimized className="object-contain opacity-60" />
           </span>
         </div>
       </Panel>
@@ -257,9 +256,9 @@ export function MorningMoodForm() {
           className="rounded-[1.05rem] border border-[#d799ff]/35 bg-[rgba(25,11,39,0.78)] px-4 py-3 text-sm leading-6 text-[#fff3d7] shadow-[0_0_24px_rgba(164,82,255,0.24)]"
           data-routine-login-cta="pawprint"
         >
-          <p className="font-semibold text-[#ffd98a]">로그인하면 오늘의 발자국이 기록장에 남아요.</p>
+          <p className="font-semibold text-[#ffd98a]">오늘의 발자국은 이 기기에 저장됐어요.</p>
           <p className="mt-1 text-[#fff3d7]/78">
-            비로그인 상태에서는 발자국을 누적하지 않고, 계정에 로그인하면 달력과 기록장에 남길 수 있어요.
+            로그인하면 이 기록을 계정에 백업하고 다른 기기에서도 이어서 볼 수 있어요.
           </p>
           <AssetTextButton
             href="/auth?next=%2Fmorning"

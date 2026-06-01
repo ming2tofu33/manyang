@@ -40,8 +40,8 @@ function createRecords(appDates: string[]): PawprintRecord[] {
 }
 
 describe("pawprint storage", () => {
-  test("does not persist pawprints for guests", () => {
-    expect(canPersistPawprint({ isAuthenticated: false })).toBe(false);
+  test("allows local pawprints for guests", () => {
+    expect(canPersistPawprint({ isAuthenticated: false })).toBe(true);
   });
 
   test("allows pawprints for authenticated users", () => {

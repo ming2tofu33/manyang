@@ -93,7 +93,9 @@ export function createPawprintRecord(input: PawprintInput): PawprintRecord {
 }
 
 export function canPersistPawprint(input: PawprintPersistenceInput): boolean {
-  return input.isAuthenticated;
+  void input;
+
+  return true;
 }
 
 export function getPawprints(storage: StorageLike): PawprintRecord[] {

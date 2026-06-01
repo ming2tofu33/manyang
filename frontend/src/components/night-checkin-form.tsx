@@ -2,13 +2,12 @@
 
 import Image from "next/image";
 import { FormEvent, useEffect, useState, useSyncExternalStore } from "react";
-import { Battery, CloudMoon, Heart, Moon, Smile, Sparkles, type LucideIcon } from "lucide-react";
 
 import { AssetTextButton } from "@/components/asset-primitives";
-import { getManyangAppDate } from "@/lib/app-date";
-import { manyangAssets } from "@/lib/manyang-assets";
+import { manyangAssets, type KeywordIconName } from "@/lib/manyang-assets";
 import {
   createNightCheckInRecord,
+  getNightCheckInAppDate,
   getNightCheckInSnapshotFromBrowser,
   saveNightCheckInToBrowser,
   subscribeToNightCheckIn,
@@ -23,40 +22,20 @@ import {
   nightCheckInCopy,
   nightCheckInMoods,
   nightCheckInNoteMaxLength,
-  type NightCheckInConditionId,
-  type NightCheckInMoodId,
 } from "@/lib/night-checkin-options";
 import { saveNightCheckInToApi } from "@/lib/routine-record-api";
 import { cn, ui } from "@/lib/styles";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { mergeRemoteNightCheckInRecord } from "@/lib/use-routine-records";
 
-const moodIcons: Record<NightCheckInMoodId, LucideIcon> = {
-  calm: Smile,
-  tired: CloudMoon,
-  anxious: Heart,
-  excited: Sparkles,
-  low: Moon,
-  mixed: Battery,
-};
-
-const conditionIcons: Record<NightCheckInConditionId, LucideIcon> = {
-  light: Sparkles,
-  heavy: Battery,
-  tense: Heart,
-  sleepy: CloudMoon,
-  sensitive: Moon,
-  okay: Smile,
-};
-
 type OptionButtonProps = {
   label: string;
-  icon: LucideIcon;
+  icon: KeywordIconName;
   isSelected: boolean;
   onClick: () => void;
 };
 
-function OptionButton({ label, icon: Icon, isSelected, onClick }: OptionButtonProps) {
+function OptionButton({ label, icon, isSelected, onClick }: OptionButtonProps) {
   return (
     <button
       type="button"
@@ -69,7 +48,9 @@ function OptionButton({ label, icon: Icon, isSelected, onClick }: OptionButtonPr
           : "",
       )}
     >
-      <Icon size={17} strokeWidth={1.85} className="shrink-0 text-[#c88963]" aria-hidden="true" />
+      <span className="relative h-[1.45rem] w-[1.45rem] shrink-0" aria-hidden="true">
+        <Image src={manyangAssets.keywordIcons[icon]} alt="" fill sizes="28px" unoptimized className="object-contain opacity-90" />
+      </span>
       <span>{label}</span>
     </button>
   );
@@ -85,7 +66,7 @@ export function NightCheckInForm() {
   const [isSavingRoutineRecord, setIsSavingRoutineRecord] = useState(false);
   const [routineSaveError, setRoutineSaveError] = useState(false);
   const [showGuestPersistencePrompt, setShowGuestPersistencePrompt] = useState(true);
-  const todayDate = getManyangAppDate();
+  const todayDate = getNightCheckInAppDate();
   const savedCheckIn = savedCheckInOverride ?? storedCheckIn;
   const hasSavedCheckInToday = savedCheckIn?.checkInDate === todayDate;
   const activeMoodId = selectedMoodId ?? (hasSavedCheckInToday ? savedCheckIn.moodId : defaultNightCheckInMood.id);
@@ -135,6 +116,12 @@ export function NightCheckInForm() {
       checkInDate: todayDate,
     });
 
+    saveNightCheckInToBrowser(record, { isAuthenticated });
+    setSavedCheckInOverride(record);
+    setSelectedMoodId(record.moodId);
+    setSelectedConditionId(record.conditionId);
+    setNote(record.note);
+
     if (!isAuthenticated) {
       setShowGuestPersistencePrompt(true);
       return;
@@ -160,11 +147,6 @@ export function NightCheckInForm() {
 
     mergeRemoteNightCheckInRecord(saveResult.record);
     saveNightCheckInToBrowser(saveResult.record, { isAuthenticated });
-
-    setSavedCheckInOverride(saveResult.record);
-    setSelectedMoodId(saveResult.record.moodId);
-    setSelectedConditionId(saveResult.record.conditionId);
-    setNote(saveResult.record.note);
   }
 
   return (
@@ -184,7 +166,7 @@ export function NightCheckInForm() {
       <section className="relative z-10 -mt-8 rounded-[1.05rem] border border-[#7c4a38]/72 bg-[rgba(5,4,12,0.78)] p-2 shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md">
         <div className="mb-2 flex items-center gap-2 text-[#ffd98a]">
           <span className="relative h-5 w-5">
-            <Image src={manyangAssets.semanticIcons.moon} alt="" fill sizes="20px" unoptimized className="object-contain opacity-90" />
+            <Image src={manyangAssets.sectionIcons.nightMood} alt="" fill sizes="20px" unoptimized className="object-contain opacity-90" />
           </span>
           <h2 className={cn("text-[0.96rem] font-semibold", ui.textGlow)}>{nightCheckInCopy.moodTitle}</h2>
         </div>
@@ -193,7 +175,7 @@ export function NightCheckInForm() {
             <OptionButton
               key={mood.id}
               label={mood.label}
-              icon={moodIcons[mood.id]}
+              icon={mood.icon}
               isSelected={mood.id === selectedMood.id}
               onClick={() => setSelectedMoodId(mood.id)}
             />
@@ -204,7 +186,7 @@ export function NightCheckInForm() {
       <section className="rounded-[1.05rem] border border-[#7c4a38]/72 bg-[rgba(5,4,12,0.74)] p-2 shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md">
         <p className="mb-2 flex items-center gap-2 text-[0.96rem] font-semibold text-[#ffd98a]">
           <span className="relative h-5 w-5">
-            <Image src={manyangAssets.semanticIcons.lantern} alt="" fill sizes="20px" unoptimized className="object-contain opacity-90" />
+            <Image src={manyangAssets.sectionIcons.nightCondition} alt="" fill sizes="20px" unoptimized className="object-contain opacity-90" />
           </span>
           {nightCheckInCopy.conditionTitle}
         </p>
@@ -213,7 +195,7 @@ export function NightCheckInForm() {
             <OptionButton
               key={condition.id}
               label={condition.label}
-              icon={conditionIcons[condition.id]}
+              icon={condition.icon}
               isSelected={condition.id === selectedCondition.id}
               onClick={() => setSelectedConditionId(condition.id)}
             />
@@ -224,7 +206,7 @@ export function NightCheckInForm() {
       <section className="rounded-[1.05rem] border border-[#7c4a38]/72 bg-[rgba(5,4,12,0.74)] p-2 shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md">
         <label htmlFor="night-checkin-note" className="mb-1.5 flex items-center gap-2 text-[0.96rem] font-semibold text-[#ffd98a]">
           <span className="relative h-5 w-5">
-            <Image src={manyangAssets.semanticIcons.feather} alt="" fill sizes="20px" unoptimized className="object-contain" />
+            <Image src={manyangAssets.sectionIcons.oneLineNote} alt="" fill sizes="20px" unoptimized className="object-contain" />
           </span>
           {nightCheckInCopy.noteLabel} <span className="text-sm font-normal text-[#fff3d7]/58">{nightCheckInCopy.optionalLabel}</span>
         </label>
@@ -271,8 +253,8 @@ export function NightCheckInForm() {
           className="rounded-[1.05rem] border border-[#d799ff]/35 bg-[rgba(25,11,39,0.78)] px-4 py-3 text-sm leading-6 text-[#fff3d7] shadow-[0_0_24px_rgba(164,82,255,0.24)]"
           data-routine-login-cta="night-checkin"
         >
-          <p className="font-semibold text-[#ffd98a]">로그인하면 밤의 기록을 달력에 남길 수 있어요.</p>
-          <p className="mt-1 text-[#fff3d7]/78">비로그인 상태에서는 기록을 누적하지 않고, 로그인하면 다음 꿈 해몽에 함께 참고할 수 있어요.</p>
+          <p className="font-semibold text-[#ffd98a]">밤의 기록은 이 기기에 저장됐어요.</p>
+          <p className="mt-1 text-[#fff3d7]/78">로그인하면 이 기록을 계정에 백업하고 다음 꿈 해몽에도 이어서 참고할 수 있어요.</p>
           <AssetTextButton
             href="/auth?next=%2Fnight"
             frame={manyangAssets.buttons.mediumSecondary}

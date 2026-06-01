@@ -43,7 +43,7 @@ describe("routine record source resolution", () => {
     });
   });
 
-  test("does not expose local pawprints and night check-ins to guest archives", () => {
+  test("exposes local pawprints and night check-ins to guest archives", () => {
     const remote: RemoteRoutineRecordsSnapshot = {
       status: "guest",
       pawprints: [],
@@ -51,15 +51,15 @@ describe("routine record source resolution", () => {
     };
 
     expect(resolveRoutineRecordState([createPawprint("local-pawprint")], [createNightCheckIn()], remote)).toEqual({
-      source: "guest",
-      pawprints: [],
-      nightCheckInRecords: [],
+      source: "local",
+      pawprints: [createPawprint("local-pawprint")],
+      nightCheckInRecords: [createNightCheckIn()],
       isLoadingRoutineRecords: false,
-      canViewRoutines: false,
+      canViewRoutines: true,
     });
   });
 
-  test("keeps routine markers empty while authenticated data is loading", () => {
+  test("keeps local routine markers visible while authenticated data is loading", () => {
     const remote: RemoteRoutineRecordsSnapshot = {
       status: "loading",
       pawprints: [],
@@ -67,9 +67,9 @@ describe("routine record source resolution", () => {
     };
 
     expect(resolveRoutineRecordState([createPawprint("local-pawprint")], [createNightCheckIn()], remote)).toMatchObject({
-      source: "guest",
-      pawprints: [],
-      nightCheckInRecords: [],
+      source: "local",
+      pawprints: [createPawprint("local-pawprint")],
+      nightCheckInRecords: [createNightCheckIn()],
       isLoadingRoutineRecords: true,
     });
   });

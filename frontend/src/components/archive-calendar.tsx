@@ -1,12 +1,20 @@
 "use client";
 
 import Image from "next/image";
+import { useSyncExternalStore } from "react";
 
+import { countMonthlyDreamRecords, countMonthlyDreamSymbols } from "@/lib/archive-records";
 import {
-  countMonthlyDreamRecords,
-  countMonthlyDreamSymbols,
-  getDayInMonth,
-} from "@/lib/archive-records";
+  addArchiveMonths,
+  canMoveArchiveMonth,
+  formatArchiveMonth,
+  getArchiveMonthRange,
+  getSelectedArchiveMonthServerSnapshot,
+  getSelectedArchiveMonthSnapshot,
+  resolveArchiveMonth,
+  saveSelectedArchiveMonth,
+  subscribeToArchiveMonth,
+} from "@/lib/archive-month";
 import {
   archiveCalendarDateGridStyle,
   archiveCalendarDayCellClassName,
@@ -14,17 +22,13 @@ import {
   archiveCalendarNightCheckInIconClassName,
   archiveCalendarPawprintIconClassName,
 } from "@/lib/archive-calendar-layout";
-import { getMonthGrid } from "@/lib/calendar";
+import { formatMonthGridCellDate, getMonthGridCells } from "@/lib/calendar";
 import { manyangAssets } from "@/lib/manyang-assets";
 import { countMonthlyNightCheckIns } from "@/lib/night-checkin";
 import { countMonthlyPawprints } from "@/lib/pawprints";
 import { cn } from "@/lib/styles";
 import { useArchiveDreamRecords } from "@/lib/use-archive-dream-records";
 import { useRoutineRecords } from "@/lib/use-routine-records";
-
-const archiveYear = 2026;
-const archiveMonth = 5;
-const calendarCells = getMonthGrid(archiveYear, archiveMonth);
 
 type ArchiveSummaryCardProps = {
   icon: string;
@@ -58,39 +62,51 @@ function ArchiveSummaryCard({ icon, label, value, accentClassName }: ArchiveSumm
 export function ArchiveCalendar() {
   const { dreamRecords, isLoadingServerRecords, source } = useArchiveDreamRecords();
   const { pawprints, nightCheckInRecords, source: routineSource } = useRoutineRecords();
+  const selectedArchiveMonth = useSyncExternalStore(
+    subscribeToArchiveMonth,
+    getSelectedArchiveMonthSnapshot,
+    getSelectedArchiveMonthServerSnapshot,
+  );
+  const visiblePawprints = pawprints;
+  const visibleNightCheckInRecords = nightCheckInRecords;
+  const hasLocalArchiveRecords = source === "local" || routineSource === "local";
+  const monthRange = getArchiveMonthRange({
+    dreamRecords,
+    pawprints: visiblePawprints,
+    nightCheckInRecords: visibleNightCheckInRecords,
+  });
+  const archiveMonth = resolveArchiveMonth(selectedArchiveMonth, monthRange);
+  const calendarCells = getMonthGridCells(archiveMonth.year, archiveMonth.month);
+  const canGoPreviousMonth = canMoveArchiveMonth(archiveMonth, monthRange, -1);
+  const canGoNextMonth = canMoveArchiveMonth(archiveMonth, monthRange, 1);
+  const monthlyDreams = countMonthlyDreamRecords(dreamRecords, archiveMonth.year, archiveMonth.month);
+  const monthlyPawprints = countMonthlyPawprints(visiblePawprints, archiveMonth.year, archiveMonth.month);
+  const monthlyNightCheckIns = countMonthlyNightCheckIns(
+    visibleNightCheckInRecords,
+    archiveMonth.year,
+    archiveMonth.month,
+  );
+  const monthlySymbols = countMonthlyDreamSymbols(dreamRecords, archiveMonth.year, archiveMonth.month);
+  const dreamDates = new Set<string>();
+  const pawprintDates = new Set<string>();
+  const nightCheckInDates = new Set<string>();
 
-  const dreamDays = new Set<number>();
-  const pawprintDays = new Set<number>();
-  const nightCheckInDays = new Set<number>();
-  const visiblePawprints = source === "server" && routineSource === "server" ? pawprints : [];
-  const visibleNightCheckInRecords = source === "server" && routineSource === "server" ? nightCheckInRecords : [];
-  const monthlyDreams = countMonthlyDreamRecords(dreamRecords, archiveYear, archiveMonth);
-  const monthlyPawprints = countMonthlyPawprints(visiblePawprints, archiveYear, archiveMonth);
-  const monthlyNightCheckIns = countMonthlyNightCheckIns(visibleNightCheckInRecords, archiveYear, archiveMonth);
-  const monthlySymbols = countMonthlyDreamSymbols(dreamRecords, archiveYear, archiveMonth);
+  function moveMonth(delta: number) {
+    if (canMoveArchiveMonth(archiveMonth, monthRange, delta)) {
+      saveSelectedArchiveMonth(addArchiveMonths(archiveMonth, delta));
+    }
+  }
 
   for (const record of dreamRecords) {
-    const day = getDayInMonth(record.dreamDate, archiveYear, archiveMonth);
-
-    if (day) {
-      dreamDays.add(day);
-    }
+    dreamDates.add(record.dreamDate);
   }
 
   for (const pawprint of visiblePawprints) {
-    const day = getDayInMonth(pawprint.appDate, archiveYear, archiveMonth);
-
-    if (day) {
-      pawprintDays.add(day);
-    }
+    pawprintDates.add(pawprint.appDate);
   }
 
   for (const checkIn of visibleNightCheckInRecords) {
-    const day = getDayInMonth(checkIn.checkInDate, archiveYear, archiveMonth);
-
-    if (day) {
-      nightCheckInDays.add(day);
-    }
+    nightCheckInDates.add(checkIn.checkInDate);
   }
 
   return (
@@ -98,12 +114,8 @@ export function ArchiveCalendar() {
       <div className="mx-auto grid w-full max-w-[382px] grid-cols-4 gap-1.5 rounded-[1.35rem] border border-[#7c4a38]/72 bg-[rgba(5,4,12,0.74)] p-2.5 shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md">
         <ArchiveSummaryCard icon={manyangAssets.semanticIcons.moon} label="꿈 기록" value={monthlyDreams} />
         <ArchiveSummaryCard icon={manyangAssets.semanticIcons.paw} label="발자국 기록" value={monthlyPawprints} />
-        <ArchiveSummaryCard
-          icon={manyangAssets.semanticIcons.sparkles}
-          label="밤의 기록"
-          value={monthlyNightCheckIns}
-        />
-        <ArchiveSummaryCard icon={manyangAssets.semanticIcons.crystalBall} label="이번 달 상징" value={monthlySymbols} />
+        <ArchiveSummaryCard icon={manyangAssets.semanticIcons.sparkles} label="밤의 기록" value={monthlyNightCheckIns} />
+        <ArchiveSummaryCard icon={manyangAssets.semanticIcons.crystalBall} label="이 달 상징" value={monthlySymbols} />
       </div>
 
       <div className="relative mx-auto aspect-[962/1452] w-full max-w-[382px]">
@@ -115,23 +127,47 @@ export function ArchiveCalendar() {
           unoptimized
           className="object-contain drop-shadow-[0_18px_48px_rgba(0,0,0,0.36)]"
         />
-        <h2 className="absolute inset-x-[27%] top-[15.7%] text-center text-[15px] font-semibold text-[#ffd98a]">
-          {archiveYear}년 {archiveMonth}월
-        </h2>
+        <div className="absolute inset-x-[12%] top-[14.8%] flex items-center justify-between gap-2">
+          <button
+            type="button"
+            aria-label="이전 달 보기"
+            disabled={!canGoPreviousMonth}
+            onClick={() => moveMonth(-1)}
+            className="relative h-8 w-8 shrink-0 rounded-full transition hover:scale-105 disabled:cursor-not-allowed disabled:opacity-28"
+          >
+            <Image src={manyangAssets.actionIcons.arrowLeft} alt="" fill sizes="32px" unoptimized className="object-contain" />
+          </button>
+          <h2 className="min-w-0 flex-1 text-center text-[15px] font-semibold text-[#ffd98a]">
+            {formatArchiveMonth(archiveMonth)}
+          </h2>
+          <button
+            type="button"
+            aria-label="다음 달 보기"
+            disabled={!canGoNextMonth}
+            onClick={() => moveMonth(1)}
+            className="relative h-8 w-8 shrink-0 rounded-full transition hover:scale-105 disabled:cursor-not-allowed disabled:opacity-28"
+          >
+            <Image src={manyangAssets.actionIcons.arrowRight} alt="" fill sizes="32px" unoptimized className="object-contain" />
+          </button>
+        </div>
         <div
           data-calendar-grid
           className="absolute grid grid-cols-7 grid-rows-6 text-center text-[11px] text-[#f5c77f]"
           style={archiveCalendarDateGridStyle}
         >
-          {calendarCells.map((day, index) => {
-            const hasDream = day ? dreamDays.has(day) : false;
-            const hasPawprint = day ? pawprintDays.has(day) : false;
-            const hasNightCheckIn = day ? nightCheckInDays.has(day) : false;
+          {calendarCells.map((cell, index) => {
+            const cellDate = formatMonthGridCellDate(cell);
+            const hasDream = dreamDates.has(cellDate);
+            const hasPawprint = pawprintDates.has(cellDate);
+            const hasNightCheckIn = nightCheckInDates.has(cellDate);
             const hasActivity = hasDream || hasPawprint || hasNightCheckIn;
 
             return (
-              <span key={`${day ?? "blank"}-${index}`} className={archiveCalendarDayCellClassName}>
-                {day ? (
+              <span
+                key={`${cellDate}-${index}`}
+                data-calendar-cell-scope={cell.isCurrentMonth ? "current-month" : "adjacent-month"}
+                className={cn(archiveCalendarDayCellClassName, !cell.isCurrentMonth && "opacity-45")}
+              >
                   <span
                     className={[
                       "relative grid h-6 w-6 place-items-center rounded-full",
@@ -139,8 +175,9 @@ export function ArchiveCalendar() {
                         ? "bg-[#4a2069] text-[#ffd98a] shadow-[0_0_18px_rgba(199,117,255,0.55)]"
                         : hasActivity
                           ? "bg-[#2b1738]/75 text-[#ffd98a] ring-1 ring-[#d79a34]/60"
-                          : "text-[#d6ad78]/82",
-                      day === 24 ? "ring-2 ring-[#c775ff]" : "",
+                          : cell.isCurrentMonth
+                            ? "text-[#d6ad78]/82"
+                            : "text-[#b88c63]/78",
                     ].join(" ")}
                   >
                     {hasDream ? (
@@ -179,18 +216,17 @@ export function ArchiveCalendar() {
                         />
                       </span>
                     ) : null}
-                    {day}
+                    {cell.day}
                   </span>
-                ) : null}
               </span>
             );
           })}
         </div>
       </div>
 
-      {source === "guest" && !isLoadingServerRecords ? (
+      {hasLocalArchiveRecords && !isLoadingServerRecords ? (
         <p className="mx-auto max-w-[382px] rounded-[1rem] border border-[#7c4a38]/45 bg-[rgba(5,4,12,0.58)] px-4 py-3 text-center text-sm leading-6 text-[#fff3d7]/74">
-          로그인하면 꿈 영수증이 이 달력에 차곡차곡 남아요.
+          이 기기에 저장된 기록이에요. 로그인하면 계정에 백업할 수 있어요.
         </p>
       ) : null}
     </section>

@@ -7,6 +7,7 @@ import {
   createNightCheckInRecord,
   getNightCheckIn,
   getNightCheckInRecords,
+  getNightCheckInAppDate,
   isNightCheckInRelatedToDreamDate,
   nightCheckInKey,
   nightCheckInRecordsKey,
@@ -121,8 +122,14 @@ describe("night check-in records", () => {
     expect(isNightCheckInRelatedToDreamDate(record, "2026-06-02")).toBe(false);
   });
 
-  test("allows persistence only for authenticated users", () => {
-    expect(canPersistNightCheckIn({ isAuthenticated: false })).toBe(false);
+  test("stores after-midnight night check-ins on the previous night's date", () => {
+    expect(getNightCheckInAppDate(new Date("2026-06-01T09:30:00.000Z"))).toBe("2026-06-01");
+    expect(getNightCheckInAppDate(new Date("2026-06-01T16:20:00.000Z"))).toBe("2026-06-01");
+    expect(getNightCheckInAppDate(new Date("2026-06-01T20:00:00.000Z"))).toBe("2026-06-02");
+  });
+
+  test("allows local persistence for guests and authenticated users", () => {
+    expect(canPersistNightCheckIn({ isAuthenticated: false })).toBe(true);
     expect(canPersistNightCheckIn({ isAuthenticated: true })).toBe(true);
   });
 });

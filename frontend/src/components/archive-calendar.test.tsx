@@ -20,4 +20,11 @@ describe("ArchiveCalendar", () => {
     expect(markup).toContain("/manyang/ui/semantic-icons/semantic-sparkles.png");
     expect(markup).toContain("/manyang/ui/semantic-icons/semantic-crystal-ball.png");
   });
+
+  it("renders adjacent month cells with a muted visual scope", () => {
+    const markup = renderToStaticMarkup(<ArchiveCalendar />);
+
+    expect(markup).toContain('data-calendar-cell-scope="adjacent-month"');
+    expect(markup).toContain("opacity-45");
+  });
 });

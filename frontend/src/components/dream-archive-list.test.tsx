@@ -8,7 +8,7 @@ describe("ArchiveCatGuide", () => {
     const markup = renderToStaticMarkup(<ArchiveCatGuide selectedCatReaderId="white_cat" />);
 
     expect(markup).toContain("/manyang/references/cat-white-profile.webp");
-    expect(markup).toContain("하얀냥");
+    expect(markup).toContain("꿈은 지나가도");
     expect(markup).not.toContain("blackcat-profile-transparent");
   });
 });

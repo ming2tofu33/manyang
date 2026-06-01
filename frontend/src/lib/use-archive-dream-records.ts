@@ -4,6 +4,7 @@ import { useCallback, useEffect, useSyncExternalStore } from "react";
 
 import { deleteDreamRecordFromApi, fetchDreamRecordsFromApi } from "./dream-record-api";
 import {
+  deleteDreamRecordToBrowser,
   getDreamRecordsSnapshotFromBrowser,
   getEmptyDreamRecordsSnapshot,
   saveDreamRecordAsLatestAnalysisToBrowser,
@@ -12,7 +13,7 @@ import {
 } from "./dream-storage";
 import { createSupabaseBrowserClient } from "./supabase/client";
 
-export type ArchiveDreamRecordSource = "server" | "guest" | "legacy_local";
+export type ArchiveDreamRecordSource = "server" | "local";
 
 export type RemoteDreamRecordsSnapshot = {
   status: "loading" | "server" | "guest" | "legacy_local";
@@ -73,20 +74,20 @@ export function resolveArchiveDreamRecordState(
     };
   }
 
-  if (remoteSnapshot.status === "legacy_local") {
+  if (remoteSnapshot.status === "loading" || remoteSnapshot.status === "guest" || remoteSnapshot.status === "legacy_local") {
     return {
       dreamRecords: localDreamRecords,
-      source: "legacy_local",
-      isLoadingServerRecords: false,
-      canViewArchive: false,
+      source: "local",
+      isLoadingServerRecords: remoteSnapshot.status === "loading",
+      canViewArchive: true,
     };
   }
 
   return {
-    dreamRecords: [],
-    source: "guest",
-    isLoadingServerRecords: remoteSnapshot.status === "loading",
-    canViewArchive: false,
+    dreamRecords: localDreamRecords,
+    source: "local",
+    isLoadingServerRecords: false,
+    canViewArchive: true,
   };
 }
 
@@ -188,7 +189,8 @@ export function useArchiveDreamRecords(): {
         return false;
       }
 
-      return false;
+      deleteDreamRecordToBrowser(recordId);
+      return true;
     },
     [resolvedState.source],
   );

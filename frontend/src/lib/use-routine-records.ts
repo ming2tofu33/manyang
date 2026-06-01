@@ -2,12 +2,23 @@
 
 import { useEffect, useSyncExternalStore } from "react";
 
-import type { NightCheckInRecord } from "./night-checkin";
-import type { PawprintRecord, PawprintSaveResult } from "./pawprints";
+import {
+  getEmptyNightCheckInRecordsSnapshot,
+  getNightCheckInRecordsSnapshotFromBrowser,
+  subscribeToNightCheckIn,
+  type NightCheckInRecord,
+} from "./night-checkin";
+import {
+  getEmptyPawprintSnapshot,
+  getPawprintSnapshotFromBrowser,
+  subscribeToPawprints,
+  type PawprintRecord,
+  type PawprintSaveResult,
+} from "./pawprints";
 import { fetchNightCheckInsFromApi, fetchPawprintsFromApi } from "./routine-record-api";
 import { createSupabaseBrowserClient } from "./supabase/client";
 
-export type RoutineRecordSource = "server" | "guest";
+export type RoutineRecordSource = "server" | "local";
 
 export type RemoteRoutineRecordsSnapshot = {
   status: "loading" | "server" | "guest";
@@ -86,8 +97,8 @@ export function getRemoteRoutineRecordsServerSnapshot(): RemoteRoutineRecordsSna
 }
 
 export function resolveRoutineRecordState(
-  _localPawprints: PawprintRecord[],
-  _localNightCheckInRecords: NightCheckInRecord[],
+  localPawprints: PawprintRecord[],
+  localNightCheckInRecords: NightCheckInRecord[],
   remoteSnapshot: RemoteRoutineRecordsSnapshot,
 ): {
   pawprints: PawprintRecord[];
@@ -107,11 +118,11 @@ export function resolveRoutineRecordState(
   }
 
   return {
-    pawprints: [],
-    nightCheckInRecords: [],
-    source: "guest",
+    pawprints: localPawprints,
+    nightCheckInRecords: localNightCheckInRecords,
+    source: "local",
     isLoadingRoutineRecords: remoteSnapshot.status === "loading",
-    canViewRoutines: false,
+    canViewRoutines: true,
   };
 }
 
@@ -197,12 +208,22 @@ export function useRoutineRecords(): {
   isLoadingRoutineRecords: boolean;
   canViewRoutines: boolean;
 } {
+  const localPawprints = useSyncExternalStore(
+    subscribeToPawprints,
+    getPawprintSnapshotFromBrowser,
+    getEmptyPawprintSnapshot,
+  );
+  const localNightCheckInRecords = useSyncExternalStore(
+    subscribeToNightCheckIn,
+    getNightCheckInRecordsSnapshotFromBrowser,
+    getEmptyNightCheckInRecordsSnapshot,
+  );
   const remoteSnapshot = useSyncExternalStore(
     subscribeToRemoteRoutineRecords,
     getRemoteRoutineRecordsSnapshot,
     getRemoteRoutineRecordsServerSnapshot,
   );
-  const resolvedState = resolveRoutineRecordState([], [], remoteSnapshot);
+  const resolvedState = resolveRoutineRecordState(localPawprints, localNightCheckInRecords, remoteSnapshot);
 
   useEffect(() => {
     void refreshRemoteRoutineRecords({ force: true });

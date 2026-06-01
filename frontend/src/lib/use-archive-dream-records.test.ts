@@ -57,18 +57,18 @@ describe("archive dream record source resolution", () => {
     });
   });
 
-  test("uses local records while the server request is loading", () => {
+  test("keeps local records visible while the server request is loading", () => {
     const localRecords = [createRecord("local")];
 
     expect(resolveArchiveDreamRecordState(localRecords, { status: "loading", records: [] })).toMatchObject({
-      source: "guest",
-      dreamRecords: [],
+      source: "local",
+      dreamRecords: localRecords,
       isLoadingServerRecords: true,
-      canViewArchive: false,
+      canViewArchive: true,
     });
   });
 
-  test("does not expose local dream records to guest archive", () => {
+  test("exposes local dream records to guest archive", () => {
     const localRecords = [createRecord("local")];
     const remote: RemoteDreamRecordsSnapshot = {
       status: "guest",
@@ -76,10 +76,10 @@ describe("archive dream record source resolution", () => {
     };
 
     expect(resolveArchiveDreamRecordState(localRecords, remote)).toMatchObject({
-      source: "guest",
-      dreamRecords: [],
+      source: "local",
+      dreamRecords: localRecords,
       isLoadingServerRecords: false,
-      canViewArchive: false,
+      canViewArchive: true,
     });
   });
 });

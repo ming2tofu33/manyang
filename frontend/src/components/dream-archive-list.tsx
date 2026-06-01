@@ -1,12 +1,17 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSyncExternalStore } from "react";
 
-import { ArchiveLoginGate } from "@/components/archive-login-gate";
 import { AssetIconButton, AssetTextButton } from "@/components/asset-primitives";
-import { createArchiveTimeline, type ArchiveTimelineItem } from "@/lib/archive-records";
+import {
+  createArchiveRecordViews,
+  getFeaturedDreamRecordView,
+  getRecentArchiveRecordViews,
+  type ArchiveRecordView,
+} from "@/lib/archive-record-view";
 import {
   getCatReaderById,
   getDefaultCatReaderSnapshot,
@@ -14,15 +19,17 @@ import {
   subscribeToSelectedCatReader,
   type CatReaderId,
 } from "@/lib/cat-readers";
+import {
+  getEmptyMorningMoodRecordsSnapshot,
+  getMorningMoodRecordsSnapshotFromBrowser,
+  subscribeToMorningMood,
+} from "@/lib/morning-mood";
 import { manyangAssets } from "@/lib/manyang-assets";
 import { cn, ui } from "@/lib/styles";
 import { useArchiveDreamRecords } from "@/lib/use-archive-dream-records";
 import { useRoutineRecords } from "@/lib/use-routine-records";
 
-const archiveYear = 2026;
-const archiveMonth = 5;
-
-const timelineIcons: Record<ArchiveTimelineItem["type"], string> = {
+const recordTypeIcons: Record<ArchiveRecordView["type"], string> = {
   dream: manyangAssets.semanticIcons.moon,
   pawprint: manyangAssets.semanticIcons.paw,
   night_checkin: manyangAssets.semanticIcons.sparkles,
@@ -30,6 +37,35 @@ const timelineIcons: Record<ArchiveTimelineItem["type"], string> = {
 
 function formatArchiveDate(date: string): string {
   return date.replaceAll("-", ".");
+}
+
+function ArchiveRecordIcon({ type }: { type: ArchiveRecordView["type"] }) {
+  return (
+    <span className="relative grid h-12 w-12 shrink-0 place-items-center rounded-full bg-[rgba(255,217,138,0.06)] ring-1 ring-[#d799ff]/12">
+      <span className="relative h-7 w-7">
+        <Image src={recordTypeIcons[type]} alt="" fill sizes="28px" unoptimized className="object-contain" />
+      </span>
+    </span>
+  );
+}
+
+function ArchiveRecordTags({ tags }: { tags: string[] }) {
+  if (tags.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="mt-2 flex flex-wrap gap-1.5">
+      {tags.slice(0, 4).map((tag) => (
+        <span
+          key={tag}
+          className="rounded-full border border-[#b98255]/38 bg-[rgba(6,4,12,0.44)] px-2.5 py-1 text-[11px] leading-none text-[#f2c27d]"
+        >
+          {tag}
+        </span>
+      ))}
+    </div>
+  );
 }
 
 export function ArchiveCatGuide({ selectedCatReaderId }: { selectedCatReaderId: CatReaderId }) {
@@ -81,64 +117,185 @@ export function DreamRecordActions({
   );
 }
 
+export function FeaturedDreamRecordCard({
+  view,
+  onOpen,
+}: {
+  view: ArchiveRecordView;
+  onOpen: (view: ArchiveRecordView) => void;
+}) {
+  return (
+    <section
+      className={cn(ui.panel, "relative overflow-hidden p-4")}
+      aria-label="최근 꿈 영수증"
+      data-featured-dream-record="true"
+    >
+      <div className="relative z-10 flex gap-3">
+        <div className="relative h-[7.25rem] w-[6.2rem] shrink-0 overflow-hidden rounded-[1rem] border border-[#7c4a38]/48 bg-[rgba(5,4,12,0.55)]">
+          <Image
+            src={manyangAssets.backgrounds.default}
+            alt=""
+            fill
+            sizes="100px"
+            unoptimized
+            className="scale-125 object-cover opacity-72"
+          />
+          <span className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,6,18,0.08),rgba(8,6,18,0.52))]" />
+        </div>
+
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center justify-between gap-2">
+            <time className="text-[12px] font-semibold text-[#f0bc7d]" dateTime={view.date}>
+              {formatArchiveDate(view.date)}
+            </time>
+            <span className="rounded-full border border-[#b98255]/42 px-2.5 py-1 text-[11px] leading-none text-[#f2c27d]">
+              {view.categoryLabel}
+            </span>
+          </div>
+          <h2 className="mt-2 line-clamp-2 text-[1.32rem] font-semibold leading-8 text-[#ffd98a]">{view.title}</h2>
+          <ArchiveRecordTags tags={view.tags} />
+          <p className="mt-2 line-clamp-2 text-[12px] leading-5 text-[#fff3d7]/72">{view.summary}</p>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        onClick={() => onOpen(view)}
+        className="relative z-10 mt-3 flex min-h-11 w-full items-center justify-between rounded-[0.9rem] border border-[#b98255]/45 bg-[rgba(9,7,18,0.58)] px-3 text-sm font-semibold text-[#ffd98a] transition hover:border-[#ffd08a]/70 focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
+      >
+        <span className="flex items-center gap-2">
+          <span className="relative h-5 w-5">
+            <Image src={manyangAssets.actionIcons.book} alt="" fill sizes="20px" unoptimized className="object-contain" />
+          </span>
+          꿈 영수증 보기
+        </span>
+        <span className="relative h-5 w-5 opacity-78" aria-hidden="true">
+          <Image src={manyangAssets.actionIcons.arrowRight} alt="" fill sizes="20px" unoptimized className="object-contain" />
+        </span>
+      </button>
+    </section>
+  );
+}
+
+function RecentArchiveRecordItem({
+  view,
+  onOpenDream,
+}: {
+  view: ArchiveRecordView;
+  onOpenDream: (view: ArchiveRecordView) => void;
+}) {
+  const content = (
+    <>
+      <ArchiveRecordIcon type={view.type} />
+      <span className="min-w-0 flex-1">
+        <span className="text-[12px] font-semibold text-[#f0bc7d]">{formatArchiveDate(view.date)}</span>
+        <span className="mt-0.5 block truncate text-[1rem] font-semibold leading-6 text-[#ffd98a]">{view.title}</span>
+        <span className="block truncate text-[12px] leading-5 text-[#fff3d7]/70">
+          {[...view.metaParts, ...view.tags].slice(0, 3).join(" · ") || view.categoryLabel}
+        </span>
+      </span>
+      <span className="relative h-6 w-6 shrink-0 opacity-75" aria-hidden="true">
+        <Image src={manyangAssets.actionIcons.arrowRight} alt="" fill sizes="24px" unoptimized className="object-contain" />
+      </span>
+    </>
+  );
+  const className =
+    "flex min-h-[4.7rem] w-full items-center gap-3 rounded-[1rem] border border-[#7c4a38]/36 bg-[rgba(10,8,21,0.58)] px-3 py-2.5 text-left shadow-[inset_0_1px_0_rgba(255,226,176,0.05)] transition hover:border-[#ffd08a]/58 hover:bg-[rgba(20,11,34,0.72)] focus:outline-none focus:ring-2 focus:ring-[#d799ff]";
+
+  if (view.type === "dream") {
+    return (
+      <button type="button" className={className} onClick={() => onOpenDream(view)}>
+        {content}
+      </button>
+    );
+  }
+
+  return (
+    <Link href={view.detailHref ?? "/archive/records"} className={className}>
+      {content}
+    </Link>
+  );
+}
+
+export function RecentArchiveRecords({
+  views,
+  onOpenDream,
+  selectedCatReaderId,
+}: {
+  views: ArchiveRecordView[];
+  onOpenDream: (view: ArchiveRecordView) => void;
+  selectedCatReaderId: CatReaderId;
+}) {
+  if (views.length === 0) {
+    return null;
+  }
+
+  return (
+    <section className={cn(ui.panel, "relative overflow-hidden p-4")} data-recent-archive-records="true">
+      <header className="mb-3 flex items-center justify-between gap-3">
+        <h2 className="text-lg font-semibold text-[#ffd98a]">최근 기록</h2>
+        <Link
+          href="/archive/records"
+          className="shrink-0 text-sm font-semibold text-[#f0bc7d] transition hover:text-[#ffd98a] focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
+        >
+          전체 보기 ›
+        </Link>
+      </header>
+      <div className="space-y-2">
+        {views.map((view) => (
+          <RecentArchiveRecordItem key={view.id} view={view} onOpenDream={onOpenDream} />
+        ))}
+      </div>
+      <ArchiveCatGuide selectedCatReaderId={selectedCatReaderId} />
+    </section>
+  );
+}
+
 export function DreamArchiveList() {
   const router = useRouter();
-  const { dreamRecords, deleteDreamRecord, isLoadingServerRecords, openDreamRecord, source } =
-    useArchiveDreamRecords();
-  const { pawprints, nightCheckInRecords, source: routineSource } = useRoutineRecords();
+  const { dreamRecords, isLoadingServerRecords, openDreamRecord, source } = useArchiveDreamRecords();
+  const { pawprints, nightCheckInRecords, isLoadingRoutineRecords } = useRoutineRecords();
+  const morningMoodRecords = useSyncExternalStore(
+    subscribeToMorningMood,
+    getMorningMoodRecordsSnapshotFromBrowser,
+    getEmptyMorningMoodRecordsSnapshot,
+  );
   const selectedCatReaderId = useSyncExternalStore(
     subscribeToSelectedCatReader,
     getSelectedCatReaderSnapshotFromBrowser,
     getDefaultCatReaderSnapshot,
   );
-  const timeline = createArchiveTimeline({
+  const visiblePawprints = pawprints;
+  const visibleNightCheckInRecords = nightCheckInRecords;
+  const views = createArchiveRecordViews({
     dreamRecords,
-    pawprints: source === "server" && routineSource === "server" ? pawprints : [],
-    nightCheckInRecords: source === "server" && routineSource === "server" ? nightCheckInRecords : [],
-    year: archiveYear,
-    month: archiveMonth,
+    pawprints: visiblePawprints,
+    nightCheckInRecords: visibleNightCheckInRecords,
+    morningMoodRecords,
   });
+  const featuredDreamRecord = getFeaturedDreamRecordView(views);
+  const recentRecords = getRecentArchiveRecordViews(views, 3);
+  const hasAnyArchiveRecords = dreamRecords.length + visiblePawprints.length + visibleNightCheckInRecords.length > 0;
+  const isLoadingArchive = isLoadingServerRecords || (source === "server" && isLoadingRoutineRecords);
 
-  function handleDelete(item: ArchiveTimelineItem) {
-    if (!item.dreamRecordId) {
-      return;
-    }
-
-    const confirmed = window.confirm(
-      `"${item.title}" 기록을 삭제할까요?\n삭제한 기록은 다시 불러올 수 없어요.`,
-    );
-
-    if (confirmed) {
-      void deleteDreamRecord(item.dreamRecordId);
-    }
-  }
-
-  function handleOpenReceipt(item: ArchiveTimelineItem) {
-    if (!item.dreamRecordId) {
-      return;
-    }
-
-    const record = dreamRecords.find((dreamRecord) => dreamRecord.id === item.dreamRecordId);
+  function handleOpenReceipt(view: ArchiveRecordView) {
+    const record = view.raw.dreamRecord;
 
     if (record && openDreamRecord(record)) {
       router.push("/result");
     }
   }
 
-  if (isLoadingServerRecords) {
+  if (isLoadingArchive) {
     return (
       <section className={cn(ui.panel, "space-y-3 p-5 text-center")}>
-        <p className={cn("text-lg font-semibold text-[#ffd98a]", ui.textGlow)}>꿈 기록장을 여는 중이에요</p>
-        <p className="text-sm leading-6 text-[#fff3d7]/76">계정에 저장된 꿈 영수증을 확인하고 있어요.</p>
+        <p className={cn("text-lg font-semibold text-[#ffd98a]", ui.textGlow)}>기록함을 여는 중이에요</p>
+        <p className="text-sm leading-6 text-[#fff3d7]/76">계정에 저장된 꿈 영수증과 하루의 흔적을 확인하고 있어요.</p>
       </section>
     );
   }
 
-  if (source === "guest") {
-    return <ArchiveLoginGate />;
-  }
-
-  if (timeline.length === 0) {
+  if (views.length === 0) {
     const reader = getCatReaderById(selectedCatReaderId);
 
     return (
@@ -153,10 +310,10 @@ export function DreamArchiveList() {
             className="scale-110 object-contain drop-shadow-[0_0_18px_rgba(215,153,255,0.28)]"
           />
         </span>
-        <p className="text-lg font-semibold text-[#ffd98a]">아직 남긴 기록이 없어요</p>
-        <p className="text-sm leading-6 text-[#fff3d7]/76">
-          꿈을 적거나 아침 기분을 남기면 이곳에 차곡차곡 쌓여요.
+        <p className="text-lg font-semibold text-[#ffd98a]">
+          {hasAnyArchiveRecords ? "아직 보여줄 기록이 없어요" : "아직 남긴 기록이 없어요"}
         </p>
+        <p className="text-sm leading-6 text-[#fff3d7]/76">꿈을 들려주거나 하루의 흔적을 남기면 이곳에 차곡차곡 모여요.</p>
         <AssetTextButton
           href="/write"
           frame={manyangAssets.buttons.mediumSecondary}
@@ -165,69 +322,20 @@ export function DreamArchiveList() {
           contentClassName="min-h-[3.2rem] px-4 text-base"
           iconClassName="h-6 w-6"
         >
-          꿈쓰기
+          꿈 들려주기
         </AssetTextButton>
       </section>
     );
   }
 
   return (
-    <section className={cn(ui.panel, "relative overflow-hidden p-4")}>
-      <header className="relative z-10 mb-3 flex items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold text-[#ffd98a]">전체 기록</h2>
-        <span className="text-sm text-[#f0bc7d]">{timeline.length}개</span>
-      </header>
-
-      <div className="relative z-10 space-y-2.5">
-        {timeline.map((item) => (
-          <article
-            key={item.id}
-            className="flex min-h-[4.55rem] items-center gap-3 rounded-[1.05rem] border border-[#7c4a38]/42 bg-[rgba(10,8,21,0.64)] px-3 py-2.5 shadow-[inset_0_1px_0_rgba(255,226,176,0.06)]"
-          >
-            <span className="relative grid h-12 w-12 shrink-0 place-items-center rounded-full bg-[rgba(255,217,138,0.06)] ring-1 ring-[#d799ff]/12">
-              <span className="relative h-7 w-7">
-                <Image
-                  src={timelineIcons[item.type]}
-                  alt=""
-                  fill
-                  sizes="28px"
-                  unoptimized
-                  className="object-contain"
-                />
-              </span>
-            </span>
-
-            <div className="min-w-0 flex-1">
-              <time className="text-sm text-[#f0bc7d]" dateTime={item.date}>
-                {formatArchiveDate(item.date)}
-              </time>
-              <h3 className="mt-0.5 truncate text-[1.05rem] font-semibold leading-6 text-[#ffd98a]">{item.title}</h3>
-              {item.meta ? <p className="truncate text-sm leading-5 text-[#fff3d7]/72">{item.meta}</p> : null}
-            </div>
-
-            {item.dreamRecordId ? (
-              <DreamRecordActions
-                title={item.title}
-                onOpen={() => handleOpenReceipt(item)}
-                onDelete={() => handleDelete(item)}
-              />
-            ) : (
-              <span className="relative h-7 w-7 shrink-0 opacity-72" aria-hidden="true">
-                <Image
-                  src={manyangAssets.actionIcons.arrowRight}
-                  alt=""
-                  fill
-                  sizes="28px"
-                  unoptimized
-                  className="object-contain"
-                />
-              </span>
-            )}
-          </article>
-        ))}
-      </div>
-
-      <ArchiveCatGuide selectedCatReaderId={selectedCatReaderId} />
-    </section>
+    <div className="space-y-4">
+      {featuredDreamRecord ? <FeaturedDreamRecordCard view={featuredDreamRecord} onOpen={handleOpenReceipt} /> : null}
+      <RecentArchiveRecords
+        views={recentRecords}
+        onOpenDream={handleOpenReceipt}
+        selectedCatReaderId={selectedCatReaderId}
+      />
+    </div>
   );
 }
