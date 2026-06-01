@@ -165,7 +165,7 @@ export function ArchiveRecordDetailClient({ recordId }: { recordId: string }) {
     morningMoodRecords,
   });
   const view = getArchiveRecordViewById(views, recordId);
-  const isLoadingArchive = isLoadingServerRecords || (source === "server" && isLoadingRoutineRecords);
+  const isLoadingArchive = (isLoadingServerRecords || (source === "server" && isLoadingRoutineRecords)) && !view;
 
   function handleOpenDream(selectedView: ArchiveRecordView) {
     const record = selectedView.raw.dreamRecord;

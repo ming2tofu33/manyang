@@ -173,7 +173,7 @@ export function ArchiveRecordsClient() {
     morningMoodRecords,
   });
   const filteredViews = filterArchiveRecordViews(views, { query, type: selectedType });
-  const isLoadingArchive = isLoadingServerRecords || (source === "server" && isLoadingRoutineRecords);
+  const isLoadingArchive = (isLoadingServerRecords || (source === "server" && isLoadingRoutineRecords)) && views.length === 0;
 
   function handleOpenDream(view: ArchiveRecordView) {
     const record = view.raw.dreamRecord;

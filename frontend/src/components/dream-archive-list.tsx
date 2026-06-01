@@ -276,7 +276,7 @@ export function DreamArchiveList() {
   const featuredDreamRecord = getFeaturedDreamRecordView(views);
   const recentRecords = getRecentArchiveRecordViews(views, 3);
   const hasAnyArchiveRecords = dreamRecords.length + visiblePawprints.length + visibleNightCheckInRecords.length > 0;
-  const isLoadingArchive = isLoadingServerRecords || (source === "server" && isLoadingRoutineRecords);
+  const isLoadingArchive = (isLoadingServerRecords || (source === "server" && isLoadingRoutineRecords)) && views.length === 0;
 
   function handleOpenReceipt(view: ArchiveRecordView) {
     const record = view.raw.dreamRecord;

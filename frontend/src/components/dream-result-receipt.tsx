@@ -294,7 +294,7 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
     () => null,
   );
   const storedCheckIn = useSyncExternalStore(subscribeToNightCheckIn, getNightCheckInSnapshotFromBrowser, () => null);
-  const { nightCheckInRecords: remoteNightCheckInRecords, source: routineSource } = useRoutineRecords();
+  const { nightCheckInRecords } = useRoutineRecords();
   const [pawprintCreated, setPawprintCreated] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showPawprintLoginPrompt, setShowPawprintLoginPrompt] = useState(false);
@@ -308,9 +308,7 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
   const receiptStampSrc = receiptStampImageSrcByAssetKey[reader.assetKey];
   const displayMood = payload.wakeMood ?? analysis.emotions[0] ?? "기록 없음";
   const remoteRelatedCheckIn =
-    routineSource === "server"
-      ? remoteNightCheckInRecords.find((checkInRecord) => isNightCheckInRelatedToDreamDate(checkInRecord, payload.dreamDate)) ?? null
-      : null;
+    nightCheckInRecords.find((checkInRecord) => isNightCheckInRelatedToDreamDate(checkInRecord, payload.dreamDate)) ?? null;
   const relatedCheckIn =
     remoteRelatedCheckIn ??
     (isNightCheckInRelatedToDreamDate(storedCheckIn, payload.dreamDate) ? storedCheckIn : null);
