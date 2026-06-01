@@ -22,7 +22,7 @@ export function getCatThemeFrameForCatReader(readerId: CatReaderId): string {
   return manyangAssets.backgrounds.themeFrames[reader.assetKey];
 }
 
-export function CatThemeFrameBackground({ className = "object-contain object-top opacity-90" }: CatThemeFrameBackgroundProps) {
+export function CatThemeFrameBackground({ className = "object-cover object-top opacity-90" }: CatThemeFrameBackgroundProps) {
   const selectedCatReaderId = useSyncExternalStore(
     subscribeToSelectedCatReader,
     getSelectedCatReaderSnapshotFromBrowser,

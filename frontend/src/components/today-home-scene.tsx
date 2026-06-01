@@ -16,6 +16,7 @@ import {
 import { getCatReaderUiTheme } from "@/lib/cat-reader-ui-theme";
 import { getHomeTitleTheme } from "@/lib/home-title-theme";
 import { manyangAssets } from "@/lib/manyang-assets";
+import { cn } from "@/lib/styles";
 
 export function TodayHomeScene() {
   const selectedCatReaderId = useSyncExternalStore(
@@ -27,7 +28,10 @@ export function TodayHomeScene() {
   const uiTheme = getCatReaderUiTheme(selectedReader.id);
   const titleTheme = getHomeTitleTheme(selectedReader.id);
   const selectedBackground = manyangAssets.backgrounds[selectedReader.homeBackgroundKey];
-  const selectedBackgroundClassName = "object-cover opacity-100";
+  const selectedBackgroundClassName = cn(
+    "home-cat-background object-cover opacity-100",
+    `home-cat-background-${selectedReader.id.replace("_", "-")}`,
+  );
 
   return (
     <AppShell

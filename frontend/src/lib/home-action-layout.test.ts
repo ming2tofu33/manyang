@@ -1,7 +1,10 @@
 import { describe, expect, test } from "vitest";
 
 import {
+  homeActionButtonClassName,
+  homeActionButtonContentClassName,
   homeActionGroupClassName,
+  homeActionQuestionClassName,
   homeActionRootClassName,
   homeStageLayout,
   nightHomeActionGroupClassName,
@@ -24,6 +27,9 @@ describe("home action layout", () => {
     expect(homeActionRootClassName).toContain("home-action-stage");
     expect(homeActionRootClassName).toContain("shrink-0");
     expect(homeActionGroupClassName).toContain("home-action-group");
+    expect(homeActionQuestionClassName).toContain("home-action-question");
+    expect(homeActionButtonClassName).toContain("home-action-button");
+    expect(homeActionButtonContentClassName).toContain("home-action-button-copy");
   });
 
   test("moves night home actions down without transform-based scroll overflow", () => {

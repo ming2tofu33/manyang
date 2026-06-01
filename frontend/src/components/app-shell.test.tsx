@@ -41,8 +41,8 @@ describe("AppShell", () => {
       </AppShell>,
     );
 
-    expect(markup).toContain("theme-frame-black-cat-v3.png");
-    expect(markup).toContain("object-contain object-top opacity-90");
+    expect(markup).toContain("theme-background-black-cat-v4.png");
+    expect(markup).toContain("object-cover object-top opacity-90");
     expect(markup).toContain('data-cat-theme-frame="current"');
     expect(markup).not.toContain('src="/manyang/backgrounds/default.webp"');
   });

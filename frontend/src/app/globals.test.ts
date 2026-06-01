@@ -20,6 +20,13 @@ describe("global animation styles", () => {
   test("defines the home cat transition animation classes and reduced motion fallback", () => {
     expect(globalsCss).toContain(".home-cat-transition-current");
     expect(globalsCss).toContain(".home-cat-transition-previous");
+    expect(globalsCss).toContain(".home-cat-background");
+    expect(globalsCss).toContain(".home-action-stage");
+    expect(globalsCss).toContain(".home-action-button");
+    expect(globalsCss).toContain(".home-effect-stage");
+    expect(globalsCss).toContain(".home-effect-target");
+    expect(globalsCss).toContain("@media (max-width: 380px) and (max-height: 740px)");
+    expect(globalsCss).toContain("@media (min-width: 420px) and (min-height: 900px)");
     expect(globalsCss).toContain(".home-cat-card-glimmer");
     expect(globalsCss).toContain("@keyframes home-cat-current-reveal");
     expect(globalsCss).toContain("@keyframes home-cat-previous-fade");

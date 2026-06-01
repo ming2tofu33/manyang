@@ -19,3 +19,7 @@ export const homeStageLayout = {
 export const homeActionRootClassName = "home-action-stage mt-auto shrink-0 space-y-2 pb-3";
 export const homeActionGroupClassName = "home-action-group space-y-2";
 export const nightHomeActionGroupClassName = "home-action-group mt-4 mb-0 space-y-0";
+export const homeActionQuestionClassName = "home-action-question mx-auto font-semibold";
+export const homeActionButtonClassName = "home-action-button mx-auto -my-1.5 block w-[76%] max-w-[288px] px-2 py-0";
+export const homeActionButtonContentClassName =
+  "home-action-button-copy pb-0.5 text-[1.42rem] text-[var(--manyang-cat-button-text)] [text-shadow:var(--manyang-cat-button-shadow)]";

@@ -5,7 +5,10 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 
 import { AssetImageTextButton } from "./asset-primitives";
 import {
+  homeActionButtonClassName,
+  homeActionButtonContentClassName,
   homeActionGroupClassName,
+  homeActionQuestionClassName,
   homeActionRootClassName,
   nightHomeActionGroupClassName,
 } from "@/lib/home-action-layout";
@@ -25,9 +28,9 @@ export function PrimaryDreamButton() {
       frame={manyangAssets.buttons.dreammemoryWrite}
       width={860}
       height={235}
-      className="mx-auto -my-1.5 block w-[76%] max-w-[288px] px-2 py-0"
+      className={homeActionButtonClassName}
       imageClassName="manyang-button-glow"
-      contentClassName="pb-0.5 text-[1.42rem] text-[var(--manyang-cat-button-text)] [text-shadow:var(--manyang-cat-button-shadow)]"
+      contentClassName={homeActionButtonContentClassName}
     >
       꿈 들려주기
     </AssetImageTextButton>
@@ -52,9 +55,9 @@ function DailyTarotButton() {
       frame={manyangAssets.buttons.dreammemoryWrite}
       width={860}
       height={235}
-      className="mx-auto -my-1.5 block w-[76%] max-w-[288px] px-2 py-0"
+      className={homeActionButtonClassName}
       imageClassName="manyang-button-glow"
-      contentClassName="pb-0.5 text-[1.42rem] text-[var(--manyang-cat-button-text)] [text-shadow:var(--manyang-cat-button-shadow)]"
+      contentClassName={homeActionButtonContentClassName}
     >
       오늘의 타로 보기
     </AssetImageTextButton>
@@ -80,7 +83,8 @@ export function TodayHomeActions() {
       <div className="px-3 pb-1 text-center">
         <p
           className={cn(
-            "mx-auto font-semibold text-[#fff3d7] [text-shadow:0_0_14px_rgba(0,0,0,0.82)]",
+            homeActionQuestionClassName,
+            "text-[#fff3d7] [text-shadow:0_0_14px_rgba(0,0,0,0.82)]",
             "text-[var(--manyang-cat-home-text)] [text-shadow:var(--manyang-cat-home-text-shadow)]",
             homeState.checkInBadge ? "max-w-[19rem] text-[14px] leading-5" : "text-[15px]",
           )}

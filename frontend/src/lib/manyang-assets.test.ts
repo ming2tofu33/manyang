@@ -121,10 +121,10 @@ describe("manyang assets", () => {
     expect(manyangAssets.backgrounds.cheeseCatHome).toBe("/manyang/backgrounds/home-cheese-cat.webp");
     expect(manyangAssets.backgrounds.grayCatHome).toBe("/manyang/backgrounds/home-gray-cat.webp");
     expect(manyangAssets.backgrounds.default).toBe("/manyang/backgrounds/default.webp");
-    expect(manyangAssets.backgrounds.themeFrames.blackCat).toBe("/manyang/backgrounds/theme-frame-black-cat-v3.png");
-    expect(manyangAssets.backgrounds.themeFrames.whiteCat).toBe("/manyang/backgrounds/theme-frame-white-cat-v3.png");
-    expect(manyangAssets.backgrounds.themeFrames.cheeseCat).toBe("/manyang/backgrounds/theme-frame-cheese-cat-v3.png");
-    expect(manyangAssets.backgrounds.themeFrames.grayCat).toBe("/manyang/backgrounds/theme-frame-gray-cat-v3.png");
+    expect(manyangAssets.backgrounds.themeFrames.blackCat).toBe("/manyang/backgrounds/theme-background-black-cat-v4.png");
+    expect(manyangAssets.backgrounds.themeFrames.whiteCat).toBe("/manyang/backgrounds/theme-background-white-cat-v4.png");
+    expect(manyangAssets.backgrounds.themeFrames.cheeseCat).toBe("/manyang/backgrounds/theme-background-cheese-cat-v4.png");
+    expect(manyangAssets.backgrounds.themeFrames.grayCat).toBe("/manyang/backgrounds/theme-background-gray-cat-v4.png");
     expect(manyangAssets.backgrounds.blackCatInterpretation).toBe("/manyang/backgrounds/interpretation-black-cat.webp");
     expect(manyangAssets.backgrounds.whiteCatInterpretation).toBe("/manyang/backgrounds/interpretation-white-cat.webp");
     expect(manyangAssets.backgrounds.cheeseCatInterpretation).toBe("/manyang/backgrounds/interpretation-cheese-cat.webp");

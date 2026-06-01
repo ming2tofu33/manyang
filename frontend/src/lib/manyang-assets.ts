@@ -10,10 +10,10 @@ export const manyangAssets = {
     cheeseCatInterpretation: "/manyang/backgrounds/interpretation-cheese-cat.webp",
     grayCatInterpretation: "/manyang/backgrounds/interpretation-gray-cat.webp",
     themeFrames: {
-      blackCat: "/manyang/backgrounds/theme-frame-black-cat-v3.png",
-      whiteCat: "/manyang/backgrounds/theme-frame-white-cat-v3.png",
-      cheeseCat: "/manyang/backgrounds/theme-frame-cheese-cat-v3.png",
-      grayCat: "/manyang/backgrounds/theme-frame-gray-cat-v3.png",
+      blackCat: "/manyang/backgrounds/theme-background-black-cat-v4.png",
+      whiteCat: "/manyang/backgrounds/theme-background-white-cat-v4.png",
+      cheeseCat: "/manyang/backgrounds/theme-background-cheese-cat-v4.png",
+      grayCat: "/manyang/backgrounds/theme-background-gray-cat-v4.png",
     },
   },
   illustrations: {

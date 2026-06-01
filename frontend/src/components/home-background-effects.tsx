@@ -6,8 +6,8 @@ import { cn } from "@/lib/styles";
 
 function getPositionStyle(target: HomeBackgroundEffectTarget): CSSProperties {
   return {
-    left: `${target.x}%`,
-    top: `${target.y}%`,
+    left: `calc(${target.x}% + var(--home-effect-x-offset, 0px))`,
+    top: `calc(${target.y}% + var(--home-effect-y-offset, 0px))`,
     width: `${target.size}px`,
     height: `${target.size}px`,
   };
@@ -40,7 +40,7 @@ export function HomeBackgroundEffects({ className, readerId }: { className?: str
 
   return (
     <div
-      className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)}
+      className={cn("home-effect-stage pointer-events-none absolute inset-0 overflow-hidden", className)}
       aria-hidden="true"
       data-home-effect-stage={stageLabel}
     >
@@ -48,7 +48,7 @@ export function HomeBackgroundEffects({ className, readerId }: { className?: str
         <span
           key={target.name}
           data-home-effect={target.name}
-          className="absolute -translate-x-1/2 -translate-y-1/2"
+          className="home-effect-target absolute"
           style={getPositionStyle(target)}
         >
           <span className={getEffectClassName(target)} style={getAnimationStyle(target)} />

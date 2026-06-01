@@ -293,6 +293,39 @@ button {
 }
 
 /* Home Background Effects */
+.home-cat-background {
+  object-position: 50% 50%;
+}
+
+.home-action-stage {
+  margin-top: auto;
+  padding-bottom: 0.75rem;
+}
+
+.home-action-question {
+  font-size: 15px;
+}
+
+.home-action-button {
+  width: min(76%, 288px);
+  max-width: none;
+}
+
+.home-action-button-copy {
+  font-size: 1.42rem;
+}
+
+.home-effect-stage {
+  --home-effect-x-offset: 0px;
+  --home-effect-y-offset: 0px;
+  --home-effect-scale: 1;
+}
+
+.home-effect-target {
+  transform: translate3d(-50%, -50%, 0) scale(var(--home-effect-scale));
+  transform-origin: center;
+}
+
 .home-live-effect {
   contain: layout paint;
   mix-blend-mode: screen;
@@ -396,6 +429,61 @@ button {
 
 .home-live-smoke.home-live-cool {
   filter: blur(9px) drop-shadow(0 0 28px rgba(153, 131, 202, 0.48));
+}
+
+@media (max-width: 380px) and (max-height: 740px) {
+  .home-cat-background {
+    object-position: 50% 52%;
+  }
+
+  .home-action-stage {
+    padding-bottom: 0.25rem;
+    row-gap: 0.35rem;
+  }
+
+  .home-action-group {
+    row-gap: 0.35rem;
+  }
+
+  .home-action-question {
+    font-size: 13px;
+    line-height: 1.35;
+  }
+
+  .home-action-button {
+    width: min(74%, 270px);
+    max-width: none;
+  }
+
+  .home-action-button-copy {
+    font-size: 1.24rem;
+  }
+
+  .home-effect-stage {
+    --home-effect-scale: 0.9;
+    --home-effect-y-offset: -2px;
+  }
+}
+
+@media (min-width: 420px) and (min-height: 900px) {
+  .home-action-stage {
+    padding-bottom: 1rem;
+    row-gap: 0.65rem;
+  }
+
+  .home-action-button {
+    width: min(78%, 304px);
+    max-width: none;
+  }
+
+  .home-action-button-copy {
+    font-size: 1.5rem;
+  }
+
+  .home-effect-stage {
+    --home-effect-scale: 1.08;
+    --home-effect-y-offset: 2px;
+  }
 }
 
 .home-cat-transition-current {

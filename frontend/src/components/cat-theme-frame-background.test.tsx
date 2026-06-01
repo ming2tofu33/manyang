@@ -5,17 +5,17 @@ import { CatThemeFrameBackground, getCatThemeFrameForCatReader } from "./cat-the
 
 describe("CatThemeFrameBackground", () => {
   test("maps selected cat readers to cat-specific theme frames", () => {
-    expect(getCatThemeFrameForCatReader("black_cat")).toBe("/manyang/backgrounds/theme-frame-black-cat-v3.png");
-    expect(getCatThemeFrameForCatReader("white_cat")).toBe("/manyang/backgrounds/theme-frame-white-cat-v3.png");
-    expect(getCatThemeFrameForCatReader("cheese_cat")).toBe("/manyang/backgrounds/theme-frame-cheese-cat-v3.png");
-    expect(getCatThemeFrameForCatReader("gray_cat")).toBe("/manyang/backgrounds/theme-frame-gray-cat-v3.png");
+    expect(getCatThemeFrameForCatReader("black_cat")).toBe("/manyang/backgrounds/theme-background-black-cat-v4.png");
+    expect(getCatThemeFrameForCatReader("white_cat")).toBe("/manyang/backgrounds/theme-background-white-cat-v4.png");
+    expect(getCatThemeFrameForCatReader("cheese_cat")).toBe("/manyang/backgrounds/theme-background-cheese-cat-v4.png");
+    expect(getCatThemeFrameForCatReader("gray_cat")).toBe("/manyang/backgrounds/theme-background-gray-cat-v4.png");
   });
 
   test("server render falls back to the default black cat frame", () => {
     const markup = renderToStaticMarkup(<CatThemeFrameBackground />);
 
-    expect(markup).toContain("theme-frame-black-cat-v3.png");
-    expect(markup).toContain("object-contain object-top opacity-90");
+    expect(markup).toContain("theme-background-black-cat-v4.png");
+    expect(markup).toContain("object-cover object-top opacity-90");
     expect(markup).toContain('data-cat-theme-frame="current"');
     expect(markup).toContain('data-cat-theme-frame-reader="black_cat"');
   });

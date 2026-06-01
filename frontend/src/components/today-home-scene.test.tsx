@@ -20,6 +20,8 @@ describe("TodayHomeScene", () => {
 
     expect(markup).toContain('data-home-cat-transition="root"');
     expect(markup).toContain("home-cat-transition-current");
+    expect(markup).toContain("home-cat-background");
+    expect(markup).toContain("home-cat-background-black-cat");
     expect(markup).not.toContain("brightness-[");
     expect(markup).not.toContain("contrast-[");
     expect(markup).not.toContain("saturate-[");

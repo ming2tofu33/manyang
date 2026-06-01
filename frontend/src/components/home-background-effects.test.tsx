@@ -22,6 +22,8 @@ describe("HomeBackgroundEffects", () => {
     const markup = renderToStaticMarkup(<HomeBackgroundEffects />);
 
     expect(markup).toContain('data-home-effect-stage="390x844"');
+    expect(markup).toContain("home-effect-stage");
+    expect(markup).toContain("home-effect-target");
   });
 
   it("puts animation delays on the animated element instead of the position wrapper", () => {
