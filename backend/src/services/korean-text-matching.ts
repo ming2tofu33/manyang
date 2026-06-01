@@ -65,6 +65,51 @@ const KOREAN_SUFFIXES = [
   "였고",
 ];
 
+// KOREAN_SUFFIXES 중 명사 조사가 아닌 "동사·형용사 어미"만 모은 부분집합.
+// 단음절 명사가 동사 활용형과 겹칠 때(불 ↔ 불다) 그 활용 어미를 골라 막는 데 쓴다.
+const VERB_ENDINGS = [
+  "다",
+  "고",
+  "던",
+  "어",
+  "아",
+  "어요",
+  "아요",
+  "어도",
+  "아도",
+  "어서",
+  "아서",
+  "다가",
+  "하다가",
+  "하는데",
+  "했어",
+  "진",
+  "는데",
+  "는지",
+  "는지는",
+  "면서",
+  "었어",
+  "았어",
+  "였어",
+  "었어요",
+  "았어요",
+  "였어요",
+  "었고",
+  "였고",
+] as const;
+
+// 동음이의 가드: 단음절 명사 라벨이 다른 단어의 활용형/파생형과 겹칠 때,
+// 해당 접미가 붙은 토큰은 매치에서 제외한다(term은 compact 기준).
+// 이건 심볼의 의미가 아니라 "한국어 형태론" 사실이라 KOREAN_SUFFIXES 옆에 둔다.
+//   별 + 로/도  → 별로(부사)·별도(따로)  차단, 별이/별을(star)  유지
+//   말 + 로/도  → 말로(by words)·말도(idiom) 차단, 말을/말이(horse) 유지
+//   불 + 동사어미 → 불었어/불어/불고(불다)   차단, 불이/불을(fire)  유지
+const SUFFIX_GUARDS: Record<string, readonly string[]> = {
+  별: ["로", "도"],
+  말: ["로", "도"],
+  불: VERB_ENDINGS,
+};
+
 export function normalizeText(text: string): string {
   return text.trim().toLocaleLowerCase();
 }
@@ -115,6 +160,10 @@ function tokenMatchesTerm(term: string, token: string): boolean {
   if (containsHangul(termKey)) {
     if (tokenKey.startsWith(termKey)) {
       const suffix = tokenKey.slice(termKey.length);
+
+      if (SUFFIX_GUARDS[termKey]?.includes(suffix)) {
+        return false;
+      }
 
       return KOREAN_SUFFIXES.includes(suffix);
     }

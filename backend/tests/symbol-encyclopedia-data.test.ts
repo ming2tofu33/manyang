@@ -121,6 +121,10 @@ const acceptedSymbolIds = [
   "monk",
   "prison",
   "watch",
+  "hand",
+  "foot",
+  "horse",
+  "star",
 ];
 
 const phase2BatchSymbolIds = [
