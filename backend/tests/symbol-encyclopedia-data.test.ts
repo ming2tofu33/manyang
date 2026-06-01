@@ -95,6 +95,12 @@ const acceptedSymbolIds = [
   "bear",
   "river",
   "anger",
+  "whale",
+  "butterfly",
+  "market",
+  "cave",
+  "book",
+  "war",
 ];
 
 const phase2BatchSymbolIds = [
