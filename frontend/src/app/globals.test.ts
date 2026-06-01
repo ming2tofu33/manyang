@@ -110,4 +110,37 @@ describe("global animation styles", () => {
     expect(globalsCss).toContain("  .animate-orb-3 {");
     expect(globalsCss).toContain("    animation: none !important;");
   });
+
+  test("defines tarot shuffle and flip animations with reduced motion fallbacks", () => {
+    expect(globalsCss).toContain(".tarot-shuffle-intro");
+    expect(globalsCss).toContain("animation: tarot-shuffle-intro-dismiss 5s ease forwards;");
+    expect(globalsCss).toContain(".tarot-draw-stage-shuffling [data-daily-tarot-deck]");
+    expect(globalsCss).toContain("animation: tarot-deck-reveal-after-shuffle 5s ease forwards;");
+    expect(globalsCss).toContain("@keyframes tarot-deck-reveal-after-shuffle");
+    expect(globalsCss).toContain("@keyframes tarot-shuffle-intro-dismiss");
+    expect(globalsCss).toContain(".tarot-shuffle-card");
+    expect(globalsCss).toContain("animation: tarot-shuffle-deal 4.25s cubic-bezier(0.22, 1, 0.36, 1) both;");
+    expect(globalsCss).toContain("@keyframes tarot-shuffle-deal");
+    expect(globalsCss).toContain(".tarot-selected-card-reveal");
+    expect(globalsCss).toContain(".tarot-selected-card-reveal-inner");
+    expect(globalsCss).toContain(".tarot-selected-card-reveal-back");
+    expect(globalsCss).toContain(".tarot-selected-card-reveal-front");
+    expect(globalsCss).toContain("@keyframes tarot-selected-card-lift");
+    expect(globalsCss).toContain("@keyframes tarot-selected-card-flip");
+    expect(globalsCss).toContain("@keyframes tarot-selected-card-back-face");
+    expect(globalsCss).toContain("@keyframes tarot-selected-card-front-face");
+    expect(globalsCss).toContain("transform: scaleX(0.045);");
+    expect(globalsCss).toContain("z-index: 2;");
+    expect(globalsCss).not.toContain("transform: rotateY(112deg);");
+    expect(globalsCss).toContain(".tarot-loading-to-result");
+    expect(globalsCss).toContain("animation: tarot-loading-panel-to-result 1200ms cubic-bezier(0.22, 1, 0.36, 1) both;");
+    expect(globalsCss).toContain(".tarot-loading-card-to-result");
+    expect(globalsCss).toContain("animation: tarot-loading-card-to-result 1200ms cubic-bezier(0.22, 1, 0.36, 1) both;");
+    expect(globalsCss).toContain("@keyframes tarot-loading-card-to-result");
+    expect(globalsCss).toContain(".tarot-result-card-enter");
+    expect(globalsCss).toContain(".tarot-result-content-enter");
+    expect(globalsCss).toContain("@keyframes tarot-result-content-enter");
+    expect(globalsCss).toContain("  .tarot-shuffle-intro {");
+    expect(globalsCss).toContain("    visibility: hidden !important;");
+  });
 });

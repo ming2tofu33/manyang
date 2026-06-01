@@ -29,6 +29,8 @@ describe("EncyclopediaDetailContent", () => {
     expect(markup).toContain("마음을 쉽게 열지 않는 경계");
     expect(markup).toContain("고양이가 다가왔나요");
     expect(markup).toContain("상징 힌트");
+    expect(markup).toContain("/manyang/ui/semantic-icons/semantic-paw.png");
+    expect(markup).not.toContain("/manyang/ui/semantic-icons/semantic-door.png");
     expect(markup).toContain("href=\"/write?symbol=cat\"");
     expect(markup).toContain("/manyang/ui/buttons/dreammemory-submit-frame-slim.png");
     expect(markup).toContain("href=\"/encyclopedia/darkness\"");

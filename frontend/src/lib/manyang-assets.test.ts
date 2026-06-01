@@ -121,11 +121,14 @@ describe("manyang assets", () => {
     expect(manyangAssets.backgrounds.cheeseCatHome).toBe("/manyang/backgrounds/home-cheese-cat.webp");
     expect(manyangAssets.backgrounds.grayCatHome).toBe("/manyang/backgrounds/home-gray-cat.webp");
     expect(manyangAssets.backgrounds.default).toBe("/manyang/backgrounds/default.webp");
+    expect(manyangAssets.backgrounds.themeFrames.blackCat).toBe("/manyang/backgrounds/theme-frame-black-cat-v3.png");
+    expect(manyangAssets.backgrounds.themeFrames.whiteCat).toBe("/manyang/backgrounds/theme-frame-white-cat-v3.png");
+    expect(manyangAssets.backgrounds.themeFrames.cheeseCat).toBe("/manyang/backgrounds/theme-frame-cheese-cat-v3.png");
+    expect(manyangAssets.backgrounds.themeFrames.grayCat).toBe("/manyang/backgrounds/theme-frame-gray-cat-v3.png");
     expect(manyangAssets.backgrounds.blackCatInterpretation).toBe("/manyang/backgrounds/interpretation-black-cat.webp");
     expect(manyangAssets.backgrounds.whiteCatInterpretation).toBe("/manyang/backgrounds/interpretation-white-cat.webp");
     expect(manyangAssets.backgrounds.cheeseCatInterpretation).toBe("/manyang/backgrounds/interpretation-cheese-cat.webp");
     expect(manyangAssets.backgrounds.grayCatInterpretation).toBe("/manyang/backgrounds/interpretation-gray-cat.webp");
-    expect(manyangAssets.illustrations.dreamseed).toBe("/manyang/backgrounds/dreamseed.webp");
     expect(manyangAssets.illustrations.dreamseedByCat.blackCat).toBe(
       "/manyang/backgrounds/dreamseed-background-black-cat-v2.png",
     );
@@ -166,11 +169,14 @@ describe("manyang assets", () => {
       manyangAssets.backgrounds.cheeseCatHome,
       manyangAssets.backgrounds.grayCatHome,
       manyangAssets.backgrounds.default,
+      manyangAssets.backgrounds.themeFrames.blackCat,
+      manyangAssets.backgrounds.themeFrames.whiteCat,
+      manyangAssets.backgrounds.themeFrames.cheeseCat,
+      manyangAssets.backgrounds.themeFrames.grayCat,
       manyangAssets.backgrounds.blackCatInterpretation,
       manyangAssets.backgrounds.whiteCatInterpretation,
       manyangAssets.backgrounds.cheeseCatInterpretation,
       manyangAssets.backgrounds.grayCatInterpretation,
-      manyangAssets.illustrations.dreamseed,
       manyangAssets.illustrations.dreamseedByCat.blackCat,
       manyangAssets.illustrations.dreamseedByCat.whiteCat,
       manyangAssets.illustrations.dreamseedByCat.cheeseCat,
@@ -210,11 +216,14 @@ describe("manyang assets", () => {
 
   test("keeps optimized shared runtime assets at their source dimensions", () => {
     expect(readImageSize(manyangAssets.backgrounds.default)).toEqual({ width: 853, height: 1844 });
+    expect(readImageSize(manyangAssets.backgrounds.themeFrames.blackCat)).toEqual({ width: 853, height: 1660 });
+    expect(readImageSize(manyangAssets.backgrounds.themeFrames.whiteCat)).toEqual({ width: 853, height: 1660 });
+    expect(readImageSize(manyangAssets.backgrounds.themeFrames.cheeseCat)).toEqual({ width: 853, height: 1660 });
+    expect(readImageSize(manyangAssets.backgrounds.themeFrames.grayCat)).toEqual({ width: 853, height: 1660 });
     expect(readImageSize(manyangAssets.backgrounds.blackCatInterpretation)).toEqual({ width: 853, height: 1844 });
     expect(readImageSize(manyangAssets.backgrounds.whiteCatInterpretation)).toEqual({ width: 853, height: 1844 });
     expect(readImageSize(manyangAssets.backgrounds.cheeseCatInterpretation)).toEqual({ width: 941, height: 1672 });
     expect(readImageSize(manyangAssets.backgrounds.grayCatInterpretation)).toEqual({ width: 852, height: 1846 });
-    expect(readImageSize(manyangAssets.illustrations.dreamseed)).toEqual({ width: 1254, height: 1254 });
     expect(readImageSize(manyangAssets.illustrations.dreamseedByCat.blackCat)).toEqual({ width: 1254, height: 1254 });
     expect(readImageSize(manyangAssets.illustrations.dreamseedByCat.whiteCat)).toEqual({ width: 1254, height: 1254 });
     expect(readImageSize(manyangAssets.illustrations.dreamseedByCat.cheeseCat)).toEqual({ width: 1254, height: 1254 });
@@ -259,7 +268,6 @@ describe("manyang assets", () => {
       ["/manyang/backgrounds/interpretation-white-cat.png", manyangAssets.backgrounds.whiteCatInterpretation, 0.2],
       ["/manyang/backgrounds/interpretation-cheese-cat.png", manyangAssets.backgrounds.cheeseCatInterpretation, 0.2],
       ["/manyang/backgrounds/interpretation-gray-cat.png", manyangAssets.backgrounds.grayCatInterpretation, 0.2],
-      ["/manyang/backgrounds/dreamseed.png", manyangAssets.illustrations.dreamseed, 0.35],
       ["/manyang/backgrounds/morning-illustration.png", manyangAssets.illustrations.morning, 0.35],
       ["/manyang/references/cat-black-profile.png", manyangAssets.illustrations.blackCatProfile, 0.35],
       ["/manyang/references/cat-white-profile.png", manyangAssets.illustrations.whiteCatProfile, 0.35],
@@ -386,29 +394,6 @@ describe("manyang assets", () => {
     });
   });
 
-  test("exposes the added common action icon assets", () => {
-    expect(manyangAssets.icons.close).toBe("/manyang/cutouts/icons/33-circle-close.png");
-    expect(manyangAssets.icons.check).toBe("/manyang/cutouts/icons/34-circle-check.png");
-    expect(manyangAssets.icons.help).toBe("/manyang/cutouts/icons/35-circle-help.png");
-
-    [
-      manyangAssets.icons.arrowLeft,
-      manyangAssets.icons.share,
-      manyangAssets.icons.bell,
-      manyangAssets.icons.settings,
-      manyangAssets.icons.trash,
-      manyangAssets.icons.profile,
-      manyangAssets.icons.bookmark,
-      manyangAssets.icons.search,
-      manyangAssets.icons.calendar,
-      manyangAssets.icons.close,
-      manyangAssets.icons.check,
-      manyangAssets.icons.help,
-    ].forEach((assetPath) => {
-      expect(publicAssetExists(assetPath)).toBe(true);
-    });
-  });
-
   test("exposes separated action glyph assets for CSS circle icon buttons", () => {
     expect(manyangAssets.actionIcons.arrowLeft).toBe("/manyang/ui/action-icons/action-arrow-left.png");
     expect(manyangAssets.actionIcons.bell).toBe("/manyang/ui/action-icons/action-bell.png");
@@ -437,6 +422,27 @@ describe("manyang assets", () => {
 
     Object.values(manyangAssets.semanticIcons).forEach((assetPath) => {
       expect(publicAssetExists(assetPath)).toBe(true);
+    });
+  });
+
+  test("exposes keyword and section icon assets for routine chips", () => {
+    expect(Object.keys(manyangAssets.keywordIcons)).toHaveLength(44);
+    expect(manyangAssets.keywordIcons.peaceful).toBe("/manyang/ui/keyword-icons/keyword-peaceful.png");
+    expect(manyangAssets.keywordIcons.coldSweat).toBe("/manyang/ui/keyword-icons/keyword-cold-sweat.png");
+    expect(manyangAssets.keywordIcons.lightBody).toBe("/manyang/ui/keyword-icons/keyword-light-body.png");
+
+    Object.values(manyangAssets.keywordIcons).forEach((assetPath) => {
+      expect(publicAssetExists(assetPath)).toBe(true);
+      expect(readImageSize(assetPath)).toEqual({ width: 256, height: 256 });
+    });
+
+    expect(Object.keys(manyangAssets.sectionIcons)).toHaveLength(9);
+    expect(manyangAssets.sectionIcons.dreamAtmosphere).toBe("/manyang/ui/section-icons/section-dream-atmosphere.png");
+    expect(manyangAssets.sectionIcons.nightCondition).toBe("/manyang/ui/section-icons/section-night-condition.png");
+
+    Object.values(manyangAssets.sectionIcons).forEach((assetPath) => {
+      expect(publicAssetExists(assetPath)).toBe(true);
+      expect(readImageSize(assetPath)).toEqual({ width: 256, height: 256 });
     });
   });
 

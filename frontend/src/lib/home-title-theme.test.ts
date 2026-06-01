@@ -7,18 +7,19 @@ describe("home title theme", () => {
     const theme = getHomeTitleTheme("black_cat");
 
     expect(theme.haloClassName).toContain("rgba(0,0,0,0.80)");
-    expect(theme.eyebrowClassName).toContain("text-[#f4b65f]");
+    expect(theme.eyebrowClassName).toContain("text-[var(--manyang-cat-eyebrow)]");
     expect(theme.eyebrowClassName).toContain("tracking-[0.16em]");
-    expect(theme.titleClassName).toContain("text-[#ffd98a]");
+    expect(theme.titleClassName).toContain("text-[var(--manyang-cat-title)]");
+    expect(theme.titleClassName).toContain("[text-shadow:var(--manyang-cat-title-shadow)]");
   });
 
   test("uses dark text without the halo only for the pink white-cat home", () => {
     const theme = getHomeTitleTheme("white_cat");
 
     expect(theme.haloClassName).toBe("hidden");
-    expect(theme.eyebrowClassName).toContain("text-[#2b1815]");
+    expect(theme.eyebrowClassName).toContain("text-[var(--manyang-cat-eyebrow)]");
     expect(theme.eyebrowClassName).toContain("tracking-[0.16em]");
-    expect(theme.titleClassName).toContain("text-[#21100f]");
+    expect(theme.titleClassName).toContain("text-[var(--manyang-cat-title)]");
     expect(theme.titleClassName).not.toContain("text-[#ffd98a]");
   });
 });

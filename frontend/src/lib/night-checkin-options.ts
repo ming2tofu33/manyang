@@ -1,6 +1,14 @@
+import type { KeywordIconName } from "./manyang-assets";
+
+type NightCheckInOption = {
+  id: string;
+  label: string;
+  icon: KeywordIconName;
+};
+
 export const nightCheckInRoute = "/night";
 export const legacyDreamSeedRoute = "/seed";
-export const nightCheckInBackground = "/manyang/backgrounds/dreamseed.webp";
+export const nightCheckInBackground = "/manyang/backgrounds/dreamseed-background-black-cat-v2.png";
 export const nightCheckInNoteMaxLength = 100;
 
 export const nightCheckInCopy = {
@@ -23,22 +31,22 @@ export const nightCheckInCopy = {
 } as const;
 
 export const nightCheckInMoods = [
-  { id: "calm", label: "편안함" },
-  { id: "tired", label: "지침" },
-  { id: "anxious", label: "불안함" },
-  { id: "excited", label: "설렘" },
-  { id: "low", label: "가라앉음" },
-  { id: "mixed", label: "복잡함" },
-] as const;
+  { id: "calm", label: "편안함", icon: "relaxed" },
+  { id: "tired", label: "지침", icon: "wornOut" },
+  { id: "anxious", label: "불안함", icon: "anxious" },
+  { id: "excited", label: "설렘", icon: "excited" },
+  { id: "low", label: "가라앉음", icon: "low" },
+  { id: "mixed", label: "복잡함", icon: "complex" },
+] as const satisfies readonly NightCheckInOption[];
 
 export const nightCheckInConditions = [
-  { id: "light", label: "가벼움" },
-  { id: "heavy", label: "무거움" },
-  { id: "tense", label: "긴장됨" },
-  { id: "sleepy", label: "졸림" },
-  { id: "sensitive", label: "예민함" },
-  { id: "okay", label: "괜찮음" },
-] as const;
+  { id: "light", label: "가벼움", icon: "lightBody" },
+  { id: "heavy", label: "무거움", icon: "heavy" },
+  { id: "tense", label: "긴장됨", icon: "tense" },
+  { id: "sleepy", label: "졸림", icon: "drowsy" },
+  { id: "sensitive", label: "예민함", icon: "sensitive" },
+  { id: "okay", label: "괜찮음", icon: "okay" },
+] as const satisfies readonly NightCheckInOption[];
 
 export type NightCheckInMoodId = (typeof nightCheckInMoods)[number]["id"];
 export type NightCheckInConditionId = (typeof nightCheckInConditions)[number]["id"];

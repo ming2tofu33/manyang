@@ -6,6 +6,7 @@ import { cn, ui } from "@/lib/styles";
 
 import { AssetIconButton } from "./asset-primitives";
 import { BottomNav } from "./bottom-nav";
+import { CatThemeFrameBackground } from "./cat-theme-frame-background";
 
 type AppShellProps = {
   children: ReactNode;
@@ -33,7 +34,7 @@ export function AppShell({
   backgroundOverlay,
   backgroundClassName = "object-cover opacity-68",
   scrimClassName = "absolute inset-0 bg-[linear-gradient(180deg,rgba(5,4,11,0.10)_0%,rgba(5,4,11,0.22)_52%,rgba(5,4,11,0.95)_100%)]",
-  bottomScrimClassName = "absolute inset-x-0 bottom-0 h-[42%] bg-[linear-gradient(180deg,transparent,#05040b_70%)]",
+  bottomScrimClassName = "absolute inset-x-0 bottom-0 h-[30%] bg-[linear-gradient(180deg,transparent,#05040b_80%)]",
   title,
   subtitle,
   titleIconSrc,
@@ -45,6 +46,7 @@ export function AppShell({
   contentMode = "scroll",
 }: AppShellProps) {
   const showRightAction = rightAction !== "none";
+  const shouldUseCatThemeFrame = background === manyangAssets.backgrounds.default;
   const rightIcon =
     rightAction === "share"
       ? manyangAssets.actionIcons.share
@@ -65,17 +67,20 @@ export function AppShell({
   return (
     <main className="h-[100dvh] overflow-hidden bg-[#05040b] text-[#fff3d7]">
       <section className="relative mx-auto flex h-[100dvh] w-full max-w-[430px] flex-col overflow-hidden bg-[#05040b] shadow-[0_0_90px_rgba(0,0,0,0.7)]">
-        {backgroundLayer ?? (
-          <Image
-            src={background}
-            alt=""
-            fill
-            priority
-            sizes="430px"
-            unoptimized
-            className={backgroundClassName}
-          />
-        )}
+        {backgroundLayer ??
+          (shouldUseCatThemeFrame ? (
+            <CatThemeFrameBackground />
+          ) : (
+            <Image
+              src={background}
+              alt=""
+              fill
+              priority
+              sizes="430px"
+              unoptimized
+              className={backgroundClassName}
+            />
+          ))}
         <div className={scrimClassName} />
         {backgroundOverlay ? <div className="pointer-events-none absolute inset-0 z-[3]">{backgroundOverlay}</div> : null}
         <div className={bottomScrimClassName} />

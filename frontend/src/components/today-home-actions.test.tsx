@@ -46,6 +46,8 @@ describe("TodayHomeActions", () => {
     expect(markup).toContain("px-2");
     expect(markup).toContain("py-0");
     expect(markup).toContain("text-[1.42rem]");
+    expect(markup).toContain("text-[var(--manyang-cat-button-text)]");
+    expect(markup).toContain("[text-shadow:var(--manyang-cat-button-shadow)]");
     expect(markup).toContain('width="860"');
     expect(markup).toContain('height="235"');
     expect(markup).not.toContain('height="375"');
@@ -58,6 +60,8 @@ describe("TodayHomeActions", () => {
     expect(markup).toContain('href="/morning"');
     expect(markup).toContain("기억나지 않아요");
     expect(markup).toContain("underline");
+    expect(markup).toContain("text-[var(--manyang-cat-link)]");
+    expect(markup).toContain("decoration-[var(--manyang-cat-link-decoration)]");
     expect(markup).not.toContain("/manyang/ui/buttons/dreammemory-forgot-frame.png");
   });
 

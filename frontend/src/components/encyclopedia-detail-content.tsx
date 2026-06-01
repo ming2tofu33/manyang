@@ -7,7 +7,7 @@ import {
   EncyclopediaReaderSymbolHint,
   EncyclopediaResultContextClient,
 } from "@/components/encyclopedia-reader-guide-client";
-import { manyangAssets } from "@/lib/manyang-assets";
+import { getEncyclopediaCategoryIcon } from "@/lib/encyclopedia-category-icons";
 import { cn, ui } from "@/lib/styles";
 
 export type RelatedSymbolLink = {
@@ -33,7 +33,14 @@ export function EncyclopediaDetailContent({
       <section className={cn(ui.panel, "p-5")}>
         <div className="flex items-start gap-4">
           <span className="relative h-16 w-16 shrink-0">
-            <Image src={manyangAssets.semanticIcons.door} alt="" fill sizes="64px" unoptimized className="object-contain" />
+            <Image
+              src={getEncyclopediaCategoryIcon(entry.category)}
+              alt=""
+              fill
+              sizes="64px"
+              unoptimized
+              className="object-contain"
+            />
           </span>
           <div>
             <p className="text-sm text-[#f0bc7d]">핵심 의미</p>

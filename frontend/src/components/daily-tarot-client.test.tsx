@@ -1,9 +1,16 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { dailyTarotStorageKey, type DailyTarotReading, type StorageLike } from "@/lib/daily-tarot";
 
-import { DailyTarotClient, DailyTarotLoadingPanel, getStableDailyTarotReadingSnapshot } from "./daily-tarot-client";
+import {
+  DailyTarotClient,
+  DailyTarotLoadingPanel,
+  DailyTarotRevealPanel,
+  getStableDailyTarotReadingSnapshot,
+} from "./daily-tarot-client";
 
 const foolCard = {
   id: 0,
@@ -94,21 +101,24 @@ afterEach(() => {
 });
 
 describe("DailyTarotClient", () => {
-  it("renders the draw-ready state with spread choices and generic face-down options", () => {
+  it("renders the shuffling intro over ready face-down options", () => {
     const markup = renderToStaticMarkup(<DailyTarotClient appDate="2026-05-31" initialReading={null} />);
 
     expect(markup).toContain('data-daily-tarot-state="draw-ready"');
+    expect(markup).toContain('data-daily-tarot-draw-stage="true"');
+    expect(markup).toContain('data-daily-tarot-shuffle-intro="true"');
+    expect(markup).toContain("tarot-draw-stage-shuffling");
+    expect(markup).toContain("tarot-shuffle-intro");
+    expect(markup).not.toContain("rounded-[1.2rem] bg-[#05040b]");
+    expect(markup).toContain("카드를 섞고 있어요");
+    expect(markup).not.toContain("h-[11rem] w-[11rem]");
+    expect(markup).not.toContain("bg-[#f2c27d]/7");
     expect(markup).toContain("오늘의 한 장");
     expect(markup).toContain("3장 리딩");
     expect(markup).toContain('data-daily-tarot-premium-tag="moon-pass"');
     expect(markup).toContain("Moon Pass");
     expect(markup).toContain('data-daily-tarot-deck');
-    expect(markup).toContain("mx-[-2.5rem] h-[23rem]");
-    expect(markup).toContain("w-[9.25rem]");
-    expect(markup).toContain("22장 메이저 아르카나 덱");
-    expect(markup).toContain("중앙 카드");
-    expect(markup).toContain("이전 카드");
-    expect(markup).toContain("다음 카드");
+    expect(markup).not.toContain("타로는 오늘의 흐름을 상징적으로 비춰보는 참고용 안내입니다.");
   });
 
   it("renders an existing LLM reading as the result without hidden options", () => {
@@ -118,8 +128,13 @@ describe("DailyTarotClient", () => {
 
     expect(markup).toContain('data-daily-tarot-state="result"');
     expect(markup).toContain('data-daily-tarot-result-card-size="large"');
+    expect(markup).toContain("tarot-result-card-enter");
+    expect(markup).toContain('data-daily-tarot-result-copy="true"');
+    expect(markup).toContain("tarot-result-content-enter");
+    expect(markup).toContain("--tarot-result-enter-delay");
+    expect(markup).toContain('data-daily-tarot-card-zoom-trigger="true"');
     expect(markup).toContain('data-daily-tarot-zoom-trigger="true"');
-    expect(markup).toContain('class="w-full text-center"');
+    expect(markup).toContain("tarot-result-card-enter w-full text-center");
     expect(markup).toContain("The Fool");
     expect(markup).toContain("A small first step opens the day");
     expect(markup).toContain("Today");
@@ -132,6 +147,7 @@ describe("DailyTarotClient", () => {
     expect(markup).toContain('data-daily-tarot-premium-tag="moon-pass"');
     expect(markup).toContain("Moon Pass");
     expect(markup).not.toContain("data-daily-tarot-option");
+    expect(markup).toContain("타로는 오늘의 흐름을 상징적으로 비춰보는 참고용 안내입니다.");
   });
 
   it("cleans provider artifacts from displayed generated copy", () => {
@@ -165,6 +181,88 @@ describe("DailyTarotClient", () => {
     expect(markup).toContain("해석을 완성하고 있어요");
     expect(markup).toContain("The Fool");
     expect(markup).toContain("정방향");
+    expect(markup).not.toContain("타로는 오늘의 흐름을 상징적으로 비춰보는 참고용 안내입니다.");
+  });
+
+  it("can expand the interpreting card into the result card size before showing the result", () => {
+    const markup = renderToStaticMarkup(
+      <DailyTarotLoadingPanel selections={foolReading.cards ?? []} transitionToResult />,
+    );
+
+    expect(markup).toContain('data-daily-tarot-loading-to-result="true"');
+    expect(markup).toContain("tarot-loading-to-result");
+    expect(markup).toContain("tarot-loading-card-to-result");
+    expect(markup).toContain("--tarot-loading-card-result-scale");
+    expect(markup).toContain("2.92");
+    expect(markup).not.toContain("animate-pulse");
+
+    const source = readFileSync(path.join(process.cwd(), "src", "components", "daily-tarot-client.tsx"), "utf8");
+
+    expect(source).toContain("const tarotResultTransitionMs = 1200;");
+  });
+
+  it("keeps the tarot zoom dialog from exposing horizontal scrolling", () => {
+    const source = readFileSync(path.join(process.cwd(), "src", "components", "daily-tarot-client.tsx"), "utf8");
+
+    expect(source).toContain("data-daily-tarot-zoom-scroll-area");
+    expect(source).toContain("overflow-x-hidden");
+    expect(source).not.toContain("overflow-auto rounded-[0.75rem]");
+  });
+
+  it("keeps the loading card spread centered without a loading orb", () => {
+    const loadingSelections = [
+      { position: "situation", orientation: "upright", card: foolCard },
+      { position: "flow", orientation: "reversed", card: { ...foolCard, id: 1, slug: "the-magician" } },
+      { position: "advice", orientation: "upright", card: { ...foolCard, id: 2, slug: "the-high-priestess" } },
+    ] satisfies NonNullable<DailyTarotReading["cards"]>;
+    const markup = renderToStaticMarkup(<DailyTarotLoadingPanel selections={loadingSelections} />);
+
+    expect(markup).toContain('data-daily-tarot-loading-card-stage="true"');
+    expect(markup).not.toContain('data-daily-tarot-loading-orb="true"');
+    expect(markup).toContain('data-daily-tarot-loading-card="true"');
+    expect(markup).not.toContain("h-[11.25rem] w-[11.25rem]");
+    expect(markup).toContain("translateX(-34px)");
+    expect(markup).toContain("translateX(34px)");
+    expect(markup).not.toContain("translateX(-44px)");
+    expect(markup).not.toContain("translateX(44px)");
+    expect(markup).not.toContain("-translate-x-1/2 -translate-y-1/2 animate-pulse");
+  });
+
+  it("renders a selected card lifting from the deck before the LLM loading state", () => {
+    const selection = foolReading.cards?.[0];
+
+    if (!selection) {
+      throw new Error("missing test tarot selection");
+    }
+
+    const revealOptions = [
+      { id: "option-1", cardId: 0, orientation: "upright" },
+      { id: "option-2", cardId: 1, orientation: "reversed" },
+      { id: "option-3", cardId: 2, orientation: "upright" },
+    ] satisfies Array<{ id: string; cardId: number; orientation: "upright" | "reversed" }>;
+    const markup = renderToStaticMarkup(
+      <DailyTarotRevealPanel
+        options={revealOptions}
+        selectedOptionId="option-1"
+        selectedOptionIndex={0}
+        selection={selection}
+      />,
+    );
+
+    expect(markup).toContain('data-daily-tarot-reveal="true"');
+    expect(markup).toContain('data-daily-tarot-reveal-deck="true"');
+    expect(markup).toContain('data-daily-tarot-selected-card-reveal="true"');
+    expect(markup).toContain('data-daily-tarot-flip-card="true"');
+    expect(markup).toContain('data-daily-tarot-flip-back="true"');
+    expect(markup).toContain('data-daily-tarot-flip-front="true"');
+    expect(markup).toContain('data-daily-tarot-reveal-origin="true"');
+    expect(markup).toContain("tarot-selected-card-reveal");
+    expect(markup).toContain("tarot-selected-card-reveal-inner");
+    expect(markup).toContain("tarot-selected-card-reveal-back");
+    expect(markup).toContain("tarot-selected-card-reveal-front");
+    expect(markup).not.toContain("tarot-flip-card-front tarot-selected-card-reveal-front");
+    expect(markup).toContain("고른 카드가 열리고 있어요");
+    expect(markup).toContain("The Fool");
   });
 
   it("does not render local fallback-shaped readings as completed results", () => {
@@ -182,6 +280,7 @@ describe("DailyTarotClient", () => {
     );
 
     expect(markup).toContain('data-daily-tarot-state="draw-ready"');
+    expect(markup).toContain('data-daily-tarot-shuffle-intro="true"');
     expect(markup).not.toContain('data-daily-tarot-state="result"');
     expect(markup).not.toContain("Local fallback title");
   });
@@ -212,6 +311,7 @@ describe("DailyTarotClient", () => {
     );
 
     expect(markup).toContain('data-daily-tarot-state="draw-ready"');
+    expect(markup).toContain('data-daily-tarot-shuffle-intro="true"');
     expect(markup).not.toContain('data-daily-tarot-state="result"');
     expect(markup).not.toContain("The Fool");
   });

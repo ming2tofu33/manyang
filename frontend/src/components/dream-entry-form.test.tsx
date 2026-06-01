@@ -14,7 +14,7 @@ vi.mock("next/navigation", () => ({
 describe("DreamEntryForm", () => {
   it("renders larger icons for dream atmosphere and sensation options", () => {
     const markup = renderToStaticMarkup(<DreamEntryForm />);
-    const largeOptionIconClass = "h-[1.25rem] w-[1.25rem]";
+    const largeOptionIconClass = "h-[1.5rem] w-[1.5rem]";
 
     const largeIconMatches =
       markup.match(new RegExp(largeOptionIconClass.replaceAll("[", "\\[").replaceAll("]", "\\]"), "g")) ?? [];

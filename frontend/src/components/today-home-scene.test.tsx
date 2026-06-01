@@ -25,6 +25,15 @@ describe("TodayHomeScene", () => {
     expect(markup).not.toContain("saturate-[");
   });
 
+  it("scopes home UI colors to the selected cat reader theme", () => {
+    const markup = renderToStaticMarkup(<TodayHomeScene />);
+
+    expect(markup).toContain('data-cat-ui-theme="black_cat"');
+    expect(markup).toMatch(/data-cat-ui-theme="black_cat"[^>]*class="contents"/);
+    expect(markup).toContain("--manyang-cat-title:#ffd98a");
+    expect(markup).toContain("--manyang-cat-accent:#d799ff");
+  });
+
   it("uses fixed stage content instead of an internal scroll container", () => {
     const markup = renderToStaticMarkup(<TodayHomeScene />);
 

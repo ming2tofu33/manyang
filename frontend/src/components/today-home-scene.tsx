@@ -13,6 +13,7 @@ import {
   getSelectedCatReaderSnapshotFromBrowser,
   subscribeToSelectedCatReader,
 } from "@/lib/cat-readers";
+import { getCatReaderUiTheme } from "@/lib/cat-reader-ui-theme";
 import { getHomeTitleTheme } from "@/lib/home-title-theme";
 import { manyangAssets } from "@/lib/manyang-assets";
 
@@ -23,6 +24,7 @@ export function TodayHomeScene() {
     getDefaultCatReaderSnapshot,
   );
   const selectedReader = getCatReaderById(selectedCatReaderId);
+  const uiTheme = getCatReaderUiTheme(selectedReader.id);
   const titleTheme = getHomeTitleTheme(selectedReader.id);
   const selectedBackground = manyangAssets.backgrounds[selectedReader.homeBackgroundKey];
   const selectedBackgroundClassName = "object-cover opacity-100";
@@ -43,23 +45,40 @@ export function TodayHomeScene() {
       showHeader={false}
       contentMode="fixed"
     >
-      <header className="relative flex min-h-[78px] items-start justify-between">
-        <AssetIconButton src={manyangAssets.actionIcons.bell} label="알림" size="header" className="relative z-20" />
+      <div
+        data-cat-ui-theme={uiTheme.id}
+        data-cat-ui-surface={uiTheme.surfaceMode}
+        style={uiTheme.cssVariables}
+        className="contents"
+      >
+        <header className="relative flex min-h-[78px] items-start justify-between">
+          <AssetIconButton
+            src={manyangAssets.actionIcons.bell}
+            label="알림"
+            size="header"
+            className="relative z-20 focus-visible:ring-[var(--manyang-cat-focus)]"
+          />
 
-        <div className="pointer-events-none absolute left-[4.1rem] right-[4.1rem] top-0 z-10 py-1 text-center">
-          <div className={titleTheme.haloClassName} />
-          <div className="relative">
-            <p className={`text-[11px] ${titleTheme.eyebrowClassName}`}>MANYANG DREAM READER</p>
-            <h1 className={`mt-1.5 text-[26px] font-semibold leading-tight ${titleTheme.titleClassName}`}>
-              마냥 꿈해몽
-            </h1>
+          <div className="pointer-events-none absolute left-[4.1rem] right-[4.1rem] top-0 z-10 py-1 text-center">
+            <div className={titleTheme.haloClassName} />
+            <div className="relative">
+              <p className={`text-[11px] ${titleTheme.eyebrowClassName}`}>MANYANG DREAM READER</p>
+              <h1 className={`mt-1.5 text-[26px] font-semibold leading-tight ${titleTheme.titleClassName}`}>
+                마냥 꿈해몽
+              </h1>
+            </div>
           </div>
-        </div>
 
-        <AssetIconButton src={manyangAssets.actionIcons.settings} label="설정" size="header" className="relative z-20" />
-      </header>
+          <AssetIconButton
+            src={manyangAssets.actionIcons.settings}
+            label="설정"
+            size="header"
+            className="relative z-20 focus-visible:ring-[var(--manyang-cat-focus)]"
+          />
+        </header>
 
-      <TodayHomeActions />
+        <TodayHomeActions />
+      </div>
     </AppShell>
   );
 }

@@ -34,6 +34,32 @@ describe("AppShell", () => {
     expect(markup).not.toContain("rgba(119,56,173");
   });
 
+  test("uses the selected-cat theme frame for the shared default background", () => {
+    const markup = renderToStaticMarkup(
+      <AppShell showHeader={false}>
+        <div>content</div>
+      </AppShell>,
+    );
+
+    expect(markup).toContain("theme-frame-black-cat-v3.png");
+    expect(markup).toContain("object-contain object-top opacity-90");
+    expect(markup).toContain('data-cat-theme-frame="current"');
+    expect(markup).not.toContain('src="/manyang/backgrounds/default.webp"');
+  });
+
+  test("keeps the default bottom scrim lower for short theme frame panels", () => {
+    const markup = renderToStaticMarkup(
+      <AppShell showHeader={false}>
+        <div>content</div>
+      </AppShell>,
+    );
+
+    expect(markup).toContain("h-[30%]");
+    expect(markup).toContain("#05040b_80%");
+    expect(markup).not.toContain("h-[34%]");
+    expect(markup).not.toContain("h-[42%]");
+  });
+
   test("uses a custom background layer when provided", () => {
     const markup = renderToStaticMarkup(
       <AppShell

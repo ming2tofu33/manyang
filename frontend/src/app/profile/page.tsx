@@ -18,7 +18,7 @@ export default function ProfilePage() {
       background={manyangAssets.backgrounds.default}
       title="내 꿈방"
       subtitle="나와 앱 설정을 관리하는 공간"
-      titleIconSrc={manyangAssets.icons.profile}
+      titleIconSrc={manyangAssets.actionIcons.profile}
       leftAction="none"
       rightAction="none"
     >

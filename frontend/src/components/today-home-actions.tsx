@@ -27,7 +27,7 @@ export function PrimaryDreamButton() {
       height={235}
       className="mx-auto -my-1.5 block w-[76%] max-w-[288px] px-2 py-0"
       imageClassName="manyang-button-glow"
-      contentClassName="pb-0.5 text-[1.42rem]"
+      contentClassName="pb-0.5 text-[1.42rem] text-[var(--manyang-cat-button-text)] [text-shadow:var(--manyang-cat-button-shadow)]"
     >
       꿈 들려주기
     </AssetImageTextButton>
@@ -38,7 +38,7 @@ function SecondaryForgotLink() {
   return (
     <Link
       href="/morning"
-      className="mx-auto mt-0.5 block w-fit rounded-full px-3 py-1 text-[13px] font-semibold text-[#f2c27d] underline decoration-[#f2c27d]/45 underline-offset-4 [text-shadow:0_0_12px_rgba(0,0,0,0.8)] transition hover:text-[#ffd98a] focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
+      className="mx-auto mt-0.5 block w-fit rounded-full px-3 py-1 text-[13px] font-semibold text-[var(--manyang-cat-link)] underline decoration-[var(--manyang-cat-link-decoration)] underline-offset-4 [text-shadow:var(--manyang-cat-home-text-shadow)] transition hover:text-[var(--manyang-cat-link-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--manyang-cat-focus)]"
     >
       기억나지 않아요
     </Link>
@@ -54,7 +54,7 @@ function DailyTarotButton() {
       height={235}
       className="mx-auto -my-1.5 block w-[76%] max-w-[288px] px-2 py-0"
       imageClassName="manyang-button-glow"
-      contentClassName="pb-0.5 text-[1.42rem]"
+      contentClassName="pb-0.5 text-[1.42rem] text-[var(--manyang-cat-button-text)] [text-shadow:var(--manyang-cat-button-shadow)]"
     >
       오늘의 타로 보기
     </AssetImageTextButton>
@@ -81,13 +81,14 @@ export function TodayHomeActions() {
         <p
           className={cn(
             "mx-auto font-semibold text-[#fff3d7] [text-shadow:0_0_14px_rgba(0,0,0,0.82)]",
+            "text-[var(--manyang-cat-home-text)] [text-shadow:var(--manyang-cat-home-text-shadow)]",
             homeState.checkInBadge ? "max-w-[19rem] text-[14px] leading-5" : "text-[15px]",
           )}
         >
           {homeState.question}
         </p>
         {homeState.checkInBadge ? (
-          <p className="mx-auto mt-1.5 max-w-[18rem] rounded-full border border-[#b98255]/45 bg-[#05040b]/52 px-3 py-1.5 text-[12px] font-semibold text-[#f4b65f]/90 backdrop-blur-md">
+          <p className="mx-auto mt-1.5 max-w-[18rem] rounded-full border border-[color:var(--manyang-cat-badge-border)] bg-[var(--manyang-cat-badge-bg)] px-3 py-1.5 text-[12px] font-semibold text-[var(--manyang-cat-badge-text)] backdrop-blur-md">
             {homeState.checkInBadge}
           </p>
         ) : null}

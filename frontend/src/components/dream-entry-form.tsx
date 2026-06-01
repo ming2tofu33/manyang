@@ -108,14 +108,14 @@ function OptionButton({ option, isSelected, onClick, disabled = false, iconSize 
       <span
         className={cn(
           "relative shrink-0 opacity-86 transition group-hover:brightness-125",
-          iconSize === "large" ? "h-[1.25rem] w-[1.25rem]" : "h-[0.95rem] w-[0.95rem]",
+          iconSize === "large" ? "h-[1.5rem] w-[1.5rem]" : "h-[1.15rem] w-[1.15rem]",
         )}
       >
         <Image
-          src={manyangAssets.semanticIcons[option.icon]}
+          src={manyangAssets.keywordIcons[option.icon]}
           alt=""
           fill
-          sizes={iconSize === "large" ? "28px" : "22px"}
+          sizes={iconSize === "large" ? "32px" : "26px"}
           unoptimized
           className="object-contain"
         />
@@ -465,7 +465,7 @@ export function DreamEntryForm() {
             )}
           />
           <span className="pointer-events-none absolute bottom-8 right-12 h-9 w-9 rotate-[12deg]">
-            <Image src={manyangAssets.semanticIcons.feather} alt="" fill sizes="48px" unoptimized className="object-contain opacity-70" />
+            <Image src={manyangAssets.sectionIcons.dreamInput} alt="" fill sizes="48px" unoptimized className="object-contain opacity-70" />
           </span>
           <span className="absolute bottom-6 right-5 text-[0.85rem] font-semibold text-[#c6a3a4]">
             {dreamText.length} / {dreamEntryMaxLength}
@@ -474,9 +474,14 @@ export function DreamEntryForm() {
 
         <section className="space-y-2.5">
           <div className="space-y-1">
-            <h2 className={cn("text-[1.08rem] font-semibold text-[#ffd98a]", ui.textGlow)}>
-              꿈의 분위기는 어땠나요?
-            </h2>
+            <div className="flex items-center gap-2">
+              <span className="relative h-6 w-6 shrink-0">
+                <Image src={manyangAssets.sectionIcons.dreamAtmosphere} alt="" fill sizes="24px" unoptimized className="object-contain" />
+              </span>
+              <h2 className={cn("text-[1.08rem] font-semibold text-[#ffd98a]", ui.textGlow)}>
+                꿈의 분위기는 어땠나요?
+              </h2>
+            </div>
             <p className="text-[0.78rem] font-medium text-[#d9b5a4]/78">
               선택하지 않아도 괜찮고, 최대 {dreamAtmosphereMaxSelection}개까지 고를 수 있어요.
             </p>
@@ -501,9 +506,14 @@ export function DreamEntryForm() {
 
         <section className="space-y-2.5">
           <div className="space-y-1">
-            <h2 className={cn("text-[1.08rem] font-semibold text-[#ffd98a]", ui.textGlow)}>
-              꿈에서 어떤 감각이 남았나요?
-            </h2>
+            <div className="flex items-center gap-2">
+              <span className="relative h-6 w-6 shrink-0">
+                <Image src={manyangAssets.sectionIcons.dreamSensation} alt="" fill sizes="24px" unoptimized className="object-contain" />
+              </span>
+              <h2 className={cn("text-[1.08rem] font-semibold text-[#ffd98a]", ui.textGlow)}>
+                꿈에서 어떤 감각이 남았나요?
+              </h2>
+            </div>
             <p className="text-[0.78rem] font-medium text-[#d9b5a4]/78">
               선택하지 않아도 괜찮고, 최대 {dreamSensationMaxSelection}개까지 고를 수 있어요.
             </p>

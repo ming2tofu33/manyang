@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
   useSyncExternalStore,
+  type CSSProperties,
   type MouseEvent,
   type PointerEvent,
   type TouchEvent,
@@ -47,9 +48,19 @@ type DailyTarotSnapshotCache = {
   storageValue: string | null;
 };
 
-type GenerationStatus = "idle" | "generating" | "error";
+type GenerationStatus = "idle" | "revealing" | "generating" | "transitioning-to-result" | "error";
+type DailyTarotRevealState = {
+  options: DailyTarotOption[];
+  selectedOptionId: string;
+  selectedOptionIndex: number;
+  selection: DailyTarotCardSelection;
+};
 
 let dailyTarotSnapshotCache: DailyTarotSnapshotCache | null = null;
+
+const tarotCardRevealMs = 1800;
+const tarotResultTransitionMs = 1200;
+const tarotShuffleCardCount = 7;
 
 const orientationLabels = {
   upright: "정방향",
@@ -163,12 +174,16 @@ function DailyTarotFanDeck({
   options,
   onSelect,
   disabled,
+  initialActiveIndex,
+  revealOptionId,
 }: {
   options: DailyTarotOption[];
-  onSelect: (option: DailyTarotOption) => void;
+  onSelect: (option: DailyTarotOption, index: number) => void;
   disabled?: boolean;
+  initialActiveIndex?: number;
+  revealOptionId?: string;
 }) {
-  const [activeIndex, setActiveIndex] = useState(() => Math.floor(options.length / 2));
+  const [activeIndex, setActiveIndex] = useState(() => initialActiveIndex ?? Math.floor(options.length / 2));
   const [dragStartX, setDragStartX] = useState<number | null>(null);
   const [dragDelta, setDragDelta] = useState(0);
   const dragStartXRef = useRef<number | null>(null);
@@ -176,13 +191,14 @@ function DailyTarotFanDeck({
   const removeWindowDragListenersRef = useRef<(() => void) | null>(null);
   const isDragging = dragStartX !== null;
   const safeActiveIndex = Math.min(activeIndex, Math.max(0, options.length - 1));
+  const isRevealMode = Boolean(revealOptionId);
 
   useEffect(() => {
     return () => removeWindowDragListenersRef.current?.();
   }, []);
 
   function moveDeckBy(delta: number) {
-    if (disabled || options.length === 0) {
+    if (disabled || isRevealMode || options.length === 0) {
       return;
     }
 
@@ -227,7 +243,7 @@ function DailyTarotFanDeck({
   }
 
   function startDrag(clientX: number) {
-    if (disabled) {
+    if (disabled || isRevealMode) {
       return;
     }
 
@@ -313,7 +329,7 @@ function DailyTarotFanDeck({
   }
 
   function handleCardClick(option: DailyTarotOption, index: number) {
-    if (disabled) {
+    if (disabled || isRevealMode) {
       return;
     }
 
@@ -323,7 +339,7 @@ function DailyTarotFanDeck({
     }
 
     if (index === safeActiveIndex) {
-      onSelect(option);
+      onSelect(option, index);
       return;
     }
 
@@ -335,7 +351,12 @@ function DailyTarotFanDeck({
   }
 
   return (
-    <div data-daily-tarot-deck className="mt-5">
+    <div
+      data-daily-tarot-deck
+      data-daily-tarot-reveal-deck={isRevealMode ? "true" : undefined}
+      aria-hidden={isRevealMode ? "true" : undefined}
+      className={cn("mt-5", isRevealMode ? "tarot-fan-deck-revealing" : "")}
+    >
       <div
         role="group"
         aria-label="22장 메이저 아르카나 덱"
@@ -363,7 +384,8 @@ function DailyTarotFanDeck({
           const translateY = Math.abs(adjustedOffset) * 10 + Math.abs(adjustedOffset) ** 2 * 2.4;
           const rotation = adjustedOffset * 7;
           const scale = isActive ? 1.03 : 1 - absoluteOffset * 0.035;
-          const opacity = absoluteOffset > 2 ? 0.72 : 1;
+          const isRevealOrigin = revealOptionId === option.id;
+          const opacity = isRevealOrigin ? 0 : isRevealMode ? (absoluteOffset > 2 ? 0.24 : 0.38) : absoluteOffset > 2 ? 0.72 : 1;
 
           return (
             <button
@@ -371,12 +393,14 @@ function DailyTarotFanDeck({
               type="button"
               data-daily-tarot-option={option.id}
               data-daily-tarot-active={isActive ? "true" : "false"}
+              data-daily-tarot-reveal-origin={isRevealOrigin ? "true" : undefined}
+              data-daily-tarot-reveal-side={isRevealMode && !isRevealOrigin ? "true" : undefined}
               aria-label={
                 isActive
                   ? `${orientationLabel} 중앙 카드 ${index + 1} / ${options.length} 뽑기`
                   : `${orientationLabel} 카드 ${index + 1} / ${options.length}로 이동`
               }
-              disabled={disabled}
+              disabled={disabled || isRevealMode}
               onClick={() => handleCardClick(option, index)}
               className={cn(
                 "absolute left-1/2 top-[48%] w-[9.25rem] cursor-grab outline-none active:cursor-grabbing disabled:cursor-wait",
@@ -410,7 +434,7 @@ function DailyTarotFanDeck({
         })}
       </div>
 
-      <div className="mx-auto -mt-3 flex max-w-[15rem] items-center justify-center gap-3">
+      <div data-daily-tarot-deck-controls="true" className="mx-auto -mt-3 flex max-w-[15rem] items-center justify-center gap-3">
         <button
           type="button"
           aria-label="이전 카드"
@@ -437,32 +461,171 @@ function DailyTarotFanDeck({
   );
 }
 
-export function DailyTarotLoadingPanel({ selections }: { selections: DailyTarotCardSelection[] }) {
+export function DailyTarotShuffleIntro() {
+  return (
+    <div
+      data-daily-tarot-shuffle-intro="true"
+      role="status"
+      aria-live="polite"
+      className="tarot-shuffle-intro pointer-events-auto absolute inset-0 z-30 flex items-start justify-center px-2 pb-4 pt-1 text-center"
+    >
+      <div className="w-full max-w-[22rem] rounded-[1.1rem] border border-[#b98255]/34 bg-[#05040b] px-4 py-5 ring-1 ring-[#d799ff]/10">
+        <div className="relative mx-auto h-[14.5rem] w-full max-w-[18rem] overflow-hidden">
+          {Array.from({ length: tarotShuffleCardCount }).map((_, index) => {
+            const offset = index - Math.floor(tarotShuffleCardCount / 2);
+
+            return (
+              <span
+                key={`shuffle-${index}`}
+                data-daily-tarot-shuffle-card="true"
+                className="tarot-shuffle-card absolute left-1/2 top-1/2 block h-[10.6rem] w-[6.6rem] drop-shadow-[0_16px_28px_rgba(0,0,0,0.32)]"
+                style={
+                  {
+                    "--shuffle-offset": offset,
+                    animationDelay: `${index * 120}ms`,
+                    zIndex: 20 + index,
+                  } as CSSProperties
+                }
+              >
+                <Image
+                  src={manyangAssets.tarot.cardBack}
+                  alt=""
+                  fill
+                  sizes="106px"
+                  className="object-contain"
+                  priority={index <= 3}
+                />
+              </span>
+            );
+          })}
+        </div>
+
+        <p className={cn("mt-1 text-[15px] font-bold text-[#ffe7b5]", ui.textGlow)}>
+          카드를 섞고 있어요
+        </p>
+        <p className="mt-2 text-[12px] leading-5 text-[#c7a98a]">
+          오늘의 흐름에 맞는 뒷면을 천천히 펼칠게요.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export function DailyTarotRevealPanel({
+  options,
+  selectedOptionId,
+  selectedOptionIndex,
+  selection,
+}: DailyTarotRevealState) {
+  const orientationLabel = orientationLabels[selection.orientation];
+
+  return (
+    <div
+      data-daily-tarot-reveal="true"
+      role="status"
+      aria-live="polite"
+      className="relative mt-4 min-h-[25rem] text-center"
+    >
+      <p className="text-[12px] font-semibold text-[#f2c27d]">고른 카드가 열리고 있어요.</p>
+      <DailyTarotFanDeck
+        disabled
+        initialActiveIndex={selectedOptionIndex}
+        onSelect={() => undefined}
+        options={options}
+        revealOptionId={selectedOptionId}
+      />
+
+      <div
+        data-daily-tarot-selected-card-reveal="true"
+        className="tarot-selected-card-reveal pointer-events-none absolute left-1/2 top-[48%] z-[80] w-[9.25rem]"
+      >
+        <div data-daily-tarot-flip-card="true" className="tarot-flip-card relative aspect-[5/8] w-full">
+          <div className="tarot-selected-card-reveal-inner relative h-full w-full">
+            <span
+              data-daily-tarot-flip-back="true"
+              className="tarot-flip-card-face tarot-selected-card-reveal-back absolute inset-0"
+            >
+              <Image
+                src={manyangAssets.tarot.cardBack}
+                alt=""
+                fill
+                sizes="148px"
+                className={cn("object-contain", selection.orientation === "reversed" ? "rotate-180" : "")}
+                priority
+              />
+            </span>
+            <span
+              data-daily-tarot-flip-front="true"
+              className="tarot-flip-card-face tarot-selected-card-reveal-front absolute inset-0"
+            >
+              <Image
+                src={selection.card.image}
+                alt={`${selection.card.nameKo} ${orientationLabel}`}
+                fill
+                sizes="148px"
+                className={cn("object-contain", selection.orientation === "reversed" ? "rotate-180" : "")}
+                priority
+              />
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <p className={cn("absolute inset-x-0 bottom-8 text-[13px] font-bold text-[#ffe7b5]", ui.textGlow)}>
+        {selection.card.nameKo} · {orientationLabel}
+      </p>
+    </div>
+  );
+}
+
+export function DailyTarotLoadingPanel({
+  selections,
+  transitionToResult = false,
+}: {
+  selections: DailyTarotCardSelection[];
+  transitionToResult?: boolean;
+}) {
   const selectedCards = selections.slice(0, 3);
+  const loadingCardResultScale = selectedCards.length > 1 ? "1.37" : "2.92";
 
   return (
     <div
       data-daily-tarot-loading="true"
+      data-daily-tarot-loading-to-result={transitionToResult ? "true" : undefined}
       role="status"
       aria-live="polite"
-      className="mx-auto mt-5 max-w-[22rem] rounded-[1.1rem] border border-[#b98255]/38 bg-[#05040b]/62 px-4 py-5 text-center shadow-[0_18px_42px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10"
+      className={cn(
+        "mx-auto mt-5 max-w-[22rem] rounded-[1.1rem] border border-[#b98255]/38 bg-[#05040b]/62 px-4 py-5 text-center shadow-[0_18px_42px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10",
+        transitionToResult ? "tarot-loading-to-result" : "",
+      )}
     >
-      <div className="mx-auto flex min-h-[10rem] items-center justify-center">
-        <div className="relative h-[9.5rem] w-[13rem]">
-          <span className="absolute left-1/2 top-1/2 h-[8.6rem] w-[8.6rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#f2c27d]/24 bg-[#f2c27d]/8 blur-[0.2px]" />
+      <div className="mx-auto flex min-h-[12rem] items-center justify-center">
+        <div
+          data-daily-tarot-loading-card-stage="true"
+          className={transitionToResult ? "relative h-[17.5rem] w-full max-w-[18rem]" : "relative h-[11.75rem] w-[13rem]"}
+        >
           {selectedCards.length > 0 ? (
             selectedCards.map((selection, index) => {
               const offset = index - (selectedCards.length - 1) / 2;
+              const offsetX = offset * 34;
+              const rotation = offset * 6;
 
               return (
                 <span
                   key={`${selection.position}-${selection.card.id}`}
-                  className="absolute left-1/2 top-1/2 block h-[8.8rem] w-[5.5rem] -translate-x-1/2 -translate-y-1/2 animate-pulse drop-shadow-[0_16px_28px_rgba(0,0,0,0.34)]"
+                  data-daily-tarot-loading-card="true"
+                  className={cn(
+                    "absolute left-1/2 top-1/2 grid h-[8.45rem] w-[5.3rem] place-items-center drop-shadow-[0_16px_28px_rgba(0,0,0,0.34)]",
+                    transitionToResult ? "tarot-loading-card-to-result" : "animate-pulse",
+                  )}
                   style={{
-                    animationDelay: `${index * 150}ms`,
-                    transform: `translate(-50%, -50%) translateX(${offset * 44}px) rotate(${offset * 7}deg)`,
+                    "--tarot-loading-card-offset-x": `${offsetX}px`,
+                    "--tarot-loading-card-result-scale": loadingCardResultScale,
+                    "--tarot-loading-card-rotation": `${rotation}deg`,
+                    animationDelay: transitionToResult ? "0ms" : `${index * 150}ms`,
+                    transform: `translate(-50%, -50%) translateX(${offsetX}px) rotate(${rotation}deg)`,
                     zIndex: 10 + index,
-                  }}
+                  } as CSSProperties}
                 >
                   <Image
                     src={selection.card.image}
@@ -476,7 +639,23 @@ export function DailyTarotLoadingPanel({ selections }: { selections: DailyTarotC
               );
             })
           ) : (
-            <span className="absolute left-1/2 top-1/2 block h-[8.8rem] w-[5.5rem] -translate-x-1/2 -translate-y-1/2 animate-pulse drop-shadow-[0_16px_28px_rgba(0,0,0,0.34)]">
+            <span
+              data-daily-tarot-loading-card="true"
+              className={cn(
+                "absolute left-1/2 top-1/2 grid h-[8.45rem] w-[5.3rem] place-items-center drop-shadow-[0_16px_28px_rgba(0,0,0,0.34)]",
+                transitionToResult ? "tarot-loading-card-to-result" : "-translate-x-1/2 -translate-y-1/2 animate-pulse",
+              )}
+              style={
+                transitionToResult
+                  ? ({
+                      "--tarot-loading-card-offset-x": "0px",
+                      "--tarot-loading-card-result-scale": loadingCardResultScale,
+                      "--tarot-loading-card-rotation": "0deg",
+                      transform: "translate(-50%, -50%)",
+                    } as CSSProperties)
+                  : undefined
+              }
+            >
               <Image
                 src={manyangAssets.tarot.cardBack}
                 alt=""
@@ -490,6 +669,10 @@ export function DailyTarotLoadingPanel({ selections }: { selections: DailyTarotC
         </div>
       </div>
 
+      <div
+        data-daily-tarot-loading-copy="true"
+        className={transitionToResult ? "tarot-loading-copy-to-result" : ""}
+      >
       <p className={cn("mt-2 text-[15px] font-bold text-[#ffe7b5]", ui.textGlow)}>
         해석을 완성하고 있어요
       </p>
@@ -508,6 +691,7 @@ export function DailyTarotLoadingPanel({ selections }: { selections: DailyTarotC
           ))}
         </div>
       ) : null}
+      </div>
     </div>
   );
 }
@@ -528,21 +712,37 @@ function DailyTarotResultCard({
   const resultLabel =
     selection.position === "today" ? orientationLabel : `${positionLabels[selection.position]} · ${orientationLabel}`;
   const cardSize = isLargeCard ? "large" : compact ? "compact" : "standard";
+  const cardImage = (
+    <div className="relative aspect-[5/8] drop-shadow-[0_18px_34px_rgba(0,0,0,0.34)]">
+      <Image
+        src={selection.card.image}
+        alt={`${selection.card.nameKo} ${orientationLabel}`}
+        fill
+        sizes={imageSizes}
+        className={cn("object-contain", selection.orientation === "reversed" ? "rotate-180" : "")}
+        priority
+      />
+    </div>
+  );
 
   return (
-    <div className="w-full text-center" data-daily-tarot-result-card-size={cardSize}>
-      <div className={cn("mx-auto w-full", imageMaxWidth)}>
-        <div className="relative aspect-[5/8] drop-shadow-[0_18px_34px_rgba(0,0,0,0.34)]">
-          <Image
-            src={selection.card.image}
-            alt={`${selection.card.nameKo} ${orientationLabel}`}
-            fill
-            sizes={imageSizes}
-            className={cn("object-contain", selection.orientation === "reversed" ? "rotate-180" : "")}
-            priority
-          />
-        </div>
-      </div>
+    <div className="tarot-result-card-enter w-full text-center" data-daily-tarot-result-card-size={cardSize}>
+      {onZoom ? (
+        <button
+          type="button"
+          data-daily-tarot-card-zoom-trigger="true"
+          aria-label={`${selection.card.nameKo} ${orientationLabel} 카드 크게 보기`}
+          onClick={() => onZoom(selection)}
+          className={cn(
+            "mx-auto block w-full cursor-zoom-in touch-manipulation rounded-[0.75rem] focus:outline-none focus:ring-2 focus:ring-[#d799ff]",
+            imageMaxWidth,
+          )}
+        >
+          {cardImage}
+        </button>
+      ) : (
+        <div className={cn("mx-auto w-full", imageMaxWidth)}>{cardImage}</div>
+      )}
       <p className="mt-2 text-[11px] font-bold uppercase tracking-[0.16em] text-[#f4b65f]">
         {resultLabel}
       </p>
@@ -624,11 +824,12 @@ function TarotCardZoomDialog({
 
       <div className="mx-auto mt-4 flex min-h-0 w-full max-w-[34rem] flex-1 flex-col items-center gap-3">
         <div
-          className="h-full max-h-[76vh] w-full overflow-auto rounded-[0.75rem] bg-[#05040b]/36 p-2"
+          data-daily-tarot-zoom-scroll-area="true"
+          className="h-full max-h-[76vh] w-full overflow-y-auto overflow-x-hidden rounded-[0.75rem] bg-[#05040b]/36 p-2"
           onTouchEnd={handleTouchEnd}
           onTouchMove={handleTouchMove}
           onTouchStart={handleTouchStart}
-          style={{ touchAction: "pan-x pan-y" }}
+          style={{ touchAction: "pan-y" }}
         >
           <div
             className="relative mx-auto aspect-[5/8] min-w-full"
@@ -749,7 +950,11 @@ function DailyTarotResult({
         ))}
       </div>
 
-      <div className="mt-5 space-y-3 rounded-[1rem] border border-[#b98255]/35 bg-[#05040b]/54 p-4 shadow-[0_14px_32px_rgba(0,0,0,0.22)]">
+      <div
+        data-daily-tarot-result-copy="true"
+        className="tarot-result-content-enter mt-5 space-y-3 rounded-[1rem] border border-[#b98255]/35 bg-[#05040b]/54 p-4 shadow-[0_14px_32px_rgba(0,0,0,0.22)]"
+        style={{ "--tarot-result-enter-delay": "120ms" } as CSSProperties}
+      >
         <p className="text-[15px] font-bold leading-6 text-[#ffe7b5]">{cleanTarotDisplayText(reading.title)}</p>
         <p className="text-[14px] leading-6 text-[#fff3d7]/88">{cleanTarotDisplayText(reading.message)}</p>
         {cardReadings?.map((cardReading) => (
@@ -763,7 +968,11 @@ function DailyTarotResult({
         </p>
       </div>
 
-      <div className="mt-4 grid grid-cols-2 gap-3" data-daily-tarot-result-actions="true">
+      <div
+        className="tarot-result-content-enter mt-4 grid grid-cols-2 gap-3"
+        data-daily-tarot-result-actions="true"
+        style={{ "--tarot-result-enter-delay": "220ms" } as CSSProperties}
+      >
         <AssetTextButton
           frame={manyangAssets.buttons.compactPrimary}
           iconSrc={manyangAssets.actionIcons.download}
@@ -788,14 +997,18 @@ function DailyTarotResult({
         <button
           type="button"
           onClick={onSelectThreeCard}
-          className="mx-auto mt-4 flex items-center justify-center gap-2 rounded-full border border-[#f2c27d]/55 bg-[#05040b]/54 px-5 py-2.5 text-[13px] font-bold text-[#f2c27d] shadow-[0_10px_24px_rgba(0,0,0,0.22)] focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
+          className="tarot-result-content-enter mx-auto mt-4 flex items-center justify-center gap-2 rounded-full border border-[#f2c27d]/55 bg-[#05040b]/54 px-5 py-2.5 text-[13px] font-bold text-[#f2c27d] shadow-[0_10px_24px_rgba(0,0,0,0.22)] focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
+          style={{ "--tarot-result-enter-delay": "320ms" } as CSSProperties}
         >
           3장 리딩
           <MoonPassTag />
         </button>
       ) : null}
 
-      <p className="mt-4 text-center text-[12px] leading-5 text-[#c7a98a]">
+      <p
+        className="tarot-result-content-enter mt-4 text-center text-[12px] leading-5 text-[#c7a98a]"
+        style={{ "--tarot-result-enter-delay": "420ms" } as CSSProperties}
+      >
         타로는 오늘의 흐름을 상징적으로 비춰보는 참고용 안내입니다.
       </p>
 
@@ -871,8 +1084,11 @@ export function DailyTarotClient({ appDate, initialReading }: DailyTarotClientPr
     isCompletedLlmReading(initialReading) ? initialReading : null,
   );
   const [pendingSelections, setPendingSelections] = useState<DailyTarotCardSelection[]>([]);
+  const [revealingState, setRevealingState] = useState<DailyTarotRevealState | null>(null);
   const [generationStatus, setGenerationStatus] = useState<GenerationStatus>("idle");
   const [generationError, setGenerationError] = useState<string | null>(null);
+  const revealTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const resultTransitionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const accessState = useAccessPlan();
   const canUseThreeCard = accessState.bypassAccessGate || accessState.accessPlan === "moon_pass";
   const positions = spreadPositions[selectedSpread];
@@ -898,10 +1114,42 @@ export function DailyTarotClient({ appDate, initialReading }: DailyTarotClientPr
   const availableOptions = options.filter((option) => !selectedCardIds.has(option.cardId));
   const nextPosition = positions[pendingSelections.length] ?? positions[positions.length - 1];
   const isGenerating = generationStatus === "generating";
+  const isRevealing = generationStatus === "revealing";
+  const isTransitioningToResult = generationStatus === "transitioning-to-result";
+  const isBusy = isGenerating || isRevealing || isTransitioningToResult;
+  const shouldShowShuffleIntro = pendingSelections.length === 0 && generationStatus === "idle";
+
+  useEffect(() => {
+    return () => {
+      if (revealTimerRef.current) {
+        clearTimeout(revealTimerRef.current);
+      }
+      if (resultTransitionTimerRef.current) {
+        clearTimeout(resultTransitionTimerRef.current);
+      }
+    };
+  }, []);
+
+  function clearRevealTimer() {
+    if (revealTimerRef.current) {
+      clearTimeout(revealTimerRef.current);
+      revealTimerRef.current = null;
+    }
+  }
+
+  function clearResultTransitionTimer() {
+    if (resultTransitionTimerRef.current) {
+      clearTimeout(resultTransitionTimerRef.current);
+      resultTransitionTimerRef.current = null;
+    }
+  }
 
   function resetDrawState(nextSpread: TarotSpread) {
+    clearRevealTimer();
+    clearResultTransitionTimer();
     setSelectedSpread(nextSpread);
     setPendingSelections([]);
+    setRevealingState(null);
     setGenerationStatus("idle");
     setGenerationError(null);
   }
@@ -909,7 +1157,9 @@ export function DailyTarotClient({ appDate, initialReading }: DailyTarotClientPr
   async function submitSelections(selections: DailyTarotCardSelection[]) {
     const selectedAt = new Date().toISOString();
 
+    clearResultTransitionTimer();
     setPendingSelections(selections);
+    setRevealingState(null);
     setGenerationStatus("generating");
     setGenerationError(null);
 
@@ -934,16 +1184,21 @@ export function DailyTarotClient({ appDate, initialReading }: DailyTarotClientPr
 
       setSelectedReading(readingBody);
       saveDailyTarotReadingToBrowser(readingBody);
-      setPendingSelections([]);
-      setGenerationStatus("idle");
+      setGenerationStatus("transitioning-to-result");
+      resultTransitionTimerRef.current = setTimeout(() => {
+        resultTransitionTimerRef.current = null;
+        setPendingSelections([]);
+        setGenerationStatus("idle");
+      }, tarotResultTransitionMs);
     } catch {
+      clearResultTransitionTimer();
       setGenerationStatus("error");
       setGenerationError("해석을 완성하지 못했어요. 선택한 카드는 그대로 남아 있어요.");
     }
   }
 
-  function handleSelect(option: DailyTarotOption) {
-    if (isGenerating || (selectedSpread === "daily_three_card" && !canUseThreeCard)) {
+  function handleSelect(option: DailyTarotOption, optionIndex: number) {
+    if (isBusy || (selectedSpread === "daily_three_card" && !canUseThreeCard)) {
       return;
     }
 
@@ -961,14 +1216,34 @@ export function DailyTarotClient({ appDate, initialReading }: DailyTarotClientPr
         orientation: option.orientation,
       },
     ];
+    const nextSelection = nextSelections[nextSelections.length - 1] ?? null;
 
-    if (nextSelections.length < positions.length) {
-      setPendingSelections(nextSelections);
-      setGenerationError(null);
+    if (!nextSelection) {
       return;
     }
 
-    void submitSelections(nextSelections);
+    clearRevealTimer();
+    setRevealingState({
+      options: availableOptions,
+      selectedOptionId: option.id,
+      selectedOptionIndex: optionIndex,
+      selection: nextSelection,
+    });
+    setGenerationStatus("revealing");
+    setGenerationError(null);
+
+    revealTimerRef.current = setTimeout(() => {
+      revealTimerRef.current = null;
+      setRevealingState(null);
+
+      if (nextSelections.length < positions.length) {
+        setPendingSelections(nextSelections);
+        setGenerationStatus("idle");
+        return;
+      }
+
+      void submitSelections(nextSelections);
+    }, tarotCardRevealMs);
   }
 
   function handleRetry() {
@@ -977,13 +1252,15 @@ export function DailyTarotClient({ appDate, initialReading }: DailyTarotClientPr
     }
   }
 
-  if (reading) {
+  if (reading && !isTransitioningToResult) {
     return <DailyTarotResult reading={reading} onSelectThreeCard={() => resetDrawState("daily_three_card")} />;
   }
 
   return (
     <section
-      data-daily-tarot-state={isGenerating ? "generating" : "draw-ready"}
+      data-daily-tarot-state={
+        isTransitioningToResult ? "transitioning-to-result" : isRevealing ? "revealing" : isGenerating ? "generating" : "draw-ready"
+      }
       className="mx-auto w-full max-w-[30rem] px-4 py-5 text-center text-[#fff3d7]"
     >
       <div className="mx-auto max-w-[22rem]">
@@ -1002,17 +1279,23 @@ export function DailyTarotClient({ appDate, initialReading }: DailyTarotClientPr
             지금 상태, 이어질 변화, 오늘의 선택을 세 장으로 나눠 읽습니다.
           </p>
         </div>
-      ) : isGenerating ? (
-        <DailyTarotLoadingPanel selections={pendingSelections} />
+      ) : isRevealing && revealingState ? (
+        <DailyTarotRevealPanel {...revealingState} />
+      ) : isGenerating || isTransitioningToResult ? (
+        <DailyTarotLoadingPanel selections={pendingSelections} transitionToResult={isTransitioningToResult} />
       ) : (
-        <>
-          <p className="mt-4 text-[12px] font-semibold text-[#f2c27d]">
+        <div
+          data-daily-tarot-draw-stage="true"
+          className={cn("relative mt-4 min-h-[25rem]", shouldShowShuffleIntro ? "tarot-draw-stage-shuffling" : "")}
+        >
+          <p className="text-[12px] font-semibold text-[#f2c27d]">
             {selectedSpread === "daily_three_card"
               ? `${positionLabels[nextPosition]} 카드를 골라 주세요.`
               : "중앙 카드를 골라 주세요."}
           </p>
-          <DailyTarotFanDeck options={availableOptions} onSelect={handleSelect} disabled={isGenerating} />
-        </>
+          <DailyTarotFanDeck options={availableOptions} onSelect={handleSelect} disabled={isBusy} />
+          {shouldShowShuffleIntro ? <DailyTarotShuffleIntro /> : null}
+        </div>
       )}
 
       {generationError ? (
@@ -1027,10 +1310,6 @@ export function DailyTarotClient({ appDate, initialReading }: DailyTarotClientPr
           </button>
         </div>
       ) : null}
-
-      <p className="mx-auto mt-4 max-w-[21rem] text-[12px] leading-5 text-[#c7a98a]">
-        타로는 오늘의 흐름을 상징적으로 비춰보는 참고용 안내입니다.
-      </p>
     </section>
   );
 }
