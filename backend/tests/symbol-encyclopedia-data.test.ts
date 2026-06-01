@@ -91,6 +91,10 @@ const acceptedSymbolIds = [
   "rainbow",
   "ghost",
   "knife",
+  "grave",
+  "bear",
+  "river",
+  "anger",
 ];
 
 const phase2BatchSymbolIds = [
