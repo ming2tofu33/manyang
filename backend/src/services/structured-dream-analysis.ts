@@ -1,5 +1,12 @@
 import { getRuntimeSymbolEntries } from "../data/symbol-encyclopedia";
 import type { RuntimeSymbolEntry, SupportedLocale, SymbolCategory } from "../contracts/symbol-encyclopedia";
+import {
+  compactText as compact,
+  matchedTerms,
+  matchedTriggers,
+  normalizeText as normalize,
+  tokenizeText as tokenize,
+} from "./korean-text-matching";
 
 export type StructuredDreamAnalysisRequest = {
   dreamText: string;
@@ -242,57 +249,6 @@ type MatchedSymbol = {
   index: number;
 };
 
-const KOREAN_SUFFIXES = [
-  "이",
-  "가",
-  "을",
-  "를",
-  "은",
-  "는",
-  "도",
-  "에",
-  "에서",
-  "에게",
-  "와",
-  "과",
-  "로",
-  "으로",
-  "처럼",
-  "만",
-  "부터",
-  "까지",
-  "마다",
-  "고",
-  "던",
-  "들",
-  "들이",
-  "들을",
-  "들과",
-  "들하고",
-  "다",
-  "요",
-  "어",
-  "아",
-  "어도",
-  "아도",
-  "어서",
-  "아서",
-  "하다가",
-  "하는데",
-  "했어",
-  "진",
-  "다가",
-  "는데",
-  "는지",
-  "는지는",
-  "면서",
-  "었어",
-  "았어",
-  "였어",
-  "었어요",
-  "았어요",
-  "였어요",
-];
 
 const ENGLISH_SCENE_STOP_WORDS = new Set([
   "about",
@@ -349,18 +305,6 @@ const LEGACY_THEME_BY_SYMBOL: Record<string, { ko: string; en: string }> = {
   many: { ko: "압도감", en: "overwhelm" },
 };
 
-function normalize(text: string): string {
-  return text.trim().toLocaleLowerCase();
-}
-
-function compact(text: string): string {
-  return normalize(text).replace(/[^\p{L}\p{N}]/gu, "");
-}
-
-function tokenize(text: string): string[] {
-  return normalize(text).match(/[\p{L}\p{N}]+/gu) ?? [];
-}
-
 function unique(values: string[]): string[] {
   return [...new Set(values.map((value) => value.trim()).filter(Boolean))];
 }
@@ -369,112 +313,12 @@ function includesAny(text: string, values: string[]): boolean {
   return values.some((value) => text.includes(value.toLocaleLowerCase()));
 }
 
-function containsHangul(text: string): boolean {
-  return /\p{Script=Hangul}/u.test(text);
-}
-
-function stripKoreanEnding(term: string): string | undefined {
-  if (!containsHangul(term) || compact(term).length < 3) {
-    return undefined;
-  }
-
-  const endings = ["하는꿈", "는꿈", "꿈", "는", "은", "고", "다"];
-  const key = compact(term);
-  const ending = endings.find((candidate) => key.endsWith(candidate));
-
-  if (!ending) {
-    return undefined;
-  }
-
-  const stem = key.slice(0, -ending.length);
-
-  return stem.length >= 2 ? stem : undefined;
-}
-
-function tokenMatchesTerm(term: string, token: string): boolean {
-  const termKey = compact(term);
-  const tokenKey = compact(token);
-
-  if (!termKey || !tokenKey) {
-    return false;
-  }
-
-  if (tokenKey === termKey) {
-    return true;
-  }
-
-  if (containsHangul(termKey)) {
-    if (tokenKey.startsWith(termKey)) {
-      const suffix = tokenKey.slice(termKey.length);
-
-      return KOREAN_SUFFIXES.includes(suffix);
-    }
-
-    const stem = stripKoreanEnding(termKey);
-
-    if (stem && tokenKey.startsWith(stem)) {
-      const suffix = tokenKey.slice(stem.length);
-
-      return suffix.length > 0 && suffix.length <= 4;
-    }
-  }
-
-  return false;
-}
-
-// 구문 별칭("A B C")의 각 단어가 순서대로(사이에 다른 단어가 끼어도) 토큰에 나타나면 매치.
-function phraseMatchesInOrder(words: string[], tokens: string[]): boolean {
-  let wordIndex = 0;
-
-  for (const token of tokens) {
-    const word = words[wordIndex];
-
-    if (word !== undefined && tokenMatchesTerm(word, token)) {
-      wordIndex += 1;
-
-      if (wordIndex === words.length) {
-        return true;
-      }
-    }
-  }
-
-  return false;
-}
-
-function termMatchesText(term: string, normalizedText: string, tokens: string[]): boolean {
-  const normalizedTerm = normalize(term);
-  const termKey = compact(normalizedTerm);
-
-  if (!termKey) {
-    return false;
-  }
-
-  if (normalizedTerm.includes(" ") || termKey.length >= 4) {
-    const textKey = compact(normalizedText);
-
-    if (textKey.includes(termKey)) {
-      return true;
-    }
-  }
-
-  // 연속 매칭이 실패해도, 구문 단어들이 순서대로 토큰에 있으면 매치(중간에 부사 등이 끼는 경우).
-  if (normalizedTerm.includes(" ") && phraseMatchesInOrder(normalizedTerm.split(/\s+/).filter(Boolean), tokens)) {
-    return true;
-  }
-
-  return tokens.some((token) => tokenMatchesTerm(normalizedTerm, token));
-}
-
-function matchedTerms(terms: string[], normalizedText: string, tokens: string[]): string[] {
-  return unique(terms.filter((term) => termMatchesText(term, normalizedText, tokens)));
-}
-
 function matchedModifiers(entry: RuntimeSymbolEntry, normalizedText: string, tokens: string[]): MatchedModifier[] {
   return Object.entries(entry.evidence.sceneModifiers)
     .map(([key, modifier]) => ({
       key,
       weight: modifier.weight,
-      matchedTerms: matchedTerms(modifier.triggerTerms, normalizedText, tokens),
+      matchedTerms: matchedTriggers(modifier.triggerTerms, normalizedText, tokens),
     }))
     .filter((modifier) => modifier.matchedTerms.length > 0);
 }
