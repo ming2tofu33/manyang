@@ -2,7 +2,9 @@
 
 import type { DreamUnavailablePayload } from "@/lib/dream-storage";
 import { getCatReaderById } from "@/lib/cat-readers";
+import { manyangAssets } from "@/lib/manyang-assets";
 import { cn } from "@/lib/styles";
+import { DreamLoadingOverlay } from "./dream-loading-overlay";
 
 type DreamUnavailableResultProps = {
   payload: DreamUnavailablePayload;
@@ -46,8 +48,15 @@ export function DreamUnavailableResult({
   const reader = getCatReaderById(payload.catReaderType);
 
   return (
-    <div className="mx-auto flex min-h-[calc(100dvh-8rem)] w-full max-w-[24rem] flex-col justify-center px-5 py-8">
-      <section className="space-y-5 rounded-[1.2rem] border border-[#e2ab6b]/55 bg-[rgba(18,10,28,0.84)] px-5 py-6 shadow-[0_18px_44px_rgba(4,3,10,0.36),inset_0_0_24px_rgba(255,211,143,0.05)]">
+    <>
+      <DreamLoadingOverlay
+        isActive={isRetrying}
+        background={manyangAssets.backgrounds[reader.interpretationBackgroundKey]}
+        readerImage={manyangAssets.loadingReaders[reader.assetKey]}
+        introImage={manyangAssets.backgrounds[reader.interpretationBackgroundKey]}
+      />
+      <div className="mx-auto flex min-h-[calc(100dvh-8rem)] w-full max-w-[24rem] flex-col justify-center px-5 py-8">
+        <section className="space-y-5 rounded-[1.2rem] border border-[#e2ab6b]/55 bg-[rgba(18,10,28,0.84)] px-5 py-6 shadow-[0_18px_44px_rgba(4,3,10,0.36),inset_0_0_24px_rgba(255,211,143,0.05)]">
         <div className="space-y-2">
           <p className="text-[0.82rem] font-semibold text-[#ffc978]/88">{reader.name}</p>
           <h1 className="text-[1.45rem] font-semibold leading-8 text-[#fff0dc]">{getUnavailableTitle(payload)}</h1>
@@ -88,7 +97,8 @@ export function DreamUnavailableResult({
             꿈 다시 열기
           </button>
         </div>
-      </section>
-    </div>
+        </section>
+      </div>
+    </>
   );
 }

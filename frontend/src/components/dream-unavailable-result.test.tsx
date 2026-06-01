@@ -35,4 +35,10 @@ describe("DreamUnavailableResult", () => {
     expect(markup).toContain("설정이 준비되지 않았어요");
     expect(markup).not.toContain("다시 불러보기");
   });
+  test("shows the cat loading ritual while retrying", () => {
+    const markup = renderToStaticMarkup(<DreamUnavailableResult payload={payload} isRetrying />);
+
+    expect(markup).toContain('data-loading-scene="reader"');
+    expect(markup).toContain("%2Fmanyang%2Freferences%2Floading-gray-cat.webp");
+  });
 });
