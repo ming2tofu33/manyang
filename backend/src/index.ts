@@ -41,6 +41,7 @@ export type {
 } from "./contracts/symbol-encyclopedia";
 export { encyclopediaEntries, getEntryBySymbol } from "./data/encyclopedia";
 export { getRuntimeSymbolEntries, getRuntimeSymbolEntry, symbolEntries } from "./data/symbol-encyclopedia";
+export { getEncyclopediaEntriesForLocale } from "./services/encyclopedia-symbols";
 export { analyzeDream } from "./services/mock-analysis";
 export {
   analyzeDreamSafetyPolicy,
