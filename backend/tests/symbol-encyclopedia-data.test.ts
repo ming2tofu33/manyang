@@ -107,6 +107,12 @@ const acceptedSymbolIds = [
   "earthquake",
   "song",
   "photo",
+  "wind",
+  "rock",
+  "laughter",
+  "meat",
+  "alcohol",
+  "dance",
 ];
 
 const phase2BatchSymbolIds = [
