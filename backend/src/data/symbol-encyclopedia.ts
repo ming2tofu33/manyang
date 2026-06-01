@@ -115,7 +115,7 @@ export const symbolEntries: SymbolEntry[] = [
     id: "snake",
     status: "active",
     editorialStatus: "approved",
-    category: "living_being",
+    category: "animal",
     subcategory: "animal",
     facets: ["reptile", "instinct", "hidden_movement", "transformation", "life_force"],
     symbolRole: ["primary_candidate"],
@@ -525,7 +525,7 @@ export const symbolEntries: SymbolEntry[] = [
     id: "many",
     status: "active",
     editorialStatus: "approved",
-    category: "quantity",
+    category: "abstract",
     subcategory: "intensity",
     facets: ["intensity", "accumulation", "overwhelm", "repeated_signal"],
     symbolRole: ["modifier"],
@@ -588,7 +588,7 @@ export const symbolEntries: SymbolEntry[] = [
     id: "dawn",
     status: "active",
     editorialStatus: "approved",
-    category: "time",
+    category: "nature",
     subcategory: "day_phase",
     facets: ["transition", "early_awareness", "quiet_threshold", "sensitivity"],
     symbolRole: ["modifier", "context_signal"],
@@ -724,7 +724,7 @@ export const symbolEntries: SymbolEntry[] = [
     id: "cat",
     status: "active",
     editorialStatus: "approved",
-    category: "living_being",
+    category: "animal",
     subcategory: "animal",
     facets: ["intuition", "independence", "quiet_observation", "distance"],
     symbolRole: ["primary_candidate"],
@@ -1708,7 +1708,7 @@ export const symbolEntries: SymbolEntry[] = [
   }),
   activeSymbol({
     id: "stranger",
-    category: "relationship",
+    category: "person",
     subcategory: "stranger",
     facets: ["unknown_self", "boundary", "new_relation", "projection"],
     symbolRole: ["primary_candidate"],
@@ -1764,7 +1764,7 @@ export const symbolEntries: SymbolEntry[] = [
   }),
   activeSymbol({
     id: "child",
-    category: "relationship",
+    category: "person",
     subcategory: "family",
     facets: ["vulnerability", "new_beginning", "care", "inner_child"],
     symbolRole: ["primary_candidate"],
@@ -1820,7 +1820,7 @@ export const symbolEntries: SymbolEntry[] = [
   }),
   activeSymbol({
     id: "dog",
-    category: "living_being",
+    category: "animal",
     subcategory: "animal",
     facets: ["loyalty", "protection", "trust", "instinctive_response"],
     symbolRole: ["primary_candidate"],
@@ -1884,7 +1884,7 @@ export const symbolEntries: SymbolEntry[] = [
   }),
   activeSymbol({
     id: "bird",
-    category: "living_being",
+    category: "animal",
     subcategory: "animal",
     facets: ["freedom", "message", "distance", "perspective"],
     symbolRole: ["primary_candidate"],
@@ -1948,7 +1948,7 @@ export const symbolEntries: SymbolEntry[] = [
   }),
   activeSymbol({
     id: "fish",
-    category: "living_being",
+    category: "animal",
     subcategory: "animal",
     facets: ["emotion_within_water", "life_force", "elusiveness", "flow"],
     symbolRole: ["primary_candidate"],
@@ -2012,7 +2012,7 @@ export const symbolEntries: SymbolEntry[] = [
   }),
   activeSymbol({
     id: "mother",
-    category: "relationship",
+    category: "person",
     subcategory: "family",
     facets: ["care", "origin", "expectation", "emotional_dependency"],
     symbolRole: ["primary_candidate"],
@@ -2068,7 +2068,7 @@ export const symbolEntries: SymbolEntry[] = [
   }),
   activeSymbol({
     id: "father",
-    category: "relationship",
+    category: "person",
     subcategory: "family",
     facets: ["authority", "support", "standard", "distance"],
     symbolRole: ["primary_candidate"],
@@ -2124,7 +2124,7 @@ export const symbolEntries: SymbolEntry[] = [
   }),
   activeSymbol({
     id: "friend",
-    category: "relationship",
+    category: "person",
     subcategory: "peer",
     facets: ["belonging", "comparison", "trust", "social_self"],
     symbolRole: ["primary_candidate"],
@@ -2180,7 +2180,7 @@ export const symbolEntries: SymbolEntry[] = [
   }),
   activeSymbol({
     id: "partner",
-    category: "relationship",
+    category: "person",
     subcategory: "intimate",
     facets: ["intimacy", "commitment", "desire", "negotiation"],
     symbolRole: ["primary_candidate"],
@@ -2250,7 +2250,7 @@ export const symbolEntries: SymbolEntry[] = [
   }),
   activeSymbol({
     id: "ex_partner",
-    category: "relationship",
+    category: "person",
     subcategory: "past_intimate",
     facets: ["unfinished_feeling", "memory", "comparison", "closure"],
     symbolRole: ["primary_candidate"],
@@ -2444,7 +2444,7 @@ export const symbolEntries: SymbolEntry[] = [
   }),
   activeSymbol({
     id: "baby",
-    category: "living_being",
+    category: "person",
     subcategory: "human_stage",
     facets: ["new_beginning", "vulnerability", "care", "potential"],
     symbolRole: ["primary_candidate"],
@@ -4234,7 +4234,7 @@ export const symbolEntries: SymbolEntry[] = [
   }),
   activeSymbol({
     id: "crowd",
-    category: "social",
+    category: "abstract",
     subcategory: "social_density",
     facets: ["social_pressure", "visibility", "belonging", "overwhelm"],
     symbolRole: ["primary_candidate", "modifier"],
@@ -4486,7 +4486,7 @@ export const symbolEntries: SymbolEntry[] = [
   }),
   activeSymbol({
     id: "pig",
-    category: "living_being",
+    category: "animal",
     subcategory: "animal",
     facets: ["abundance", "fortune", "nurture", "luck"],
     symbolRole: ["primary_candidate"],

@@ -16,7 +16,7 @@ describe("findRuntimeSymbolMatches", () => {
       locale: "ko",
       label: "뱀",
       matchType: "exact",
-      category: "living_being",
+      category: "animal",
       subcategory: "animal",
     });
     expect(snake?.facets).toEqual(expect.arrayContaining(["reptile", "hidden_movement"]));

@@ -1,11 +1,16 @@
+// 단일 축 대분류(런타임 SymbolCategory와 동일 집합). 레거시 seed는 이 중 일부만 사용.
 export type DreamSymbolCategory =
   | "place"
-  | "object"
-  | "action"
-  | "nature"
+  | "person"
   | "animal"
+  | "nature"
+  | "object"
+  | "body"
+  | "action"
+  | "event"
+  | "food"
   | "emotion"
-  | "person";
+  | "abstract";
 
 export type CatReaderType = "black_cat" | "white_cat" | "cheese_cat" | "gray_cat";
 export type CatReaderAccess = "free" | "annual_premium";

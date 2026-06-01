@@ -358,9 +358,9 @@ function clampImportance(value: number): 1 | 2 | 3 | 4 | 5 {
 
 function symbolImportance(entry: RuntimeSymbolEntry, modifiers: MatchedModifier[]): 1 | 2 | 3 | 4 | 5 {
   const base =
-    entry.category === "time"
+    entry.subcategory === "day_phase"
       ? 2
-      : entry.category === "quantity"
+      : entry.subcategory === "intensity"
         ? 4
         : entry.symbolRole.includes("primary_candidate")
           ? 4

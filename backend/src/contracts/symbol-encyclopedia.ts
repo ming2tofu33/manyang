@@ -6,21 +6,18 @@ export const SYMBOL_ACCESS_TIERS = ["free", "premium"] as const;
 
 export const SUPPORTED_LOCALES = ["ko", "en"] as const;
 
+// 단일 축("꿈에 무엇이 나오나") 대분류. 사용자 브라우즈/SEO와 해몽 엔진이 함께 쓴다.
 export const SYMBOL_CATEGORIES = [
   "place",
-  "living_being",
+  "person",
+  "animal",
+  "nature",
   "object",
   "body",
   "action",
   "event",
-  "nature",
   "food",
   "emotion",
-  "social",
-  "relationship",
-  "state",
-  "quantity",
-  "time",
   "abstract",
 ] as const;
 

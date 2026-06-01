@@ -215,7 +215,7 @@ describe("symbol encyclopedia data", () => {
 
     expect(snake).toMatchObject({
       id: "snake",
-      category: "living_being",
+      category: "animal",
       subcategory: "animal",
       facets: expect.arrayContaining(["reptile", "instinct", "hidden_movement"]),
       symbolRole: expect.arrayContaining(["primary_candidate"]),
@@ -239,12 +239,12 @@ describe("symbol encyclopedia data", () => {
     expect(newSymbols.every((entry) => entry.editorialStatus === "approved")).toBe(true);
   });
 
-  test("adds the first phase 2 coverage batch with relationship, body, place, object, and event symbols", () => {
+  test("adds the first phase 2 coverage batch with person, body, place, object, and event symbols", () => {
     const phase2Symbols = symbolEntries.filter((entry) => phase2BatchSymbolIds.includes(entry.id));
 
     expect(phase2Symbols).toHaveLength(20);
     expect(phase2Symbols.map((entry) => entry.category)).toEqual(
-      expect.arrayContaining(["relationship", "body", "place", "object", "event", "living_being"]),
+      expect.arrayContaining(["person", "body", "place", "object", "event"]),
     );
     expect(phase2Symbols.filter((entry) => entry.safetyLevel === "sensitive").map((entry) => entry.id)).toEqual(
       expect.arrayContaining(["death", "funeral", "pregnancy", "money", "teeth"]),
@@ -256,17 +256,17 @@ describe("symbol encyclopedia data", () => {
 
     expect(phase2BSymbols).toHaveLength(20);
     expect(phase2BSymbols.map((entry) => entry.category)).toEqual(
-      expect.arrayContaining(["place", "object", "body", "action", "event", "nature", "food", "emotion", "social"]),
+      expect.arrayContaining(["place", "object", "body", "action", "event", "nature", "food", "emotion", "abstract"]),
     );
     expect(phase2BSymbols.filter((entry) => entry.safetyLevel === "sensitive").map((entry) => entry.id)).toEqual(
       expect.arrayContaining(["body", "blood", "wedding"]),
     );
   });
 
-  test("uses domain-specific categories for food, emotion, and social-scene symbols", () => {
+  test("uses domain-specific categories for food, emotion, and scene-quality symbols", () => {
     expect(symbolEntries.find((entry) => entry.id === "food")?.category).toBe("food");
     expect(symbolEntries.find((entry) => entry.id === "crying")?.category).toBe("emotion");
-    expect(symbolEntries.find((entry) => entry.id === "crowd")?.category).toBe("social");
+    expect(symbolEntries.find((entry) => entry.id === "crowd")?.category).toBe("abstract");
   });
 
   test("keeps high-risk aliases from waking multiple active symbols", () => {

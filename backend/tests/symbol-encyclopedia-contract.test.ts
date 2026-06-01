@@ -25,19 +25,15 @@ describe("symbol encyclopedia contract", () => {
   test("defines the categories and metadata enums required by retrieval", () => {
     expect(SYMBOL_CATEGORIES).toEqual([
       "place",
-      "living_being",
+      "person",
+      "animal",
+      "nature",
       "object",
       "body",
       "action",
       "event",
-      "nature",
       "food",
       "emotion",
-      "social",
-      "relationship",
-      "state",
-      "quantity",
-      "time",
       "abstract",
     ]);
     expect(SYMBOL_STATUSES).toEqual(["draft", "active", "deprecated"]);
@@ -109,7 +105,7 @@ describe("symbol encyclopedia contract", () => {
       id: "snake",
       status: "active",
       editorialStatus: "approved",
-      category: "living_being",
+      category: "animal",
       subcategory: "animal",
       facets: ["reptile", "instinct", "hidden_movement"],
       symbolRole: ["primary_candidate"],
