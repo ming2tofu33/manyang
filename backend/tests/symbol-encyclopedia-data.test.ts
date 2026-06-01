@@ -81,6 +81,11 @@ const acceptedSymbolIds = [
   "cow",
   "mouse",
   "spider",
+  "naked",
+  "gold",
+  "snow",
+  "moon",
+  "flood",
 ];
 
 const phase2BatchSymbolIds = [
