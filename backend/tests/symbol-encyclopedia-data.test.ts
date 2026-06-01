@@ -113,6 +113,13 @@ const acceptedSymbolIds = [
   "meat",
   "alcohol",
   "dance",
+  "insect",
+  "deer",
+  "frog",
+  "monkey",
+  "celebrity",
+  "monk",
+  "prison",
 ];
 
 const phase2BatchSymbolIds = [
