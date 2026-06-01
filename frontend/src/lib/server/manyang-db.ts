@@ -1,12 +1,14 @@
 import type { DreamAnalysisResponse } from "@manyang/backend";
 import { Pool, type PoolClient, type PoolConfig } from "pg";
 
+import type { AccessPlan } from "@/lib/access-policy";
 import {
   createCompletedDreamRecordFromDbRow,
   createDreamRecordInsertModels,
   type PersistCompletedDreamReadingInput,
 } from "@/lib/manyang-dream-records";
 import type { DreamCompletedPayload, DreamRecord } from "@/lib/dream-storage";
+import type { MorningMoodRecord } from "@/lib/morning-mood";
 import type { NightCheckInRecord } from "@/lib/night-checkin";
 import type { PawprintInput, PawprintRecord, PawprintSaveResult, PawprintSource } from "@/lib/pawprints";
 import type { DailyTarotReading } from "@/lib/daily-tarot";
@@ -22,6 +24,27 @@ export type PersistGuestBasicReadingUsageInput = {
 export type PersistCompletedTarotReadingInput = {
   userId: string;
   reading: DailyTarotReading;
+};
+
+export type ReadingUsageFeatureKey = "dream_basic" | "dream_premium" | "tarot_one_card" | "tarot_three_card";
+
+export type PersistAuditEventInput = {
+  actorUserId?: string | null;
+  targetUserId?: string | null;
+  eventType: string;
+  metadata?: Record<string, unknown>;
+};
+
+export type FeedbackSubjectType = "dream_reading" | "tarot_reading" | "archive_record" | "app_flow";
+
+export type PersistFeedbackEventInput = {
+  userId?: string | null;
+  guestId?: string | null;
+  subjectType: FeedbackSubjectType;
+  subjectId?: string | null;
+  rating?: number | null;
+  feedbackText?: string | null;
+  metadata?: Record<string, unknown>;
 };
 
 export function createManyangDbPool(config: PoolConfig = {}): Pool {
@@ -101,6 +124,12 @@ export async function hasCompletedGuestBasicReadingOnDate(
     `
       select exists (
         select 1
+        from manyang.reading_usage
+        where guest_id = $1::uuid
+          and usage_date = $2::date
+          and feature_key = 'dream_basic'
+      ) or exists (
+        select 1
         from manyang.guest_reading_usage
         where guest_id = $1::uuid
           and usage_date = $2::date
@@ -117,6 +146,19 @@ export async function persistGuestBasicReadingUsage(
   input: PersistGuestBasicReadingUsageInput,
   pool = getManyangDbPool(),
 ): Promise<void> {
+  await pool.query(
+    `
+      insert into manyang.reading_usage (
+        guest_id,
+        usage_date,
+        feature_key
+      )
+      values ($1::uuid, $2::date, 'dream_basic')
+      on conflict on constraint reading_usage_identity_feature_date_unique do nothing
+    `,
+    [input.guestId, input.dreamDate],
+  );
+
   await pool.query(
     `
       insert into manyang.guest_reading_usage (
@@ -194,6 +236,182 @@ export async function isAdminUser(userId: string, pool = getManyangDbPool()): Pr
   );
 
   return result.rows[0]?.is_admin === true;
+}
+
+export async function getActiveSubscriptionPlanForUser(
+  userId: string,
+  pool = getManyangDbPool(),
+): Promise<Extract<AccessPlan, "moon_pass"> | null> {
+  const result = await pool.query<{ plan_key: Extract<AccessPlan, "moon_pass"> }>(
+    `
+      select plan_key
+      from manyang.subscriptions
+      where user_id = $1
+        and plan_key = 'moon_pass'
+        and (
+          status in ('active', 'trialing')
+          or (
+            status = 'canceled'
+            and cancel_at_period_end = true
+            and current_period_end is not null
+            and current_period_end > now()
+          )
+        )
+      order by current_period_end desc nulls last, updated_at desc
+      limit 1
+    `,
+    [userId],
+  );
+
+  return result.rows[0]?.plan_key ?? null;
+}
+
+export async function hasReadingUsageForUserOnDate(
+  userId: string,
+  usageDate: string,
+  featureKey: ReadingUsageFeatureKey,
+  pool = getManyangDbPool(),
+): Promise<boolean> {
+  const result = await pool.query<{ has_usage: boolean }>(
+    `
+      select exists (
+        select 1
+        from manyang.reading_usage
+        where user_id = $1
+          and usage_date = $2::date
+          and feature_key = $3
+      ) as has_usage
+    `,
+    [userId, usageDate, featureKey],
+  );
+
+  return result.rows[0]?.has_usage === true;
+}
+
+export async function hasReadingUsageForGuestOnDate(
+  guestId: string,
+  usageDate: string,
+  featureKey: ReadingUsageFeatureKey,
+  pool = getManyangDbPool(),
+): Promise<boolean> {
+  const result = await pool.query<{ has_usage: boolean }>(
+    `
+      select exists (
+        select 1
+        from manyang.reading_usage
+        where guest_id = $1::uuid
+          and usage_date = $2::date
+          and feature_key = $3
+      ) as has_usage
+    `,
+    [guestId, usageDate, featureKey],
+  );
+
+  return result.rows[0]?.has_usage === true;
+}
+
+export async function incrementReadingUsageForUser(
+  userId: string,
+  usageDate: string,
+  featureKey: ReadingUsageFeatureKey,
+  pool = getManyangDbPool(),
+): Promise<void> {
+  await pool.query(
+    `
+      insert into manyang.reading_usage (
+        user_id,
+        usage_date,
+        feature_key
+      )
+      values ($1, $2::date, $3)
+      on conflict on constraint reading_usage_identity_feature_date_unique do update
+        set usage_count = manyang.reading_usage.usage_count + 1,
+            updated_at = now()
+    `,
+    [userId, usageDate, featureKey],
+  );
+}
+
+export async function incrementReadingUsageForGuest(
+  guestId: string,
+  usageDate: string,
+  featureKey: ReadingUsageFeatureKey,
+  pool = getManyangDbPool(),
+): Promise<void> {
+  await pool.query(
+    `
+      insert into manyang.reading_usage (
+        guest_id,
+        usage_date,
+        feature_key
+      )
+      values ($1::uuid, $2::date, $3)
+      on conflict on constraint reading_usage_identity_feature_date_unique do update
+        set usage_count = manyang.reading_usage.usage_count + 1,
+            updated_at = now()
+    `,
+    [guestId, usageDate, featureKey],
+  );
+}
+
+export async function persistAuditEvent(
+  input: PersistAuditEventInput,
+  pool = getManyangDbPool(),
+): Promise<void> {
+  await pool.query(
+    `
+      insert into manyang.audit_events (
+        actor_user_id,
+        target_user_id,
+        event_type,
+        metadata
+      )
+      values ($1, $2, $3, $4::jsonb)
+    `,
+    [
+      input.actorUserId ?? null,
+      input.targetUserId ?? null,
+      input.eventType,
+      JSON.stringify(input.metadata ?? {}),
+    ],
+  );
+}
+
+export async function persistFeedbackEvent(
+  input: PersistFeedbackEventInput,
+  pool = getManyangDbPool(),
+): Promise<string> {
+  const result = await pool.query<{ id: string }>(
+    `
+      insert into manyang.feedback_events (
+        user_id,
+        guest_id,
+        subject_type,
+        subject_id,
+        rating,
+        feedback_text,
+        metadata
+      )
+      values ($1, $2::uuid, $3, $4, $5, $6, $7::jsonb)
+      returning id
+    `,
+    [
+      input.userId ?? null,
+      input.guestId ?? null,
+      input.subjectType,
+      input.subjectId ?? null,
+      input.rating ?? null,
+      input.feedbackText ?? null,
+      JSON.stringify(input.metadata ?? {}),
+    ],
+  );
+  const feedbackId = result.rows[0]?.id;
+
+  if (!feedbackId) {
+    throw new Error("Failed to create manyang feedback event");
+  }
+
+  return feedbackId;
 }
 
 async function withTransaction<T>(pool: Pool, run: (client: PoolClient) => Promise<T>): Promise<T> {
@@ -416,6 +634,10 @@ export type PersistPawprintForUserInput = PawprintInput & {
   userId: string;
 };
 
+export type PersistMorningCheckInForUserInput = MorningMoodRecord & {
+  userId: string;
+};
+
 export type PersistNightCheckInForUserInput = Omit<NightCheckInRecord, "savedAt"> & {
   userId: string;
 };
@@ -452,6 +674,26 @@ function createNightCheckInRecordFromDbRow(row: {
     conditionId: row.condition_id,
     conditionLabel: row.condition_label,
     note: row.note ?? "",
+    savedAt: row.created_at,
+  };
+}
+
+function createMorningMoodRecordFromDbRow(row: {
+  id: string;
+  mood_date: string;
+  mood: string;
+  mood_color: string;
+  body_feeling: string;
+  thought: string;
+  created_at: string;
+}): MorningMoodRecord {
+  return {
+    id: row.id,
+    moodDate: row.mood_date,
+    mood: row.mood,
+    moodColor: row.mood_color,
+    bodyFeeling: row.body_feeling,
+    thought: row.thought,
     savedAt: row.created_at,
   };
 }
@@ -554,6 +796,88 @@ export async function persistPawprintForUser(
     created: false,
     record: createPawprintRecordFromDbRow(existingRecord),
   };
+}
+
+export async function listMorningCheckInsForUser(
+  userId: string,
+  pool = getManyangDbPool(),
+): Promise<MorningMoodRecord[]> {
+  const result = await pool.query<{
+    id: string;
+    mood_date: string;
+    mood: string;
+    mood_color: string;
+    body_feeling: string;
+    thought: string;
+    created_at: string;
+  }>(
+    `
+      select
+        id,
+        to_char(mood_date, 'YYYY-MM-DD') as mood_date,
+        mood,
+        mood_color,
+        body_feeling,
+        thought,
+        created_at::text as created_at
+      from manyang.morning_checkins
+      where user_id = $1
+      order by mood_date desc, created_at desc
+      limit 120
+    `,
+    [userId],
+  );
+
+  return result.rows.map((row) => createMorningMoodRecordFromDbRow(row));
+}
+
+export async function persistMorningCheckInForUser(
+  input: PersistMorningCheckInForUserInput,
+  pool = getManyangDbPool(),
+): Promise<MorningMoodRecord> {
+  const result = await pool.query<{
+    id: string;
+    mood_date: string;
+    mood: string;
+    mood_color: string;
+    body_feeling: string;
+    thought: string;
+    created_at: string;
+  }>(
+    `
+      insert into manyang.morning_checkins (
+        user_id,
+        mood_date,
+        mood,
+        mood_color,
+        body_feeling,
+        thought
+      )
+      values ($1, $2::date, $3, $4, $5, $6)
+      on conflict on constraint morning_checkins_user_mood_date_unique do update
+        set mood = excluded.mood,
+            mood_color = excluded.mood_color,
+            body_feeling = excluded.body_feeling,
+            thought = excluded.thought,
+            updated_at = now()
+      returning
+        id,
+        to_char(mood_date, 'YYYY-MM-DD') as mood_date,
+        mood,
+        mood_color,
+        body_feeling,
+        thought,
+        created_at::text as created_at
+    `,
+    [input.userId, input.moodDate, input.mood, input.moodColor, input.bodyFeeling, input.thought],
+  );
+  const row = result.rows[0];
+
+  if (!row) {
+    throw new Error("Failed to create manyang morning check-in");
+  }
+
+  return createMorningMoodRecordFromDbRow(row);
 }
 
 export async function listNightCheckInsForUser(

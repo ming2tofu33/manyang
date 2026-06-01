@@ -3,6 +3,12 @@
 import { useEffect, useSyncExternalStore } from "react";
 
 import {
+  getEmptyMorningMoodRecordsSnapshot,
+  getMorningMoodRecordsSnapshotFromBrowser,
+  subscribeToMorningMood,
+  type MorningMoodRecord,
+} from "./morning-mood";
+import {
   getEmptyNightCheckInRecordsSnapshot,
   getNightCheckInRecordsSnapshotFromBrowser,
   subscribeToNightCheckIn,
@@ -15,7 +21,7 @@ import {
   type PawprintRecord,
   type PawprintSaveResult,
 } from "./pawprints";
-import { fetchNightCheckInsFromApi, fetchPawprintsFromApi } from "./routine-record-api";
+import { fetchMorningCheckInsFromApi, fetchNightCheckInsFromApi, fetchPawprintsFromApi } from "./routine-record-api";
 import { createSupabaseBrowserClient } from "./supabase/client";
 
 export type RoutineRecordSource = "server" | "local";
@@ -23,12 +29,14 @@ export type RoutineRecordSource = "server" | "local";
 export type RemoteRoutineRecordsSnapshot = {
   status: "loading" | "server" | "guest";
   pawprints: PawprintRecord[];
+  morningMoodRecords: MorningMoodRecord[];
   nightCheckInRecords: NightCheckInRecord[];
 };
 
 const emptyRemoteRoutineRecordsSnapshot: RemoteRoutineRecordsSnapshot = {
   status: "loading",
   pawprints: [],
+  morningMoodRecords: [],
   nightCheckInRecords: [],
 };
 
@@ -69,6 +77,10 @@ function mergeNightCheckIn(records: NightCheckInRecord[], record: NightCheckInRe
   return [record, ...records.filter((storedRecord) => storedRecord.checkInDate !== record.checkInDate)];
 }
 
+function mergeMorningCheckIn(records: MorningMoodRecord[], record: MorningMoodRecord): MorningMoodRecord[] {
+  return [record, ...records.filter((storedRecord) => storedRecord.moodDate !== record.moodDate)];
+}
+
 async function hasSupabaseBrowserSession(): Promise<boolean> {
   try {
     const supabase = createSupabaseBrowserClient();
@@ -98,10 +110,12 @@ export function getRemoteRoutineRecordsServerSnapshot(): RemoteRoutineRecordsSna
 
 export function resolveRoutineRecordState(
   localPawprints: PawprintRecord[],
+  localMorningMoodRecords: MorningMoodRecord[],
   localNightCheckInRecords: NightCheckInRecord[],
   remoteSnapshot: RemoteRoutineRecordsSnapshot,
 ): {
   pawprints: PawprintRecord[];
+  morningMoodRecords: MorningMoodRecord[];
   nightCheckInRecords: NightCheckInRecord[];
   source: RoutineRecordSource;
   isLoadingRoutineRecords: boolean;
@@ -110,6 +124,7 @@ export function resolveRoutineRecordState(
   if (remoteSnapshot.status === "server") {
     return {
       pawprints: remoteSnapshot.pawprints,
+      morningMoodRecords: remoteSnapshot.morningMoodRecords,
       nightCheckInRecords: remoteSnapshot.nightCheckInRecords,
       source: "server",
       isLoadingRoutineRecords: false,
@@ -119,6 +134,7 @@ export function resolveRoutineRecordState(
 
   return {
     pawprints: localPawprints,
+    morningMoodRecords: localMorningMoodRecords,
     nightCheckInRecords: localNightCheckInRecords,
     source: "local",
     isLoadingRoutineRecords: remoteSnapshot.status === "loading",
@@ -137,20 +153,27 @@ export async function refreshRemoteRoutineRecords(options: { force?: boolean } =
         setRemoteRoutineRecordsSnapshot({
           status: "guest",
           pawprints: [],
+          morningMoodRecords: [],
           nightCheckInRecords: [],
         });
         return;
       }
 
-      const [pawprintsResult, nightCheckInsResult] = await Promise.all([
+      const [pawprintsResult, morningCheckInsResult, nightCheckInsResult] = await Promise.all([
         fetchPawprintsFromApi(),
+        fetchMorningCheckInsFromApi(),
         fetchNightCheckInsFromApi(),
       ]);
 
-      if (pawprintsResult.status === "unauthenticated" && nightCheckInsResult.status === "unauthenticated") {
+      if (
+        pawprintsResult.status === "unauthenticated" &&
+        morningCheckInsResult.status === "unauthenticated" &&
+        nightCheckInsResult.status === "unauthenticated"
+      ) {
         setRemoteRoutineRecordsSnapshot({
           status: "guest",
           pawprints: [],
+          morningMoodRecords: [],
           nightCheckInRecords: [],
         });
         return;
@@ -159,6 +182,7 @@ export async function refreshRemoteRoutineRecords(options: { force?: boolean } =
       setRemoteRoutineRecordsSnapshot({
         status: "server",
         pawprints: pawprintsResult.status === "ok" ? pawprintsResult.records : [],
+        morningMoodRecords: morningCheckInsResult.status === "ok" ? morningCheckInsResult.records : [],
         nightCheckInRecords: nightCheckInsResult.status === "ok" ? nightCheckInsResult.records : [],
       });
     })
@@ -176,6 +200,7 @@ export function mergeRemotePawprintResult(result: PawprintSaveResult): void {
       : {
           status: "server" as const,
           pawprints: [],
+          morningMoodRecords: [],
           nightCheckInRecords: [],
         };
 
@@ -192,6 +217,7 @@ export function mergeRemoteNightCheckInRecord(record: NightCheckInRecord): void 
       : {
           status: "server" as const,
           pawprints: [],
+          morningMoodRecords: [],
           nightCheckInRecords: [],
         };
 
@@ -201,8 +227,26 @@ export function mergeRemoteNightCheckInRecord(record: NightCheckInRecord): void 
   });
 }
 
+export function mergeRemoteMorningCheckInRecord(record: MorningMoodRecord): void {
+  const currentSnapshot =
+    remoteRoutineRecordsSnapshot.status === "server"
+      ? remoteRoutineRecordsSnapshot
+      : {
+          status: "server" as const,
+          pawprints: [],
+          morningMoodRecords: [],
+          nightCheckInRecords: [],
+        };
+
+  setRemoteRoutineRecordsSnapshot({
+    ...currentSnapshot,
+    morningMoodRecords: mergeMorningCheckIn(currentSnapshot.morningMoodRecords, record),
+  });
+}
+
 export function useRoutineRecords(): {
   pawprints: PawprintRecord[];
+  morningMoodRecords: MorningMoodRecord[];
   nightCheckInRecords: NightCheckInRecord[];
   source: RoutineRecordSource;
   isLoadingRoutineRecords: boolean;
@@ -212,6 +256,11 @@ export function useRoutineRecords(): {
     subscribeToPawprints,
     getPawprintSnapshotFromBrowser,
     getEmptyPawprintSnapshot,
+  );
+  const localMorningMoodRecords = useSyncExternalStore(
+    subscribeToMorningMood,
+    getMorningMoodRecordsSnapshotFromBrowser,
+    getEmptyMorningMoodRecordsSnapshot,
   );
   const localNightCheckInRecords = useSyncExternalStore(
     subscribeToNightCheckIn,
@@ -223,7 +272,12 @@ export function useRoutineRecords(): {
     getRemoteRoutineRecordsSnapshot,
     getRemoteRoutineRecordsServerSnapshot,
   );
-  const resolvedState = resolveRoutineRecordState(localPawprints, localNightCheckInRecords, remoteSnapshot);
+  const resolvedState = resolveRoutineRecordState(
+    localPawprints,
+    localMorningMoodRecords,
+    localNightCheckInRecords,
+    remoteSnapshot,
+  );
 
   useEffect(() => {
     void refreshRemoteRoutineRecords({ force: true });

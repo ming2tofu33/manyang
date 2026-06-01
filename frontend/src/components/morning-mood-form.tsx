@@ -19,9 +19,9 @@ import {
   getPawprintAppDate,
   savePawprintToBrowser,
 } from "@/lib/pawprints";
-import { savePawprintToApi } from "@/lib/routine-record-api";
+import { saveMorningCheckInToApi, savePawprintToApi } from "@/lib/routine-record-api";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { mergeRemotePawprintResult } from "@/lib/use-routine-records";
+import { mergeRemoteMorningCheckInRecord, mergeRemotePawprintResult } from "@/lib/use-routine-records";
 import {
   morningBodyFeelings,
   morningMoodCopy,
@@ -171,23 +171,27 @@ export function MorningMoodForm() {
     setIsSavingRoutineRecord(true);
     setRoutineSaveError(false);
 
-    const pawprintResult = await savePawprintToApi(pawprintInput);
+    const [morningCheckInResult, pawprintResult] = await Promise.all([
+      saveMorningCheckInToApi(record),
+      savePawprintToApi(pawprintInput),
+    ]);
 
     setIsSavingRoutineRecord(false);
 
-    if (pawprintResult.status === "unauthenticated") {
+    if (morningCheckInResult.status === "unauthenticated" || pawprintResult.status === "unauthenticated") {
       setIsAuthenticated(false);
       setShowGuestPersistencePrompt(true);
       setPawprintCreated(Boolean(localPawprintResult?.created));
       return;
     }
 
-    if (pawprintResult.status === "error") {
+    if (morningCheckInResult.status === "error" || pawprintResult.status === "error") {
       setRoutineSaveError(true);
       setPawprintCreated(false);
       return;
     }
 
+    mergeRemoteMorningCheckInRecord(morningCheckInResult.record);
     mergeRemotePawprintResult(pawprintResult);
     setPawprintCreated(pawprintResult.created);
   }

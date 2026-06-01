@@ -1,10 +1,13 @@
 import { describe, expect, test } from "vitest";
 
+import type { MorningMoodRecord } from "./morning-mood";
 import type { NightCheckInRecord } from "./night-checkin";
 import type { PawprintRecord } from "./pawprints";
 import {
+  fetchMorningCheckInsFromApi,
   fetchNightCheckInsFromApi,
   fetchPawprintsFromApi,
+  saveMorningCheckInToApi,
   saveNightCheckInToApi,
   savePawprintToApi,
 } from "./routine-record-api";
@@ -27,6 +30,18 @@ function createNightCheckInRecord(): NightCheckInRecord {
     conditionId: "okay",
     conditionLabel: "괜찮음",
     note: "small note",
+    savedAt: "2026-05-30T00:00:00.000Z",
+  };
+}
+
+function createMorningMoodRecord(): MorningMoodRecord {
+  return {
+    id: "morning-2026-05-30",
+    moodDate: "2026-05-30",
+    mood: "calm",
+    moodColor: "#c7b7ff",
+    bodyFeeling: "light",
+    thought: "new day",
     savedAt: "2026-05-30T00:00:00.000Z",
   };
 }
@@ -56,6 +71,19 @@ describe("routine record API client", () => {
 
     expect(result).toEqual({ status: "ok", records });
     expect(requestedUrls).toEqual(["/api/night-checkins"]);
+  });
+
+  test("loads authenticated morning check-ins from the server API", async () => {
+    const records = [createMorningMoodRecord()];
+    const requestedUrls: string[] = [];
+
+    const result = await fetchMorningCheckInsFromApi(async (url) => {
+      requestedUrls.push(String(url));
+      return Response.json({ records });
+    });
+
+    expect(result).toEqual({ status: "ok", records });
+    expect(requestedUrls).toEqual(["/api/morning-checkins"]);
   });
 
   test("saves pawprints through the server API", async () => {
@@ -124,6 +152,36 @@ describe("routine record API client", () => {
     ]);
   });
 
+  test("saves morning check-ins through the server API", async () => {
+    const calls: Array<{ url: string; method?: string; body?: unknown }> = [];
+    const record = createMorningMoodRecord();
+
+    const result = await saveMorningCheckInToApi(record, async (url, init) => {
+      calls.push({
+        url: String(url),
+        method: init?.method,
+        body: JSON.parse(String(init?.body)),
+      });
+
+      return Response.json({ record }, { status: 201 });
+    });
+
+    expect(result).toEqual({ status: "saved", record });
+    expect(calls).toEqual([
+      {
+        url: "/api/morning-checkins",
+        method: "POST",
+        body: {
+          moodDate: "2026-05-30",
+          mood: "calm",
+          moodColor: "#c7b7ff",
+          bodyFeeling: "light",
+          thought: "new day",
+        },
+      },
+    ]);
+  });
+
   test("treats unauthenticated routine requests as guest state", async () => {
     const pawprints = await fetchPawprintsFromApi(async () =>
       Response.json({ error: "authentication required" }, { status: 401 }),
@@ -131,8 +189,12 @@ describe("routine record API client", () => {
     const nightCheckIn = await saveNightCheckInToApi(createNightCheckInRecord(), async () =>
       Response.json({ error: "authentication required" }, { status: 401 }),
     );
+    const morningCheckIns = await fetchMorningCheckInsFromApi(async () =>
+      Response.json({ error: "authentication required" }, { status: 401 }),
+    );
 
     expect(pawprints).toEqual({ status: "unauthenticated", records: [] });
     expect(nightCheckIn).toEqual({ status: "unauthenticated" });
+    expect(morningCheckIns).toEqual({ status: "unauthenticated", records: [] });
   });
 });

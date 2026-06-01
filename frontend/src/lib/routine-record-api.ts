@@ -1,3 +1,4 @@
+import type { MorningMoodInput, MorningMoodRecord } from "./morning-mood";
 import type { NightCheckInInput, NightCheckInRecord } from "./night-checkin";
 import type { PawprintInput, PawprintRecord, PawprintSaveResult } from "./pawprints";
 
@@ -31,6 +32,20 @@ export type FetchNightCheckInsResult =
       records: [];
     };
 
+export type FetchMorningCheckInsResult =
+  | {
+      status: "ok";
+      records: MorningMoodRecord[];
+    }
+  | {
+      status: "unauthenticated";
+      records: [];
+    }
+  | {
+      status: "error";
+      records: [];
+    };
+
 export type SavePawprintApiResult =
   | ({
       status: "saved";
@@ -54,6 +69,18 @@ export type SaveNightCheckInApiResult =
       status: "error";
     };
 
+export type SaveMorningCheckInApiResult =
+  | {
+      status: "saved";
+      record: MorningMoodRecord;
+    }
+  | {
+      status: "unauthenticated";
+    }
+  | {
+      status: "error";
+    };
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -64,6 +91,20 @@ function isPawprintRecordArray(value: unknown): value is PawprintRecord[] {
 
 function isNightCheckInRecordArray(value: unknown): value is NightCheckInRecord[] {
   return Array.isArray(value);
+}
+
+function isMorningMoodRecordArray(value: unknown): value is MorningMoodRecord[] {
+  return Array.isArray(value);
+}
+
+function createMorningCheckInRequestBody(record: MorningMoodInput | MorningMoodRecord): MorningMoodInput {
+  return {
+    moodDate: record.moodDate,
+    mood: record.mood,
+    moodColor: record.moodColor,
+    bodyFeeling: record.bodyFeeling,
+    thought: record.thought,
+  };
 }
 
 function createNightCheckInRequestBody(record: NightCheckInInput | NightCheckInRecord): NightCheckInInput {
@@ -116,6 +157,30 @@ export async function fetchNightCheckInsFromApi(fetcher: FetchLike = fetch): Pro
     const body = (await response.json()) as { records?: unknown };
 
     if (!isNightCheckInRecordArray(body.records)) {
+      return { status: "error", records: [] };
+    }
+
+    return { status: "ok", records: body.records };
+  } catch {
+    return { status: "error", records: [] };
+  }
+}
+
+export async function fetchMorningCheckInsFromApi(fetcher: FetchLike = fetch): Promise<FetchMorningCheckInsResult> {
+  try {
+    const response = await fetcher("/api/morning-checkins");
+
+    if (response.status === 401) {
+      return { status: "unauthenticated", records: [] };
+    }
+
+    if (!response.ok) {
+      return { status: "error", records: [] };
+    }
+
+    const body = (await response.json()) as { records?: unknown };
+
+    if (!isMorningMoodRecordArray(body.records)) {
       return { status: "error", records: [] };
     }
 
@@ -188,6 +253,40 @@ export async function saveNightCheckInToApi(
     return {
       status: "saved",
       record: body.record as NightCheckInRecord,
+    };
+  } catch {
+    return { status: "error" };
+  }
+}
+
+export async function saveMorningCheckInToApi(
+  record: MorningMoodInput | MorningMoodRecord,
+  fetcher: FetchLike = fetch,
+): Promise<SaveMorningCheckInApiResult> {
+  try {
+    const response = await fetcher("/api/morning-checkins", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(createMorningCheckInRequestBody(record)),
+    });
+
+    if (response.status === 401) {
+      return { status: "unauthenticated" };
+    }
+
+    if (!response.ok) {
+      return { status: "error" };
+    }
+
+    const body = (await response.json()) as { record?: unknown };
+
+    if (!isRecord(body.record)) {
+      return { status: "error" };
+    }
+
+    return {
+      status: "saved",
+      record: body.record as MorningMoodRecord,
     };
   } catch {
     return { status: "error" };

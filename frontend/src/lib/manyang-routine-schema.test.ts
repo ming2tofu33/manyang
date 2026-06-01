@@ -16,6 +16,13 @@ const nightCheckInsMigrationPath = join(
   "migrations",
   "20260531000100_create_night_checkins.sql",
 );
+const morningCheckInsMigrationPath = join(
+  process.cwd(),
+  "..",
+  "supabase",
+  "migrations",
+  "20260601000100_create_morning_checkins.sql",
+);
 
 describe("manyang routine records migration", () => {
   test("creates authenticated-only pawprint and dream seed tables", () => {
@@ -40,5 +47,16 @@ describe("manyang routine records migration", () => {
     expect(sql).toContain("(select auth.uid())");
     expect(sql).toContain("create index if not exists night_checkins_user_date_idx");
     expect(sql).not.toContain("create table if not exists public.night_checkins");
+  });
+
+  test("creates authenticated-only morning check-in table", () => {
+    const sql = readFileSync(morningCheckInsMigrationPath, "utf8");
+
+    expect(sql).toContain("create table if not exists manyang.morning_checkins");
+    expect(sql).toContain("morning_checkins_user_mood_date_unique");
+    expect(sql).toContain("alter table manyang.morning_checkins enable row level security");
+    expect(sql).toContain("(select auth.uid())");
+    expect(sql).toContain("create index if not exists morning_checkins_user_date_idx");
+    expect(sql).not.toContain("create table if not exists public.morning_checkins");
   });
 });

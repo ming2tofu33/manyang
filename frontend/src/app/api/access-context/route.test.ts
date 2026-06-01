@@ -21,6 +21,7 @@ describe("GET /api/access-context", () => {
     const response = await handleAccessContextRequest({
       getAuthenticatedUserId: async () => "user-1",
       getAccessPlanForUser: async () => "free_account",
+      getSubscriptionPlanForUser: async () => null,
       isAdminUser: async () => false,
     });
 
@@ -37,6 +38,7 @@ describe("GET /api/access-context", () => {
     const response = await handleAccessContextRequest({
       getAuthenticatedUserId: async () => "user-1",
       getAccessPlanForUser: async () => "free_account",
+      getSubscriptionPlanForUser: async () => null,
       isAdminUser: async () => true,
     });
 
@@ -46,6 +48,23 @@ describe("GET /api/access-context", () => {
       role: "admin",
       bypassDailyLimit: true,
       bypassAccessGate: true,
+    });
+  });
+
+  test("uses active subscription plan before profile metadata plan", async () => {
+    const response = await handleAccessContextRequest({
+      getAuthenticatedUserId: async () => "user-1",
+      getAccessPlanForUser: async () => "free_account",
+      getSubscriptionPlanForUser: async () => "moon_pass",
+      isAdminUser: async () => false,
+    });
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      accessPlan: "moon_pass",
+      role: "user",
+      bypassDailyLimit: false,
+      bypassAccessGate: false,
     });
   });
 });

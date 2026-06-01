@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 
+import type { MorningMoodRecord } from "./morning-mood";
 import type { NightCheckInRecord } from "./night-checkin";
 import type { PawprintRecord } from "./pawprints";
 import { resolveRoutineRecordState, type RemoteRoutineRecordsSnapshot } from "./use-routine-records";
@@ -26,17 +27,33 @@ function createNightCheckIn(checkInDate = "2026-05-30"): NightCheckInRecord {
   };
 }
 
+function createMorningMood(moodDate = "2026-05-30"): MorningMoodRecord {
+  return {
+    id: `morning-${moodDate}`,
+    moodDate,
+    mood: "calm",
+    moodColor: "#c7b7ff",
+    bodyFeeling: "light",
+    thought: "hello",
+    savedAt: `${moodDate}T08:00:00.000Z`,
+  };
+}
+
 describe("routine record source resolution", () => {
   test("uses server pawprints and night check-ins for authenticated archives", () => {
     const remote: RemoteRoutineRecordsSnapshot = {
       status: "server",
       pawprints: [createPawprint("server-pawprint")],
+      morningMoodRecords: [createMorningMood("2026-05-29")],
       nightCheckInRecords: [createNightCheckIn("2026-05-29")],
     };
 
-    expect(resolveRoutineRecordState([createPawprint("local-pawprint")], [createNightCheckIn()], remote)).toEqual({
+    expect(
+      resolveRoutineRecordState([createPawprint("local-pawprint")], [createMorningMood()], [createNightCheckIn()], remote),
+    ).toEqual({
       source: "server",
       pawprints: remote.pawprints,
+      morningMoodRecords: remote.morningMoodRecords,
       nightCheckInRecords: remote.nightCheckInRecords,
       isLoadingRoutineRecords: false,
       canViewRoutines: true,
@@ -47,12 +64,14 @@ describe("routine record source resolution", () => {
     const remote: RemoteRoutineRecordsSnapshot = {
       status: "guest",
       pawprints: [],
+      morningMoodRecords: [],
       nightCheckInRecords: [],
     };
 
-    expect(resolveRoutineRecordState([createPawprint("local-pawprint")], [createNightCheckIn()], remote)).toEqual({
+    expect(resolveRoutineRecordState([createPawprint("local-pawprint")], [createMorningMood()], [createNightCheckIn()], remote)).toEqual({
       source: "local",
       pawprints: [createPawprint("local-pawprint")],
+      morningMoodRecords: [createMorningMood()],
       nightCheckInRecords: [createNightCheckIn()],
       isLoadingRoutineRecords: false,
       canViewRoutines: true,
@@ -63,12 +82,14 @@ describe("routine record source resolution", () => {
     const remote: RemoteRoutineRecordsSnapshot = {
       status: "loading",
       pawprints: [],
+      morningMoodRecords: [],
       nightCheckInRecords: [],
     };
 
-    expect(resolveRoutineRecordState([createPawprint("local-pawprint")], [createNightCheckIn()], remote)).toMatchObject({
+    expect(resolveRoutineRecordState([createPawprint("local-pawprint")], [createMorningMood()], [createNightCheckIn()], remote)).toMatchObject({
       source: "local",
       pawprints: [createPawprint("local-pawprint")],
+      morningMoodRecords: [createMorningMood()],
       nightCheckInRecords: [createNightCheckIn()],
       isLoadingRoutineRecords: true,
     });

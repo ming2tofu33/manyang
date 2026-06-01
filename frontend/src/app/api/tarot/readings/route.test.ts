@@ -1,6 +1,10 @@
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
-import { handleTarotReadingRequest } from "./route";
+import { handleTarotReadingRequest, resolveTarotLlmTimeoutMs } from "./route";
+
+afterEach(() => {
+  vi.unstubAllEnvs();
+});
 
 function createJsonRequest(body: unknown): Request {
   return new Request("http://localhost/api/tarot/readings", {
@@ -73,6 +77,14 @@ const generatedThreeCard = {
 };
 
 describe("POST /api/tarot/readings", () => {
+  test("resolves tarot LLM timeout env with safe bounds", () => {
+    expect(resolveTarotLlmTimeoutMs({})).toBe(25_000);
+    expect(resolveTarotLlmTimeoutMs({ MANYANG_LLM_TIMEOUT_MS: "45000" })).toBe(45_000);
+    expect(resolveTarotLlmTimeoutMs({ MANYANG_LLM_TIMEOUT_MS: "50" })).toBe(1_000);
+    expect(resolveTarotLlmTimeoutMs({ MANYANG_LLM_TIMEOUT_MS: "120000" })).toBe(60_000);
+    expect(resolveTarotLlmTimeoutMs({ MANYANG_LLM_TIMEOUT_MS: "not-a-number" })).toBe(25_000);
+  });
+
   test("rejects invalid tarot reading requests before LLM work starts", async () => {
     const generateTarotReadingForUser = vi.fn();
     const response = await handleTarotReadingRequest(
@@ -134,6 +146,8 @@ describe("POST /api/tarot/readings", () => {
   });
 
   test("returns and persists a generated one-card tarot reading for authenticated users", async () => {
+    vi.stubEnv("MANYANG_LLM_TIMEOUT_MS", "45000");
+
     const persistCompletedTarotReading = vi.fn();
     const generateTarotReadingForUser = vi.fn(async () => ({
       status: "ok" as const,
@@ -179,7 +193,7 @@ describe("POST /api/tarot/readings", () => {
           }),
         ],
       }),
-      expect.objectContaining({ provider: expect.any(Object) }),
+      expect.objectContaining({ provider: expect.any(Object), providerTimeoutMs: 45_000 }),
     );
     expect(persistCompletedTarotReading).toHaveBeenCalledWith({
       userId: "00000000-0000-4000-8000-000000000001",

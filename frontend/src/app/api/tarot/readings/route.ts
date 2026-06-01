@@ -26,6 +26,8 @@ import { isPaidAccessPlan, type AccessPlan } from "@/lib/access-policy";
 
 export const runtime = "nodejs";
 
+type EnvLike = Record<string, string | undefined>;
+
 type TarotReadingSelectionRequest = {
   cardId: number;
   orientation: TarotOrientation;
@@ -48,6 +50,10 @@ type TarotReadingValidationResult =
       ok: false;
       error: string;
     };
+
+const MIN_LLM_TIMEOUT_MS = 1_000;
+const MAX_LLM_TIMEOUT_MS = 60_000;
+const DEFAULT_TAROT_LLM_TIMEOUT_MS = 25_000;
 
 export type TarotReadingsRouteDependencies = {
   getAuthenticatedUserId?: () => Promise<string | null>;
@@ -88,6 +94,16 @@ function createUnavailablePayload(reason: Extract<TarotReadingResult, { status: 
     reason,
     retryable,
   };
+}
+
+export function resolveTarotLlmTimeoutMs(env: EnvLike = process.env): number {
+  const configuredTimeoutMs = Number(env.MANYANG_LLM_TIMEOUT_MS);
+
+  if (!Number.isFinite(configuredTimeoutMs) || configuredTimeoutMs <= 0) {
+    return DEFAULT_TAROT_LLM_TIMEOUT_MS;
+  }
+
+  return Math.min(MAX_LLM_TIMEOUT_MS, Math.max(MIN_LLM_TIMEOUT_MS, Math.round(configuredTimeoutMs)));
 }
 
 async function getDefaultAccessPlanForUser(userId: string | null): Promise<AccessPlan> {
@@ -345,7 +361,7 @@ export async function handleTarotReadingRequest(
   const selections = validatedBody.value.selections.map(resolveSelection);
   const result = await resolvedDependencies.generateTarotReadingForUser(
     createTarotReadingInput(validatedBody.value, selections),
-    { provider },
+    { provider, providerTimeoutMs: resolveTarotLlmTimeoutMs() },
   );
 
   if (result.status === "unavailable") {

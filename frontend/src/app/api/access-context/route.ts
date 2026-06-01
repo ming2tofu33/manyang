@@ -1,4 +1,7 @@
-import { isAdminUser as isAdminUserFromDb } from "@/lib/server/manyang-db";
+import {
+  getActiveSubscriptionPlanForUser,
+  isAdminUser as isAdminUserFromDb,
+} from "@/lib/server/manyang-db";
 import { getAuthenticatedAccessPlan, getAuthenticatedUserId } from "@/lib/supabase/server";
 import type { AccessPlan, AccessRole } from "@/lib/access-policy";
 
@@ -14,6 +17,7 @@ export type AccessContextResponse = {
 export type AccessContextRouteDependencies = {
   getAuthenticatedUserId?: () => Promise<string | null>;
   getAccessPlanForUser?: (userId: string | null) => Promise<AccessPlan>;
+  getSubscriptionPlanForUser?: (userId: string) => Promise<Extract<AccessPlan, "moon_pass"> | null>;
   isAdminUser?: (userId: string) => Promise<boolean>;
 };
 
@@ -33,6 +37,14 @@ async function getDefaultIsAdminUser(userId: string): Promise<boolean> {
   }
 }
 
+async function getDefaultSubscriptionPlanForUser(userId: string): Promise<Extract<AccessPlan, "moon_pass"> | null> {
+  try {
+    return await getActiveSubscriptionPlanForUser(userId);
+  } catch {
+    return null;
+  }
+}
+
 function createGuestAccessContext(): AccessContextResponse {
   return {
     accessPlan: "guest",
@@ -48,6 +60,7 @@ export async function handleAccessContextRequest(
   const resolvedDependencies: Required<AccessContextRouteDependencies> = {
     getAuthenticatedUserId,
     getAccessPlanForUser: getDefaultAccessPlanForUser,
+    getSubscriptionPlanForUser: getDefaultSubscriptionPlanForUser,
     isAdminUser: getDefaultIsAdminUser,
     ...dependencies,
   };
@@ -69,8 +82,10 @@ export async function handleAccessContextRequest(
     } satisfies AccessContextResponse);
   }
 
+  const subscriptionPlan = await resolvedDependencies.getSubscriptionPlanForUser(userId);
+
   return Response.json({
-    accessPlan: await resolvedDependencies.getAccessPlanForUser(userId),
+    accessPlan: subscriptionPlan ?? (await resolvedDependencies.getAccessPlanForUser(userId)),
     role: "user",
     bypassDailyLimit: false,
     bypassAccessGate: false,
