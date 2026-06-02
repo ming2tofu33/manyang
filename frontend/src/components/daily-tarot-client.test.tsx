@@ -101,6 +101,19 @@ afterEach(() => {
 });
 
 describe("DailyTarotClient", () => {
+  it("uses the initial user id to render a user-specific face-down deck", () => {
+    const firstUserMarkup = renderToStaticMarkup(
+      <DailyTarotClient appDate="2026-06-02" initialReading={null} initialUserId="user-first" />,
+    );
+    const secondUserMarkup = renderToStaticMarkup(
+      <DailyTarotClient appDate="2026-06-02" initialReading={null} initialUserId="user-second" />,
+    );
+
+    expect(firstUserMarkup).toContain("data-daily-tarot-option=");
+    expect(secondUserMarkup).toContain("data-daily-tarot-option=");
+    expect(firstUserMarkup).not.toEqual(secondUserMarkup);
+  });
+
   it("renders the shuffling intro over ready face-down options", () => {
     const markup = renderToStaticMarkup(<DailyTarotClient appDate="2026-05-31" initialReading={null} />);
 

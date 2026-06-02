@@ -4,6 +4,7 @@ import { AppShell } from "@/components/app-shell";
 import { DailyTarotClient } from "@/components/daily-tarot-client";
 import { manyangAssets } from "@/lib/manyang-assets";
 import { getPawprintAppDate } from "@/lib/pawprints";
+import { getAuthenticatedUserId } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   robots: {
@@ -12,8 +13,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default function TarotPage() {
+export const dynamic = "force-dynamic";
+
+export default async function TarotPage() {
   const appDate = getPawprintAppDate();
+  const initialUserId = await getAuthenticatedUserId();
 
   return (
     <AppShell
@@ -26,7 +30,7 @@ export default function TarotPage() {
       showBottomNav={false}
     >
       <section data-daily-tarot-page className="flex min-h-full flex-col px-1 pb-4 pt-1 text-[#fff3d7]">
-        <DailyTarotClient appDate={appDate} initialReading={null} />
+        <DailyTarotClient appDate={appDate} initialReading={null} initialUserId={initialUserId} />
       </section>
     </AppShell>
   );

@@ -16,8 +16,11 @@ import {
 import { AssetTextButton } from "@/components/asset-primitives";
 import {
   createDailyTarotOptions,
+  createDailyTarotUserIdentityKey,
   dailyTarotStorageKey,
   getDailyTarotReadingFromBrowser,
+  getOrCreateDailyTarotGuestIdentityFromBrowser,
+  pendingDailyTarotDrawIdentityKey,
   saveDailyTarotReadingToBrowser,
   subscribeToDailyTarot,
   type DailyTarotCardSelection,
@@ -33,16 +36,19 @@ import {
   createTarotReadingSvg,
 } from "@/lib/result-actions";
 import { cn, ui } from "@/lib/styles";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { getTarotMajorCardById } from "@/lib/tarot-major-cards";
 import { useAccessPlan } from "@/lib/use-access-plan";
 
 type DailyTarotClientProps = {
   appDate: string;
   initialReading: DailyTarotReading | null;
+  initialUserId?: string | null;
 };
 
 type DailyTarotSnapshotCache = {
   appDate: string;
+  drawIdentityKey: string | null;
   spread: TarotSpread;
   reading: DailyTarotReading | null;
   storageValue: string | null;
@@ -134,21 +140,31 @@ function getTouchDistance(touches: TouchEvent<HTMLDivElement>["touches"]): numbe
 export function getStableDailyTarotReadingSnapshot(
   appDate: string,
   spread: TarotSpread = "daily_one_card",
+  drawIdentityKey: string | null = null,
 ): DailyTarotReading | null {
   const storageValue = getDailyTarotStorageValueFromBrowser();
 
   if (
     dailyTarotSnapshotCache?.appDate === appDate &&
+    dailyTarotSnapshotCache.drawIdentityKey === drawIdentityKey &&
     dailyTarotSnapshotCache.spread === spread &&
     dailyTarotSnapshotCache.storageValue === storageValue
   ) {
     return dailyTarotSnapshotCache.reading;
   }
 
-  const reading = getDailyTarotReadingFromBrowser(appDate, spread);
-  dailyTarotSnapshotCache = { appDate, spread, reading, storageValue };
+  const reading = getDailyTarotReadingFromBrowser(appDate, { spread, drawIdentityKey });
+  dailyTarotSnapshotCache = { appDate, drawIdentityKey, spread, reading, storageValue };
 
   return reading;
+}
+
+function createInitialDailyTarotDrawIdentityKey(initialUserId: string | null | undefined): string {
+  return initialUserId ? createDailyTarotUserIdentityKey(initialUserId) : pendingDailyTarotDrawIdentityKey;
+}
+
+function isMatchingDailyTarotDrawIdentity(reading: DailyTarotReading, drawIdentityKey: string): boolean {
+  return !reading.drawIdentityKey || reading.drawIdentityKey === drawIdentityKey;
 }
 
 function wrapDeckIndex(index: number, length: number): number {
@@ -392,6 +408,8 @@ function DailyTarotFanDeck({
               key={option.id}
               type="button"
               data-daily-tarot-option={option.id}
+              data-daily-tarot-card-id={option.cardId}
+              data-daily-tarot-orientation={option.orientation}
               data-daily-tarot-active={isActive ? "true" : "false"}
               data-daily-tarot-reveal-origin={isRevealOrigin ? "true" : undefined}
               data-daily-tarot-reveal-side={isRevealMode && !isRevealOrigin ? "true" : undefined}
@@ -1077,8 +1095,9 @@ function createGenerationRequestBody(
   };
 }
 
-export function DailyTarotClient({ appDate, initialReading }: DailyTarotClientProps) {
-  const options = useMemo(() => createDailyTarotOptions(appDate), [appDate]);
+export function DailyTarotClient({ appDate, initialReading, initialUserId = null }: DailyTarotClientProps) {
+  const [drawIdentityKey, setDrawIdentityKey] = useState(() => createInitialDailyTarotDrawIdentityKey(initialUserId));
+  const options = useMemo(() => createDailyTarotOptions(appDate, { drawIdentityKey }), [appDate, drawIdentityKey]);
   const [selectedSpread, setSelectedSpread] = useState<TarotSpread>("daily_one_card");
   const [selectedReading, setSelectedReading] = useState<DailyTarotReading | null>(
     isCompletedLlmReading(initialReading) ? initialReading : null,
@@ -1094,19 +1113,28 @@ export function DailyTarotClient({ appDate, initialReading }: DailyTarotClientPr
   const positions = spreadPositions[selectedSpread];
   const storedReading = useSyncExternalStore(
     subscribeToDailyTarot,
-    () => getStableDailyTarotReadingSnapshot(appDate, selectedSpread),
+    () => getStableDailyTarotReadingSnapshot(appDate, selectedSpread, drawIdentityKey),
     () => (isCompletedLlmReading(initialReading) ? initialReading : null),
   );
   const storedReadingForDate =
-    isCompletedLlmReading(storedReading) && storedReading.appDate === appDate && storedReading.spread === selectedSpread
+    isCompletedLlmReading(storedReading) &&
+    storedReading.appDate === appDate &&
+    storedReading.spread === selectedSpread &&
+    isMatchingDailyTarotDrawIdentity(storedReading, drawIdentityKey)
       ? storedReading
       : null;
   const selectedReadingForDate =
-    isCompletedLlmReading(selectedReading) && selectedReading.appDate === appDate && selectedReading.spread === selectedSpread
+    isCompletedLlmReading(selectedReading) &&
+    selectedReading.appDate === appDate &&
+    selectedReading.spread === selectedSpread &&
+    isMatchingDailyTarotDrawIdentity(selectedReading, drawIdentityKey)
       ? selectedReading
       : null;
   const initialReadingForDate =
-    isCompletedLlmReading(initialReading) && initialReading.appDate === appDate && initialReading.spread === selectedSpread
+    isCompletedLlmReading(initialReading) &&
+    initialReading.appDate === appDate &&
+    initialReading.spread === selectedSpread &&
+    isMatchingDailyTarotDrawIdentity(initialReading, drawIdentityKey)
       ? initialReading
       : null;
   const reading = storedReadingForDate ?? selectedReadingForDate ?? initialReadingForDate;
@@ -1117,6 +1145,7 @@ export function DailyTarotClient({ appDate, initialReading }: DailyTarotClientPr
   const isRevealing = generationStatus === "revealing";
   const isTransitioningToResult = generationStatus === "transitioning-to-result";
   const isBusy = isGenerating || isRevealing || isTransitioningToResult;
+  const isDrawIdentityPending = drawIdentityKey === pendingDailyTarotDrawIdentityKey;
   const shouldShowShuffleIntro = pendingSelections.length === 0 && generationStatus === "idle";
 
   useEffect(() => {
@@ -1129,6 +1158,40 @@ export function DailyTarotClient({ appDate, initialReading }: DailyTarotClientPr
       }
     };
   }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function resolveDrawIdentity() {
+      if (initialUserId) {
+        setDrawIdentityKey(createDailyTarotUserIdentityKey(initialUserId));
+        return;
+      }
+
+      try {
+        const supabase = createSupabaseBrowserClient();
+        const { data } = await supabase.auth.getSession();
+        const sessionUserId = data.session?.user?.id;
+        const nextIdentityKey = sessionUserId
+          ? createDailyTarotUserIdentityKey(sessionUserId)
+          : getOrCreateDailyTarotGuestIdentityFromBrowser();
+
+        if (isMounted) {
+          setDrawIdentityKey(nextIdentityKey);
+        }
+      } catch {
+        if (isMounted) {
+          setDrawIdentityKey(getOrCreateDailyTarotGuestIdentityFromBrowser());
+        }
+      }
+    }
+
+    void resolveDrawIdentity();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [initialUserId]);
 
   function clearRevealTimer() {
     if (revealTimerRef.current) {
@@ -1182,8 +1245,10 @@ export function DailyTarotClient({ appDate, initialReading }: DailyTarotClientPr
         throw new Error("tarot reading unavailable");
       }
 
-      setSelectedReading(readingBody);
-      saveDailyTarotReadingToBrowser(readingBody);
+      const readingForCurrentIdentity = { ...readingBody, drawIdentityKey };
+
+      setSelectedReading(readingForCurrentIdentity);
+      saveDailyTarotReadingToBrowser(readingForCurrentIdentity);
       setGenerationStatus("transitioning-to-result");
       resultTransitionTimerRef.current = setTimeout(() => {
         resultTransitionTimerRef.current = null;
@@ -1198,7 +1263,7 @@ export function DailyTarotClient({ appDate, initialReading }: DailyTarotClientPr
   }
 
   function handleSelect(option: DailyTarotOption, optionIndex: number) {
-    if (isBusy || (selectedSpread === "daily_three_card" && !canUseThreeCard)) {
+    if (isBusy || isDrawIdentityPending || (selectedSpread === "daily_three_card" && !canUseThreeCard)) {
       return;
     }
 
@@ -1293,7 +1358,7 @@ export function DailyTarotClient({ appDate, initialReading }: DailyTarotClientPr
               ? `${positionLabels[nextPosition]} 카드를 골라 주세요.`
               : "중앙 카드를 골라 주세요."}
           </p>
-          <DailyTarotFanDeck options={availableOptions} onSelect={handleSelect} disabled={isBusy} />
+          <DailyTarotFanDeck options={availableOptions} onSelect={handleSelect} disabled={isBusy || isDrawIdentityPending} />
           {shouldShowShuffleIntro ? <DailyTarotShuffleIntro /> : null}
         </div>
       )}

@@ -39,6 +39,7 @@ export type DailyTarotReading = {
   id: string;
   spread: TarotSpread;
   source?: "local" | "llm";
+  drawIdentityKey?: string;
   appDate: string;
   selectedAt: string;
   card: TarotMajorCard;
@@ -56,12 +57,25 @@ export type CreateDailyTarotReadingInput = {
   appDate: string;
   selectedAt: string;
   option: DailyTarotOption;
+  drawIdentityKey?: string | null;
 };
 
 export const dailyTarotStorageKey = "manyang:daily-tarot-readings";
 export const dailyTarotChangedEvent = "manyang:daily-tarot-changed";
+export const dailyTarotGuestIdentityStorageKey = "manyang:daily-tarot-guest-id";
+export const pendingDailyTarotDrawIdentityKey = "guest:pending";
 
 const emptyDailyTarotReadingSnapshot: DailyTarotReading | null = null;
+
+export type CreateDailyTarotOptionsConfig = {
+  count?: number;
+  drawIdentityKey?: string | null;
+};
+
+export type GetDailyTarotReadingOptions = {
+  spread?: TarotSpread;
+  drawIdentityKey?: string | null;
+};
 
 function parseJson<T>(value: string | null, fallback: T): T {
   if (!value) {
@@ -115,8 +129,53 @@ function createRandom(seed: number): () => number {
   };
 }
 
-function shuffleCards(appDate: string): TarotMajorCard[] {
-  const random = createRandom(createSeed(appDate));
+function normalizeDailyTarotDrawIdentityKey(value: string | null | undefined): string | null {
+  const normalized = value?.trim();
+
+  return normalized ? normalized : null;
+}
+
+function createFallbackGuestId(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
+}
+
+export function createDailyTarotUserIdentityKey(userId: string): string {
+  const normalizedUserId = userId.trim();
+
+  return normalizedUserId ? `user:${normalizedUserId}` : pendingDailyTarotDrawIdentityKey;
+}
+
+export function createDailyTarotGuestIdentityKey(guestId: string): string {
+  const normalizedGuestId = guestId.trim();
+
+  return normalizedGuestId ? `guest:${normalizedGuestId}` : pendingDailyTarotDrawIdentityKey;
+}
+
+export function getOrCreateDailyTarotGuestIdentity(storage: StorageLike): string {
+  const storedGuestId = storage.getItem(dailyTarotGuestIdentityStorageKey);
+
+  if (storedGuestId?.trim()) {
+    return createDailyTarotGuestIdentityKey(storedGuestId);
+  }
+
+  const guestId = createFallbackGuestId();
+  storage.setItem(dailyTarotGuestIdentityStorageKey, guestId);
+
+  return createDailyTarotGuestIdentityKey(guestId);
+}
+
+export function getOrCreateDailyTarotGuestIdentityFromBrowser(): string {
+  const storage = getBrowserStorage();
+
+  return storage ? getOrCreateDailyTarotGuestIdentity(storage) : pendingDailyTarotDrawIdentityKey;
+}
+
+function shuffleCards(seedSource: string): TarotMajorCard[] {
+  const random = createRandom(createSeed(seedSource));
   const cards = [...tarotMajorCards];
 
   for (let index = cards.length - 1; index > 0; index -= 1) {
@@ -149,6 +208,10 @@ function isDailyTarotPosition(value: unknown): value is DailyTarotPosition {
 
 function expectedPositionsForSpread(spread: TarotSpread): DailyTarotPosition[] {
   return spread === "daily_three_card" ? ["situation", "flow", "advice"] : ["today"];
+}
+
+function isValidStoredDrawIdentityKey(value: unknown): value is string | undefined {
+  return value === undefined || (typeof value === "string" && value.trim().length > 0);
 }
 
 function isStoredTarotMajorCard(value: unknown): value is TarotMajorCard {
@@ -214,7 +277,7 @@ function isStoredDailyTarotReading(value: unknown): value is DailyTarotReading {
   const cards = value.cards;
   const generated = value.generated;
 
-  if (!isTarotSpread(spread) || value.source !== "llm" || !Array.isArray(cards)) {
+  if (!isTarotSpread(spread) || value.source !== "llm" || !Array.isArray(cards) || !isValidStoredDrawIdentityKey(value.drawIdentityKey)) {
     return false;
   }
 
@@ -242,14 +305,59 @@ function getDailyTarotReadings(storage: StorageLike): DailyTarotReading[] {
   return Array.isArray(readings) ? readings.filter(isStoredDailyTarotReading) : [];
 }
 
-export function createDailyTarotOptions(appDate: string, count: number = tarotMajorCards.length): DailyTarotOption[] {
-  const optionCount = Math.max(0, Math.min(count, tarotMajorCards.length));
-  const seed = createSeed(`${appDate}:orientation`);
-  const selectedCards = shuffleCards(appDate).slice(0, optionCount);
+function resolveCreateDailyTarotOptionsConfig(
+  configOrCount: number | CreateDailyTarotOptionsConfig | undefined,
+): Required<CreateDailyTarotOptionsConfig> {
+  if (typeof configOrCount === "number") {
+    return {
+      count: configOrCount,
+      drawIdentityKey: null,
+    };
+  }
+
+  return {
+    count: configOrCount?.count ?? tarotMajorCards.length,
+    drawIdentityKey: normalizeDailyTarotDrawIdentityKey(configOrCount?.drawIdentityKey),
+  };
+}
+
+function resolveGetDailyTarotReadingOptions(
+  spreadOrOptions: TarotSpread | GetDailyTarotReadingOptions | undefined,
+): Required<GetDailyTarotReadingOptions> {
+  if (spreadOrOptions === "daily_one_card" || spreadOrOptions === "daily_three_card") {
+    return {
+      spread: spreadOrOptions,
+      drawIdentityKey: null,
+    };
+  }
+
+  return {
+    spread: spreadOrOptions?.spread ?? "daily_one_card",
+    drawIdentityKey: normalizeDailyTarotDrawIdentityKey(spreadOrOptions?.drawIdentityKey),
+  };
+}
+
+function matchesDailyTarotDrawIdentity(reading: DailyTarotReading, drawIdentityKey: string | null): boolean {
+  if (!drawIdentityKey) {
+    return true;
+  }
+
+  return reading.drawIdentityKey === drawIdentityKey;
+}
+
+export function createDailyTarotOptions(
+  appDate: string,
+  configOrCount: number | CreateDailyTarotOptionsConfig = tarotMajorCards.length,
+): DailyTarotOption[] {
+  const config = resolveCreateDailyTarotOptionsConfig(configOrCount);
+  const optionCount = Math.max(0, Math.min(config.count, tarotMajorCards.length));
+  const seedSource = config.drawIdentityKey ? `${appDate}:${config.drawIdentityKey}` : appDate;
+  const orientationRandom = createRandom(createSeed(`${seedSource}:orientation`));
+  const selectedCards = shuffleCards(seedSource).slice(0, optionCount);
   const options = selectedCards.map<DailyTarotOption>((card, index) => ({
     id: `option-${index + 1}`,
     cardId: card.id,
-    orientation: ((seed + card.id + index) % 2 === 0 ? "upright" : "reversed") satisfies TarotOrientation,
+    orientation: (orientationRandom() < 0.5 ? "upright" : "reversed") satisfies TarotOrientation,
   }));
 
   if (options.length > 1) {
@@ -281,6 +389,7 @@ export function createDailyTarotReading(input: CreateDailyTarotReadingInput): Da
     id: `daily-tarot-${input.appDate}`,
     spread: "daily_one_card",
     source: "local",
+    drawIdentityKey: normalizeDailyTarotDrawIdentityKey(input.drawIdentityKey) ?? undefined,
     appDate: input.appDate,
     selectedAt: input.selectedAt,
     card,
@@ -294,8 +403,12 @@ export function createDailyTarotReading(input: CreateDailyTarotReadingInput): Da
 }
 
 export function saveDailyTarotReading(storage: StorageLike, reading: DailyTarotReading): void {
+  const readingDrawIdentityKey = normalizeDailyTarotDrawIdentityKey(reading.drawIdentityKey);
   const readings = getDailyTarotReadings(storage).filter(
-    (storedReading) => storedReading.appDate !== reading.appDate || storedReading.spread !== reading.spread,
+    (storedReading) =>
+      storedReading.appDate !== reading.appDate ||
+      storedReading.spread !== reading.spread ||
+      normalizeDailyTarotDrawIdentityKey(storedReading.drawIdentityKey) !== readingDrawIdentityKey,
   );
 
   storage.setItem(dailyTarotStorageKey, JSON.stringify([reading, ...readings]));
@@ -304,18 +417,27 @@ export function saveDailyTarotReading(storage: StorageLike, reading: DailyTarotR
 export function getDailyTarotReading(
   storage: StorageLike,
   appDate: string,
-  spread: TarotSpread = "daily_one_card",
+  spreadOrOptions: TarotSpread | GetDailyTarotReadingOptions = "daily_one_card",
 ): DailyTarotReading | null {
-  return getDailyTarotReadings(storage).find((reading) => reading.appDate === appDate && reading.spread === spread) ?? null;
+  const options = resolveGetDailyTarotReadingOptions(spreadOrOptions);
+
+  return (
+    getDailyTarotReadings(storage).find(
+      (reading) =>
+        reading.appDate === appDate &&
+        reading.spread === options.spread &&
+        matchesDailyTarotDrawIdentity(reading, options.drawIdentityKey),
+    ) ?? null
+  );
 }
 
 export function getDailyTarotReadingFromBrowser(
   appDate: string,
-  spread: TarotSpread = "daily_one_card",
+  spreadOrOptions: TarotSpread | GetDailyTarotReadingOptions = "daily_one_card",
 ): DailyTarotReading | null {
   const storage = getBrowserStorage();
 
-  return storage ? getDailyTarotReading(storage, appDate, spread) : emptyDailyTarotReadingSnapshot;
+  return storage ? getDailyTarotReading(storage, appDate, spreadOrOptions) : emptyDailyTarotReadingSnapshot;
 }
 
 export function saveDailyTarotReadingToBrowser(reading: DailyTarotReading): void {

@@ -3,11 +3,14 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import {
   createDailyTarotOptions,
   createDailyTarotReading,
+  createDailyTarotUserIdentityKey,
   dailyTarotChangedEvent,
+  dailyTarotGuestIdentityStorageKey,
   dailyTarotStorageKey,
   getDailyTarotReading,
   getDailyTarotReadingFromBrowser,
   getEmptyDailyTarotReadingSnapshot,
+  getOrCreateDailyTarotGuestIdentity,
   saveDailyTarotReading,
   saveDailyTarotReadingToBrowser,
   subscribeToDailyTarot,
@@ -137,6 +140,23 @@ afterEach(() => {
 });
 
 describe("daily tarot draw logic", () => {
+  test("creates different daily tarot options for different draw identities on the same app date", () => {
+    const firstUserOptions = createDailyTarotOptions("2026-06-02", {
+      count: 8,
+      drawIdentityKey: "user:first",
+    });
+    const secondUserOptions = createDailyTarotOptions("2026-06-02", {
+      count: 8,
+      drawIdentityKey: "user:second",
+    });
+
+    expect(firstUserOptions).toHaveLength(8);
+    expect(secondUserOptions).toHaveLength(8);
+    expect(firstUserOptions.map((option) => `${option.cardId}:${option.orientation}`)).not.toEqual(
+      secondUserOptions.map((option) => `${option.cardId}:${option.orientation}`),
+    );
+  });
+
   test("creates deterministic unique daily tarot options with both orientations", () => {
     const options = createDailyTarotOptions("2026-05-31", 6);
     const cardIds = options.map((option) => option.cardId);
@@ -150,6 +170,18 @@ describe("daily tarot draw logic", () => {
 
   test("returns the same daily tarot options for the same app date", () => {
     expect(createDailyTarotOptions("2026-05-31")).toEqual(createDailyTarotOptions("2026-05-31"));
+  });
+
+  test("returns the same daily tarot options for the same draw identity", () => {
+    expect(
+      createDailyTarotOptions("2026-06-02", {
+        drawIdentityKey: "user:same",
+      }),
+    ).toEqual(
+      createDailyTarotOptions("2026-06-02", {
+        drawIdentityKey: "user:same",
+      }),
+    );
   });
 
   test("uses the full major arcana deck by default", () => {
@@ -222,6 +254,30 @@ describe("daily tarot draw logic", () => {
     expect(getDailyTarotReading(storage, "2026-06-01")).toBeNull();
   });
 
+  test("keeps stored daily tarot readings separated by draw identity", () => {
+    const storage = createMemoryStorage();
+    const firstUserReading = {
+      ...createGeneratedReading("2026-05-31"),
+      drawIdentityKey: "user:first",
+      selectedAt: "2026-05-31T09:30:00.000Z",
+    };
+    const secondUserReading = {
+      ...createGeneratedReading("2026-05-31"),
+      drawIdentityKey: "user:second",
+      selectedAt: "2026-05-31T10:30:00.000Z",
+    };
+
+    saveDailyTarotReading(storage, firstUserReading);
+    saveDailyTarotReading(storage, secondUserReading);
+
+    expect(getDailyTarotReading(storage, "2026-05-31", {
+      drawIdentityKey: "user:first",
+    })).toEqual(firstUserReading);
+    expect(getDailyTarotReading(storage, "2026-05-31", {
+      drawIdentityKey: "user:second",
+    })).toEqual(secondUserReading);
+  });
+
   test("stores newest first and replaces the same app date", () => {
     const storage = createMemoryStorage();
     const first = createGeneratedReading("2026-05-30");
@@ -290,6 +346,17 @@ describe("daily tarot draw logic", () => {
   test("exports daily tarot storage constants", () => {
     expect(dailyTarotStorageKey).toBe("manyang:daily-tarot-readings");
     expect(dailyTarotChangedEvent).toBe("manyang:daily-tarot-changed");
+  });
+
+  test("creates stable draw identity keys for authenticated and guest users", () => {
+    const storage = createMemoryStorage();
+    const firstGuestIdentity = getOrCreateDailyTarotGuestIdentity(storage);
+    const secondGuestIdentity = getOrCreateDailyTarotGuestIdentity(storage);
+
+    expect(createDailyTarotUserIdentityKey("user-1")).toBe("user:user-1");
+    expect(firstGuestIdentity).toBe(secondGuestIdentity);
+    expect(firstGuestIdentity).toMatch(/^guest:/);
+    expect(storage.getItem(dailyTarotGuestIdentityStorageKey)).toBe(firstGuestIdentity.slice("guest:".length));
   });
 });
 
