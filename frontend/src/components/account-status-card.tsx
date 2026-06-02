@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 import { AssetTextButton } from "@/components/asset-primitives";
+import type { AccessRole } from "@/lib/access-policy";
 import { manyangAssets } from "@/lib/manyang-assets";
 import { cn, ui } from "@/lib/styles";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -14,11 +15,19 @@ export function createProfileLoginHref(): string {
   return "/auth?next=%2Fprofile";
 }
 
-export function getAccountStatusCopy(status: AccountStatus): {
+export function getAccountStatusCopy(status: AccountStatus, accessRole: AccessRole = "user"): {
   title: string;
   body: string;
   primaryActionLabel: string;
 } {
+  if (status === "authenticated" && accessRole === "admin") {
+    return {
+      title: "어드민 테스트 모드가 켜져 있어요",
+      body: "일일 제한과 Moon Pass 잠금을 우회해 꿈 해몽과 타로 흐름을 확인할 수 있어요.",
+      primaryActionLabel: "로그아웃",
+    };
+  }
+
   if (status === "authenticated") {
     return {
       title: "계정이 꿈을 보관하고 있어요",
@@ -34,10 +43,17 @@ export function getAccountStatusCopy(status: AccountStatus): {
   };
 }
 
-export function AccountStatusCard({ initialStatus = "guest" }: { initialStatus?: AccountStatus }) {
+export function AccountStatusCard({
+  initialStatus = "guest",
+  accessRole = "user",
+}: {
+  initialStatus?: AccountStatus;
+  accessRole?: AccessRole;
+}) {
   const [status, setStatus] = useState<AccountStatus>(initialStatus);
   const [isSigningOut, setIsSigningOut] = useState(false);
-  const copy = getAccountStatusCopy(status);
+  const copy = getAccountStatusCopy(status, accessRole);
+  const isAdmin = status === "authenticated" && accessRole === "admin";
 
   useEffect(() => {
     let isMounted = true;
@@ -84,6 +100,7 @@ export function AccountStatusCard({ initialStatus = "guest" }: { initialStatus?:
     <section
       className={cn(ui.panel, "space-y-3 p-4")}
       data-account-status-card={status}
+      data-account-access-role={accessRole}
     >
       <div className="flex items-start gap-3">
         <span className="relative mt-0.5 h-12 w-12 shrink-0 rounded-full bg-[rgba(255,217,138,0.06)] ring-1 ring-[#d799ff]/12">
@@ -99,7 +116,14 @@ export function AccountStatusCard({ initialStatus = "guest" }: { initialStatus?:
           </span>
         </span>
         <div className="min-w-0 flex-1 space-y-1">
-          <p className={cn("text-base font-semibold text-[#ffd98a]", ui.textGlow)}>{copy.title}</p>
+          <div className="flex flex-wrap items-center gap-2">
+            <p className={cn("text-base font-semibold text-[#ffd98a]", ui.textGlow)}>{copy.title}</p>
+            {isAdmin ? (
+              <span className="rounded-full border border-[#d799ff]/38 bg-[#241036]/72 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-normal text-[#e7b3ff]">
+                Admin
+              </span>
+            ) : null}
+          </div>
           <p className="text-sm leading-6 text-[#fff3d7]/76">{copy.body}</p>
         </div>
       </div>

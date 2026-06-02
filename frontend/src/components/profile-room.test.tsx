@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { ProfileRoom } from "./profile-room";
+import { AdminAccessPanel, AdminPersonaSettings, ProfileRoom } from "./profile-room";
 
 describe("ProfileRoom", () => {
   it("orders the room around account, reader theme, plan, settings, records, and support", () => {
@@ -74,5 +74,51 @@ describe("ProfileRoom", () => {
     expect(markup).toContain("마냥 꿈해몽의 해석은 오락과 자기 성찰을 위한 감성 리딩입니다.");
     expect(markup).not.toContain("최근 기록");
     expect(markup).not.toContain("이번 달 기록");
+  });
+
+  it("renders the admin testing panel only for admin access state", () => {
+    const userMarkup = renderToStaticMarkup(
+      <AdminAccessPanel
+        accessState={{
+          accessPlan: "free_account",
+          role: "user",
+          bypassDailyLimit: false,
+          bypassAccessGate: false,
+        }}
+      />,
+    );
+    const adminMarkup = renderToStaticMarkup(
+      <AdminAccessPanel
+        accessState={{
+          accessPlan: "moon_pass",
+          role: "admin",
+          bypassDailyLimit: true,
+          bypassAccessGate: true,
+        }}
+      />,
+    );
+
+    expect(userMarkup).toBe("");
+    expect(adminMarkup).toContain('data-profile-section="admin"');
+    expect(adminMarkup).toContain('data-admin-access-state="active"');
+    expect(adminMarkup).toContain("어드민 테스트 모드");
+    expect(adminMarkup).toContain("일일 해몽 제한");
+    expect(adminMarkup).toContain("Moon Pass 잠금");
+    expect(adminMarkup).toContain('href="/write"');
+    expect(adminMarkup).toContain('href="/tarot"');
+  });
+
+  it("renders day and night persona settings only for admins", () => {
+    const userMarkup = renderToStaticMarkup(<AdminPersonaSettings accessRole="user" />);
+    const adminMarkup = renderToStaticMarkup(<AdminPersonaSettings accessRole="admin" />);
+
+    expect(userMarkup).toBe("");
+    expect(adminMarkup).toContain('data-profile-section="admin-personas"');
+    expect(adminMarkup).toContain('data-admin-persona-option="day"');
+    expect(adminMarkup).toContain('data-admin-persona-option="night"');
+    expect(adminMarkup).toContain("낮 페르소나");
+    expect(adminMarkup).toContain("밤 페르소나");
+    expect(adminMarkup).toContain('href="/morning"');
+    expect(adminMarkup).toContain('href="/night"');
   });
 });

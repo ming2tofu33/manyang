@@ -41,4 +41,19 @@ describe("CatReaderPicker", () => {
     expect(markup).not.toContain("disabled");
     expect(markup).toContain("Moon Pass");
   });
+
+  it("marks premium cat access as admin-open when the user has an admin role", () => {
+    const markup = renderToStaticMarkup(
+      <CatReaderPicker
+        value="gray_cat"
+        onChange={() => undefined}
+        variant="compact"
+        accessRole="admin"
+      />,
+    );
+
+    expect(markup).toContain("잿빛냥");
+    expect(markup).toContain("Admin");
+    expect(markup).not.toContain("Moon Pass");
+  });
 });

@@ -22,6 +22,13 @@ describe("account status card", () => {
     });
   });
 
+  test("describes authenticated admin status", () => {
+    expect(getAccountStatusCopy("authenticated", "admin")).toMatchObject({
+      title: "어드민 테스트 모드가 켜져 있어요",
+      primaryActionLabel: "로그아웃",
+    });
+  });
+
   test("links guest login back to profile", () => {
     expect(createProfileLoginHref()).toBe("/auth?next=%2Fprofile");
   });
@@ -32,5 +39,14 @@ describe("account status card", () => {
     expect(markup).toContain('data-account-status-card="guest"');
     expect(markup).toContain(getAccountStatusCopy("guest").title);
     expect(markup).toContain(createProfileLoginHref().replace("&", "&amp;"));
+  });
+
+  test("renders an admin badge for authenticated admin accounts", () => {
+    const markup = renderToStaticMarkup(<AccountStatusCard initialStatus="authenticated" accessRole="admin" />);
+
+    expect(markup).toContain('data-account-status-card="authenticated"');
+    expect(markup).toContain('data-account-access-role="admin"');
+    expect(markup).toContain("어드민 테스트 모드가 켜져 있어요");
+    expect(markup).toContain("Admin");
   });
 });

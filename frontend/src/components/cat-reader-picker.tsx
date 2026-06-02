@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
+import type { AccessRole } from "@/lib/access-policy";
 import { catReaderPickerSheetCopy, getCatReaderHomeCopy } from "@/lib/cat-reader-home-copy";
 import {
   catReaders,
@@ -21,20 +22,37 @@ type CatReaderPickerProps = {
   variant?: "home" | "compact";
   className?: string;
   heading?: string;
+  accessRole?: AccessRole;
 };
 
 function getReaderImage(reader: CatReader): string {
   return manyangAssets.illustrations[reader.assetKey];
 }
 
+function getLockedBadgeLabel(reader: CatReader, accessRole: AccessRole): string | null {
+  if (!reader.lockedLabel) {
+    return null;
+  }
+
+  return accessRole === "admin" ? "Admin" : "Moon Pass";
+}
+
 export const homeCatSelectionFeedbackMs = 220;
 export const homeCatBackgroundChangeDelayMs = 280;
 
-export function CatReaderPicker({ value, onChange, variant = "home", className, heading }: CatReaderPickerProps) {
+export function CatReaderPicker({
+  value,
+  onChange,
+  variant = "home",
+  className,
+  heading,
+  accessRole = "user",
+}: CatReaderPickerProps) {
   const { locale, t } = useLocale();
   const selectedReader = getCatReaderById(value);
   const selectedReaderName = getCatReaderName(selectedReader, locale);
   const selectedReaderCopy = getCatReaderHomeCopy(selectedReader.id);
+  const selectedLockedBadgeLabel = getLockedBadgeLabel(selectedReader, accessRole);
   const isCompact = variant === "compact";
   const [isHomeSheetOpen, setIsHomeSheetOpen] = useState(false);
   const [pendingReaderId, setPendingReaderId] = useState<CatReaderId | null>(null);
@@ -113,9 +131,9 @@ export function CatReaderPicker({ value, onChange, variant = "home", className, 
               <span className="shrink-0 rounded-full border border-[#b98255]/35 bg-[#1b1028]/70 px-1.5 py-0.5 text-[9px] font-semibold leading-none text-[#f0bc7d]">
                 {selectedReaderCopy.tag}
               </span>
-              {selectedReader.lockedLabel ? (
+              {selectedLockedBadgeLabel ? (
                 <span className="shrink-0 rounded-full border border-[#d799ff]/35 bg-[#241036]/70 px-1.5 py-0.5 text-[9px] font-semibold leading-none text-[#e7b3ff]">
-                  Moon Pass
+                  {selectedLockedBadgeLabel}
                 </span>
               ) : null}
             </span>
@@ -167,6 +185,7 @@ export function CatReaderPicker({ value, onChange, variant = "home", className, 
                   const isSelected = reader.id === value;
                   const isPending = pendingReaderId === reader.id;
                   const readerCopy = getCatReaderHomeCopy(reader.id);
+                  const lockedBadgeLabel = getLockedBadgeLabel(reader, accessRole);
 
                   return (
                     <button
@@ -211,8 +230,10 @@ export function CatReaderPicker({ value, onChange, variant = "home", className, 
                         <span className="mt-0.5 block truncate text-[10px] text-[#fff3d7]/70">
                           {readerCopy.sheetLine}
                         </span>
-                        {reader.lockedLabel ? (
-                          <span className="mt-0.5 block truncate text-[9px] font-semibold text-[#e7b3ff]">Moon Pass</span>
+                        {lockedBadgeLabel ? (
+                          <span className="mt-0.5 block truncate text-[9px] font-semibold text-[#e7b3ff]">
+                            {lockedBadgeLabel}
+                          </span>
                         ) : null}
                       </span>
                     </button>
@@ -265,6 +286,7 @@ export function CatReaderPicker({ value, onChange, variant = "home", className, 
       <div className="grid grid-cols-4 gap-2">
         {catReaders.map((reader) => {
           const isSelected = reader.id === value;
+          const lockedBadgeLabel = getLockedBadgeLabel(reader, accessRole);
 
           return (
             <button
@@ -272,7 +294,7 @@ export function CatReaderPicker({ value, onChange, variant = "home", className, 
               type="button"
               onClick={() => onChange(reader.id)}
               aria-pressed={isSelected}
-              title={reader.lockedLabel ?? reader.shortDescription}
+              title={accessRole === "admin" ? reader.shortDescription : (reader.lockedLabel ?? reader.shortDescription)}
               className={cn(
                 "group min-w-0 rounded-[0.9rem] border bg-[rgba(12,8,24,0.72)] p-1.5 text-center transition focus:outline-none focus:ring-2 focus:ring-[#d799ff]",
                 isSelected
@@ -294,8 +316,10 @@ export function CatReaderPicker({ value, onChange, variant = "home", className, 
                 {getCatReaderName(reader, locale)}
               </span>
               <span className="mt-0.5 block truncate text-[9px] font-semibold text-[#f0bc7d]">{reader.role}</span>
-              {reader.lockedLabel ? (
-                <span className="mt-0.5 block truncate text-[9px] font-semibold text-[#f0bc7d]">Moon Pass</span>
+              {lockedBadgeLabel ? (
+                <span className="mt-0.5 block truncate text-[9px] font-semibold text-[#f0bc7d]">
+                  {lockedBadgeLabel}
+                </span>
               ) : null}
             </button>
           );
