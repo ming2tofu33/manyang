@@ -49,10 +49,14 @@ export type DreamEvidenceSet = {
 };
 
 const DEFAULT_SEMANTIC_CANDIDATE_LIMIT = 1;
-const DEFAULT_VECTOR_CANDIDATE_MIN_SCORE = 0.85;
-const DEFAULT_VECTOR_CANDIDATE_WITH_EXPLICIT_MIN_SCORE = 0.92;
+// 임계값은 실제 인덱스(text-embedding-3-small, ko/en 847청크)의 코사인 분포에 맞춰 보정됨:
+// 구조분석으로 확장된 쿼리에서 정답 심볼은 ~0.55–0.78, 무관 노이즈는 ~0.34–0.40에 분포한다.
+// 기존 0.85/0.92는 그 범위를 한참 웃돌아 벡터 후보/승격이 사실상 한 번도 발화하지 못했다(dead lane).
+// 노이즈 바닥(~0.40)보다 충분히 높고 정답대(~0.55+) 안에 드는 값으로 내려, promotion-by-agreement 경로를 살린다.
+const DEFAULT_VECTOR_CANDIDATE_MIN_SCORE = 0.6;
+const DEFAULT_VECTOR_CANDIDATE_WITH_EXPLICIT_MIN_SCORE = 0.68;
 const DEFAULT_SEMANTIC_PROMOTION_MIN_CONFIDENCE = 0.8;
-const DEFAULT_VECTOR_PROMOTION_MIN_SCORE = 0.92;
+const DEFAULT_VECTOR_PROMOTION_MIN_SCORE = 0.68;
 const DEFAULT_VECTOR_NEW_SYMBOL_LIMIT = 1;
 
 const retrievalPolicy: DreamEvidenceRetrievalPolicy = {
