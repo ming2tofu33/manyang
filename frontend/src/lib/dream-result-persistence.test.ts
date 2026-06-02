@@ -3,8 +3,8 @@ import { describe, expect, test } from "vitest";
 import { shouldSaveReadingToLocalArchive } from "./dream-result-persistence";
 
 describe("dream result persistence policy", () => {
-  test("never saves completed readings to local archive for guests", () => {
-    expect(shouldSaveReadingToLocalArchive({ isAuthenticated: false, status: "completed" })).toBe(false);
+  test("saves completed guest readings to the local archive", () => {
+    expect(shouldSaveReadingToLocalArchive({ isAuthenticated: false, status: "completed" })).toBe(true);
   });
 
   test("does not save unavailable attempts as permanent archive records", () => {

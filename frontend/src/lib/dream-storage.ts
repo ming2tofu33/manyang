@@ -54,6 +54,10 @@ export const dreamRecordsKey = "manyang:dreams";
 export const dreamDraftKey = "manyang:dream-draft";
 export const dreamStorageChangedEvent = "manyang:dream-storage-changed";
 
+export type SaveDreamRecordOptions = {
+  maxRecords?: number;
+};
+
 const emptyDreamRecords: DreamRecord[] = [];
 
 let latestAnalysisSnapshotCache:
@@ -155,10 +159,11 @@ export function getDreamRecordsSnapshot(storage: StorageLike): DreamRecord[] {
   return value;
 }
 
-export function saveDreamRecord(storage: StorageLike, record: DreamRecord): void {
+export function saveDreamRecord(storage: StorageLike, record: DreamRecord, options: SaveDreamRecordOptions = {}): void {
   const records = getDreamRecords(storage).filter((storedRecord) => storedRecord.id !== record.id);
+  const nextRecords = [record, ...records];
 
-  storage.setItem(dreamRecordsKey, JSON.stringify([record, ...records]));
+  storage.setItem(dreamRecordsKey, JSON.stringify(options.maxRecords ? nextRecords.slice(0, options.maxRecords) : nextRecords));
 }
 
 function createLatestAnalysisPayloadFromRecord(record: DreamRecord): LatestAnalysisPayload {
@@ -296,11 +301,11 @@ export function getEmptyDreamRecordsSnapshot(): DreamRecord[] {
   return emptyDreamRecords;
 }
 
-export function saveDreamRecordToBrowser(record: DreamRecord): void {
+export function saveDreamRecordToBrowser(record: DreamRecord, options: SaveDreamRecordOptions = {}): void {
   const storage = getBrowserStorage();
 
   if (storage) {
-    saveDreamRecord(storage, record);
+    saveDreamRecord(storage, record, options);
     notifyDreamStorageChanged();
   }
 }

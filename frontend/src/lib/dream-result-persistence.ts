@@ -3,8 +3,8 @@ export type DreamResultPersistenceInput = {
   status: "completed" | "unavailable";
 };
 
-export function shouldSaveReadingToLocalArchive(input: DreamResultPersistenceInput): boolean {
-  void input;
+export const guestLocalDreamArchiveLimit = 3;
 
-  return false;
+export function shouldSaveReadingToLocalArchive(input: DreamResultPersistenceInput): boolean {
+  return !input.isAuthenticated && input.status === "completed";
 }

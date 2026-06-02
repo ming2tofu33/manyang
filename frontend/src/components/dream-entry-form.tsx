@@ -38,10 +38,12 @@ import {
   getDreamDraftFromBrowser,
   getLatestAnalysisSnapshotFromBrowser,
   saveDreamDraftToBrowser,
+  saveDreamRecordToBrowser,
   saveLatestAnalysisToBrowser,
   subscribeToDreamStorage,
   type DreamUnavailablePayload,
 } from "@/lib/dream-storage";
+import { guestLocalDreamArchiveLimit, shouldSaveReadingToLocalArchive } from "@/lib/dream-result-persistence";
 import { DREAM_LOADING_MINIMUM_MS } from "@/lib/dream-loading-sequence";
 import { manyangAssets } from "@/lib/manyang-assets";
 import {
@@ -204,7 +206,7 @@ export function DreamEntryForm() {
     () => null,
   );
   const todayDate = getManyangAppDate();
-  const { accessPlan, bypassDailyLimit } = useAccessPlan();
+  const { accessPlan, role, bypassDailyLimit, bypassAccessGate } = useAccessPlan();
   const { locale, t } = useLocale();
   const [dreamText, setDreamText] = useState(initialDraft?.dreamText ?? "");
   const [dreamAtmospheres, setDreamAtmospheres] = useState<string[]>([]);
@@ -225,6 +227,7 @@ export function DreamEntryForm() {
     readingKind,
     hasUsedBasicReadingToday: hasUsedBasicReadingOnDate(latestAnalysis, todayDate),
     bypassDailyLimit,
+    bypassAccessGate,
   });
   const isDailyLimitGate = readingGate.reason === "guest_daily_limit" || readingGate.reason === "free_daily_limit";
   const isReadingAvailable = readingGate.allowed && (!isFallbackReading || Boolean(readingState.fallbackReaderId));
@@ -368,6 +371,7 @@ export function DreamEntryForm() {
       }
 
       const analysis = responseBody as DreamAnalysisResponse;
+      const savedAt = new Date().toISOString();
       const payload = {
         dreamText: trimmedDreamText,
         dreamDate,
@@ -378,6 +382,18 @@ export function DreamEntryForm() {
       };
 
       saveLatestAnalysisToBrowser(payload);
+
+      if (shouldSaveReadingToLocalArchive({ isAuthenticated: accessPlan !== "guest", status: "completed" })) {
+        saveDreamRecordToBrowser(
+          {
+            ...payload,
+            id: `local-dream-${savedAt}`,
+            savedAt,
+          },
+          { maxRecords: guestLocalDreamArchiveLimit },
+        );
+      }
+
       clearDreamDraftFromBrowser();
 
       router.push("/result");
@@ -424,6 +440,7 @@ export function DreamEntryForm() {
           value={selectedCatReaderId}
           onChange={setDraftCatReaderId}
           variant="compact"
+          accessRole={role}
         />
 
         {isFallbackReading || !isReadingAvailable ? (

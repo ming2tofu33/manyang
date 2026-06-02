@@ -158,6 +158,34 @@ describe("dream storage helpers", () => {
     expect(getDreamRecords(storage).map((record) => record.id)).toEqual(["second", "first"]);
   });
 
+  test("can limit saved dream records for local guest archives", () => {
+    const storage = createMemoryStorage();
+    const first: CompletedDreamRecord = {
+      id: "first",
+      savedAt: "2026-05-24T00:00:00.000Z",
+      ...createPayload(),
+      dreamDate: "2026-05-24",
+    };
+    const second: CompletedDreamRecord = {
+      id: "second",
+      savedAt: "2026-05-25T00:00:00.000Z",
+      ...createPayload(),
+      dreamDate: "2026-05-25",
+    };
+    const third: CompletedDreamRecord = {
+      id: "third",
+      savedAt: "2026-05-26T00:00:00.000Z",
+      ...createPayload(),
+      dreamDate: "2026-05-26",
+    };
+
+    saveDreamRecord(storage, first, { maxRecords: 2 });
+    saveDreamRecord(storage, second, { maxRecords: 2 });
+    saveDreamRecord(storage, third, { maxRecords: 2 });
+
+    expect(getDreamRecords(storage).map((record) => record.id)).toEqual(["third", "second"]);
+  });
+
   test("deletes only the matching dream record", () => {
     const storage = createMemoryStorage();
     const first: CompletedDreamRecord = {
