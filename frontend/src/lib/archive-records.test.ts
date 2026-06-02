@@ -6,9 +6,12 @@ import {
   createArchiveTimeline,
   getDayInMonth,
 } from "./archive-records";
-import type { DreamRecord } from "./dream-storage";
+import type { DreamCompletedPayload } from "./dream-storage";
 import type { NightCheckInRecord } from "./night-checkin";
 import type { PawprintRecord } from "./pawprints";
+
+// 항상 completed 레코드를 만드는 헬퍼이므로 completed variant로 좁혀 analysis에 직접 접근한다.
+type CompletedDreamRecord = DreamCompletedPayload & { id: string; savedAt: string };
 
 function createDreamRecord(input: {
   id: string;
@@ -16,7 +19,7 @@ function createDreamRecord(input: {
   savedAt?: string;
   summary?: string;
   symbols?: string[];
-}): DreamRecord {
+}): CompletedDreamRecord {
   return {
     id: input.id,
     dreamText: `${input.id} text`,

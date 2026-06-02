@@ -1,9 +1,11 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const mockedHomeState = vi.hoisted(() => ({
+import type { HomeState } from "@/lib/home-mode";
+
+const mockedHomeState = vi.hoisted((): { value: HomeState } => ({
   value: {
-    mode: "morning" as const,
+    mode: "morning",
     question: "morning question",
     primary: { label: "꿈 들려주기", href: "/write" },
     secondary: { label: "기억나지 않아요", href: "/morning" },

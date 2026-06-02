@@ -137,7 +137,7 @@ describe("DreamResultReceipt", () => {
       analysis: {
         ...basePayload.analysis,
         reader: {
-          id: "gray_cat",
+          id: "gray_cat" as const,
           name: "잿빛냥",
           access: "annual_premium" as const,
         },

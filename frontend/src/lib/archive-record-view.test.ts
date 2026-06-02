@@ -7,7 +7,7 @@ import {
   getFeaturedDreamRecordView,
   getRecentArchiveRecordViews,
 } from "./archive-record-view";
-import type { DreamRecord } from "./dream-storage";
+import type { DreamCompletedPayload } from "./dream-storage";
 import type { MorningMoodRecord } from "./morning-mood";
 import type { NightCheckInRecord } from "./night-checkin";
 import type { PawprintRecord } from "./pawprints";
@@ -18,7 +18,8 @@ function createDreamRecord(input: {
   savedAt?: string;
   summary?: string;
   symbols?: string[];
-}): DreamRecord {
+  // 항상 completed 레코드를 만드는 헬퍼이므로 completed variant로 좁혀 analysis에 직접 접근한다.
+}): DreamCompletedPayload & { id: string; savedAt: string } {
   return {
     id: input.id,
     dreamText: `${input.id} text`,
