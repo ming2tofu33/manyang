@@ -39,7 +39,6 @@ export type {
   SymbolRole,
   SymbolSafetyLevel,
 } from "./contracts/symbol-encyclopedia";
-export { encyclopediaEntries, getEntryBySymbol } from "./data/encyclopedia";
 export { getRuntimeSymbolEntries, getRuntimeSymbolEntry, symbolEntries } from "./data/symbol-encyclopedia";
 export { getEncyclopediaEntriesForLocale } from "./services/encyclopedia-symbols";
 export { analyzeDream } from "./services/mock-analysis";
@@ -187,12 +186,10 @@ export type {
   RetrievalMatchType,
   RetrievalScoreInput,
 } from "./services/retrieval-scoring";
-export { findMatchingSymbols, findRuntimeSymbolMatches } from "./services/symbol-matcher";
+export { findRuntimeSymbolMatches } from "./services/symbol-matcher";
 export type {
   RuntimeSymbolMatch,
   RuntimeSymbolMatchOptions,
-  SymbolMatch,
-  SymbolMatchOptions,
 } from "./services/symbol-matcher";
 export {
   retrieveDreamEvidence,

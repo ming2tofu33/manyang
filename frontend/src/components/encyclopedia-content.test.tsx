@@ -1,4 +1,4 @@
-import { encyclopediaEntries } from "@manyang/backend";
+import { getEncyclopediaEntriesForLocale } from "@manyang/backend";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
@@ -28,7 +28,9 @@ describe("EncyclopediaContent", () => {
   });
 
   it("keeps static encyclopedia content server-renderable while reader guide hydrates separately", () => {
-    const markup = renderToStaticMarkup(<EncyclopediaContent entries={encyclopediaEntries.slice(0, 12)} />);
+    const markup = renderToStaticMarkup(
+      <EncyclopediaContent entries={getEncyclopediaEntriesForLocale("ko").slice(0, 12)} />,
+    );
 
     expect(markup).toContain("/manyang/references/cat-black-profile.webp");
     expect(markup).toContain("사전 안내");

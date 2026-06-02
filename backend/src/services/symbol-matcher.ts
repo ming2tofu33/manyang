@@ -1,45 +1,13 @@
-import { encyclopediaEntries } from "../data/encyclopedia";
 import { getRuntimeSymbolEntries } from "../data/symbol-encyclopedia";
-import type { EncyclopediaEntry } from "../contracts/dream";
 import type { RuntimeSymbolEntry, SupportedLocale, SymbolCategory, SymbolRole } from "../contracts/symbol-encyclopedia";
 import type { RetrievalMatchType } from "./retrieval-scoring";
 import { scoreRetrievalCandidate } from "./retrieval-scoring";
 import {
-  compactText as compact,
   matchedTerms,
   normalizeText,
   tokenizeText as tokenize,
   triggerMatchesText,
 } from "./korean-text-matching";
-
-export type SymbolMatch = {
-  entry: EncyclopediaEntry;
-  matchedAliases: string[];
-  score: number;
-};
-
-export type SymbolMatchOptions = {
-  limit?: number;
-};
-
-export function findMatchingSymbols(text: string, options: SymbolMatchOptions = {}): SymbolMatch[] {
-  const tokens = tokenize(text);
-  const normalizedText = normalizeText(text);
-  const limit = options.limit ?? 5;
-
-  return encyclopediaEntries
-    .map((entry, index) => {
-      const aliases = [entry.symbol, ...entry.aliases];
-      const matchedAliases = matchedTerms(aliases, normalizedText, tokens);
-      const score = matchedAliases.reduce((total, alias) => total + compact(alias).length, 0) + (matchedAliases.includes(entry.symbol) ? 3 : 0);
-
-      return { entry, matchedAliases, score, index };
-    })
-    .filter((match) => match.matchedAliases.length > 0)
-    .sort((left, right) => right.score - left.score || left.index - right.index)
-    .slice(0, limit)
-    .map(({ entry, matchedAliases, score }) => ({ entry, matchedAliases, score }));
-}
 
 export type RuntimeSymbolMatch = {
   entryId: string;
