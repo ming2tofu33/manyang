@@ -16,6 +16,8 @@ import { getHomeState } from "@/lib/home-mode";
 import { manyangAssets } from "@/lib/manyang-assets";
 import { getNightCheckInSnapshotFromBrowser, subscribeToNightCheckIn } from "@/lib/night-checkin";
 import { cn } from "@/lib/styles";
+import { useAccessPlan } from "@/lib/use-access-plan";
+import { useAdminLabTimeOverride } from "@/lib/use-admin-lab-time-override";
 
 function getCurrentDateSnapshot(): Date | null {
   return null;
@@ -65,6 +67,8 @@ function DailyTarotButton() {
 }
 
 export function TodayHomeActions() {
+  const accessState = useAccessPlan();
+  const adminLabTime = useAdminLabTimeOverride(accessState.role);
   const checkIn = useSyncExternalStore(subscribeToNightCheckIn, getNightCheckInSnapshotFromBrowser, () => null);
   const [currentDate, setCurrentDate] = useState<Date | null>(getCurrentDateSnapshot);
 
@@ -74,12 +78,16 @@ export function TodayHomeActions() {
     return () => window.clearTimeout(timer);
   }, []);
 
-  const currentHomeDate = currentDate ?? new Date("2026-05-24T08:00:00");
+  const currentHomeDate = adminLabTime.forcedDate ?? currentDate ?? new Date("2026-05-24T08:00:00");
   const homeState = getHomeState(currentHomeDate, checkIn);
   const isNight = homeState.mode === "night";
 
   return (
-    <div data-home-action-stage="root" className={homeActionRootClassName}>
+    <div
+      data-home-action-stage="root"
+      data-admin-lab-time-override={adminLabTime.override}
+      className={homeActionRootClassName}
+    >
       <div className="px-3 pb-1 text-center">
         <p
           className={cn(

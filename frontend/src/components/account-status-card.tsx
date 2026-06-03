@@ -3,8 +3,9 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
+import { AdminToolNav } from "@/components/admin-tool-nav";
 import { AssetTextButton } from "@/components/asset-primitives";
-import type { AccessRole } from "@/lib/access-policy";
+import type { AccessPlan, AccessRole } from "@/lib/access-policy";
 import { manyangAssets } from "@/lib/manyang-assets";
 import { cn, ui } from "@/lib/styles";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -44,14 +45,23 @@ export function getAccountStatusCopy(status: AccountStatus, accessRole: AccessRo
 }
 
 export function AccountStatusCard({
+  accessPlan = "guest",
   initialStatus = "guest",
   accessRole = "user",
+  bypassAccessGate = false,
+  bypassDailyLimit = false,
+  initialAdminOptionsOpen = false,
 }: {
+  accessPlan?: AccessPlan;
   initialStatus?: AccountStatus;
   accessRole?: AccessRole;
+  bypassAccessGate?: boolean;
+  bypassDailyLimit?: boolean;
+  initialAdminOptionsOpen?: boolean;
 }) {
   const [status, setStatus] = useState<AccountStatus>(initialStatus);
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const [isAdminOptionsOpen, setIsAdminOptionsOpen] = useState(initialAdminOptionsOpen);
   const copy = getAccountStatusCopy(status, accessRole);
   const isAdmin = status === "authenticated" && accessRole === "admin";
 
@@ -129,18 +139,32 @@ export function AccountStatusCard({
       </div>
 
       {status === "authenticated" ? (
-        <AssetTextButton
-          frame={manyangAssets.buttons.mediumSecondary}
-          type="button"
-          onClick={handleSignOut}
-          disabled={isSigningOut}
-          iconSrc={manyangAssets.actionIcons.profile}
-          className="max-w-[15rem]"
-          contentClassName="min-h-[3.05rem] px-4 text-sm"
-          iconClassName="h-5 w-5"
-        >
-          {isSigningOut ? "로그아웃 중" : copy.primaryActionLabel}
-        </AssetTextButton>
+        <div className="flex items-center gap-2">
+          <AssetTextButton
+            frame={manyangAssets.buttons.mediumSecondary}
+            type="button"
+            onClick={handleSignOut}
+            disabled={isSigningOut}
+            iconSrc={manyangAssets.actionIcons.profile}
+            className="max-w-[15rem]"
+            contentClassName="min-h-[3.05rem] px-4 text-sm"
+            iconClassName="h-5 w-5"
+          >
+            {isSigningOut ? "로그아웃 중" : copy.primaryActionLabel}
+          </AssetTextButton>
+
+          {isAdmin ? (
+            <button
+              type="button"
+              aria-controls="account-admin-options"
+              aria-expanded={isAdminOptionsOpen}
+              onClick={() => setIsAdminOptionsOpen((value) => !value)}
+              className="inline-flex h-9 shrink-0 items-center justify-center rounded-md border border-[#d799ff]/38 bg-[#100b1d]/72 px-2.5 text-[11px] font-semibold text-[#e7b3ff] transition hover:border-[#ffd08a]/62 focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
+            >
+              Admin 옵션
+            </button>
+          ) : null}
+        </div>
       ) : (
         <AssetTextButton
           href={createProfileLoginHref()}
@@ -153,6 +177,32 @@ export function AccountStatusCard({
           {copy.primaryActionLabel}
         </AssetTextButton>
       )}
+
+      {isAdmin && isAdminOptionsOpen ? (
+        <div
+          id="account-admin-options"
+          data-account-admin-options="open"
+          className="space-y-3"
+        >
+          <AdminToolNav title="Admin 옵션" />
+
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              { label: "plan", value: accessPlan },
+              { label: "daily", value: bypassDailyLimit ? "우회" : "기본" },
+              { label: "gate", value: bypassAccessGate ? "우회" : "기본" },
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="min-w-0 rounded-md border border-[#7c4a38]/38 bg-[#06040c]/52 px-2 py-1.5"
+              >
+                <span className="block truncate text-[10px] font-semibold text-[#f0bc7d]/78">{item.label}</span>
+                <span className="mt-0.5 block truncate text-[11px] font-semibold text-[#ffd98a]">{item.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }

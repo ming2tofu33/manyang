@@ -48,5 +48,35 @@ describe("account status card", () => {
     expect(markup).toContain('data-account-access-role="admin"');
     expect(markup).toContain("어드민 테스트 모드가 켜져 있어요");
     expect(markup).toContain("Admin");
+    expect(markup).toContain("Admin 옵션");
+    expect(markup).not.toContain('data-account-admin-options="open"');
+    expect(markup).not.toContain('data-profile-section="admin"');
+  });
+
+  test("keeps admin options inside the account banner when opened", () => {
+    const markup = renderToStaticMarkup(
+      <AccountStatusCard
+        accessPlan="moon_pass"
+        accessRole="admin"
+        bypassAccessGate
+        bypassDailyLimit
+        initialAdminOptionsOpen
+        initialStatus="authenticated"
+      />,
+    );
+
+    expect(markup).toContain('data-account-admin-options="open"');
+    expect(markup).toContain('data-admin-tool-nav="true"');
+    expect(markup).toContain('href="/admin/lab"');
+    expect(markup).toContain('href="/admin/lab/loading"');
+    expect(markup).toContain('href="/write"');
+    expect(markup).toContain('href="/tarot?adminTest=1"');
+    expect(markup).toContain('href="/profile"');
+    expect(markup).toContain("일반 화면 확인");
+    expect(markup).toContain("타로 테스트");
+    expect(markup).toContain("moon_pass");
+    expect(markup).toContain("daily");
+    expect(markup).toContain("gate");
+    expect(markup.match(/우회/g)?.length).toBeGreaterThanOrEqual(2);
   });
 });

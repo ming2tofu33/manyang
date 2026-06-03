@@ -11,6 +11,8 @@ import {
 } from "@/lib/record-entry-availability";
 import { manyangAssets } from "@/lib/manyang-assets";
 import { cn, ui } from "@/lib/styles";
+import { useAccessPlan } from "@/lib/use-access-plan";
+import { useAdminLabTimeOverride } from "@/lib/use-admin-lab-time-override";
 
 type ArchiveRecordEntryDefinition = {
   key: ArchiveRecordEntryKey;
@@ -145,16 +147,22 @@ function RecordEntryCard({
 }
 
 export function ArchiveRecordEntryPanel({ currentDate }: { currentDate?: Date }) {
+  const accessState = useAccessPlan();
+  const adminLabTime = useAdminLabTimeOverride(accessState.role);
   const liveDate = useSyncExternalStore(
     subscribeToArchiveEntryDate,
     getCurrentArchiveEntryDateSnapshot,
     getServerArchiveEntryDateSnapshot,
   );
-  const activeDate = currentDate ?? liveDate ?? fallbackArchiveEntryDate;
+  const activeDate = currentDate ?? adminLabTime.forcedDate ?? liveDate ?? fallbackArchiveEntryDate;
   const entryState = getArchiveRecordEntryState(activeDate);
 
   return (
-    <section className={cn(ui.panel, "space-y-3 p-4")} data-archive-record-entry-panel="true">
+    <section
+      className={cn(ui.panel, "space-y-3 p-4")}
+      data-archive-record-entry-panel="true"
+      data-admin-lab-time-override={adminLabTime.override}
+    >
       <header className="px-1">
         <h2 className={cn("text-lg font-semibold text-[#ffd98a]", ui.textGlow)}>기록하기</h2>
         <p className="mt-1 text-[12px] leading-5 text-[#fff3d7]/68">지금 남길 수 있는 기록을 골라요.</p>

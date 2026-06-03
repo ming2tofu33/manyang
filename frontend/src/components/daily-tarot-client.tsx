@@ -42,6 +42,7 @@ import { useAccessPlan } from "@/lib/use-access-plan";
 
 type DailyTarotClientProps = {
   appDate: string;
+  ignoreStoredReading?: boolean;
   initialReading: DailyTarotReading | null;
   initialUserId?: string | null;
 };
@@ -64,8 +65,8 @@ type DailyTarotRevealState = {
 
 let dailyTarotSnapshotCache: DailyTarotSnapshotCache | null = null;
 
-const tarotCardRevealMs = 1800;
-const tarotResultTransitionMs = 1200;
+export const tarotCardRevealMs = 1800;
+export const tarotResultTransitionMs = 1200;
 const tarotShuffleCardCount = 7;
 
 const orientationLabels = {
@@ -1095,12 +1096,17 @@ function createGenerationRequestBody(
   };
 }
 
-export function DailyTarotClient({ appDate, initialReading, initialUserId = null }: DailyTarotClientProps) {
+export function DailyTarotClient({
+  appDate,
+  ignoreStoredReading = false,
+  initialReading,
+  initialUserId = null,
+}: DailyTarotClientProps) {
   const [drawIdentityKey, setDrawIdentityKey] = useState(() => createInitialDailyTarotDrawIdentityKey(initialUserId));
   const options = useMemo(() => createDailyTarotOptions(appDate, { drawIdentityKey }), [appDate, drawIdentityKey]);
   const [selectedSpread, setSelectedSpread] = useState<TarotSpread>("daily_one_card");
   const [selectedReading, setSelectedReading] = useState<DailyTarotReading | null>(
-    isCompletedLlmReading(initialReading) ? initialReading : null,
+    !ignoreStoredReading && isCompletedLlmReading(initialReading) ? initialReading : null,
   );
   const [pendingSelections, setPendingSelections] = useState<DailyTarotCardSelection[]>([]);
   const [revealingState, setRevealingState] = useState<DailyTarotRevealState | null>(null);
@@ -1113,10 +1119,11 @@ export function DailyTarotClient({ appDate, initialReading, initialUserId = null
   const positions = spreadPositions[selectedSpread];
   const storedReading = useSyncExternalStore(
     subscribeToDailyTarot,
-    () => getStableDailyTarotReadingSnapshot(appDate, selectedSpread, drawIdentityKey),
-    () => (isCompletedLlmReading(initialReading) ? initialReading : null),
+    () => (ignoreStoredReading ? null : getStableDailyTarotReadingSnapshot(appDate, selectedSpread, drawIdentityKey)),
+    () => (!ignoreStoredReading && isCompletedLlmReading(initialReading) ? initialReading : null),
   );
   const storedReadingForDate =
+    !ignoreStoredReading &&
     isCompletedLlmReading(storedReading) &&
     storedReading.appDate === appDate &&
     storedReading.spread === selectedSpread &&
@@ -1131,13 +1138,16 @@ export function DailyTarotClient({ appDate, initialReading, initialUserId = null
       ? selectedReading
       : null;
   const initialReadingForDate =
+    !ignoreStoredReading &&
     isCompletedLlmReading(initialReading) &&
     initialReading.appDate === appDate &&
     initialReading.spread === selectedSpread &&
     isMatchingDailyTarotDrawIdentity(initialReading, drawIdentityKey)
       ? initialReading
       : null;
-  const reading = storedReadingForDate ?? selectedReadingForDate ?? initialReadingForDate;
+  const reading = ignoreStoredReading
+    ? selectedReadingForDate
+    : (storedReadingForDate ?? selectedReadingForDate ?? initialReadingForDate);
   const selectedCardIds = new Set(pendingSelections.map((selection) => selection.card.id));
   const availableOptions = options.filter((option) => !selectedCardIds.has(option.cardId));
   const nextPosition = positions[pendingSelections.length] ?? positions[positions.length - 1];

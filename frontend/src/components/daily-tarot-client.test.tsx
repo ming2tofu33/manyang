@@ -163,6 +163,17 @@ describe("DailyTarotClient", () => {
     expect(markup).toContain("타로는 오늘의 흐름을 상징적으로 비춰보는 참고용 안내입니다.");
   });
 
+  it("can ignore an existing reading when admin tarot test mode starts a fresh flow", () => {
+    const markup = renderToStaticMarkup(
+      <DailyTarotClient appDate="2026-05-31" ignoreStoredReading initialReading={foolReading} />,
+    );
+
+    expect(markup).toContain('data-daily-tarot-state="draw-ready"');
+    expect(markup).toContain('data-daily-tarot-option=');
+    expect(markup).not.toContain('data-daily-tarot-state="result"');
+    expect(markup).not.toContain("A small first step opens the day");
+  });
+
   it("cleans provider artifacts from displayed generated copy", () => {
     const artifactReading = {
       ...foolReading,
