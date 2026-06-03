@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, test, vi } from "vitest";
 
 import { AppShell } from "./app-shell";
+import { mobileLayout } from "@/lib/mobile-layout";
 
 vi.mock("next/navigation", () => ({
   usePathname: () => "/",
@@ -54,8 +55,8 @@ describe("AppShell", () => {
       </AppShell>,
     );
 
-    expect(markup).toContain("h-[30%]");
-    expect(markup).toContain("#05040b_80%");
+    expect(markup).toContain("h-[24%]");
+    expect(markup).toContain("#05040b_82%");
     expect(markup).not.toContain("h-[34%]");
     expect(markup).not.toContain("h-[42%]");
   });
@@ -96,5 +97,16 @@ describe("AppShell", () => {
     expect(markup).toContain("Result");
     expect(markup).not.toContain("settings");
     expect(markup).not.toContain("share");
+  });
+
+  test("uses shared mobile shell width tokens for the content inset", () => {
+    const markup = renderToStaticMarkup(
+      <AppShell showHeader={false} showBottomNav={false}>
+        <div>content</div>
+      </AppShell>,
+    );
+
+    expect(markup).toContain(mobileLayout.shellInlinePaddingClassName);
+    expect(markup).not.toContain("px-6 pb-1.5 pt-8");
   });
 });

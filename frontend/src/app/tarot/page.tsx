@@ -24,7 +24,7 @@ export default async function TarotPage() {
       background={manyangAssets.backgrounds.default}
       title="오늘의 타로"
       subtitle="카드의 방향까지 직접 골라 오늘의 흐름을 확인해요."
-      titleIconSrc={manyangAssets.semanticIcons.crystalBall}
+      titleIconSrc={manyangAssets.pageIcons.tarot}
       backHref="/"
       rightAction="none"
       showBottomNav={false}

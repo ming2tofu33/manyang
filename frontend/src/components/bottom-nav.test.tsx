@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
 import { manyangAssets } from "@/lib/manyang-assets";
+import { mobileLayout } from "@/lib/mobile-layout";
 
 vi.mock("next/navigation", () => ({
   usePathname: () => "/profile",
@@ -41,11 +42,13 @@ describe("BottomNav", () => {
   it("keeps menu items inside the footer frame corners", () => {
     const markup = renderToStaticMarkup(<BottomNav />);
 
-    expect(markup).toContain("-mx-6");
-    expect(markup).toContain("w-[calc(100%+3rem)]");
-    expect(markup).toContain("h-[96px]");
+    expect(markup).toContain(mobileLayout.shellBleedClassName);
+    expect(markup).not.toContain("-mx-6");
+    expect(markup).not.toContain("w-[calc(100%+3rem)]");
+    expect(markup).toContain("h-[88px]");
     expect(markup).toContain("inset-x-[8%]");
-    expect(markup).toContain("top-[0.7rem]");
-    expect(markup).toContain("bottom-[1.25rem]");
+    expect(markup).toContain("top-[0.8rem]");
+    expect(markup).toContain("bottom-[0.4rem]");
+    expect(markup).toContain("object-bottom");
   });
 });

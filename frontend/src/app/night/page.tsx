@@ -20,7 +20,7 @@ export default function NightPage() {
       backgroundOverlay={<NightCheckInBackgroundOverlay />}
       title="✧ 밤의 기록 ✧"
       subtitle={nightCheckInCopy.pageSubtitle}
-      titleIconSrc={manyangAssets.semanticIcons.moon}
+      titleIconSrc={manyangAssets.pageIcons.nightRecord}
       backHref="/"
       rightAction="calendar"
       showBottomNav={false}

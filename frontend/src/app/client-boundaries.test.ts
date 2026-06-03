@@ -15,6 +15,8 @@ describe("client component boundaries", () => {
 
     expect(encyclopediaPage).toContain('import { AppShell } from "@/components/app-shell";');
     expect(encyclopediaPage).toContain('import { EncyclopediaContent } from "@/components/encyclopedia-content";');
+    expect(encyclopediaPage).toContain("getIndexableEncyclopediaEntries()");
+    expect(encyclopediaPage).not.toContain("getIndexableEncyclopediaEntries().slice");
     expect(encyclopediaPage).not.toContain("EncyclopediaPageClient");
 
     expect(encyclopediaDetailPage).toContain('import { AppShell } from "@/components/app-shell";');

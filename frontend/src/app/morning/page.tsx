@@ -35,7 +35,7 @@ export default function MorningPage() {
       }
       title={morningMoodCopy.pageTitle}
       subtitle={morningMoodCopy.pageSubtitle}
-      titleIconSrc={manyangAssets.semanticIcons.moon}
+      titleIconSrc={manyangAssets.pageIcons.morningPawprint}
       backHref="/"
       rightAction="calendar"
       showBottomNav={false}

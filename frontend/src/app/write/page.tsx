@@ -17,6 +17,7 @@ export default function WritePage() {
       background={manyangAssets.backgrounds.default}
       bottomScrimClassName="absolute inset-x-0 bottom-0 h-[42%] bg-[linear-gradient(180deg,transparent,#05040b_70%)]"
       title="✧ 꿈 들려주기 ✧"
+      titleIconSrc={manyangAssets.pageIcons.write}
       backHref="/"
       rightAction="book"
       showBottomNav={false}

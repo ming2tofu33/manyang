@@ -2,6 +2,7 @@ import Image from "next/image";
 import type { ReactNode } from "react";
 
 import { manyangAssets } from "@/lib/manyang-assets";
+import { mobileLayout } from "@/lib/mobile-layout";
 import { cn, ui } from "@/lib/styles";
 
 import { AssetIconButton } from "./asset-primitives";
@@ -34,7 +35,7 @@ export function AppShell({
   backgroundOverlay,
   backgroundClassName = "object-cover opacity-68",
   scrimClassName = "absolute inset-0 bg-[linear-gradient(180deg,rgba(5,4,11,0.10)_0%,rgba(5,4,11,0.22)_52%,rgba(5,4,11,0.95)_100%)]",
-  bottomScrimClassName = "absolute inset-x-0 bottom-0 h-[30%] bg-[linear-gradient(180deg,transparent,#05040b_80%)]",
+  bottomScrimClassName = "absolute inset-x-0 bottom-0 h-[24%] bg-[linear-gradient(180deg,transparent,#05040b_82%)]",
   title,
   subtitle,
   titleIconSrc,
@@ -85,7 +86,13 @@ export function AppShell({
         {backgroundOverlay ? <div className="pointer-events-none absolute inset-0 z-[3]">{backgroundOverlay}</div> : null}
         <div className={bottomScrimClassName} />
 
-        <div className="relative z-10 flex h-full min-h-0 flex-col px-6 pb-1.5 pt-8">
+        <div
+          className={cn(
+            "relative z-10 flex h-full min-h-0 flex-col pt-8",
+            showBottomNav ? "pb-0" : "pb-1.5",
+            mobileLayout.shellInlinePaddingClassName,
+          )}
+        >
           {showHeader ? (
             <header className={cn("flex justify-between", titleIconSrc ? "min-h-[6.4rem] items-start" : "min-h-14 items-center")}>
               {backHref ? (

@@ -27,9 +27,10 @@ export default function EncyclopediaPage() {
       background={manyangAssets.backgrounds.default}
       title="꿈해몽 백과"
       subtitle="궁금한 꿈의 상징을 찾아보세요"
+      titleIconSrc={manyangAssets.pageIcons.encyclopedia}
       backHref="/"
     >
-      <EncyclopediaContent entries={getIndexableEncyclopediaEntries().slice(0, 12)} />
+      <EncyclopediaContent entries={getIndexableEncyclopediaEntries()} />
     </AppShell>
   );
 }
