@@ -14,4 +14,11 @@ describe("NightCheckInForm", () => {
     expect(markup).not.toContain("꿈 씨앗");
     expect(markup).not.toContain("씨앗");
   });
+
+  test("keeps the night check-in speech bubble closer to the cat illustration", () => {
+    const markup = renderToStaticMarkup(<NightCheckInForm />);
+
+    expect(markup).toContain("absolute right-7 top-[3.35rem]");
+    expect(markup).not.toContain("top-[5.05rem]");
+  });
 });

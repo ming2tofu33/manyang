@@ -152,7 +152,7 @@ export function NightCheckInForm() {
   return (
     <form onSubmit={handleSubmit} className="mt-0 space-y-1.5 pb-2">
       <section className="relative -mt-7 h-[16rem]">
-        <div className="absolute right-7 top-[5.05rem] max-w-[9.6rem] rounded-[1rem] border border-[#8b563f]/70 bg-[rgba(7,6,17,0.72)] px-3 py-2 text-center text-[12px] font-semibold leading-[1.35] text-[#d8c7bc] shadow-[0_0_18px_rgba(0,0,0,0.34)]">
+        <div className="absolute right-7 top-[3.35rem] max-w-[9.6rem] rounded-[1rem] border border-[#8b563f]/70 bg-[rgba(7,6,17,0.72)] px-3 py-2 text-center text-[12px] font-semibold leading-[1.35] text-[#d8c7bc] shadow-[0_0_18px_rgba(0,0,0,0.34)]">
           오늘의 느낌은
           <br />
           내일의 단서다냥.

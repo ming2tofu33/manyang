@@ -481,7 +481,7 @@ export function DreamEntryForm() {
               "h-[8.05rem] resize-none border-0 bg-transparent p-0 pl-3 pr-2 pb-9 text-[0.98rem] leading-7 text-[#fff0dc] placeholder:text-[#9d7f9b] focus:border-transparent",
             )}
           />
-          <span className="pointer-events-none absolute bottom-8 right-12 h-9 w-9 rotate-[12deg]">
+          <span className="pointer-events-none absolute bottom-5 right-[4.9rem] h-7 w-7 rotate-[12deg]">
             <Image src={manyangAssets.sectionIcons.dreamInput} alt="" fill sizes="48px" unoptimized className="object-contain opacity-70" />
           </span>
           <span className="absolute bottom-6 right-5 text-[0.85rem] font-semibold text-[#c6a3a4]">

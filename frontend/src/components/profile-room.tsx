@@ -22,8 +22,10 @@ import { useAccessPlan, type ClientAccessState } from "@/lib/use-access-plan";
 type ProfileMenuItem = {
   title: string;
   description: string;
-  icon: keyof typeof manyangAssets.profileIcons;
-};
+} & (
+  | { icon: keyof typeof manyangAssets.profileIcons; menuIcon?: never }
+  | { icon?: never; menuIcon: keyof typeof manyangAssets.profileMenuIcons }
+);
 
 const appSettings: ProfileMenuItem[] = [
   {
@@ -34,7 +36,7 @@ const appSettings: ProfileMenuItem[] = [
   {
     title: "개인정보와 보안",
     description: "앱 잠금, 기록 숨기기, 공유 설정",
-    icon: "privacy",
+    menuIcon: "privacySecurity",
   },
   {
     title: "화면 테마",
@@ -47,17 +49,17 @@ const recordSettings: ProfileMenuItem[] = [
   {
     title: "기록 백업",
     description: "꿈 기록을 계정에 안전하게 보관",
-    icon: "account",
+    menuIcon: "recordBackup",
   },
   {
     title: "기록 내보내기",
     description: "꿈 영수증과 기록을 파일로 저장",
-    icon: "account",
+    menuIcon: "recordExport",
   },
   {
     title: "전체 기록 삭제",
     description: "저장된 꿈 기록과 발자국 정리",
-    icon: "privacy",
+    menuIcon: "recordDelete",
   },
 ];
 
@@ -65,24 +67,32 @@ const supportItems: ProfileMenuItem[] = [
   {
     title: "문의와 피드백",
     description: "오류 신고, 의견 보내기, 사용 가이드",
-    icon: "service",
+    menuIcon: "feedback",
   },
   {
     title: "이용약관",
     description: "서비스 이용 기준과 책임 범위",
-    icon: "service",
+    menuIcon: "terms",
   },
   {
     title: "개인정보처리방침",
     description: "기록과 계정 정보가 다뤄지는 방식",
-    icon: "privacy",
+    menuIcon: "privacyPolicy",
   },
   {
     title: "앱 버전",
     description: "현재 앱 버전과 업데이트 안내",
-    icon: "account",
+    menuIcon: "appVersion",
   },
 ];
+
+function getProfileMenuIconSrc(item: ProfileMenuItem) {
+  if (item.menuIcon) {
+    return manyangAssets.profileMenuIcons[item.menuIcon];
+  }
+
+  return manyangAssets.profileIcons[item.icon];
+}
 
 const adminPersonaOptions = [
   {
@@ -139,7 +149,7 @@ function ComingSoonMenuList({ items }: { items: ProfileMenuItem[] }) {
         >
           <span className="relative h-11 w-11 shrink-0">
             <Image
-              src={manyangAssets.profileIcons[item.icon]}
+              src={getProfileMenuIconSrc(item)}
               alt=""
               fill
               sizes="44px"

@@ -62,11 +62,16 @@ describe("ProfileRoom", () => {
     const markup = renderToStaticMarkup(<ProfileRoom />);
 
     expect(markup).toContain("/manyang/ui/profile-icons/profile-notifications.png");
-    expect(markup).toContain("/manyang/ui/profile-icons/profile-privacy.png");
     expect(markup).toContain("/manyang/ui/profile-icons/profile-theme.png");
     expect(markup).toContain("/manyang/ui/profile-icons/profile-moon-pass.png");
-    expect(markup).toContain("/manyang/ui/profile-icons/profile-service.png");
-    expect(markup).toContain("/manyang/ui/profile-icons/profile-account.png");
+    expect(markup).toContain("/manyang/ui/profile-menu-icons/profile-menu-privacy-security.png");
+    expect(markup).toContain("/manyang/ui/profile-menu-icons/profile-menu-record-backup.png");
+    expect(markup).toContain("/manyang/ui/profile-menu-icons/profile-menu-record-export.png");
+    expect(markup).toContain("/manyang/ui/profile-menu-icons/profile-menu-record-delete.png");
+    expect(markup).toContain("/manyang/ui/profile-menu-icons/profile-menu-feedback.png");
+    expect(markup).toContain("/manyang/ui/profile-menu-icons/profile-menu-terms.png");
+    expect(markup).toContain("/manyang/ui/profile-menu-icons/profile-menu-privacy-policy.png");
+    expect(markup).toContain("/manyang/ui/profile-menu-icons/profile-menu-app-version.png");
     expect(markup.match(/h-11 w-11 shrink-0/g) ?? []).toHaveLength(10);
     expect(markup.match(/object-contain p-0/g) ?? []).toHaveLength(10);
     expect(markup).not.toContain("h-[3.25rem] w-[3.25rem] shrink-0");

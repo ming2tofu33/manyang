@@ -28,7 +28,7 @@ export function NightCheckInBackgroundOverlay() {
 
   return (
     <>
-      <div className="absolute inset-x-0 top-8 h-[25.4rem] overflow-hidden">
+      <div className="absolute inset-x-0 top-0 h-[25.4rem] overflow-hidden">
         <Image
           key={backgroundSrc}
           src={backgroundSrc}

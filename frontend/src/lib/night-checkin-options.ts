@@ -8,7 +8,7 @@ type NightCheckInOption = {
 
 export const nightCheckInRoute = "/night";
 export const legacyDreamSeedRoute = "/seed";
-export const nightCheckInBackground = "/manyang/backgrounds/dreamseed-background-black-cat-v2.png";
+export const nightCheckInBackground = "/manyang/backgrounds/dreamseed-background-black-cat-v2.webp";
 export const nightCheckInNoteMaxLength = 100;
 
 export const nightCheckInCopy = {
