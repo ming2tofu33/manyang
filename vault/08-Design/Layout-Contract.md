@@ -197,3 +197,12 @@ type BackgroundLayoutPreset = {
 - 홈 CTA는 `homeStageLayout.bands.actions` 안에서 관리하고, 하단 메뉴와 최소 `12px` 간격을 유지한다.
 - 홈 라이브 효과 레이어는 `data-home-effect-stage="390x844"`를 노출해, 효과 좌표가 어떤 기준 캔버스에 묶여 있는지 확인할 수 있어야 한다.
 - 홈 액션 영역은 `data-home-action-stage="root"`와 `home-action-stage` class를 사용한다. 나중에 버튼 위치를 조정할 때는 여러 CSS 파일을 직접 바꾸기보다 `frontend/src/lib/home-action-layout.ts`의 stage 값과 class preset을 먼저 수정한다.
+
+## Mobile Width Token Update - 2026-06-03
+
+- 공통 모바일 폭 값은 `frontend/src/lib/mobile-layout.ts`에서 관리한다.
+- `AppShell` 내부 좌우 inset은 `mobileLayout.shellInlinePaddingClassName`을 기준으로 한다.
+- 하단 nav의 bleed 폭은 `mobileLayout.shellBleedClassName`을 기준으로 한다. shell inset만 바꾸고 nav bleed를 따로 두면 푸터 프레임이 양옆으로 뜨거나 잘릴 수 있다.
+- 기록 달력과 리스트형 surface의 최대 폭은 `mobileLayout.wideSurfaceMaxWidthClassName`을 우선 사용한다.
+- 홈, 결과 영수증, 로딩, 타로처럼 에셋 좌표와 비율이 중요한 화면은 공통 surface 폭을 직접 적용하지 않는다.
+- `390 x 844`에서 먼저 위치를 잡고, `375 x 667`과 `430 x 932`는 깨짐 검수와 보정용으로 본다.

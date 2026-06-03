@@ -254,3 +254,13 @@ Updated 2026-05-29:
 - The tracked large runtime image set changed from 41.44 MiB to 4.15 MiB.
 - PNG originals remain as source/reference assets and should not be deleted without separate cleanup approval.
 - See [[Frontend-Optimization-Evidence-2026-05-29]] for the final pass summary, size deltas, verification commands, and screenshot evidence.
+
+## Mobile Width System Status
+
+Updated 2026-06-03:
+
+- Mobile shell width tokens live in `frontend/src/lib/mobile-layout.ts`.
+- `AppShell` now uses shared shell inset tokens instead of a hardcoded `px-6`.
+- `BottomNav` now uses the matching shell bleed token instead of depending on `-mx-6` and `w-[calc(100%+3rem)]`.
+- Archive calendar surfaces use the wider shared surface max width.
+- Home stage, result receipt, loading, and tarot remain protected exceptions because their asset coordinates and image ratios are more important than raw width usage.
