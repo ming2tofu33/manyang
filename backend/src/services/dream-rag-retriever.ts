@@ -54,7 +54,9 @@ const DEFAULT_SEMANTIC_CANDIDATE_LIMIT = 1;
 // 기존 0.85/0.92는 그 범위를 한참 웃돌아 벡터 후보/승격이 사실상 한 번도 발화하지 못했다(dead lane).
 // 노이즈 바닥(~0.40)보다 충분히 높고 정답대(~0.55+) 안에 드는 값으로 내려, promotion-by-agreement 경로를 살린다.
 const DEFAULT_VECTOR_CANDIDATE_MIN_SCORE = 0.6;
-const DEFAULT_VECTOR_CANDIDATE_WITH_EXPLICIT_MIN_SCORE = 0.68;
+// 0.68 → 0.62: 무관한 explicit 매치(예: 손)가 있을 때도 진짜 벡터 후보(예: teeth 0.628)가
+// 막히지 않도록 낮춤. 노이즈 바닥(~0.40)보다 충분히 높아 precision 영향은 제한적(eval로 검증).
+const DEFAULT_VECTOR_CANDIDATE_WITH_EXPLICIT_MIN_SCORE = 0.62;
 const DEFAULT_SEMANTIC_PROMOTION_MIN_CONFIDENCE = 0.8;
 const DEFAULT_VECTOR_PROMOTION_MIN_SCORE = 0.68;
 const DEFAULT_VECTOR_NEW_SYMBOL_LIMIT = 1;

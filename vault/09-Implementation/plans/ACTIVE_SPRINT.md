@@ -71,6 +71,97 @@ status: active
 | AI-RAG-24 | RAG live quality eval 보강 | done | P0 | candidate-only 상징 누수, semantic+vector promotion, sensitive auto-promotion guard를 live eval 케이스와 metrics로 고정 |
 | I18N-01 | EN front-door 기반 + 엔진 locale 연결 | done | P0 | locale 스토어/사전/훅, API에 locale 전송, EN 고양이 이름(Midnight/Luna/Sol/Ash), 프로필 언어 토글 구현 |
 | I18N-02 | 나머지 UI 문구 EN 이관 | todo | P0 | 아래 I18N 체크리스트의 한국어 잔여 UI 문구를 ko/en 사전 기반으로 전환 |
+| ENC-01 | 백과사전 작성 스타일 가이드·시장 조사 | done | P0 | `docs/dream-tarot-content-research.md`, `docs/dream-encyclopedia-style-guide.md` 작성 |
+| ENC-02 | 미사용 필드 제거 | done | P0 | `interpretationLenses`/`cultureNotes`/`tensionAxis`를 contract·helper·121항목·test에서 제거, tsc·전체 테스트 통과 |
+| ENC-03 | 어색한 표제어 라벨 감사 | done | P1 | 땅·여럿·변기·잃어버린 물건·알몸 + en Land 재명명, 골든/mock 테스트 갱신 |
+| ENC-04 | 이중문화 원칙 확정(ko=동양/en=서양) | done | P0 | 스타일 가이드 §0-A + memory, locale=문화 분기, 번역본 금지 |
+| ENC-05 | 1차 배치 8항목 재작성(B안+이중문화) | done | P0 | 땅·뱀·똥·돼지·물·치아·돈·쫓김 ko/en, sceneModifier 6개 확장, fortune 문화 분리 |
+| ENC-06 | 2차 배치: 동양 고유 + 서양 심리 강 | todo | P0 | 용·조상·거북이·귀신·무지개 / 거미·나비·곰·고래 등 문화 차 큰 ~12개 |
+| ENC-07 | 나머지 ~101개 전수 재작성 | todo | P0 | 전 항목 ko=동양/en=서양 + B안 정보화, 우회동사 제거, sceneModifier 5~7개, fortune 분리 |
+| ENC-08 | vault YAML(05-Content/symbols) 동기화 | todo | P1 | 변경 항목 YAML 반영(라벨 변경 포함), PyYAML 파싱 확인 |
+| RAG-IMP-01 | 검색 평가셋 + recall@k/precision 하니스 | done | P0 | `retrieval-eval.ts` 32케이스(ID 기반), `npm run eval:retrieval`, 회귀 테스트, baseline 저장 |
+| RAG-IMP-02 | 벡터 경로 실서비스 활성화(하이브리드) | done | P0 | ko/en 인덱스(872청크, text-embedding-3-small) 빌드 → `output/rag/`, `.env` 활성, 하이브리드 eval로 lift 확인 |
+| RAG-IMP-03 | 형태소 lemma를 matcher/structure에 연결 | done | P1 | 라이브 경로는 이미 lemma 공급(llm-dream-analysis), retriever가 매처로 전달. eval에도 연결. 단 lemma는 **lemma친화 alias가 있어야** 효과(아래 RAG-IMP-04와 조합) |
+| RAG-IMP-04 | 트리거/searchText 동의어 확장 | doing | P1 | (일부 완료: 흙탕물·장례식장·chasing alias) 남은 recall 구멍 동의어·구어체·활용형 보강 |
+| RAG-IMP-05 | 재랭킹/임계값 튜닝 | doing | P1 | (완료: 벡터 explicit-동반 임계값 0.68→0.62 — en teeth 0.628 구제, precision 0.738 유지) 남은: exact 포화·일반어 라벨 과매치 |
+| RAG-IMP-06 | 무매칭/저매칭 폴백 전략 | todo | P2 | 미등록 꿈에도 안전한 일반 grounding 제공 |
+| RAG-IMP-07 | 타로 카드 데이터 테이블 분리 | todo | P2 | 78장 의미를 RAG 아닌 버전관리 lookup 데이터로 정리 |
+| RAG-IMP-08 | coverage eval(심볼 충분도) | done | P0 | `coverage-eval.ts` 72개 흔한 상징 탐침, matching/coverage 갭 분리, `npm run eval:coverage`, 회귀 테스트 |
+| RAG-IMP-09 | 하드코딩 정리 | todo | P2 | `mock-analysis.ts` 심볼조합 if-체인(snake+owned_land 등), `structured-dream-analysis.ts` LEGACY_* 맵·searching/many 특수분기를 데이터 주도로 |
+| ENC-09 | 미해결 matching 케이스 | todo | P1 | retrieval-eval 잔여 miss: 우수수→teeth(형태소), 도망쳤어→chased(패러프레이즈), molar→teeth, en chased 보강 |
+
+## Encyclopedia Quality & RAG Sprint (2026-06-03)
+
+### 배경
+
+백과사전 한국어가 (1) 번역체·우회동사("비춘다")로 정보 전달이 약하고, (2) ko/en이 서로의 번역본이라 문화권 분리가 안 되어 있었다. 또한 미사용 필드(interpretationLenses 등)와 어색한 표제어가 남아 있었다.
+별도로, RAG 관점 냉정 평가 결과 **기본 검색이 어휘(lexical) 매칭**이고 벡터 경로는 옵션으로만 존재(`embeddingProvider && vectorIndex` 주입 시에만 가동), 검색 품질 측정 지표가 없다는 것이 확인됐다. (형태소 분석기 Kiwi는 B-4로 배포됨, 단 LLM 경로 보강 위주.)
+
+### 합의된 순서 (2026-06-03)
+
+1. **RAG 우선** (콘텐츠 ENC-06~07보다 먼저). 구조적 한계(어휘 매칭 recall)부터 해결.
+2. **측정부터** — RAG-IMP-01(평가셋 + recall@k/precision)을 가장 먼저. 측정 없이 튜닝하지 않는다.
+3. 콘텐츠 ENC-07 전수 작업은 **카테고리 단위**(장소→사물→사람→행동→자연→감정)로, RAG가 안정된 뒤 진행.
+
+### 원칙 (확정)
+
+- **백과사전 = 정보 전달.** 화자 톤은 프롬프트에서 입힌다. 분위기 형용사 금지, "X 꿈은 ~라는 뜻이다" 사전식 직접 단언(B안).
+- **locale = 문화권.** `locales.ko`=동양 전통(재물·태몽·길흉 점사), `locales.en`=서양 전통(융·신화·심리). 번역 금지.
+- **안전 우선.** sensitive 상징은 avoidExpressions로 단정·예언 차단. 전통 길흉은 fortune에 "전통적으로 ~" 인용으로만.
+- 참고: `docs/dream-encyclopedia-style-guide.md`, `docs/dream-tarot-content-research.md`.
+
+### Phase A — 콘텐츠 (ENC)
+
+- [x] ENC-01~05 완료 (가이드/조사, 필드 제거, 라벨 감사, 이중문화, 1차 8항목)
+- [ ] ENC-06: 문화 차 큰 2차 배치 ~12개. 동양 고유(용·조상·거북이·귀신·무지개·닭) / 서양 심리 강(거미·나비·곰·고래·벌레·사슴)
+- [ ] ENC-07: **기존 121개 전수**를 카테고리 단위로 ko=동양/en=서양 + B안 재작성. 배치마다 tsc+test+`eval:retrieval`. (33개 완료: 1차 8 + event 6 + person 12 + body 7, **88개 남음**)
+- [ ] ENC-08: vault YAML 동기화 (또는 YAML을 backend seed에서 생성하는 단방향 소스 결정)
+
+#### ENC-07 카테고리별 진행 (1차 8개 = 일부 완료, 총 121)
+
+진행 순서는 분량/임팩트 고려해 정한다. 각 카테고리 완료 = 그 안 모든 항목 ko/en 재작성 + 테스트 통과.
+
+- [ ] **place** 18개 (땅✓ / room·home·school·corridor·window·stairs·elevator·bathroom·kitchen·road·bridge·workplace·market·cave·prison·mountain·river 등)
+- [ ] **object** 21개 (똥✓·돈✓ / door·key·mirror·bag·shoes·lost_item·phone·bed·clothes·knife·gold·ring·book·watch·photo·boat?·등)
+- [x] **person** 12개 ✓ (조상·스님·아기·어머니 = 동양 고유/태몽 vs 융 원형 / stranger·child·father·friend·partner·ex_partner·ghost·celebrity = B안+보편)
+- [ ] **action** 10개 (쫓김✓ / searching·running·falling·flying·swimming·fighting·crying·dance·laughter·exam?)
+- [ ] **animal** 21개 (뱀✓·돼지✓ / cat·dog·bird·fish·tiger·cow·mouse·spider·dragon·turtle·bear·whale·butterfly·chicken·deer·frog·monkey·horse·insect)
+- [ ] **nature** 17개 (물✓ / sea·rain·fire·snow·moon·flood·rainbow·wind·rock·tree·flower·star·dawn·earthquake 등)
+- [x] **body** 8개 ✓ (치아·임신·머리카락·몸·피·알몸·손·발) — 임신=태몽 vs 창의적 잉태, 나머지 B안. (피=재물 전통은 안전정책상 의도적 배제 유지)
+- [x] **event** 6개 ✓ (죽음·장례식·시험·결혼식·전쟁·사고) — death=동양 역몽 fortune 추가, funeral/wedding/war en fortune 서양으로 재구성, 나머지 B안
+- [ ] **food** 3개 (0 / food·meat·alcohol)
+- [ ] **emotion** 3개 (0 / anger 등)
+- [ ] **abstract** 2개 (여럿 등)
+
+> 카테고리별 정확한 ID 목록은 `npm run eval:coverage` 산출물·seed로 대조. 진행하며 coverage_gap 신규 심볼(ENC-06/RAG)도 해당 카테고리에 흡수한다.
+
+### Phase B — RAG 기술 (RAG-IMP) · 콘텐츠와 병행 가능
+
+선후 관계: **RAG-IMP-01(측정) → 02(벡터) → 03~05(recall·ranking)**. 측정 없이 튜닝하지 않는다.
+
+- [x] RAG-IMP-01: 평가셋 32개(한/영, common/tradition/sensitive/paraphrase) + recall@k·precision 스크립트 + baseline. **Baseline(k=5): micro 0.842 / macro 0.781.** tag별: common 1.0, tradition 1.0, sensitive 0.333, paraphrase 0.556, en 0.833. 노출된 구멍: sceneModifier-only 미surface, 단음절 alias 가드(물↛흙탕물), 패러프레이즈, 영어 형태소(chasing↛chased)
+- [x] RAG-IMP-03 + 04(조합): 라이브 경로의 형태소 lemma(Kiwi)를 eval에도 연결하고, lemma친화 bare-stem alias(being_chased "도망치/뒤따라/following")를 추가. **결과: hybrid macro recall 0.891→0.938, paraphrase 0.667→0.833** (도망쳤어→"도망치"→쫓김). 발견: lemma는 정확하지만 alias가 구문형("도망치는 꿈")이면 연결 안 됨 → lemma는 alias와 조합해야 효과. precision: lexical 0.823 / hybrid 0.749(후보 tier). `npm run eval:retrieval:vector`. alias 충돌 가드로 "도망"(running과 겹침)은 제외.
+- [~] RAG-IMP-05: 벡터 explicit-동반 임계값 0.68→0.62 (`dream-rag-retriever.ts`). 진단 결과 한국어 짧은 구어체(도망쳤어→being_chased)는 벡터 점수가 노이즈 바닥(0.38)이라 임계값으로 못 잡음 → **RAG-IMP-03(형태소/lemma)** 필요. precision 0.738 유지.
+- [x] RAG-IMP-02: ko/en 인덱스 빌드(`npm run build:rag-index`, 각 872청크) → `output/rag/dream-rag-{ko,en}.json`, `.env` 활성(이미 라우트 배선됨). **하이브리드 eval(`npm run eval:retrieval:vector`): macro recall 0.859→0.891, sensitive 0.5→0.833.** 벡터가 alias-갭(이가 우수수 빠졌어→teeth)을 precision 붕괴 없이 의미로 잡음. 남은 미스(도망쳤어→chased, molar→teeth)는 threshold 튜닝(RAG-IMP-05) 대상. 주의: 인덱스(각 38MB)는 `output/`(gitignore) → 배포 시 빌드 스텝 필요.
+- [ ] RAG-IMP-03: 매처/구조분석 경로에 lemma 공급(현재 LLM 경로 한정), `safeLemmatize` 폴백
+- [ ] RAG-IMP-04: 평가셋에서 드러난 recall 구멍부터 trigger/searchText 동의어 보강
+- [ ] RAG-IMP-05: 재랭킹 — exact 포화 완화, 일반어 라벨 과매치 보정(예: "땅" 라벨이 snake를 제친 사례)
+- [ ] RAG-IMP-06: 저/무매칭 폴백
+- [ ] RAG-IMP-07: 타로 카드 의미를 버전관리 lookup 데이터로 분리(타로는 닫힌 집합이라 RAG 대상 아님)
+
+### 측정 결과 (2026-06-03)
+
+- **Matching recall (RAG-IMP-01)**: baseline k=5 micro 0.842 / macro 0.781 / precision 0.698. 타깃 alias 3건(흙탕물·장례식장·chasing) 후 **micro 0.895 / macro 0.859 / precision 0.792** (recall↑, precision↑). → 낮은 recall은 심볼 부족이 아니라 **매칭(alias/형태소/패러프레이즈)** 문제임이 입증됨.
+- **Coverage (RAG-IMP-08)**: 흔한 상징 72개 탐침 → covered 44, **matching_gap 0**(있는 심볼은 bare 키워드로 100% 매칭), **coverage_gap 26**(항목 없음), over_match 2(보석→gold, 할머니→ancestor).
+- **결론**: 두 축 분리 확인. 매칭은 견고(0.86), 그러나 **흔한 상징의 ~37%가 미등록** = 실재하는 coverage 부족. → ENC-07 우선 추가 목록 확보.
+- **ENC-07 우선 추가 후보(coverage_gap 26)**: 해·태양·하늘·배(船)·자전거·총·경찰·군인·도둑·절·교회·사자·코끼리·늑대·토끼·여우·오줌·시체·키스·안개·번개·모자·안경·선생님·할머니(전용)·편지·컴퓨터
+- 아티팩트: `backend/output/eval/retrieval-eval-latest.{md,json}`, `coverage-eval-latest.{md,json}`. 재생성: `npm run eval:retrieval` / `npm run eval:coverage`.
+
+### 완료 기준 (Definition of Done)
+
+- 모든 활성 심볼 ko=동양/en=서양로 분리되고 우회동사 0, sceneModifier ≥5
+- RAG 평가셋에서 baseline 대비 recall@5 개선 수치 기록
+- backend tsc·전체 테스트·frontend build 통과, vault/docs 동기화
 
 ## ACCESS-01 Implementation Checklist
 
