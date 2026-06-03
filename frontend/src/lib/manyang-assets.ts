@@ -18,10 +18,10 @@ export const manyangAssets = {
   },
   illustrations: {
     dreamseedByCat: {
-      blackCat: "/manyang/backgrounds/dreamseed-background-black-cat-v2.png",
-      whiteCat: "/manyang/backgrounds/dreamseed-background-white-cat-v2.png",
-      cheeseCat: "/manyang/backgrounds/dreamseed-background-cheese-cat-v3.png",
-      grayCat: "/manyang/backgrounds/dreamseed-background-gray-cat-v2.png",
+      blackCat: "/manyang/backgrounds/dreamseed-background-black-cat-v2.webp",
+      whiteCat: "/manyang/backgrounds/dreamseed-background-white-cat-v2.webp",
+      cheeseCat: "/manyang/backgrounds/dreamseed-background-cheese-cat-v3.webp",
+      grayCat: "/manyang/backgrounds/dreamseed-background-gray-cat-v2.webp",
     },
     morning: "/manyang/backgrounds/morning-illustration.webp",
     blackCatProfile: "/manyang/references/cat-black-profile.webp",
@@ -102,6 +102,16 @@ export const manyangAssets = {
       profile: "/manyang/ui/footer/footer-icon-profile.png",
     },
   },
+  basicIcons: {
+    moon: "/manyang/ui/basic-icons/basic-moon.png",
+    paw: "/manyang/ui/basic-icons/basic-paw.png",
+    sparkles: "/manyang/ui/basic-icons/basic-sparkles.png",
+    crystalBall: "/manyang/ui/basic-icons/basic-crystal-ball.png",
+    pencil: "/manyang/ui/basic-icons/basic-pencil.png",
+    book: "/manyang/ui/basic-icons/basic-book.png",
+    settings: "/manyang/ui/basic-icons/basic-settings.png",
+    profile: "/manyang/ui/basic-icons/basic-profile.png",
+  },
   actionIcons: {
     arrowLeft: "/manyang/ui/action-icons/action-arrow-left.png",
     arrowRight: "/manyang/ui/action-icons/action-arrow-right.png",
@@ -120,6 +130,17 @@ export const manyangAssets = {
     check: "/manyang/ui/action-icons/action-check.png",
     help: "/manyang/ui/action-icons/action-help.png",
   },
+  pageIcons: {
+    today: "/manyang/ui/page-icons/page-today.png",
+    write: "/manyang/ui/page-icons/page-write.png",
+    archive: "/manyang/ui/page-icons/page-archive.png",
+    encyclopedia: "/manyang/ui/page-icons/page-encyclopedia.png",
+    profile: "/manyang/ui/page-icons/page-profile.png",
+    dreamReceipt: "/manyang/ui/page-icons/page-dream-receipt.png",
+    morningPawprint: "/manyang/ui/page-icons/page-morning-pawprint.png",
+    nightRecord: "/manyang/ui/page-icons/page-night-record.png",
+    tarot: "/manyang/ui/page-icons/page-tarot.png",
+  },
   semanticIcons: {
     moon: "/manyang/ui/semantic-icons/semantic-moon.png",
     paw: "/manyang/ui/semantic-icons/semantic-paw.png",
@@ -133,6 +154,25 @@ export const manyangAssets = {
     crystalBall: "/manyang/ui/semantic-icons/semantic-crystal-ball.png",
     crystals: "/manyang/ui/semantic-icons/semantic-crystals.png",
     star: "/manyang/ui/semantic-icons/semantic-star.png",
+  },
+  calendarRecordIcons: {
+    dream: "/manyang/ui/calendar-record-icons/calendar-record-dream.png",
+    pawprint: "/manyang/ui/calendar-record-icons/calendar-record-pawprint.png",
+    night: "/manyang/ui/calendar-record-icons/calendar-record-night.png",
+    symbol: "/manyang/ui/calendar-record-icons/calendar-record-symbol.png",
+  },
+  encyclopediaIcons: {
+    place: "/manyang/ui/encyclopedia-icons/encyclopedia-place.png",
+    person: "/manyang/ui/encyclopedia-icons/encyclopedia-person.png",
+    animal: "/manyang/ui/encyclopedia-icons/encyclopedia-animal.png",
+    nature: "/manyang/ui/encyclopedia-icons/encyclopedia-nature.png",
+    object: "/manyang/ui/encyclopedia-icons/encyclopedia-object.png",
+    body: "/manyang/ui/encyclopedia-icons/encyclopedia-body.png",
+    action: "/manyang/ui/encyclopedia-icons/encyclopedia-action.png",
+    event: "/manyang/ui/encyclopedia-icons/encyclopedia-event.png",
+    food: "/manyang/ui/encyclopedia-icons/encyclopedia-food.png",
+    emotion: "/manyang/ui/encyclopedia-icons/encyclopedia-emotion.png",
+    abstract: "/manyang/ui/encyclopedia-icons/encyclopedia-abstract.png",
   },
   keywordIcons: {
     peaceful: "/manyang/ui/keyword-icons/keyword-peaceful.png",
@@ -199,7 +239,19 @@ export const manyangAssets = {
     service: "/manyang/ui/profile-icons/profile-service.png",
     account: "/manyang/ui/profile-icons/profile-account.png",
   },
+  profileMenuIcons: {
+    recordBackup: "/manyang/ui/profile-menu-icons/profile-menu-record-backup.png",
+    recordExport: "/manyang/ui/profile-menu-icons/profile-menu-record-export.png",
+    recordDelete: "/manyang/ui/profile-menu-icons/profile-menu-record-delete.png",
+    feedback: "/manyang/ui/profile-menu-icons/profile-menu-feedback.png",
+    terms: "/manyang/ui/profile-menu-icons/profile-menu-terms.png",
+    privacySecurity: "/manyang/ui/profile-menu-icons/profile-menu-privacy-security.png",
+    privacyPolicy: "/manyang/ui/profile-menu-icons/profile-menu-privacy-policy.png",
+    appVersion: "/manyang/ui/profile-menu-icons/profile-menu-app-version.png",
+    morningPawprint: "/manyang/ui/profile-menu-icons/profile-menu-morning-pawprint.png",
+  },
 } as const;
 
 export type KeywordIconName = keyof typeof manyangAssets.keywordIcons;
 export type SectionIconName = keyof typeof manyangAssets.sectionIcons;
+export type CalendarRecordIconName = keyof typeof manyangAssets.calendarRecordIcons;
