@@ -24,9 +24,9 @@ const filterTabs: Array<{ type: ArchiveRecordFilterType; label: string }> = [
 ];
 
 const recordTypeIcons: Record<ArchiveRecordView["type"], string> = {
-  dream: manyangAssets.semanticIcons.moon,
-  night_checkin: manyangAssets.semanticIcons.sparkles,
-  pawprint: manyangAssets.semanticIcons.paw,
+  dream: manyangAssets.calendarRecordIcons.dream,
+  night_checkin: manyangAssets.calendarRecordIcons.night,
+  pawprint: manyangAssets.calendarRecordIcons.pawprint,
 };
 
 function formatArchiveDate(date: string): string {

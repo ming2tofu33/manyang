@@ -26,6 +26,7 @@ import { formatMonthGridCellDate, getMonthGridCells } from "@/lib/calendar";
 import { manyangAssets } from "@/lib/manyang-assets";
 import { countMonthlyNightCheckIns } from "@/lib/night-checkin";
 import { countMonthlyPawprints } from "@/lib/pawprints";
+import { mobileLayout } from "@/lib/mobile-layout";
 import { cn } from "@/lib/styles";
 import { useArchiveDreamRecords } from "@/lib/use-archive-dream-records";
 import { useRoutineRecords } from "@/lib/use-routine-records";
@@ -111,19 +112,24 @@ export function ArchiveCalendar() {
 
   return (
     <section className="space-y-4">
-      <div className="mx-auto grid w-full max-w-[382px] grid-cols-4 gap-1.5 rounded-[1.35rem] border border-[#7c4a38]/72 bg-[rgba(5,4,12,0.74)] p-2.5 shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md">
-        <ArchiveSummaryCard icon={manyangAssets.semanticIcons.moon} label="꿈 기록" value={monthlyDreams} />
-        <ArchiveSummaryCard icon={manyangAssets.semanticIcons.paw} label="발자국 기록" value={monthlyPawprints} />
-        <ArchiveSummaryCard icon={manyangAssets.semanticIcons.sparkles} label="밤의 기록" value={monthlyNightCheckIns} />
-        <ArchiveSummaryCard icon={manyangAssets.semanticIcons.crystalBall} label="이 달 상징" value={monthlySymbols} />
+      <div
+        className={cn(
+          "mx-auto grid w-full grid-cols-4 gap-1.5 rounded-[1.35rem] border border-[#7c4a38]/72 bg-[rgba(5,4,12,0.74)] p-2.5 shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md",
+          mobileLayout.wideSurfaceMaxWidthClassName,
+        )}
+      >
+        <ArchiveSummaryCard icon={manyangAssets.calendarRecordIcons.dream} label="꿈 기록" value={monthlyDreams} />
+        <ArchiveSummaryCard icon={manyangAssets.calendarRecordIcons.pawprint} label="발자국 기록" value={monthlyPawprints} />
+        <ArchiveSummaryCard icon={manyangAssets.calendarRecordIcons.night} label="밤의 기록" value={monthlyNightCheckIns} />
+        <ArchiveSummaryCard icon={manyangAssets.calendarRecordIcons.symbol} label="이 달 상징" value={monthlySymbols} />
       </div>
 
-      <div className="relative mx-auto aspect-[962/1452] w-full max-w-[382px]">
+      <div className={cn("relative mx-auto aspect-[962/1452] w-full", mobileLayout.wideSurfaceMaxWidthClassName)}>
         <Image
           src="/manyang/ui/calendar.webp"
           alt=""
           fill
-          sizes="382px"
+          sizes={`${mobileLayout.wideSurfaceMaxWidth}px`}
           unoptimized
           className="object-contain drop-shadow-[0_18px_48px_rgba(0,0,0,0.36)]"
         />
@@ -183,7 +189,7 @@ export function ArchiveCalendar() {
                     {hasDream ? (
                       <span className={archiveCalendarDreamIconClassName}>
                         <Image
-                          src={manyangAssets.semanticIcons.moon}
+                          src={manyangAssets.calendarRecordIcons.dream}
                           alt=""
                           fill
                           sizes="14px"
@@ -195,7 +201,7 @@ export function ArchiveCalendar() {
                     {hasPawprint ? (
                       <span className={archiveCalendarPawprintIconClassName}>
                         <Image
-                          src={manyangAssets.semanticIcons.paw}
+                          src={manyangAssets.calendarRecordIcons.pawprint}
                           alt=""
                           fill
                           sizes="12px"
@@ -207,7 +213,7 @@ export function ArchiveCalendar() {
                     {hasNightCheckIn ? (
                       <span className={archiveCalendarNightCheckInIconClassName}>
                         <Image
-                          src={manyangAssets.semanticIcons.sparkles}
+                          src={manyangAssets.calendarRecordIcons.night}
                           alt=""
                           fill
                           sizes="12px"
@@ -225,7 +231,12 @@ export function ArchiveCalendar() {
       </div>
 
       {hasLocalArchiveRecords && !isLoadingServerRecords ? (
-        <p className="mx-auto max-w-[382px] rounded-[1rem] border border-[#7c4a38]/45 bg-[rgba(5,4,12,0.58)] px-4 py-3 text-center text-sm leading-6 text-[#fff3d7]/74">
+        <p
+          className={cn(
+            "mx-auto rounded-[1rem] border border-[#7c4a38]/45 bg-[rgba(5,4,12,0.58)] px-4 py-3 text-center text-sm leading-6 text-[#fff3d7]/74",
+            mobileLayout.wideSurfaceMaxWidthClassName,
+          )}
+        >
           이 기기에 저장된 기록이에요. 로그인하면 계정에 백업할 수 있어요.
         </p>
       ) : null}

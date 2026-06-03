@@ -25,9 +25,9 @@ import { useArchiveDreamRecords } from "@/lib/use-archive-dream-records";
 import { useRoutineRecords } from "@/lib/use-routine-records";
 
 const recordTypeIcons: Record<ArchiveRecordView["type"], string> = {
-  dream: manyangAssets.semanticIcons.moon,
-  pawprint: manyangAssets.semanticIcons.paw,
-  night_checkin: manyangAssets.semanticIcons.sparkles,
+  dream: manyangAssets.calendarRecordIcons.dream,
+  pawprint: manyangAssets.calendarRecordIcons.pawprint,
+  night_checkin: manyangAssets.calendarRecordIcons.night,
 };
 
 type RecentArchiveSlotDefinition = {

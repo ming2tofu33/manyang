@@ -53,21 +53,21 @@ const recordEntries: ArchiveRecordEntryDefinition[] = [
     title: "꿈 들려주기",
     description: "기억나는 꿈을 적고 고양이에게 해몽을 받아요.",
     href: "/write",
-    icon: manyangAssets.semanticIcons.moon,
+    icon: manyangAssets.pageIcons.write,
   },
   {
     key: "morning",
     title: "꿈의 발자국 남기기",
     description: "꿈이 흐릿한 날, 기분과 몸 상태만 남겨요.",
     href: "/morning",
-    icon: manyangAssets.semanticIcons.paw,
+    icon: manyangAssets.pageIcons.morningPawprint,
   },
   {
     key: "night",
     title: "밤의 기록 남기기",
     description: "잠들기 전 오늘의 마음과 컨디션을 남겨요.",
     href: "/night",
-    icon: manyangAssets.semanticIcons.sparkles,
+    icon: manyangAssets.pageIcons.nightRecord,
   },
 ];
 

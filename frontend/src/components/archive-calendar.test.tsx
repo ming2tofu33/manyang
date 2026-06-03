@@ -1,6 +1,8 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
+import { mobileLayout } from "@/lib/mobile-layout";
+
 import { ArchiveCalendar } from "./archive-calendar";
 
 describe("ArchiveCalendar", () => {
@@ -12,13 +14,13 @@ describe("ArchiveCalendar", () => {
     expect(markup).not.toContain("/_next/image");
   });
 
-  it("uses separated semantic symbols for summary cards and date markers", () => {
+  it("uses separated calendar record symbols for summary cards and date markers", () => {
     const markup = renderToStaticMarkup(<ArchiveCalendar />);
 
-    expect(markup).toContain("/manyang/ui/semantic-icons/semantic-moon.png");
-    expect(markup).toContain("/manyang/ui/semantic-icons/semantic-paw.png");
-    expect(markup).toContain("/manyang/ui/semantic-icons/semantic-sparkles.png");
-    expect(markup).toContain("/manyang/ui/semantic-icons/semantic-crystal-ball.png");
+    expect(markup).toContain("/manyang/ui/calendar-record-icons/calendar-record-dream.png");
+    expect(markup).toContain("/manyang/ui/calendar-record-icons/calendar-record-pawprint.png");
+    expect(markup).toContain("/manyang/ui/calendar-record-icons/calendar-record-night.png");
+    expect(markup).toContain("/manyang/ui/calendar-record-icons/calendar-record-symbol.png");
   });
 
   it("renders adjacent month cells with a muted visual scope", () => {
@@ -26,5 +28,12 @@ describe("ArchiveCalendar", () => {
 
     expect(markup).toContain('data-calendar-cell-scope="adjacent-month"');
     expect(markup).toContain("opacity-45");
+  });
+
+  it("uses the wider shared surface width for the calendar and monthly summary", () => {
+    const markup = renderToStaticMarkup(<ArchiveCalendar />);
+
+    expect(markup).toContain(mobileLayout.wideSurfaceMaxWidthClassName);
+    expect(markup).not.toContain("max-w-[382px]");
   });
 });

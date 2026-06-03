@@ -31,10 +31,10 @@ function DetailRow({ label, value }: { label: string; value: string }) {
 function DetailHeader({ view }: { view: ArchiveRecordView }) {
   const icon =
     view.type === "pawprint"
-      ? manyangAssets.semanticIcons.paw
+      ? manyangAssets.calendarRecordIcons.pawprint
       : view.type === "night_checkin"
-        ? manyangAssets.semanticIcons.sparkles
-        : manyangAssets.semanticIcons.moon;
+        ? manyangAssets.calendarRecordIcons.night
+        : manyangAssets.calendarRecordIcons.dream;
 
   return (
     <header className="space-y-3 text-center">
