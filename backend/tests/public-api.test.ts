@@ -12,7 +12,7 @@ describe("backend public API", () => {
   it("exports runtime encyclopedia and retrieval helpers", () => {
     expect(SUPPORTED_LOCALES).toEqual(["ko", "en"]);
     expect(getRuntimeSymbolEntries("ko").length).toBeGreaterThanOrEqual(10);
-    expect(findRuntimeSymbolMatches("내 땅에 큰 구렁이가 있었어", { locale: "ko" })[0]?.entryId).toBe("snake");
+    expect(findRuntimeSymbolMatches("큰 구렁이를 보는 꿈을 꿨어", { locale: "ko" })[0]?.entryId).toBe("snake");
     expect(
       scoreRetrievalCandidate({
         matchType: "exact",

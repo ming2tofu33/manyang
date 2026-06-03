@@ -23,7 +23,7 @@ describe("findRuntimeSymbolMatches", () => {
     expect(snake?.symbolRole).toContain("primary_candidate");
     expect(snake?.confidence).toBeGreaterThanOrEqual(0.82);
     expect(snake?.matchedText).toEqual(expect.arrayContaining(["뱀", "구렁이"]));
-    expect(snake?.usedFields).toEqual(expect.arrayContaining(["aliases", "sceneModifiers.large", "sceneModifiers.many"]));
+    expect(snake?.usedFields).toEqual(expect.arrayContaining(["aliases", "sceneModifiers.enteringHomeOrLand", "sceneModifiers.many"]));
     expect(snake?.evidence.coreMeanings).toContain("생명력");
   });
 

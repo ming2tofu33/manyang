@@ -15,11 +15,11 @@ describe("analyzeDream", () => {
     expect(result.dreamId).toMatch(/^[0-9a-f-]{36}$/);
     expect(result.analysisId).toMatch(/^[0-9a-f-]{36}$/);
     expect(result.cardId).toMatch(/^[0-9a-f-]{36}$/);
-    expect(result.symbols).toEqual(expect.arrayContaining(["뱀", "우리 땅", "많은 수"]));
+    expect(result.symbols).toEqual(expect.arrayContaining(["뱀", "땅", "여럿"]));
     expect(result.themes).toEqual(expect.arrayContaining(["영역", "생명력", "압도감"]));
     expect(result.interpretation).toContain("내 영역");
     expect(result.symbolReadings.length).toBeGreaterThanOrEqual(2);
-    expect(result.readingBasis.usedSymbols).toEqual(expect.arrayContaining(["뱀", "우리 땅"]));
+    expect(result.readingBasis.usedSymbols).toEqual(expect.arrayContaining(["뱀", "땅"]));
     expect(result.readingBasis.confidence).toBeGreaterThanOrEqual(0.8);
     expect(result.card.keywords.length).toBeGreaterThanOrEqual(3);
 
@@ -148,8 +148,8 @@ describe("analyzeDream", () => {
       wakeMood: "surprised",
     });
 
-    expect(result.symbols).toEqual(expect.arrayContaining(["뱀", "우리 땅", "많은 수"]));
-    expect(result.readingBasis.usedSymbols).toEqual(expect.arrayContaining(["뱀", "우리 땅"]));
+    expect(result.symbols).toEqual(expect.arrayContaining(["뱀", "땅", "여럿"]));
+    expect(result.readingBasis.usedSymbols).toEqual(expect.arrayContaining(["뱀", "땅"]));
     expect(result.readingBasis.confidence).toBeGreaterThanOrEqual(0.8);
   });
 

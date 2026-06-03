@@ -15,18 +15,13 @@ export {
   SYMBOL_CATEGORIES,
   SYMBOL_EDITORIAL_STATUSES,
   SYMBOL_EMBEDDING_CHUNK_TYPES,
-  SYMBOL_INTERPRETATION_LENSES,
   SYMBOL_ROLES,
   SYMBOL_SAFETY_LEVELS,
   SYMBOL_STATUSES,
 } from "./contracts/symbol-encyclopedia";
 export type {
-  CultureNote,
   EmbeddingChunkType,
   EmbeddingProfile,
-  InterpretationLens,
-  InterpretationLensKey,
-  InterpretationLensMap,
   LocalizedSymbolEntry,
   RuntimeSymbolEntry,
   SceneModifier,

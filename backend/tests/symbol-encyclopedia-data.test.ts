@@ -233,9 +233,6 @@ describe("symbol encyclopedia data", () => {
       expect(entry.subcategory.length).toBeGreaterThan(0);
       expect(entry.facets.length).toBeGreaterThanOrEqual(3);
       expect(entry.symbolRole.length).toBeGreaterThanOrEqual(1);
-      expect(entry.interpretationLenses.universal.safeTransform.length).toBeGreaterThanOrEqual(2);
-      expect(entry.interpretationLenses.east_asian.safeTransform.length).toBeGreaterThanOrEqual(1);
-      expect(entry.interpretationLenses.western.safeTransform.length).toBeGreaterThanOrEqual(1);
       expect(entry.embeddingProfile.chunkTypes).toEqual(
         expect.arrayContaining(["searchText", "sceneModifier", "safeReading", "metaphorHook"]),
       );
@@ -260,6 +257,25 @@ describe("symbol encyclopedia data", () => {
         expect(localized.smallPrescriptions.length).toBeGreaterThanOrEqual(1);
       }
     }
+  });
+
+  test("keeps Korean encyclopedia safe readings neutral and user-facing", () => {
+    const forbiddenSafeReadingPatterns = [
+      /길몽|길조|태몽|재물운|대표적/,
+      /반드시|무조건/,
+      /안전해요|다뤄야 해요|낮게 반영/,
+    ];
+    const violations = symbolEntries.flatMap((entry) =>
+      forbiddenSafeReadingPatterns
+        .filter((pattern) => pattern.test(entry.locales.ko.safeReading))
+        .map((pattern) => ({
+          id: entry.id,
+          pattern: String(pattern),
+          safeReading: entry.locales.ko.safeReading,
+        })),
+    );
+
+    expect(violations).toEqual([]);
   });
 
   test("flattens a localized symbol into the runtime retrieval shape", () => {

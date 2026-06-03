@@ -287,7 +287,7 @@ const ENGLISH_SCENE_STOP_WORDS = new Set([
 ]);
 
 const LEGACY_MODIFIER_QUERY_BY_SYMBOL_MODIFIER: Record<string, string[]> = {
-  "snake:large": ["largeSnake"],
+  "snake:enteringHomeOrLand": ["largeSnake"],
   "snake:many": ["manySnakes"],
   "owned_land:filledWithAnimals": ["ownedLand"],
   "many:manyAnimals": ["manySnakes"],

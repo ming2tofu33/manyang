@@ -21,7 +21,7 @@ describe("dream reading golden cases", () => {
       locale: "ko",
     });
 
-    expect(result.readingBasis.usedSymbols).toEqual(expect.arrayContaining(["뱀", "우리 땅", "많은 수"]));
+    expect(result.readingBasis.usedSymbols).toEqual(expect.arrayContaining(["뱀", "땅", "여럿"]));
     expect(result.readingBasis.mainThemes).toEqual(expect.arrayContaining(["영역", "생명력", "압도감"]));
     expect(combinedGeneratedText(result)).not.toMatch(/재물운|큰돈|횡재|태몽|조만간|반드시|길한 징조/);
   });

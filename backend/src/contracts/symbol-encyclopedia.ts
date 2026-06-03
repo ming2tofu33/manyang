@@ -23,8 +23,6 @@ export const SYMBOL_CATEGORIES = [
 
 export const SYMBOL_ROLES = ["primary_candidate", "modifier", "context_signal"] as const;
 
-export const SYMBOL_INTERPRETATION_LENSES = ["universal", "east_asian", "western"] as const;
-
 export const SYMBOL_EMBEDDING_CHUNK_TYPES = ["searchText", "sceneModifier", "safeReading", "metaphorHook"] as const;
 
 export const SYMBOL_EDITORIAL_STATUSES = ["needs_review", "approved"] as const;
@@ -35,16 +33,8 @@ export type SymbolAccessTier = (typeof SYMBOL_ACCESS_TIERS)[number];
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 export type SymbolCategory = (typeof SYMBOL_CATEGORIES)[number];
 export type SymbolRole = (typeof SYMBOL_ROLES)[number];
-export type InterpretationLensKey = (typeof SYMBOL_INTERPRETATION_LENSES)[number];
 export type EmbeddingChunkType = (typeof SYMBOL_EMBEDDING_CHUNK_TYPES)[number];
 export type SymbolEditorialStatus = (typeof SYMBOL_EDITORIAL_STATUSES)[number];
-
-export type CultureNote = {
-  weight: number;
-  exposeByDefault: false;
-  notes: string[];
-  safeTransform: string[];
-};
 
 export type FortuneValence = "auspicious" | "cautious";
 
@@ -63,16 +53,6 @@ export type SymbolFortune = {
   /** conditional일 때 흉으로 기운 장면의 '부드러운 환기'(불행 예측 금지). */
   cautious?: string;
 };
-
-export type InterpretationLens = {
-  sourceBasis: string[];
-  coreMeanings?: string[];
-  referenceNotes?: string[];
-  safeTransform: string[];
-  avoidClaims: string[];
-};
-
-export type InterpretationLensMap = Record<InterpretationLensKey, InterpretationLens>;
 
 export type EmbeddingProfile = {
   chunkTypes: EmbeddingChunkType[];
@@ -106,13 +86,10 @@ export type SymbolEntry = {
   symbolRole: SymbolRole[];
   safetyLevel: SymbolSafetyLevel;
   accessTier: SymbolAccessTier;
-  interpretationLenses: InterpretationLensMap;
   embeddingProfile: EmbeddingProfile;
   universalMeanings: string[];
-  tensionAxis: string[];
   relatedIds: string[];
   sourceBasis: string[];
-  cultureNotes?: Partial<Record<SupportedLocale, CultureNote>>;
   locales: Record<SupportedLocale, LocalizedSymbolEntry>;
 };
 
