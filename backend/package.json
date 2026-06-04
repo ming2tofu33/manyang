@@ -12,6 +12,7 @@
     "eval:retrieval": "tsx src/scripts/run-retrieval-eval.ts",
     "eval:coverage": "tsx src/scripts/run-coverage-eval.ts",
     "eval:retrieval:vector": "tsx src/scripts/run-retrieval-eval-vector.ts",
+    "enc:status": "tsx src/scripts/run-enc-status.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
