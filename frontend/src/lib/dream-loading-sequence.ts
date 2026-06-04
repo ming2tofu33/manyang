@@ -1,5 +1,5 @@
-export const DREAM_LOADING_READER_SCENE_MS = 2000;
-export const DREAM_LOADING_INTERPRETATION_SCENE_MS = 5000;
+export const DREAM_LOADING_READER_SCENE_MS = 3000;
+export const DREAM_LOADING_INTERPRETATION_SCENE_MS = 7000;
 export const DREAM_LOADING_ORB_MINIMUM_MS = 10000;
 export const DREAM_LOADING_MINIMUM_MS =
   DREAM_LOADING_READER_SCENE_MS + DREAM_LOADING_INTERPRETATION_SCENE_MS + DREAM_LOADING_ORB_MINIMUM_MS;
@@ -12,9 +12,9 @@ export const dreamLoadingOrbSteps = [
 ] as const;
 
 const READER_SCENE_MESSAGE = "오늘 꿈을 읽을 고양이가 도착했어요.";
-const INTERPRETATION_SCENE_MESSAGE = "고양이가 첫 장면을 살펴보고 있어요.";
-const LONG_WAIT_MESSAGE = "꿈 내용이 길어서 조금 더 깊게 읽고 있어요.";
-const VERY_LONG_WAIT_MESSAGE = "조금 오래 걸리고 있어요. 곧 다시 확인할게요.";
+const INTERPRETATION_SCENE_MESSAGE = "장면과 상징을 차분히 읽고 있어요.";
+const LONG_WAIT_MESSAGE = "꿈 조각이 많아 한 겹 더 맞춰보고 있어요.";
+const VERY_LONG_WAIT_MESSAGE = "연결이 늦어지고 있어요. 준비되는 대로 바로 열게요.";
 const ORB_STEP_MS = DREAM_LOADING_ORB_MINIMUM_MS / dreamLoadingOrbSteps.length;
 
 export type DreamLoadingScene = "reader" | "interpretation" | "orb";
@@ -61,7 +61,7 @@ function getSupportingMessage(elapsedMs: number): string | null {
     return VERY_LONG_WAIT_MESSAGE;
   }
 
-  if (elapsedMs >= 30000) {
+  if (elapsedMs >= 25000) {
     return LONG_WAIT_MESSAGE;
   }
 

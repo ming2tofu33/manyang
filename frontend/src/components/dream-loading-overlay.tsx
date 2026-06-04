@@ -26,6 +26,10 @@ export function DreamLoadingOverlay({
   const isReaderScene = sequence.scene === "reader";
   const isInterpretationScene = sequence.scene === "interpretation";
   const isOrbScene = sequence.scene === "orb";
+  const sceneLabel = isReaderScene ? "고양이 등장" : isInterpretationScene ? "해석 중" : "오브 리딩";
+  const defaultSupportingMessage = isOrbScene
+    ? "오브가 맑아지면 꿈 영수증을 열게요."
+    : "잠시 뒤 꿈 조각을 오브에 모을게요.";
 
   useEffect(() => {
     if (!isActive) {
@@ -60,14 +64,26 @@ export function DreamLoadingOverlay({
         isActive ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
       )}
     >
-      <div className="absolute inset-0 animate-bg-cinematic opacity-45" style={{ transformOrigin: "center 50%" }}>
-        <Image src={background} alt="background" fill sizes="100vw" className="object-cover" priority />
+      <div
+        className={cn(
+          "absolute inset-0 transition duration-1000 ease-out",
+          isOrbScene ? "opacity-100 scale-100" : "opacity-0 scale-[1.012]",
+        )}
+      >
+        <Image
+          src={background}
+          alt=""
+          fill
+          sizes="100vw"
+          className="object-cover brightness-[0.5] contrast-[1.04]"
+          priority
+        />
       </div>
 
       <div
         className={cn(
           "absolute inset-0 transition duration-1000 ease-out",
-          isReaderScene ? "opacity-100 blur-0 scale-100" : "opacity-0 blur-md scale-[1.035]",
+          isReaderScene ? "opacity-100 scale-100" : "opacity-0 scale-[1.018]",
         )}
       >
         <Image
@@ -84,7 +100,7 @@ export function DreamLoadingOverlay({
       <div
         className={cn(
           "absolute inset-0 transition duration-1000 ease-out",
-          isInterpretationScene ? "opacity-100 blur-0 scale-100" : "opacity-0 blur-md scale-[1.035]",
+          isInterpretationScene ? "opacity-100 scale-100" : "opacity-0 scale-[1.012]",
         )}
       >
         <Image
@@ -92,20 +108,37 @@ export function DreamLoadingOverlay({
           alt=""
           fill
           sizes="100vw"
-          className="object-cover brightness-[0.94] contrast-[1.04]"
+          className="object-cover brightness-[1.01] contrast-[1.04] saturate-[1.03]"
           priority
         />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,4,11,0.08)_0%,rgba(5,4,11,0.18)_46%,rgba(5,4,11,0.76)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,4,11,0.02)_0%,rgba(5,4,11,0.03)_48%,rgba(5,4,11,0.7)_100%)]" />
       </div>
 
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(112,50,145,0.18),transparent_42%),linear-gradient(180deg,rgba(5,4,11,0.14),rgba(5,4,11,0.88))]" />
+      <div
+        className={cn(
+          "absolute inset-0 transition-opacity duration-700",
+          isInterpretationScene
+            ? "opacity-0"
+            : "opacity-100 bg-[radial-gradient(circle_at_50%_42%,rgba(112,50,145,0.16),transparent_44%),linear-gradient(180deg,rgba(5,4,11,0.08),rgba(5,4,11,0.86))]",
+        )}
+      />
 
-      <div className="relative z-10 flex h-full w-full flex-col items-center justify-center px-6 pb-10 pt-8 text-center">
-        <div className="relative flex h-[20rem] w-full max-w-[24rem] items-center justify-center">
+      <div
+        className={cn(
+          "relative z-10 flex h-full w-full flex-col items-center px-6 pt-8 text-center",
+          isOrbScene ? "justify-center pb-10" : "justify-end pb-[5.25rem]",
+        )}
+      >
+        <div
+          className={cn(
+            "relative flex h-[18rem] w-full max-w-[24rem] items-center justify-center transition duration-1000 ease-out",
+            isOrbScene ? "mb-5 opacity-100 scale-100" : "pointer-events-none h-0 opacity-0 scale-105",
+          )}
+        >
           <div
             className={cn(
               "absolute inset-0 flex items-center justify-center transition duration-1000 ease-out",
-              isOrbScene ? "opacity-100 blur-0 scale-100" : "opacity-0 blur-md scale-105",
+              isOrbScene ? "opacity-100 scale-100" : "opacity-0 scale-105",
             )}
           >
             <div className="animate-orb-glow-premium relative h-[17rem] w-[17rem] sm:h-[21rem] sm:w-[21rem]">
@@ -133,50 +166,34 @@ export function DreamLoadingOverlay({
                 className="animate-orb-3 absolute object-contain drop-shadow-2xl"
                 priority
               />
-              <span className="absolute -left-3 top-10 h-14 w-14 animate-orb-1">
-                <Image
-                  src={manyangAssets.semanticIcons.key}
-                  alt=""
-                  fill
-                  sizes="56px"
-                  unoptimized
-                  className="object-contain opacity-75"
-                />
-              </span>
-              <span className="absolute -right-2 bottom-12 h-14 w-14 animate-orb-2">
-                <Image
-                  src={manyangAssets.semanticIcons.cloud}
-                  alt=""
-                  fill
-                  sizes="56px"
-                  unoptimized
-                  className="object-contain opacity-75"
-                />
-              </span>
-              <span className="absolute bottom-2 left-1/2 h-12 w-12 -translate-x-1/2 animate-orb-3">
-                <Image
-                  src={manyangAssets.semanticIcons.sparkles}
-                  alt=""
-                  fill
-                  sizes="48px"
-                  unoptimized
-                  className="object-contain opacity-80"
-                />
-              </span>
             </div>
           </div>
         </div>
 
-        <div className="min-h-[9.5rem] w-full max-w-[22rem] space-y-4">
+        <div
+          data-loading-copy-panel="true"
+          className={cn(
+            "w-full max-w-[22rem] rounded-[1.15rem] border px-4 py-4 shadow-[0_18px_42px_rgba(0,0,0,0.38),inset_0_0_24px_rgba(255,217,138,0.04)]",
+            isOrbScene
+              ? "border-[#d799ff]/24 bg-[rgba(12,8,24,0.58)]"
+              : "border-[#f0bc7d]/32 bg-[rgba(5,4,11,0.68)]",
+          )}
+        >
+          <p className="mb-2 text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-[#f0bc7d]/74">
+            {sceneLabel}
+          </p>
           {isOrbScene ? (
-            <div className="mx-auto flex w-fit items-center gap-2 rounded-full border border-[#d799ff]/28 bg-[rgba(18,10,31,0.62)] px-3 py-1.5 text-[0.78rem] font-semibold text-[#e8b6ff] shadow-[0_0_18px_rgba(185,97,255,0.18)]">
-              <span>해몽 단계 {sequence.stepLabel}</span>
-              <span className="flex gap-1" aria-hidden="true">
+            <div
+              data-loading-step-indicator="true"
+              className="mb-3 flex items-center gap-2 text-[0.72rem] font-semibold text-[#e8b6ff]/88"
+            >
+              <span className="shrink-0">오브 리딩 {sequence.stepLabel}</span>
+              <span className="flex flex-1 gap-1" aria-hidden="true">
                 {Array.from({ length: 4 }).map((_, index) => (
                   <span
                     key={index}
                     className={cn(
-                      "h-1.5 w-1.5 rounded-full",
+                      "h-1 flex-1 rounded-full",
                       index <= sequence.stepIndex
                         ? "bg-[#ffd98a] shadow-[0_0_8px_rgba(255,217,138,0.85)]"
                         : "bg-[#7b5f85]/55",
@@ -187,12 +204,12 @@ export function DreamLoadingOverlay({
             </div>
           ) : null}
 
-          <p className="animate-text-shimmer min-h-[3.6rem] text-balance text-[1.35rem] font-semibold leading-[1.65] tracking-normal sm:text-2xl">
+          <p className="animate-text-shimmer min-h-[3.2rem] text-balance text-[1.22rem] font-semibold leading-[1.65] tracking-normal sm:text-2xl">
             {sequence.message}
           </p>
 
-          <p className="mx-auto min-h-[2.75rem] max-w-[19rem] text-[0.9rem] font-medium leading-6 text-[#f4cfa8]/78">
-            {sequence.supportingMessage ?? "해몽이 끝나면 꿈 영수증이 자동으로 열려요."}
+          <p className="mx-auto mt-3 min-h-[2.25rem] max-w-[19rem] text-[0.88rem] font-medium leading-6 text-[#f4cfa8]/78">
+            {sequence.supportingMessage ?? defaultSupportingMessage}
           </p>
         </div>
       </div>

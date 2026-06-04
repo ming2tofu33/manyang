@@ -33,7 +33,7 @@ describe("AdminLoadingLab", () => {
   });
 
   it("keeps the collapsed control sheet reduced to the pull handle", () => {
-    const markup = renderToStaticMarkup(<AdminLoadingLab initialMode="dream" initialDreamElapsedMs={7000} />);
+    const markup = renderToStaticMarkup(<AdminLoadingLab initialMode="dream" initialDreamElapsedMs={10000} />);
 
     expect(markup).toContain('data-admin-loading-lab-state="active"');
     expect(markup).toContain('data-admin-loading-lab-mode="dream"');
@@ -47,8 +47,8 @@ describe("AdminLoadingLab", () => {
     expect(markup).not.toContain('href="/profile"');
     expect(markup).not.toContain("꿈해몽 타임라인");
     expect(markup).not.toContain("고양이 등장");
-    expect(markup).not.toContain("0.0s - 2.0s");
-    expect(markup).not.toContain("17.0s+");
+    expect(markup).not.toContain("0.0s - 3.0s");
+    expect(markup).not.toContain("20.0s+");
   });
 
   it("can render the control sheet expanded for detailed timeline checks", () => {
@@ -60,8 +60,11 @@ describe("AdminLoadingLab", () => {
     expect(markup).not.toContain('data-admin-tool-nav="true"');
     expect(markup).toContain("꿈해몽 타임라인");
     expect(markup).toContain("고양이 등장");
-    expect(markup).toContain("0.0s - 2.0s");
-    expect(markup).toContain("17.0s+");
+    expect(markup).toContain("0.0s - 3.0s");
+    expect(markup).toContain("3.0s - 10.0s");
+    expect(markup).toContain("10.0s - 20.0s+");
+    expect(markup).toContain("20.0s+");
+    expect(markup).toContain("25.0s / 55.0s");
     expect(markup).toContain("Midnight");
     expect(markup).toContain("Luna");
   });
@@ -79,11 +82,14 @@ describe("AdminLoadingLab", () => {
     expect(revealMarkup).toContain("카드 공개");
     expect(revealMarkup).toContain("1.8s");
 
-    expect(loadingMarkup).toContain('data-daily-tarot-loading="true"');
+    expect(loadingMarkup).toContain('data-daily-tarot-state="generating-result"');
+    expect(loadingMarkup).toContain('data-daily-tarot-card-story="true"');
+    expect(loadingMarkup).toContain('data-daily-tarot-reading-loading="true"');
     expect(loadingMarkup).toContain("해석 대기");
     expect(loadingMarkup).toContain("API 8.0s");
-    expect(loadingMarkup).toContain("결과 전환");
-    expect(loadingMarkup).toContain("1.2s");
+    expect(loadingMarkup).toContain("결과 표시");
+    expect(loadingMarkup).not.toContain("결과 전환");
+    expect(loadingMarkup).not.toContain("1.2s");
   });
 
   it("restricts the loading lab for non-admin users", () => {

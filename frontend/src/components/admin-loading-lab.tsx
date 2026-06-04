@@ -5,10 +5,9 @@ import { Gauge, Pause, Play, RotateCcw, SkipForward } from "lucide-react";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 
 import {
-  DailyTarotLoadingPanel,
+  DailyTarotPendingResult,
   DailyTarotRevealPanel,
   tarotCardRevealMs,
-  tarotResultTransitionMs,
 } from "@/components/daily-tarot-client";
 import { DreamLoadingOverlay } from "@/components/dream-loading-overlay";
 import {
@@ -48,10 +47,10 @@ const tarotApiWaitOptions = [3_000, 8_000, 17_000, 30_000] as const;
 
 const dreamJumpPoints = [
   { label: "0s", elapsedMs: 0 },
-  { label: "2s", elapsedMs: DREAM_LOADING_READER_SCENE_MS },
-  { label: "7s", elapsedMs: DREAM_LOADING_READER_SCENE_MS + DREAM_LOADING_INTERPRETATION_SCENE_MS },
-  { label: "17s", elapsedMs: DREAM_LOADING_MINIMUM_MS },
-  { label: "30s", elapsedMs: 30_000 },
+  { label: "3s", elapsedMs: DREAM_LOADING_READER_SCENE_MS },
+  { label: "10s", elapsedMs: DREAM_LOADING_READER_SCENE_MS + DREAM_LOADING_INTERPRETATION_SCENE_MS },
+  { label: "20s", elapsedMs: DREAM_LOADING_MINIMUM_MS },
+  { label: "25s", elapsedMs: 25_000 },
   { label: "55s", elapsedMs: 55_000 },
 ] as const;
 
@@ -119,36 +118,31 @@ function createTarotRevealState(cardCount: TarotCardCount) {
 
 function getTarotTimelineState(elapsedMs: number, apiWaitMs: number) {
   const safeElapsedMs = Math.max(0, elapsedMs);
-  const generatingStartMs = tarotCardRevealMs;
-  const transitionStartMs = generatingStartMs + apiWaitMs;
-  const completeMs = transitionStartMs + tarotResultTransitionMs;
+  const completeMs = Math.max(tarotCardRevealMs, apiWaitMs);
 
-  if (safeElapsedMs < generatingStartMs) {
+  if (safeElapsedMs < tarotCardRevealMs) {
     return {
       completeMs,
       stage: "reveal" as const,
       stageElapsedMs: safeElapsedMs,
       stageLabel: "카드 공개",
-      transitionToResult: false,
     };
   }
 
-  if (safeElapsedMs < transitionStartMs) {
+  if (safeElapsedMs < completeMs) {
     return {
       completeMs,
       stage: "generating" as const,
-      stageElapsedMs: safeElapsedMs - generatingStartMs,
+      stageElapsedMs: safeElapsedMs - tarotCardRevealMs,
       stageLabel: "해석 대기",
-      transitionToResult: false,
     };
   }
 
   return {
     completeMs,
-    stage: "transitioning" as const,
-    stageElapsedMs: safeElapsedMs - transitionStartMs,
-    stageLabel: "결과 전환",
-    transitionToResult: true,
+    stage: "complete" as const,
+    stageElapsedMs: safeElapsedMs - completeMs,
+    stageLabel: "결과 표시",
   };
 }
 
@@ -290,9 +284,9 @@ export function AdminLoadingLab({
       return;
     }
 
-    const nextPoint = [tarotCardRevealMs, tarotCardRevealMs + tarotApiWaitMs, tarotTimelineState.completeMs].find(
-      (point) => point > tarotElapsedMs + 50,
-    );
+    const nextPoint = Array.from(new Set([tarotCardRevealMs, tarotTimelineState.completeMs]))
+      .sort((left, right) => left - right)
+      .find((point) => point > tarotElapsedMs + 50);
     setTarotElapsedMs(nextPoint ?? tarotTimelineState.completeMs);
   }
 
@@ -334,8 +328,14 @@ export function AdminLoadingLab({
         <div className="mt-4 pb-5" data-admin-loading-tarot-preview="true">
           {tarotTimelineState.stage === "reveal" && tarotRevealState ? (
             <DailyTarotRevealPanel {...tarotRevealState} />
+          ) : tarotTimelineState.stage === "generating" ? (
+            <DailyTarotPendingResult selections={tarotSelections} />
           ) : (
-            <DailyTarotLoadingPanel selections={tarotSelections} transitionToResult={tarotTimelineState.transitionToResult} />
+            <AdminLoadingPanel title="결과 표시">
+              <p className="text-[13px] leading-6 text-[#fff3d7]/74">
+                카드 공개가 끝나고 해석 응답도 준비되면 결과 화면의 카드와 본문이 바로 fade-in 됩니다.
+              </p>
+            </AdminLoadingPanel>
           )}
         </div>
       )}
@@ -422,11 +422,11 @@ export function AdminLoadingLab({
               {mode === "dream" ? (
                 <div className="mt-3 space-y-3">
                   <AdminLoadingPanel title="꿈해몽 타임라인">
-                    <TimelineRow active={dreamSequence.scene === "reader"} label="고양이 등장" time="0.0s - 2.0s" />
-                    <TimelineRow active={dreamSequence.scene === "interpretation"} label="해석 배경" time="2.0s - 7.0s" />
-                    <TimelineRow active={dreamSequence.scene === "orb"} label={`오브 단계 ${dreamSequence.stepLabel}`} time="7.0s - 17.0s+" />
-                    <TimelineRow active={dreamSequence.canFinish} label="결과 이동 가능" time="17.0s+" />
-                    <TimelineRow active={dreamElapsedMs >= 30_000} label="긴 대기 문구" time="30.0s / 55.0s" />
+                    <TimelineRow active={dreamSequence.scene === "reader"} label="고양이 등장" time="0.0s - 3.0s" />
+                    <TimelineRow active={dreamSequence.scene === "interpretation"} label="해석 배경" time="3.0s - 10.0s" />
+                    <TimelineRow active={dreamSequence.scene === "orb"} label={`오브 단계 ${dreamSequence.stepLabel}`} time="10.0s - 20.0s+" />
+                    <TimelineRow active={dreamSequence.canFinish} label="결과 이동 가능" time="20.0s+" />
+                    <TimelineRow active={dreamElapsedMs >= 25_000} label="긴 대기 문구" time="25.0s / 55.0s" />
                   </AdminLoadingPanel>
 
                   <div className="flex flex-wrap gap-2">
@@ -466,9 +466,9 @@ export function AdminLoadingLab({
                       time={`API 응답까지 (${formatSeconds(tarotApiWaitMs)} 시뮬레이션)`}
                     />
                     <TimelineRow
-                      active={tarotTimelineState.stage === "transitioning"}
-                      label="결과 전환"
-                      time={formatSeconds(tarotResultTransitionMs)}
+                      active={tarotTimelineState.stage === "complete"}
+                      label="결과 표시"
+                      time={formatSeconds(tarotTimelineState.completeMs)}
                     />
                   </AdminLoadingPanel>
 
@@ -501,7 +501,7 @@ export function AdminLoadingLab({
                     {[
                       { label: "공개", elapsedMs: 0 },
                       { label: "해석", elapsedMs: tarotCardRevealMs },
-                      { label: "전환", elapsedMs: tarotCardRevealMs + tarotApiWaitMs },
+                      { label: "결과", elapsedMs: tarotTimelineState.completeMs },
                     ].map((point) => (
                       <AdminLoadingControlButton
                         key={point.label}
