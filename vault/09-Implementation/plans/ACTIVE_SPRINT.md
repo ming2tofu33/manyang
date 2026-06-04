@@ -114,7 +114,9 @@ status: active
 
 - [x] ENC-01~05 완료 (가이드/조사, 필드 제거, 라벨 감사, 이중문화, 1차 8항목)
 - [ ] ENC-06: 문화 차 큰 2차 배치 ~12개. 동양 고유(용·조상·거북이·귀신·무지개·닭) / 서양 심리 강(거미·나비·곰·고래·벌레·사슴)
-- [ ] ENC-07: **기존 121개 전수**를 카테고리 단위로 ko=동양/en=서양 + B안 재작성. 배치마다 tsc+test+`eval:retrieval`. (33개 완료: 1차 8 + event 6 + person 12 + body 7, **88개 남음**)
+- [ ] ENC-07: **기존 121개 전수**를 카테고리 단위로 ko=동양/en=서양 + B안 재작성. 배치마다 tsc+test+`eval:retrieval`. (41개 완료: 1차 8 + event 6 + person 12 + body 7 + animal/nature 8, **80개 남음**)
+
+  - **결함 스캔 기반 우선순위(2026-06-03)**: 카테고리 순서 대신 `grep`로 잔여 결함을 스캔해 우선 처리. en "In Korean tradition"/"conception dream" 누수 8건(불·비·물고기·용·호랑이·곰·고래·개구리)을 전부 서양(융·신화·변태)으로 교체, 누수 0 확인. ko safeReading "비추는 상징/장소/공간" 14건 → "담은 …"으로 일괄 정리(비추 safeReading 0건, 거울·별 metaphorHook의 올바른 "비추는"은 보존). 남은 결함: lightReadings/shadowReadings "흐름/장면" 접미사(per-symbol 재작성 시 정리).
 - [ ] ENC-08: vault YAML 동기화 (또는 YAML을 backend seed에서 생성하는 단방향 소스 결정)
 
 #### ENC-07 카테고리별 진행 (1차 8개 = 일부 완료, 총 121)
@@ -125,8 +127,8 @@ status: active
 - [ ] **object** 21개 (똥✓·돈✓ / door·key·mirror·bag·shoes·lost_item·phone·bed·clothes·knife·gold·ring·book·watch·photo·boat?·등)
 - [x] **person** 12개 ✓ (조상·스님·아기·어머니 = 동양 고유/태몽 vs 융 원형 / stranger·child·father·friend·partner·ex_partner·ghost·celebrity = B안+보편)
 - [ ] **action** 10개 (쫓김✓ / searching·running·falling·flying·swimming·fighting·crying·dance·laughter·exam?)
-- [ ] **animal** 21개 (뱀✓·돼지✓ / cat·dog·bird·fish·tiger·cow·mouse·spider·dragon·turtle·bear·whale·butterfly·chicken·deer·frog·monkey·horse·insect)
-- [ ] **nature** 17개 (물✓ / sea·rain·fire·snow·moon·flood·rainbow·wind·rock·tree·flower·star·dawn·earthquake 등)
+- [~] **animal** 21개 (8/21: 뱀·돼지·용·호랑이·물고기·곰·고래·개구리✓ — 동양 길몽 유지/en은 서양 신화·융·변태로 교체 / 남음: cat·dog·bird·cow·mouse·spider·turtle·butterfly·chicken·deer·monkey·horse·insect)
+- [~] **nature** 17개 (3/17: 물·불·비✓ — en fortune을 서양으로 / 남음: sea·snow·moon·flood·rainbow·wind·rock·tree·flower·star·dawn·earthquake 등)
 - [x] **body** 8개 ✓ (치아·임신·머리카락·몸·피·알몸·손·발) — 임신=태몽 vs 창의적 잉태, 나머지 B안. (피=재물 전통은 안전정책상 의도적 배제 유지)
 - [x] **event** 6개 ✓ (죽음·장례식·시험·결혼식·전쟁·사고) — death=동양 역몽 fortune 추가, funeral/wedding/war en fortune 서양으로 재구성, 나머지 B안
 - [ ] **food** 3개 (0 / food·meat·alcohol)

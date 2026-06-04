@@ -756,7 +756,7 @@ export const symbolEntries: SymbolEntry[] = [
       metaphorHooks: ["마음이 돌아가는 방", "내 울타리 안의 기척"],
       cardTitleSeeds: ["집 안에 남은 달", "돌아온 마음의 방"],
       smallPrescriptions: ["오늘 내 공간에서 하나만 정리해보세요."],
-      safeReading: "집은 내면의 기반이나 생활의 안정감을 비추는 장소로 읽을 수 있어요.",
+      safeReading: "집은 내면의 기반이나 생활의 안정감을 담은 장소로 읽을 수 있어요.",
       avoidExpressions: ["집을 사게 된다", "가족에게 반드시 일이 생긴다"],
     }),
     en: localized({
@@ -1068,7 +1068,7 @@ export const symbolEntries: SymbolEntry[] = [
       metaphorHooks: ["나를 바라보는 또 다른 눈", "반사된 마음의 윤곽"],
       cardTitleSeeds: ["거울 속의 달", "비친 마음의 밤"],
       smallPrescriptions: ["오늘 나를 평가하지 않고 관찰하는 문장 하나를 써보세요."],
-      safeReading: "거울은 자기 인식과 타인의 시선, 내가 보는 나의 모습을 비추는 상징으로 읽을 수 있어요.",
+      safeReading: "거울은 자기 인식과 타인의 시선, 내가 보는 나의 모습을 담은 상징으로 읽을 수 있어요.",
       avoidExpressions: ["배신자가 나타난다", "외모가 나빠진다"],
     }),
     en: localized({
@@ -1311,8 +1311,14 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["불", "불꽃", "화재", "불길", "타오르"],
       searchText: "불, 불꽃, 화재, 불길, 타오름, 에너지, 분노, 정화, 통제 어려움",
       coreMeanings: ["에너지", "분노", "정화", "통제 어려움"],
-      lightReadings: ["정체된 것을 태워 새롭게 하려는 흐름", "강한 의욕이 올라오는 장면"],
-      shadowReadings: ["감정이 번지는 부담", "통제하기 어려운 변화"],
+      lightReadings: [
+        "불이 크게 일어 활활 번지는 꿈은 전통적으로 재물과 번성이 인다는 길몽으로 푼다",
+        "작은 불씨가 살아나는 꿈은 강한 의욕이나 새 에너지가 올라온다는 뜻이다",
+      ],
+      shadowReadings: [
+        "감정이 번지듯 불이 커지는 꿈은 통제하기 어려운 변화에 대한 부담이다",
+        "집이 타거나 끄지 못하는 꿈은 과열된 마음을 식혀야 한다는 신호다",
+      ],
       sceneModifiers: {
         houseFire: modifier("내 생활 영역 안에서 감정이 과열된 장면", ["집에 불", "집이 타", "방에 불"], 0.86, "cautious"),
         smallFlame: modifier("아직 작지만 살아 있는 에너지", ["작은 불", "촛불", "불씨"], 0.72),
@@ -1350,8 +1356,8 @@ export const symbolEntries: SymbolEntry[] = [
       avoidExpressions: ["there will be a fire", "money luck is coming"],
       fortune: {
         valence: "conditional",
-        auspicious: "In Korean tradition, a fire blazing up and spreading wide was read as rising wealth and flourishing.",
-        cautious: "A house burning or a fire you cannot put out was a gentle nudge to cool an overheated feeling — never a prediction of disaster.",
+        auspicious: "In Western symbolism fire is passion, energy, and transformation; a steady or rising flame reads as drive and the burning-away of what is stale.",
+        cautious: "An uncontrolled or house fire reads as anger or change running too hot — a cue to cool an overheated feeling, never a disaster forecast.",
       },
     }),
   }),
@@ -1369,8 +1375,14 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["비", "소나기", "빗속", "장마", "폭우"],
       searchText: "비, 소나기, 빗속, 장마, 폭우, 감정 배출, 씻김, 우울감, 완화",
       coreMeanings: ["감정 배출", "씻김", "우울감", "완화"],
-      lightReadings: ["쌓였던 감정이 부드럽게 흘러나오는 장면", "긴장이 조금 씻기는 흐름"],
-      shadowReadings: ["기분이 가라앉는 감각", "젖은 채 버티는 피로"],
+      lightReadings: [
+        "단비가 부드럽게 내리는 꿈은 쌓였던 감정이 흘러나오고 긴장이 씻긴다는 뜻이다",
+        "비를 맞으며 차분해지는 꿈은 묵은 기분이 가라앉는다는 뜻이다",
+      ],
+      shadowReadings: [
+        "폭우에 흠뻑 젖는 꿈은 기분이 무겁게 가라앉은 상태다",
+        "젖은 채 버티는 꿈은 감정에 젖어 빠져나오지 못하는 피로다",
+      ],
       sceneModifiers: {
         heavyRain: modifier("감정의 양이 커져 압도되는 장면", ["폭우", "장대비", "많이 내"], 0.82, "cautious"),
         gentleRain: modifier("기분이 천천히 풀리는 장면", ["보슬비", "가랑비", "조용히"], 0.68, "auspicious"),
@@ -1408,8 +1420,8 @@ export const symbolEntries: SymbolEntry[] = [
       avoidExpressions: ["something sad will happen", "money will arrive"],
       fortune: {
         valence: "conditional",
-        auspicious: "In Korean tradition, a gentle, timely rain was read as relief and fortune watering the ground.",
-        cautious: "A downpour or being drenched was a nudge to watch for things piling up too fast — never a prediction of misfortune.",
+        auspicious: "In Western symbolism rain is emotional release and renewal — gentle rain reads as cleansing, relief, and feelings washing through.",
+        cautious: "A downpour or being drenched reads as feelings piling up too fast — a cue to let them pass, never a misfortune forecast.",
       },
     }),
   }),
@@ -1792,7 +1804,7 @@ export const symbolEntries: SymbolEntry[] = [
       avoidExpressions: ["money luck is coming", "this means pregnancy"],
       fortune: {
         valence: "auspicious",
-        auspicious: "In Korean tradition, catching a fish or seeing a big one was read as wealth coming in, sometimes even a 태몽 (conception dream).",
+        auspicious: "In Western symbolism a fish is content of the unconscious surfacing — an insight or idea, emotional life moving in the deep; catching one reads as grasping something elusive.",
       },
     }),
   }),
@@ -2700,7 +2712,7 @@ export const symbolEntries: SymbolEntry[] = [
       metaphorHooks: ["내 역할이 놓인 책상", "평가받는 마음의 사무실"],
       cardTitleSeeds: ["사무실의 밤", "출근하지 못한 마음"],
       smallPrescriptions: ["오늘 업무에서 반드시 할 일 하나와 내려놓을 일 하나를 구분해보세요."],
-      safeReading: "직장은 역할, 성과, 평가, 반복되는 책임을 비추는 상징일 수 있어요.",
+      safeReading: "직장은 역할, 성과, 평가, 반복되는 책임을 담은 상징일 수 있어요.",
       avoidExpressions: ["승진한다", "해고된다", "회사에 일이 생긴다"],
     }),
     en: localized({
@@ -3060,7 +3072,7 @@ export const symbolEntries: SymbolEntry[] = [
       metaphorHooks: ["두 세계 사이에 놓인 길", "건너야 하지만 흔들리는 연결"],
       cardTitleSeeds: ["다리 위의 밤", "무너진 연결"],
       smallPrescriptions: ["지금 연결해야 할 사람이나 일 하나를 떠올려보세요."],
-      safeReading: "다리는 다음 단계로 건너가는 전환, 연결, 불안을 비추는 상징일 수 있어요.",
+      safeReading: "다리는 다음 단계로 건너가는 전환, 연결, 불안을 담은 상징일 수 있어요.",
       avoidExpressions: ["반드시 성공한다", "이사를 간다", "관계가 끊어진다"],
     }),
     en: localized({
@@ -3156,7 +3168,7 @@ export const symbolEntries: SymbolEntry[] = [
       metaphorHooks: ["마음을 먹이는 부엌", "익어가는 준비의 냄새"],
       cardTitleSeeds: ["부엌의 밤", "비어 있는 싱크대"],
       smallPrescriptions: ["오늘 나를 실제로 먹이고 돌보는 일을 하나 챙겨보세요."],
-      safeReading: "부엌은 돌봄, 준비, 생활 리듬, 실질적인 보살핌을 비추는 공간일 수 있어요.",
+      safeReading: "부엌은 돌봄, 준비, 생활 리듬, 실질적인 보살핌을 담은 공간일 수 있어요.",
       avoidExpressions: ["가족 운이 바뀐다", "먹을 복이 들어온다"],
     }),
     en: localized({
@@ -3204,7 +3216,7 @@ export const symbolEntries: SymbolEntry[] = [
       metaphorHooks: ["마음이 먹고 싶어 하는 것", "소화되지 않은 허기"],
       cardTitleSeeds: ["식탁 위의 밤", "채워지지 않은 그릇"],
       smallPrescriptions: ["오늘 나에게 부족한 에너지나 돌봄이 무엇인지 적어보세요."],
-      safeReading: "음식은 필요와 욕구, 영양, 나눔의 감각을 비추는 상징일 수 있어요.",
+      safeReading: "음식은 필요와 욕구, 영양, 나눔의 감각을 담은 상징일 수 있어요.",
       avoidExpressions: ["재물이 들어온다", "살이 찐다"],
       fortune: {
         valence: "auspicious",
@@ -3260,7 +3272,7 @@ export const symbolEntries: SymbolEntry[] = [
       metaphorHooks: ["내가 입고 있는 역할", "보여주기 위해 걸친 표정"],
       cardTitleSeeds: ["새 옷의 밤", "맞지 않는 옷"],
       smallPrescriptions: ["요즘 내가 억지로 입고 있는 역할이 있는지 적어보세요."],
-      safeReading: "옷은 역할, 자기 표현, 체면, 보호막을 비추는 상징일 수 있어요.",
+      safeReading: "옷은 역할, 자기 표현, 체면, 보호막을 담은 상징일 수 있어요.",
       avoidExpressions: ["망신을 당한다", "신분이 바뀐다"],
     }),
     en: localized({
@@ -4093,7 +4105,7 @@ export const symbolEntries: SymbolEntry[] = [
       metaphorHooks: ["보이기 시작한 작은 성장", "시들까 봐 조심스러운 아름다움"],
       cardTitleSeeds: ["꽃이 핀 밤", "시든 꽃다발"],
       smallPrescriptions: ["작게 피어난 성과 하나를 스스로 인정해보세요."],
-      safeReading: "꽃은 피어남과 인정 욕구, 섬세한 성장을 비추는 상징일 수 있어요.",
+      safeReading: "꽃은 피어남과 인정 욕구, 섬세한 성장을 담은 상징일 수 있어요.",
       avoidExpressions: ["연애운이 온다", "행운이 확정된다"],
       fortune: {
         valence: "auspicious",
@@ -4288,8 +4300,14 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["용", "용꿈", "승천", "청룡", "황룡", "이무기"],
       searchText: "용, 용꿈, 승천, 청룡, 황룡, 이무기, 출세, 권위, 큰 행운, 재물, 태몽",
       coreMeanings: ["권위", "상승", "큰 행운", "변화"],
-      lightReadings: ["크게 도약하거나 인정받는 흐름", "오래 준비한 일이 한 단계 올라서는 장면"],
-      shadowReadings: ["기대가 너무 커서 부담스러운 마음", "감당하기 벅찬 변화 앞의 긴장"],
+      lightReadings: [
+        "용이 하늘로 오르는 꿈은 전통적으로 출세·승천을 알리는 으뜸 길몽으로 푼다",
+        "용이 품에 안기는 꿈은 큰 경사나 귀인이 든다는 뜻이다",
+      ],
+      shadowReadings: [
+        "기대가 너무 커서 부담스러운 꿈은 감당하기 벅찬 변화 앞의 긴장이다",
+        "용이 위협적으로 덮치는 꿈은 나를 넘어서는 힘 앞에서 압도되는 마음이다",
+      ],
       sceneModifiers: {
         ascending: modifier("용이 하늘로 오르는 장면", ["승천", "하늘로", "올라", "날아오"], 0.88, "auspicious"),
         comingToYou: modifier("용이 품이나 집으로 들어오는 장면", ["품에", "집으로", "안", "들어오"], 0.82, "auspicious"),
@@ -4310,25 +4328,33 @@ export const symbolEntries: SymbolEntry[] = [
     en: localized({
       label: "Dragon",
       aliases: ["dragon", "blue dragon", "golden dragon", "ascending dragon", "dragon rising"],
-      searchText: "dragon, blue dragon, golden dragon, ascending, rising to the sky, success, authority, great fortune, conception dream",
-      coreMeanings: ["power", "ascent", "great fortune", "transformation"],
-      lightReadings: ["rising into a bigger role or being recognized", "something you prepared for climbing to the next level"],
-      shadowReadings: ["pressure from expectations that feel too large", "tension before a change you are unsure you can hold"],
+      searchText: "dragon, blue dragon, golden dragon, slaying a dragon, guardian of treasure, primal power, the shadow, transformation, obstacle",
+      coreMeanings: ["primal power", "a force to face", "guarded treasure", "transformation"],
+      lightReadings: [
+        "Taming or befriending a dragon means owning a great inner power or potential",
+        "A dragon guarding treasure means a reward that lies beyond a challenge you must face",
+      ],
+      shadowReadings: [
+        "A dragon attacking means a powerful obstacle, fear, or primal force confronting you",
+        "Pressure from expectations too large to hold",
+      ],
       sceneModifiers: {
-        ascending: modifier("the dragon rising into the sky", ["rising", "into the sky", "soaring", "ascend"], 0.88, "auspicious"),
-        comingToYou: modifier("the dragon coming into your home or arms", ["into the house", "into your arms", "came to you"], 0.82, "auspicious"),
-        threatening: modifier("the dragon looming or attacking", ["attacking", "scary", "loomed"], 0.78, "cautious"),
+        ascending: modifier("the dragon rising — a surge of power or ambition lifting in you", ["rising", "into the sky", "soaring", "ascend"], 0.88, "auspicious"),
+        comingToYou: modifier("the dragon coming to you — a great force you can claim or ally with", ["into the house", "into your arms", "came to you"], 0.82, "auspicious"),
+        threatening: modifier("the dragon attacking — a powerful obstacle or fear to confront", ["attacking", "scary", "loomed"], 0.78, "cautious"),
       },
-      contextQuestions: ["Did the dragon rise into the sky or stay on the ground?", "Did it feel overwhelming or uplifting?"],
-      metaphorHooks: ["a great force rising skyward", "power beyond the everyday"],
-      cardTitleSeeds: ["The Dragon That Rose", "Night of Ascent"],
-      smallPrescriptions: ["Write down one thing you want to aim high for today."],
-      safeReading: "A dragon is a classic auspicious symbol of rise, authority, and great fortune.",
+      contextQuestions: ["Did the dragon rise, come to you, or attack?", "Did it feel like power to claim or a force to fear?"],
+      metaphorHooks: ["a primal force rising skyward", "the guardian before the treasure"],
+      cardTitleSeeds: ["The Dragon That Rose", "Facing the Dragon"],
+      smallPrescriptions: ["Write down one great challenge whose reward is worth facing it."],
+      safeReading: "In Western myth a dragon is raw power and a guardian of treasure — a great force to confront or claim, not a literal omen.",
       avoidExpressions: ["you will definitely succeed", "you will surely get rich"],
       fortune: {
-        valence: "auspicious",
+        valence: "conditional",
         auspicious:
-          "A dragon dream is the top auspicious omen in Korean tradition — rise, success, great wealth, and an important benefactor; a dragon ascending or coming to you was also read as a big celebration or a conception dream.",
+          "In Western myth the dragon is primal power and the guardian of treasure; taming or allying with it reads as claiming a great inner strength or a reward beyond a challenge.",
+        cautious:
+          "A hostile dragon is the obstacle or shadow to face before the reward — a force to confront, not a disaster foretold.",
       },
     }),
   }),
@@ -4346,8 +4372,14 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["호랑이", "범", "백호", "호랑이꿈", "호랑이를 타"],
       searchText: "호랑이, 범, 백호, 호랑이꿈, 귀인, 권위, 든든한 사람, 태몽, 용기, 경계",
       coreMeanings: ["권위", "귀인", "용기", "경계"],
-      lightReadings: ["든든한 사람이나 큰 기운이 곁에 오는 흐름", "두려움을 마주하고 한 발 나아가는 장면"],
-      shadowReadings: ["나를 누르는 강한 인물이나 압박", "맞서기 버거운 힘 앞의 긴장"],
+      lightReadings: [
+        "호랑이를 타거나 다스리는 꿈은 전통적으로 귀인·권위가 따른다는 길몽으로 푼다",
+        "호랑이를 마주해 물러서지 않는 꿈은 두려움을 마주하고 나아간다는 뜻이다",
+      ],
+      shadowReadings: [
+        "호랑이가 위협적으로 덮치는 꿈은 나를 누르는 강한 인물이나 압박이다",
+        "맞서기 버거운 호랑이 앞의 꿈은 감당하기 힘든 힘 앞의 긴장이다",
+      ],
       sceneModifiers: {
         riding: modifier("호랑이를 타거나 다스리는 장면", ["타", "올라타", "다스"], 0.84, "auspicious"),
         comingToYou: modifier("호랑이가 다가오거나 품에 안기는 장면", ["품에", "안", "다가", "들어오"], 0.8, "auspicious"),
@@ -4357,7 +4389,7 @@ export const symbolEntries: SymbolEntry[] = [
       metaphorHooks: ["산을 지키는 큰 기운", "마주 서야 할 힘"],
       cardTitleSeeds: ["산에서 내려온 범", "호랑이를 마주한 밤"],
       smallPrescriptions: ["오늘은 미뤄둔 두려운 일 하나를 작게라도 마주해보세요."],
-      safeReading: "호랑이는 권위와 용기, 마주해야 할 압박을 함께 비추는 강한 상징으로 읽을 수 있어요.",
+      safeReading: "호랑이는 권위와 용기, 마주해야 할 압박을 함께 담은 강한 상징으로 읽을 수 있어요.",
       avoidExpressions: ["반드시 귀인이 온다", "큰 사고가 난다"],
       fortune: {
         valence: "conditional",
@@ -4370,27 +4402,33 @@ export const symbolEntries: SymbolEntry[] = [
     en: localized({
       label: "Tiger",
       aliases: ["tiger", "white tiger", "tiger dream", "riding a tiger", "great cat"],
-      searchText: "tiger, white tiger, riding a tiger, authority, powerful person, benefactor, conception dream, courage, threat",
-      coreMeanings: ["authority", "benefactor", "courage", "wariness"],
-      lightReadings: ["a strong, dependable presence arriving beside you", "facing a fear and stepping forward"],
-      shadowReadings: ["a forceful person or pressure bearing down on you", "tension before a power that feels hard to face"],
+      searchText: "tiger, white tiger, riding a tiger, raw power, instinct, untamed strength, courage, threat, predator",
+      coreMeanings: ["raw power", "instinct", "courage", "a threat to face"],
+      lightReadings: [
+        "Riding or taming a tiger means owning your own power and instinct",
+        "Facing a tiger without flinching means meeting a fear and stepping forward",
+      ],
+      shadowReadings: [
+        "A forceful person or pressure bearing down on you",
+        "Tension before a power, or an untamed part of yourself, that feels hard to face",
+      ],
       sceneModifiers: {
-        riding: modifier("riding or commanding the tiger", ["riding", "rode", "tamed"], 0.84, "auspicious"),
-        comingToYou: modifier("the tiger approaching or held close", ["into your arms", "came close", "came to you"], 0.8, "auspicious"),
-        attacking: modifier("the tiger lunging or chasing", ["attacked", "bit", "chased", "lunged"], 0.84, "cautious"),
+        riding: modifier("riding or taming the tiger — owning your power and instinct", ["riding", "rode", "tamed"], 0.84, "auspicious"),
+        comingToYou: modifier("the tiger approaching calmly — a powerful ally or your own strength drawing near", ["into your arms", "came close", "came to you"], 0.8, "auspicious"),
+        attacking: modifier("the tiger lunging — a powerful threat or untamed force bearing down", ["attacked", "bit", "chased", "lunged"], 0.84, "cautious"),
       },
       contextQuestions: ["Did the tiger feel threatening or dependable?", "Were you riding or commanding it?"],
-      metaphorHooks: ["a great force guarding the mountain", "a power to be faced"],
+      metaphorHooks: ["raw power prowling nearby", "an instinct to be faced or owned"],
       cardTitleSeeds: ["The Tiger From the Mountain", "Night Facing the Tiger"],
       smallPrescriptions: ["Face one postponed, scary task today, even in a small way."],
-      safeReading: "A tiger ties to authority, a benefactor, and courage; when threatening, it can mean pressure to face.",
+      safeReading: "A tiger ties to raw power, instinct, and courage; when threatening, a force or fear to face.",
       avoidExpressions: ["a benefactor will surely appear", "an accident will happen"],
       fortune: {
         valence: "conditional",
         auspicious:
-          "Riding or being approached warmly by a tiger was traditionally read as an auspicious omen of a benefactor, authority, or a conception dream.",
+          "In Western symbolism the tiger is raw power and instinct; riding or taming it reads as owning your own strength and courage.",
         cautious:
-          "A tiger lunging or attacking was taken as a gentle nudge to look at a forceful person or pressure weighing on you.",
+          "A lunging tiger reads as a powerful threat, or an untamed part of yourself, to face — not an omen.",
       },
     }),
   }),
@@ -4419,7 +4457,7 @@ export const symbolEntries: SymbolEntry[] = [
       metaphorHooks: ["천천히 쌓이는 곳간", "묵묵히 끄는 수레"],
       cardTitleSeeds: ["외양간으로 든 소", "황소를 끄는 밤"],
       smallPrescriptions: ["오늘은 꾸준히 해온 일 하나를 스스로 칭찬해주세요."],
-      safeReading: "소는 꾸준함과 생활의 기반, 오래 쌓아온 자원을 비추는 상징으로 읽을 수 있어요.",
+      safeReading: "소는 꾸준함과 생활의 기반, 오래 쌓아온 자원을 담은 상징으로 읽을 수 있어요.",
       avoidExpressions: ["반드시 부자가 된다", "큰 손해가 난다"],
       fortune: {
         valence: "conditional",
@@ -4674,7 +4712,7 @@ export const symbolEntries: SymbolEntry[] = [
       metaphorHooks: ["손에 쥔 귀한 빛", "오래 다듬은 가치"],
       cardTitleSeeds: ["황금을 주운 밤", "빛나는 보석"],
       smallPrescriptions: ["오늘은 내가 정말 귀하게 여기는 것 하나를 적어보세요."],
-      safeReading: "금·보석은 내가 귀하게 여기는 가치와 자원, 지키고 싶은 것을 비추는 상징으로 읽을 수 있어요.",
+      safeReading: "금·보석은 내가 귀하게 여기는 가치와 자원, 지키고 싶은 것을 담은 상징으로 읽을 수 있어요.",
       avoidExpressions: ["반드시 큰돈이 들어온다", "투자하면 좋다"],
       fortune: {
         valence: "conditional",
@@ -4798,7 +4836,7 @@ export const symbolEntries: SymbolEntry[] = [
       metaphorHooks: ["품에 안은 작은 소망", "차오르고 기우는 마음"],
       cardTitleSeeds: ["보름달 뜬 밤", "달빛에 잠긴 마음"],
       smallPrescriptions: ["오늘은 조용히 품어온 소망 하나를 또렷이 적어보세요."],
-      safeReading: "달은 소망과 정서의 리듬, 차오르고 기우는 마음의 흐름을 비추는 상징으로 읽을 수 있어요.",
+      safeReading: "달은 소망과 정서의 리듬, 차오르고 기우는 마음의 흐름을 담은 상징으로 읽을 수 있어요.",
       avoidExpressions: ["반드시 소원이 이뤄진다", "임신을 예지한다"],
       fortune: {
         valence: "conditional",
@@ -5055,7 +5093,7 @@ export const symbolEntries: SymbolEntry[] = [
       metaphorHooks: ["비 끝에 걸린 희망", "잠깐 빛나는 약속"],
       cardTitleSeeds: ["비 끝의 무지개", "하늘에 걸린 다리"],
       smallPrescriptions: ["오늘은 요즘 가장 바라는 것 하나를 또렷이 적어보세요."],
-      safeReading: "무지개는 어려운 흐름 뒤에 보이는 희망과 연결, 다음 장면으로 건너가는 마음을 비추는 상징으로 읽을 수 있어요.",
+      safeReading: "무지개는 어려운 흐름 뒤에 보이는 희망과 연결, 다음 장면으로 건너가는 마음을 담은 상징으로 읽을 수 있어요.",
       avoidExpressions: ["반드시 소원이 이뤄진다", "무조건 행운이 온다"],
       fortune: {
         valence: "auspicious",
@@ -5297,8 +5335,14 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["곰", "반달곰", "큰 곰", "곰이 나타", "흑곰"],
       searchText: "곰, 반달곰, 흑곰, 큰 곰, 우직함, 힘, 재물, 귀인, 끈기, 보호, 태몽, 길조",
       coreMeanings: ["우직한 힘", "재물·귀인", "끈기"],
-      lightReadings: ["묵직하고 든든한 힘이 곁에 서는 장면", "끈기 있게 버틴 끝에 복이 드는 흐름"],
-      shadowReadings: ["둔중해서 답답하게 느껴지는 장면", "버겁고 무겁게 다가오는 부담"],
+      lightReadings: [
+        "곰이 순하게 다가와 안기는 꿈은 전통적으로 우직한 복과 재물·귀인을 알리는 길몽으로 푼다",
+        "끈기 있게 버틴 끝에 복이 드는 꿈은 묵직한 힘이 곁에 선다는 뜻이다",
+      ],
+      shadowReadings: [
+        "곰이 둔중해 답답한 꿈은 버겁고 무겁게 다가오는 부담이다",
+        "곰이 위협하거나 쫓아오는 꿈은 감당하기 힘든 압박이 다가온다는 뜻이다",
+      ],
       sceneModifiers: {
         friendlyOrEntering: modifier("곰이 순하거나 다가와 안기는 장면", ["순", "다가", "안기", "따르"], 0.82, "auspicious"),
         powerful: modifier("곰이 크고 힘있게 버티는 장면", ["크", "힘", "버티", "우직"], 0.76),
@@ -5321,27 +5365,33 @@ export const symbolEntries: SymbolEntry[] = [
     en: localized({
       label: "Bear",
       aliases: ["bear", "black bear", "big bear", "a bear appeared", "grizzly"],
-      searchText: "bear, black bear, grizzly, big bear, sturdy strength, wealth, patron, endurance, protection, good fortune",
-      coreMeanings: ["sturdy strength", "wealth and a patron", "endurance"],
-      lightReadings: ["a solid, dependable strength standing near", "fortune arriving after patient endurance"],
-      shadowReadings: ["something that feels heavy and slow", "a burden that arrives weighty and hard"],
+      searchText: "bear, black bear, grizzly, big bear, strength, introspection, hibernation, endurance, protection, mother bear",
+      coreMeanings: ["strength", "introspection", "endurance", "primal instinct"],
+      lightReadings: [
+        "A calm bear means solid strength, or a season of introspection and rest (hibernation)",
+        "A mother bear means fierce protection of what you hold dear",
+      ],
+      shadowReadings: [
+        "A threatening bear means a heavy force or anger bearing down on you",
+        "Something that feels heavy and slow to face",
+      ],
       sceneModifiers: {
-        friendlyOrEntering: modifier("the bear gentle or coming to embrace", ["gentle", "approached", "embraced", "followed"], 0.82, "auspicious"),
-        powerful: modifier("the bear large and powerfully enduring", ["large", "powerful", "enduring", "sturdy"], 0.76),
-        threatening: modifier("the bear threatening or chasing", ["threatening", "chased", "lunged", "growled"], 0.8, "cautious"),
+        friendlyOrEntering: modifier("the bear gentle or approaching — solid strength or a protective presence", ["gentle", "approached", "embraced", "followed"], 0.82, "auspicious"),
+        powerful: modifier("the bear large and enduring — deep reserves of strength and patience", ["large", "powerful", "enduring", "sturdy"], 0.76),
+        threatening: modifier("the bear threatening or chasing — a heavy force or anger to face", ["threatening", "chased", "lunged", "growled"], 0.8, "cautious"),
       },
       contextQuestions: ["Was the bear gentle or threatening?", "Did it come close or embrace you?"],
-      metaphorHooks: ["a solid, dependable strength", "fortune at the end of endurance"],
+      metaphorHooks: ["a solid, dependable strength", "a season of withdrawal and rest"],
       cardTitleSeeds: ["The Night a Bear Came Near", "A Place of Solid Strength"],
       smallPrescriptions: ["Write down one thing you want to endure steadily today."],
-      safeReading: "A bear means sturdy strength, wealth, and a helpful patron; gentle and approaching, it reads as even better fortune.",
+      safeReading: "A bear can mean sturdy strength, a time of introspection (hibernation), or fierce protection; when threatening, a heavy force to face.",
       avoidExpressions: ["you will surely bear a son", "wealth is guaranteed"],
       fortune: {
         valence: "conditional",
         auspicious:
-          "A gentle bear approaching or embracing you was traditionally an auspicious omen of sturdy fortune, wealth, and a helpful patron — and a prized conception dream.",
+          "In Western symbolism the bear is strength and introspection — its hibernation reads as a needed season of withdrawal and inner work, and the mother bear, fierce protection.",
         cautious:
-          "A bear threatening or chasing you was taken as a nudge to look at a burden that feels heavy to carry.",
+          "A threatening bear reads as a heavy force or anger to face, not an omen.",
       },
     }),
   }),
@@ -5483,8 +5533,14 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["고래", "흰고래", "큰 고래", "고래가 헤엄", "범고래"],
       searchText: "고래, 흰고래, 범고래, 큰 고래, 큰 복, 재물, 풍요, 깊이, 바다, 태몽, 길조, 스케일",
       coreMeanings: ["큰 복", "풍요·스케일", "깊이"],
-      lightReadings: ["크고 넉넉한 복이 다가오는 장면", "스케일 큰 기회가 깊은 곳에서 떠오르는 흐름"],
-      shadowReadings: ["너무 커서 감당하기 버거운 장면", "깊은 곳이 막막하게 느껴지는 마음"],
+      lightReadings: [
+        "고래를 품에 안거나 올라타는 꿈은 전통적으로 큰 복과 재물·풍요를 알리는 길몽으로 푼다",
+        "스케일 큰 기회가 깊은 곳에서 떠오르는 꿈은 넉넉한 가능성이 다가온다는 뜻이다",
+      ],
+      shadowReadings: [
+        "너무 커서 감당하기 버거운 꿈은 큰 흐름 앞에서 위축되는 마음이다",
+        "고래에 휩쓸리거나 삼켜질 듯한 꿈은 깊은 곳이 막막하게 느껴지는 상태다",
+      ],
       sceneModifiers: {
         embracingOrRiding: modifier("고래를 품에 안거나 올라타는 장면", ["품", "안", "올라타", "타고"], 0.84, "auspicious"),
         swimmingFree: modifier("고래가 유유히 헤엄치거나 솟구치는 장면", ["헤엄", "솟구", "유유", "물 위로"], 0.78, "auspicious"),
@@ -5505,25 +5561,33 @@ export const symbolEntries: SymbolEntry[] = [
     en: localized({
       label: "Whale",
       aliases: ["whale", "white whale", "big whale", "whale swimming", "orca"],
-      searchText: "whale, white whale, orca, big whale, great abundance, wealth, vastness, depth, sea, good fortune, scale",
-      coreMeanings: ["great abundance", "vastness and scale", "depth"],
-      lightReadings: ["something large and abundant coming near", "a big chance surfacing from the deep"],
-      shadowReadings: ["something so large it is hard to carry", "a depth that feels daunting"],
+      searchText: "whale, white whale, orca, big whale, the unconscious, vast emotion, depth, sea, awe, Jonah",
+      coreMeanings: ["the deep unconscious", "vast emotion", "awe", "depth"],
+      lightReadings: [
+        "A whale surfacing means something vast rising from your unconscious — a big feeling or insight",
+        "Swimming calmly with a whale means being at ease with deep, powerful emotion",
+      ],
+      shadowReadings: [
+        "Being swallowed or swept up means a feeling so vast it threatens to overwhelm you",
+        "A depth that feels daunting to enter",
+      ],
       sceneModifiers: {
-        embracingOrRiding: modifier("embracing or riding the whale", ["embraced", "held", "rode", "on its back"], 0.84, "auspicious"),
-        swimmingFree: modifier("the whale swimming calmly or breaching", ["swimming", "breached", "calmly", "above water"], 0.78, "auspicious"),
-        engulfing: modifier("being swept up or nearly swallowed by the whale", ["swept", "swallowed", "pulled in", "overwhelming"], 0.78, "cautious"),
+        embracingOrRiding: modifier("embracing or riding the whale — at home with a vast, deep force in you", ["embraced", "held", "rode", "on its back"], 0.84, "auspicious"),
+        swimmingFree: modifier("the whale swimming calmly or breaching — deep emotion moving with ease", ["swimming", "breached", "calmly", "above water"], 0.78, "auspicious"),
+        engulfing: modifier("being swept up or swallowed — a vast feeling threatening to overwhelm (Jonah in the whale)", ["swept", "swallowed", "pulled in", "overwhelming"], 0.78, "cautious"),
       },
-      contextQuestions: ["Did you embrace or ride the whale?", "Was it calm or overwhelming?"],
-      metaphorHooks: ["large and generous fortune", "scale rising from the deep"],
-      cardTitleSeeds: ["The Night You Held a Whale", "Great Fortune From the Deep"],
-      smallPrescriptions: ["Write down one hope you would like to embrace on a large scale today."],
-      safeReading: "A whale means great abundance, vastness, and scale; holding or riding one reads as even more precious fortune.",
+      contextQuestions: ["Did you swim with the whale, or feel swept up by it?", "Was it calm or overwhelming?"],
+      metaphorHooks: ["the deep psyche surfacing", "vastness rising from the deep"],
+      cardTitleSeeds: ["The Night You Swam With a Whale", "Depths From the Deep"],
+      smallPrescriptions: ["Write down one large feeling you would like to move with rather than against today."],
+      safeReading: "A whale can mean the vast unconscious, a powerful deep emotion, or awe; swimming with one, being at ease with that depth.",
       avoidExpressions: ["you will surely have a child", "great money is guaranteed"],
       fortune: {
-        valence: "auspicious",
+        valence: "conditional",
         auspicious:
-          "A whale — especially holding or riding one — was traditionally an auspicious omen of great abundance, wealth, and a prized conception dream.",
+          "In Western symbolism the whale is the vast unconscious and the depth of emotion (Jung) — moving with it reads as embracing a powerful inner depth.",
+        cautious:
+          "Being swallowed or swept under reads as a vast feeling overwhelming you — Jonah's whale, a passage to move through.",
       },
     }),
   }),
@@ -6000,7 +6064,7 @@ export const symbolEntries: SymbolEntry[] = [
       metaphorHooks: ["또렷이 자리 잡는 약속", "마음을 잇는 동그라미"],
       cardTitleSeeds: ["반지를 받은 밤", "환히 빛나는 언약"],
       smallPrescriptions: ["오늘은 지키고 싶은 약속 하나를 또렷이 적어보세요."],
-      safeReading: "반지는 약속과 연결, 관계에서 확인하고 싶은 마음을 비추는 상징으로 읽을 수 있어요.",
+      safeReading: "반지는 약속과 연결, 관계에서 확인하고 싶은 마음을 담은 상징으로 읽을 수 있어요.",
       avoidExpressions: ["반드시 결혼한다", "곧 청혼받는다"],
       fortune: {
         valence: "conditional",
@@ -6187,7 +6251,7 @@ export const symbolEntries: SymbolEntry[] = [
       metaphorHooks: ["다시 돌아본 한 장면", "마음에 간직된 기록"],
       cardTitleSeeds: ["사진을 본 밤", "간직된 한 장면"],
       smallPrescriptions: ["오늘은 다시 떠올리고 싶은 좋은 장면 하나를 적어보세요."],
-      safeReading: "사진은 추억과 과거의 장면, 오래 남기고 싶은 인연이나 감정을 비추는 상징으로 읽을 수 있어요.",
+      safeReading: "사진은 추억과 과거의 장면, 오래 남기고 싶은 인연이나 감정을 담은 상징으로 읽을 수 있어요.",
       avoidExpressions: ["옛 인연이 반드시 돌아온다", "과거가 그대로 재현된다"],
       fortune: {
         valence: "conditional",
@@ -6734,8 +6798,14 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["개구리", "청개구리", "두꺼비", "개구리떼", "올챙이"],
       searchText: "개구리, 청개구리, 두꺼비, 개구리떼, 올챙이, 재물, 풍요, 번성, 도약, 태몽, 길조, 비",
       coreMeanings: ["재물·풍요", "번성", "도약"],
-      lightReadings: ["풍요와 재물이 불어나듯 차오르는 장면", "한 번에 폴짝 도약하는 활기찬 흐름"],
-      shadowReadings: ["사방으로 뛰어 산만해지는 장면", "정신없이 흩어지는 마음"],
+      lightReadings: [
+        "개구리나 두꺼비가 품에 들거나 떼로 모여드는 꿈은 전통적으로 재물·풍요와 번성을 알리는 길조로 푼다",
+        "개구리가 힘차게 폴짝 뛰는 꿈은 한 번에 도약하는 활기를 뜻한다",
+      ],
+      shadowReadings: [
+        "개구리가 사방으로 흩어져 뛰는 꿈은 정신없이 흩어진 마음이다",
+        "우왕좌왕 산만해지는 꿈은 집중이 흐트러진 상태다",
+      ],
       sceneModifiers: {
         comingToYou: modifier("개구리나 두꺼비가 품에 들거나 모여드는 장면", ["품", "들어오", "모여", "안기"], 0.84, "auspicious"),
         leaping: modifier("개구리가 힘차게 폴짝 뛰는 장면", ["폴짝", "뛰", "도약", "튀어"], 0.78, "auspicious"),
@@ -6758,27 +6828,33 @@ export const symbolEntries: SymbolEntry[] = [
     en: localized({
       label: "Frog",
       aliases: ["frog", "tree frog", "toad", "frogs", "tadpole"],
-      searchText: "frog, tree frog, toad, frogs, tadpole, wealth, abundance, fertility, leap, conception dream, good omen, rain",
-      coreMeanings: ["abundance and fortune", "fertility", "a leap forward"],
-      lightReadings: ["plenty brimming up as if multiplying", "a lively flow of leaping forward in one bound"],
-      shadowReadings: ["scattering every which way and getting frazzled", "a mind flying apart in all directions"],
+      searchText: "frog, tree frog, toad, frogs, tadpole, transformation, renewal, cleansing, a leap, potential, the prince",
+      coreMeanings: ["transformation", "renewal", "a leap forward"],
+      lightReadings: [
+        "A frog — or a tadpole becoming one — means transformation and growth into a new stage",
+        "A powerful leap means progress made in one bold bound",
+      ],
+      shadowReadings: [
+        "Frogs scattering every which way means a mind flying apart and getting frazzled",
+        "Losing focus in all directions",
+      ],
       sceneModifiers: {
-        comingToYou: modifier("frogs or a toad coming into your arms or gathering", ["into your arms", "came in", "gathered", "nestled"], 0.84, "auspicious"),
-        leaping: modifier("the frog leaping powerfully", ["leapt", "hopped", "bounded", "sprang"], 0.78, "auspicious"),
-        scattering: modifier("frogs scattering every which way", ["scattered", "every which way", "frazzled", "chaos"], 0.72, "cautious"),
+        comingToYou: modifier("a frog or toad coming to you — a transformation or fresh start drawing near", ["into your arms", "came in", "gathered", "nestled"], 0.84, "auspicious"),
+        leaping: modifier("the frog leaping powerfully — progress in one bold bound", ["leapt", "hopped", "bounded", "sprang"], 0.78, "auspicious"),
+        scattering: modifier("frogs scattering every which way — a scattered mind to gather", ["scattered", "every which way", "frazzled", "chaos"], 0.72, "cautious"),
       },
-      contextQuestions: ["Did a frog or toad come into your arms or gather?", "Did it leap powerfully?"],
-      metaphorHooks: ["abundance brimming as if multiplying", "a leap forward in one bound"],
-      cardTitleSeeds: ["The Night a Frog Came to Your Arms", "A Place It Leapt Forward"],
+      contextQuestions: ["Did the frog leap, or scatter every which way?", "Did it feel like growth or chaos?"],
+      metaphorHooks: ["the tadpole becoming a frog", "a leap forward in one bound"],
+      cardTitleSeeds: ["The Night It Transformed", "A Place It Leapt Forward"],
       smallPrescriptions: ["Write down one thing you would like to leap forward on in one bound today."],
-      safeReading: "A frog means abundance, fortune, and fertility; coming to you or gathering reads as even better energy.",
+      safeReading: "A frog can mean transformation, renewal, or a leap forward; scattering frogs, a scattered mind to gather.",
       avoidExpressions: ["you will surely get pregnant", "riches are guaranteed"],
       fortune: {
         valence: "conditional",
         auspicious:
-          "A frog or toad coming into your arms, or frogs gathering, was traditionally an auspicious omen of wealth, abundance, and fertility — and a conception dream.",
+          "In Western symbolism the frog is transformation and renewal — the tadpole becoming a frog, the frog-prince's hidden potential, a cleansing fresh start.",
         cautious:
-          "Frogs scattering every which way was taken as a nudge to gather a mind that has flown apart.",
+          "Frogs scattering reads as a scattered mind to gather, not an omen.",
       },
     }),
   }),
