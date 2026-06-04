@@ -85,7 +85,7 @@ export function AdminToolQuickNav({ activeId, className, linkIds }: AdminToolQui
     <nav
       aria-label="어드민 빠른 이동"
       data-admin-tool-quick-nav="true"
-      className={cn("flex gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden", className)}
+      className={cn("flex gap-2 overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden", className)}
     >
       {links.map((item) => {
         const active = item.id === activeId;

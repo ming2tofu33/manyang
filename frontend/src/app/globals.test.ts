@@ -17,6 +17,20 @@ function getRuleBody(selector: string) {
 }
 
 describe("global animation styles", () => {
+  test("locks the document against horizontal rubber-band dragging", () => {
+    const rootScrollGuard = getRuleBody("html,\nbody");
+    const bodyRuleStart = globalsCss.indexOf("\nbody {\n  background:");
+    const bodyRuleEnd = globalsCss.indexOf("}", bodyRuleStart);
+
+    expect(rootScrollGuard).toContain("width: 100%;");
+    expect(rootScrollGuard).toContain("max-width: 100%;");
+    expect(rootScrollGuard).toContain("overflow-x: hidden;");
+    expect(rootScrollGuard).toContain("overscroll-behavior-x: none;");
+    expect(bodyRuleStart).toBeGreaterThanOrEqual(0);
+    expect(bodyRuleEnd).toBeGreaterThan(bodyRuleStart);
+    expect(globalsCss.slice(bodyRuleStart, bodyRuleEnd)).toContain("min-height: 100dvh;");
+  });
+
   test("defines the home cat transition animation classes and reduced motion fallback", () => {
     expect(globalsCss).toContain(".home-cat-transition-current");
     expect(globalsCss).toContain(".home-cat-transition-previous");

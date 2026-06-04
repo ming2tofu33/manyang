@@ -109,4 +109,16 @@ describe("AppShell", () => {
     expect(markup).toContain(mobileLayout.shellInlinePaddingClassName);
     expect(markup).not.toContain("px-6 pb-1.5 pt-8");
   });
+
+  test("prevents wide child surfaces from creating horizontal page dragging", () => {
+    const markup = renderToStaticMarkup(
+      <AppShell showHeader={false} showBottomNav={false}>
+        <div className="w-screen">wide receipt or tarot surface</div>
+      </AppShell>,
+    );
+
+    expect(markup).toContain("w-full max-w-full overflow-hidden overscroll-x-none");
+    expect(markup).toContain("overflow-y-auto overflow-x-hidden overscroll-x-none overscroll-y-contain");
+    expect(markup).toContain('data-app-shell-content-mode="scroll"');
+  });
 });

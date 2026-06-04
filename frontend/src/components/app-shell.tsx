@@ -66,8 +66,8 @@ export function AppShell({
           : "설정";
 
   return (
-    <main className="h-[100dvh] overflow-hidden bg-[#05040b] text-[#fff3d7]">
-      <section className="relative mx-auto flex h-[100dvh] w-full max-w-[430px] flex-col overflow-hidden bg-[#05040b] shadow-[0_0_90px_rgba(0,0,0,0.7)]">
+    <main className="h-[100dvh] w-full max-w-full overflow-hidden overscroll-x-none bg-[#05040b] text-[#fff3d7]">
+      <section className="relative mx-auto flex h-[100dvh] w-full max-w-[430px] flex-col overflow-hidden overscroll-x-none bg-[#05040b] shadow-[0_0_90px_rgba(0,0,0,0.7)]">
         {backgroundLayer ??
           (shouldUseCatThemeFrame ? (
             <CatThemeFrameBackground />
@@ -134,8 +134,8 @@ export function AppShell({
             className={cn(
               "min-h-0 flex-1",
               contentMode === "fixed"
-                ? "overflow-hidden pb-0"
-                : "overflow-y-auto overscroll-contain pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+                ? "overflow-hidden overscroll-x-none pb-0"
+                : "overflow-y-auto overflow-x-hidden overscroll-x-none overscroll-y-contain pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
             )}
             data-app-shell-content-mode={contentMode}
           >

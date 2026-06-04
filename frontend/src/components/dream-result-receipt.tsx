@@ -554,7 +554,7 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
                 <span className="max-w-full break-keep">{displayMood}</span>
               </p>
             </div>
-            <div className="mt-5 flex flex-nowrap justify-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" data-receipt-symbol-tags="true">
+            <div className="mt-5 flex flex-nowrap justify-center gap-1.5 overflow-x-auto overscroll-x-contain pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" data-receipt-symbol-tags="true">
               {analysis.symbols.slice(0, 5).map((symbol, index) => (
                 <span
                   key={symbol}
