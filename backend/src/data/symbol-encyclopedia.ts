@@ -3978,7 +3978,7 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["산", "높은 산", "산을 오르는 꿈", "등산", "산 정상"],
       searchText: "산, 높은 산, 산을 오르는 꿈, 등산, 산 정상, 도전, 시야, 안정감, 높은 목표",
       coreMeanings: ["도전", "시야", "안정감", "높은 목표"],
-      lightReadings: ["더 넓은 시야를 얻기 위해 오르는 장면", "큰 과제를 꾸준히 마주하는 마음"],
+      lightReadings: ["더 넓은 시야를 얻으려 오르는 마음", "큰 과제를 꾸준히 마주하려는 뜻"],
       shadowReadings: ["과제가 너무 크게 느껴지는 부담", "올라가야 한다는 압박"],
       sceneModifiers: {
         climbing: modifier("목표를 향해 꾸준히 오르는 과정", ["오르", "등산", "올라"], 0.78, "auspicious"),
@@ -4017,8 +4017,8 @@ export const symbolEntries: SymbolEntry[] = [
       avoidExpressions: ["success is guaranteed", "a powerful helper will come"],
       fortune: {
         valence: "conditional",
-        auspicious: "Climbing a mountain or reaching its summit was traditionally read as achievement and helpful people arriving.",
-        cautious: "A steep, hard-to-climb mountain was a nudge to weigh the size of a current task.",
+        auspicious: "In Western symbolism a mountain is the goal and the long climb toward it — even the ascent of the Self; reaching the summit reads as achievement and a wider view.",
+        cautious: "A steep, hard-to-climb mountain reads as a task whose size is worth weighing before you start.",
       },
     }),
   }),
@@ -4075,8 +4075,8 @@ export const symbolEntries: SymbolEntry[] = [
       avoidExpressions: ["wealth will grow", "family fortune will rise"],
       fortune: {
         valence: "conditional",
-        auspicious: "A large, lush, or growing tree was traditionally read as flourishing and a solid foundation.",
-        cautious: "A dry or withered tree was a nudge toward a place that needs care or fresh energy.",
+        auspicious: "In Western symbolism the tree is growth and the rooted Self — the tree of life; a large, lush, growing tree reads as flourishing on a solid foundation.",
+        cautious: "A dry or withered tree reads as a part of life that needs care or fresh energy.",
       },
     }),
   }),
@@ -4094,7 +4094,7 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["꽃", "꽃다발", "꽃이 피는 꿈", "시든 꽃", "화분"],
       searchText: "꽃, 꽃다발, 꽃이 피는 꿈, 시든 꽃, 화분, 피어남, 아름다움, 인정, 섬세함, 시기",
       coreMeanings: ["피어남", "아름다움", "인정", "섬세함"],
-      lightReadings: ["보여지고 인정받고 싶은 마음이 피어나는 장면", "작은 성장이 눈에 보이기 시작한 장면"],
+      lightReadings: ["보여지고 인정받고 싶은 마음이 피어난다는 뜻", "작은 성장이 눈에 보이기 시작한다는 뜻"],
       shadowReadings: ["시들까 봐 조심스러운 불안", "겉으로 보기 좋은 모습에만 묶이는 느낌"],
       sceneModifiers: {
         blooming: modifier("가능성이나 감정이 겉으로 드러나기 시작한 장면", ["피", "활짝", "만개"], 0.78),
@@ -4787,8 +4787,8 @@ export const symbolEntries: SymbolEntry[] = [
     en: localized({
       label: "Snow",
       aliases: ["snow", "snowfall", "first snow", "white snow", "snowing"],
-      searchText: "snow, snowfall, first snow, white snow, purity, fresh start, cold, isolation, blocked path, stillness",
-      coreMeanings: ["purity", "fresh start", "stillness"],
+      searchText: "snow, snowfall, first snow, white snow, purity, fresh start, frozen emotion, cold, isolation, stillness",
+      coreMeanings: ["purity", "fresh start", "frozen emotion"],
       lightReadings: ["a clean cover over what came before and a fresh start", "a quiet settling that sorts the mind"],
       shadowReadings: ["feeling isolated by a blocked, cold path", "a heart that feels coldly stopped"],
       sceneModifiers: {
@@ -4805,9 +4805,9 @@ export const symbolEntries: SymbolEntry[] = [
       fortune: {
         valence: "conditional",
         auspicious:
-          "Clean snow piling softly, or first snow falling, was sometimes read as covering old things and bringing renewal and abundance.",
+          "In Western symbolism clean, fresh snow reads as a clean slate and a quiet, renewing pause — covering the old so something new can begin.",
         cautious:
-          "Snow blocking the path or freezing cold was taken as a nudge to look at a paused flow or a feeling of isolation.",
+          "Snow blocking the path or freezing cold reads as frozen feeling or isolation — a paused, numbed stretch to thaw gently.",
       },
     }),
   }),
@@ -4849,10 +4849,16 @@ export const symbolEntries: SymbolEntry[] = [
     en: localized({
       label: "Moon",
       aliases: ["moon", "full moon", "crescent moon", "moonlight", "round moon"],
-      searchText: "moon, full moon, crescent moon, moonlight, wish, emotion, longing, cycle, tide, intuition",
-      coreMeanings: ["wish", "emotional tide", "cycle"],
-      lightReadings: ["a wish you have held coming into focus", "feelings calmly filling like a rising tide"],
-      shadowReadings: ["longing for something out of reach", "moods that tilt and change often"],
+      searchText: "moon, full moon, crescent moon, moonlight, the feminine, anima, emotion, intuition, cycle, tide, longing",
+      coreMeanings: ["the feminine", "emotional tide", "intuition", "cycles"],
+      lightReadings: [
+        "A bright full moon means emotional fullness and intuition at its peak — Jung tied the moon to the feminine, the anima",
+        "The moon rising means feelings and instincts coming into focus",
+      ],
+      shadowReadings: [
+        "Longing for something out of reach",
+        "Moods that wax and wane, or intuition clouded over",
+      ],
       sceneModifiers: {
         fullMoon: modifier("a bright full moon", ["full moon", "round", "bright", "whole"], 0.82, "auspicious"),
         rising: modifier("the moon rising or held close", ["rising", "into your arms", "came to you"], 0.78, "auspicious"),
@@ -4862,14 +4868,14 @@ export const symbolEntries: SymbolEntry[] = [
       metaphorHooks: ["a small wish held close", "a heart that waxes and wanes"],
       cardTitleSeeds: ["A Night of the Full Moon", "A Heart in Moonlight"],
       smallPrescriptions: ["Write down one quietly held wish clearly today."],
-      safeReading: "The moon mirrors wishes and emotional tides; a bright full moon means harmony, a dim one means longing.",
+      safeReading: "The moon reflects emotion, intuition, and cycles — Jung's feminine (the anima); a full moon means fullness, a dim one, longing or flux.",
       avoidExpressions: ["your wish will surely come true", "this foretells a pregnancy"],
       fortune: {
         valence: "conditional",
         auspicious:
-          "A bright full moon rising, or the moon coming to you, was sometimes read as wishes fulfilled, harmony, and a happy occasion.",
+          "In Western symbolism the moon governs emotion, intuition, and cycles — Jung linked it to the feminine (the anima); a full moon reads as feeling and instinct at their fullest.",
         cautious:
-          "A clouded or waning moon was taken as a nudge to soothe an out-of-reach longing or a frequently shifting mood.",
+          "A clouded or waning moon reads as fluctuating moods or intuition clouded over — a cue to wait for clarity before deciding.",
       },
     }),
   }),
@@ -4911,9 +4917,9 @@ export const symbolEntries: SymbolEntry[] = [
     en: localized({
       label: "Flood",
       aliases: ["flood", "flooding", "rising water", "overflow", "deluge", "tsunami"],
-      searchText: "flood, flooding, rising water, overflow, deluge, swept away, big change, wealth, emotion, overwhelm",
+      searchText: "flood, flooding, rising water, overflow, deluge, swept away, big change, emotion, overwhelm, cleansing, Noah",
       coreMeanings: ["overflow", "big change", "overwhelm"],
-      lightReadings: ["clear water rising as energy and resources fill up", "riding a large current up to the next stage"],
+      lightReadings: ["clear water rising and getting through means a cleansing renewal you come out the other side of", "riding a large current up to the next stage"],
       shadowReadings: ["being swept by a change too big to hold", "feelings overflowing all at once"],
       sceneModifiers: {
         clearRising: modifier("clear water rising high", ["clear", "rising", "filling"], 0.82, "auspicious"),
@@ -4924,14 +4930,14 @@ export const symbolEntries: SymbolEntry[] = [
       metaphorHooks: ["water cresting over the bank", "a current rising all at once"],
       cardTitleSeeds: ["The Night the Water Rose", "An Overflowing River"],
       smallPrescriptions: ["Of everything that piled up at once, pick the one thing to handle first today."],
-      safeReading: "A flood can mean wealth and big energy when the water rises clear, or an overwhelming change when it sweeps muddy.",
+      safeReading: "A flood can mean a cleansing renewal when clear water rises and you get through, or an overwhelming change when it sweeps muddy.",
       avoidExpressions: ["wealth will surely come", "a disaster is coming"],
       fortune: {
         valence: "conditional",
         auspicious:
-          "Clear water rising high, or floating up safely, was sometimes read as wealth and a big surge of energy filling up.",
+          "In Western symbolism a flood is overwhelming emotion or sweeping change; clear water rising and getting through reads as a cleansing renewal you survive and grow from (Noah's flood).",
         cautious:
-          "Being swept or submerged by muddy water was taken as a nudge to steady a change or a flood of feeling that arrived all at once.",
+          "Being swept or submerged by muddy water reads as a change or a flood of feeling too big to hold all at once — something to ride out, not a disaster foretold.",
       },
     }),
   }),
@@ -5409,8 +5415,8 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["강", "냇물", "강을 건너", "강가", "시냇가"],
       searchText: "강, 강가, 냇물, 시냇가, 강을 건너, 인생행로, 흐름, 전환, 건넘, 맑은 물, 탁류",
       coreMeanings: ["인생행로", "흐름", "건넘"],
-      lightReadings: ["막힘없이 흘러 다음으로 건너가는 장면", "맑은 강이 시원하게 트이는 흐름"],
-      shadowReadings: ["탁하거나 건너지 못해 막막한 장면", "흐름이 멈춰 정체된 느낌"],
+      lightReadings: ["막힘없이 흘러 다음 단계로 건너간다는 뜻", "맑은 강이 시원하게 트인다는 뜻"],
+      shadowReadings: ["탁하거나 건너지 못해 막막한 마음", "흐름이 멈춰 정체된 느낌"],
       sceneModifiers: {
         crossingClear: modifier("맑은 강을 시원하게 건너는 장면", ["맑", "건너", "트이", "잔잔"], 0.82, "auspicious"),
         flowing: modifier("강물이 유유히 흐르는 장면", ["흐르", "유유", "잔잔", "넓"], 0.74),
