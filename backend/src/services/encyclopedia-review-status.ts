@@ -30,6 +30,9 @@ export const BICULTURAL_REVIEWED: ReadonlySet<string> = new Set([
   // object (en을 서양 상징으로) — 21/21 완결 (money·feces는 batch1)
   "door", "window", "key", "mirror", "bag", "shoes", "car", "bus", "train", "airplane",
   "phone", "bed", "clothes", "gold", "knife", "book", "ring", "photo", "watch",
+  // place (en을 서양 상징으로) — 18/18 완결 (owned_land는 batch1)
+  "school", "corridor", "home", "room", "stairs", "elevator", "hospital", "toilet", "bathroom",
+  "workplace", "road", "bridge", "kitchen", "grave", "market", "cave", "prison",
 ]);
 
 export type CategoryReviewStatus = {

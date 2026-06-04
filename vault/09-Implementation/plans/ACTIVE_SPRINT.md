@@ -114,7 +114,7 @@ status: active
 
 - [x] ENC-01~05 완료 (가이드/조사, 필드 제거, 라벨 감사, 이중문화, 1차 8항목)
 - [ ] ENC-06: 문화 차 큰 2차 배치 ~12개. 동양 고유(용·조상·거북이·귀신·무지개·닭) / 서양 심리 강(거미·나비·곰·고래·벌레·사슴)
-- [ ] ENC-07: **기존 121개 전수**를 카테고리 단위로 ko=동양/en=서양 + B안 재작성. 배치마다 tsc+test+`eval:retrieval`. (87개 완료: 1차 8 + event 6 + person 12 + body 8 + animal 21 + nature 17 + object 21 — **animal·nature·object·person·body·event 완결**, **34개 남음**: place 18·action 10·food 3·emotion 3·abstract 2)
+- [ ] ENC-07: **기존 121개 전수**를 카테고리 단위로 ko=동양/en=서양 + B안 재작성. 배치마다 tsc+test+`eval:retrieval`. (104개 완료: 1차 8 + event 6 + person 12 + body 8 + animal 21 + nature 17 + object 21 + place 18 — **place·animal·nature·object·person·body·event 완결**, **17개 남음**: action 10·food 3·emotion 3·abstract 2)
 
   - **결함 스캔 기반 우선순위(2026-06-03)**: 카테고리 순서 대신 `grep`로 잔여 결함을 스캔해 우선 처리. en "In Korean tradition"/"conception dream" 누수 8건(불·비·물고기·용·호랑이·곰·고래·개구리)을 전부 서양(융·신화·변태)으로 교체, 누수 0 확인. ko safeReading "비추는 상징/장소/공간" 14건 → "담은 …"으로 일괄 정리(비추 safeReading 0건, 거울·별 metaphorHook의 올바른 "비추는"은 보존). lightReadings의 "인지동작+흐름/장면" 번역체(알아차리는 흐름/확인하는 장면 등) 23건을 직접 서술로 정리 → **번역체 0건**. 남은 "흐름/장면"(~37)은 "재산이 되는 흐름"·"어우러지는 흐름"처럼 자연스러운 관용 용법이라 보존(churn 방지).
 - [ ] ENC-08: vault YAML 동기화 (또는 YAML을 backend seed에서 생성하는 단방향 소스 결정)
@@ -123,7 +123,7 @@ status: active
 
 진행 순서는 분량/임팩트 고려해 정한다. 각 카테고리 완료 = 그 안 모든 항목 ko/en 재작성 + 테스트 통과.
 
-- [ ] **place** 18개 (땅✓ / room·home·school·corridor·window·stairs·elevator·bathroom·kitchen·road·bridge·workplace·market·cave·prison·mountain·river 등)
+- [x] **place** 18개 ✓ (18/18) — 동양 재물·음택 유지, en은 서양 상징으로: 집/방=the house as the psyche(융, 방=자아의 일부·지하실=무의식), 무덤=the past laid to rest·the buried(음택 재물 제거), 동굴=the unconscious·womb of rebirth·hero's descent&return, 변기=healthy letting-go·catharsis(재물 제거), 욕실=ritual cleansing·washing away guilt, 부엌=the hearth(Hestia)·cauldron·raw→cooked, 다리=the crossing between worlds·Styx, 길=the crossroads·road of life, 계단=Jacob's ladder·descent into the depths(출세 제거), 시장=the agora·Vanity Fair(재물 제거), 문=Janus, 복도=the liminal, 감옥=self-imposed prison. (school·elevator·workplace·hospital = 현대/보편물이라 en 이미 보편적. 땅 batch1)
 - [x] **object** 21개 ✓ (21/21) — 동양 재물·인연 유지, en은 서양 상징으로: 금=alchemical/incorruptible Self·Midas greed, 반지=the unbroken circle·covenant·binding ring, 책=Book of Life·sacred/hidden knowledge, 열쇠=key to the unconscious·answer to a mystery, 신발=standpoint·Cinderella's slipper·walking in another's shoes, 거울=Narcissus·true self vs persona, 문=threshold·Janus·rite of passage, 창문=window of the soul, 가방=emotional baggage, 옷=persona(Jung), 비행기=Icarus, 칼=sword of discrimination·double-edged, 침대=intimate threshold, 시계=Father Time. (car·bus·train·phone·photo = 현대 보편물이라 en 이미 보편적, ko 정리만. 똥·돈 batch1)
 - [x] **person** 12개 ✓ (조상·스님·아기·어머니 = 동양 고유/태몽 vs 융 원형 / stranger·child·father·friend·partner·ex_partner·ghost·celebrity = B안+보편)
 - [ ] **action** 10개 (쫓김✓ / searching·running·falling·flying·swimming·fighting·crying·dance·laughter·exam?)
