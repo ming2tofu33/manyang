@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 import { AssetTextButton } from "@/components/asset-primitives";
 import {
@@ -55,25 +56,43 @@ function DetailHeader({ view }: { view: ArchiveRecordView }) {
 export function RoutineRecordDetailContent({
   view,
   onOpenDream,
+  onDeleteDream,
 }: {
   view: ArchiveRecordView;
   onOpenDream: (view: ArchiveRecordView) => void;
+  onDeleteDream?: (view: ArchiveRecordView) => void;
 }) {
   if (view.type === "dream") {
+    const dreamRecordId = view.dreamRecordId ?? view.raw.dreamRecord?.id;
+
     return (
       <section className={cn(ui.panel, "mt-8 space-y-4 p-5 text-center")}>
         <DetailHeader view={view} />
         <p className="text-sm leading-6 text-[#fff3d7]/76">이 기록은 꿈 영수증 화면에서 다시 읽을 수 있어요.</p>
-        <AssetTextButton
-          frame={manyangAssets.buttons.mediumSecondary}
-          iconSrc={manyangAssets.actionIcons.book}
-          onClick={() => onOpenDream(view)}
-          className="mx-auto max-w-[16rem]"
-          contentClassName="min-h-[3.25rem] text-base"
-          iconClassName="h-6 w-6"
-        >
-          꿈 영수증 보기
-        </AssetTextButton>
+        <div className="mx-auto grid w-full max-w-[17rem] gap-3">
+          <AssetTextButton
+            frame={manyangAssets.buttons.mediumSecondary}
+            iconSrc={manyangAssets.actionIcons.book}
+            onClick={() => onOpenDream(view)}
+            contentClassName="min-h-[3.25rem] text-base"
+            iconClassName="h-6 w-6"
+          >
+            꿈 영수증 보기
+          </AssetTextButton>
+          {dreamRecordId && onDeleteDream ? (
+            <div data-dream-record-delete-detail-action={dreamRecordId}>
+              <AssetTextButton
+                frame={manyangAssets.buttons.mediumSecondary}
+                iconSrc={manyangAssets.actionIcons.trash}
+                onClick={() => onDeleteDream(view)}
+                contentClassName="min-h-[3.25rem] text-base"
+                iconClassName="h-6 w-6"
+              >
+                기록 삭제
+              </AssetTextButton>
+            </div>
+          ) : null}
+        </div>
       </section>
     );
   }
@@ -143,7 +162,8 @@ export function RoutineRecordDetailContent({
 
 export function ArchiveRecordDetailClient({ recordId }: { recordId: string }) {
   const router = useRouter();
-  const { dreamRecords, isLoadingServerRecords, openDreamRecord, source } = useArchiveDreamRecords();
+  const [deleteError, setDeleteError] = useState("");
+  const { dreamRecords, isLoadingServerRecords, openDreamRecord, deleteDreamRecord, source } = useArchiveDreamRecords();
   const { pawprints, morningMoodRecords, nightCheckInRecords, isLoadingRoutineRecords } = useRoutineRecords();
   const visiblePawprints = pawprints;
   const visibleNightCheckInRecords = nightCheckInRecords;
@@ -162,6 +182,32 @@ export function ArchiveRecordDetailClient({ recordId }: { recordId: string }) {
     if (record && openDreamRecord(record)) {
       router.push("/result");
     }
+  }
+
+  async function handleDeleteDream(selectedView: ArchiveRecordView) {
+    const record = selectedView.raw.dreamRecord;
+
+    if (!record) {
+      return;
+    }
+
+    const shouldDelete =
+      typeof window === "undefined" ||
+      window.confirm("이 꿈 영수증을 기록장에서 삭제할까요? 삭제하면 되돌릴 수 없어요.");
+
+    if (!shouldDelete) {
+      return;
+    }
+
+    setDeleteError("");
+    const deleted = await deleteDreamRecord(record.id);
+
+    if (deleted) {
+      router.push("/archive/records");
+      return;
+    }
+
+    setDeleteError("꿈 영수증을 삭제하지 못했어요. 잠시 후 다시 시도해주세요.");
   }
 
   if (isLoadingArchive) {
@@ -188,5 +234,14 @@ export function ArchiveRecordDetailClient({ recordId }: { recordId: string }) {
     );
   }
 
-  return <RoutineRecordDetailContent view={view} onOpenDream={handleOpenDream} />;
+  return (
+    <>
+      <RoutineRecordDetailContent view={view} onOpenDream={handleOpenDream} onDeleteDream={handleDeleteDream} />
+      {deleteError ? (
+        <p className="mt-4 rounded-[1rem] border border-[#b98255]/45 bg-[rgba(7,6,18,0.78)] px-4 py-3 text-center text-sm font-semibold leading-6 text-[#ffd98a]">
+          {deleteError}
+        </p>
+      ) : null}
+    </>
+  );
 }

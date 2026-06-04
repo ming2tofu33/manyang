@@ -105,8 +105,7 @@ describe("POST /api/dreams/analyze", () => {
       name: "하얀냥",
       access: "free",
     });
-    expect(body.readerNote).toContain("같은 기준");
-    expect(body.readerNote).not.toContain("하얀냥");
+    expect(body.readerNote).toBe("");
     expect(body.symbols).toEqual(expect.arrayContaining(["학교", "복도", "문", "찾기"]));
     expect(body.readingBasis.usedSymbols).toEqual(expect.arrayContaining(["학교", "복도", "문", "찾기"]));
     expect(body.summary).toContain("꿈");

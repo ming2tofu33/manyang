@@ -55,10 +55,14 @@ function RecordTags({ tags }: { tags: string[] }) {
 function DreamReceiptCard({
   view,
   onOpenDream,
+  onDeleteDream,
 }: {
   view: ArchiveRecordView;
   onOpenDream: (view: ArchiveRecordView) => void;
+  onDeleteDream?: (view: ArchiveRecordView) => void;
 }) {
+  const dreamRecordId = view.dreamRecordId ?? view.raw.dreamRecord?.id;
+
   return (
     <article className="relative overflow-hidden rounded-[1.15rem] border border-[#8b6345]/60 bg-[#ead2a6] p-4 text-[#2f2117] shadow-[0_18px_48px_rgba(0,0,0,0.34)]">
       <span className="absolute right-5 top-0 h-12 w-6 bg-[#5a247d]" aria-hidden="true" />
@@ -82,16 +86,32 @@ function DreamReceiptCard({
           />
         </div>
       </div>
-      <button
-        type="button"
-        onClick={() => onOpenDream(view)}
-        className="mt-3 flex min-h-10 w-full items-center justify-between rounded-[0.75rem] border border-[#8b6345]/38 bg-[#f3dfbb]/60 px-3 text-sm font-semibold text-[#4b2c44] transition hover:bg-[#f6e7c8] focus:outline-none focus:ring-2 focus:ring-[#7a3a93]"
-      >
-        <span>자세히 보기</span>
-        <span className="relative h-5 w-5" aria-hidden="true">
-          <Image src={manyangAssets.actionIcons.arrowRight} alt="" fill sizes="20px" unoptimized className="object-contain" />
-        </span>
-      </button>
+      <div className="mt-3 flex gap-2">
+        <button
+          type="button"
+          onClick={() => onOpenDream(view)}
+          className="flex min-h-10 flex-1 items-center justify-between rounded-[0.75rem] border border-[#8b6345]/38 bg-[#f3dfbb]/60 px-3 text-sm font-semibold text-[#4b2c44] transition hover:bg-[#f6e7c8] focus:outline-none focus:ring-2 focus:ring-[#7a3a93]"
+        >
+          <span>자세히 보기</span>
+          <span className="relative h-5 w-5" aria-hidden="true">
+            <Image src={manyangAssets.actionIcons.arrowRight} alt="" fill sizes="20px" unoptimized className="object-contain" />
+          </span>
+        </button>
+        {dreamRecordId && onDeleteDream ? (
+          <button
+            type="button"
+            onClick={() => onDeleteDream(view)}
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-[0.75rem] border border-[#8b6345]/38 bg-[#f3dfbb]/60 transition hover:bg-[#f6e7c8] focus:outline-none focus:ring-2 focus:ring-[#7a3a93]"
+            aria-label={`${view.title} 기록 삭제`}
+            title="기록 삭제"
+            data-dream-record-delete-action={dreamRecordId}
+          >
+            <span className="relative h-5 w-5" aria-hidden="true">
+              <Image src={manyangAssets.actionIcons.trash} alt="" fill sizes="20px" unoptimized className="object-contain" />
+            </span>
+          </button>
+        ) : null}
+      </div>
     </article>
   );
 }
@@ -99,12 +119,14 @@ function DreamReceiptCard({
 export function ArchiveRecordListCard({
   view,
   onOpenDream,
+  onDeleteDream,
 }: {
   view: ArchiveRecordView;
   onOpenDream: (view: ArchiveRecordView) => void;
+  onDeleteDream?: (view: ArchiveRecordView) => void;
 }) {
   if (view.type === "dream") {
-    return <DreamReceiptCard view={view} onOpenDream={onOpenDream} />;
+    return <DreamReceiptCard view={view} onOpenDream={onOpenDream} onDeleteDream={onDeleteDream} />;
   }
 
   return (
@@ -153,7 +175,8 @@ export function ArchiveRecordsClient() {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [selectedType, setSelectedType] = useState<ArchiveRecordFilterType>("all");
-  const { dreamRecords, isLoadingServerRecords, openDreamRecord, source } = useArchiveDreamRecords();
+  const [deleteError, setDeleteError] = useState("");
+  const { dreamRecords, isLoadingServerRecords, openDreamRecord, deleteDreamRecord, source } = useArchiveDreamRecords();
   const { pawprints, morningMoodRecords, nightCheckInRecords, source: routineSource, isLoadingRoutineRecords } =
     useRoutineRecords();
   const visiblePawprints = pawprints;
@@ -175,6 +198,29 @@ export function ArchiveRecordsClient() {
     }
   }
 
+  async function handleDeleteDream(view: ArchiveRecordView) {
+    const record = view.raw.dreamRecord;
+
+    if (!record) {
+      return;
+    }
+
+    const shouldDelete =
+      typeof window === "undefined" ||
+      window.confirm("이 꿈 영수증을 기록장에서 삭제할까요? 삭제하면 되돌릴 수 없어요.");
+
+    if (!shouldDelete) {
+      return;
+    }
+
+    setDeleteError("");
+    const deleted = await deleteDreamRecord(record.id);
+
+    if (!deleted) {
+      setDeleteError("꿈 영수증을 삭제하지 못했어요. 잠시 후 다시 시도해주세요.");
+    }
+  }
+
   if (isLoadingArchive) {
     return (
       <section className={cn(ui.panel, "mt-8 space-y-3 p-5 text-center")}>
@@ -189,6 +235,12 @@ export function ArchiveRecordsClient() {
       {source === "local" || routineSource === "local" ? (
         <p className="rounded-[1rem] border border-[#7c4a38]/45 bg-[rgba(5,4,12,0.58)] px-4 py-3 text-center text-sm leading-6 text-[#fff3d7]/74">
           이 기기에 저장된 기록이에요. 로그인하면 계정에 백업할 수 있어요.
+        </p>
+      ) : null}
+
+      {deleteError ? (
+        <p className="rounded-[1rem] border border-[#b98255]/45 bg-[rgba(7,6,18,0.78)] px-4 py-3 text-center text-sm font-semibold leading-6 text-[#ffd98a]">
+          {deleteError}
         </p>
       ) : null}
 
@@ -231,7 +283,14 @@ export function ArchiveRecordsClient() {
 
       <div className="space-y-3">
         {filteredViews.length > 0 ? (
-          filteredViews.map((view) => <ArchiveRecordListCard key={view.id} view={view} onOpenDream={handleOpenDream} />)
+          filteredViews.map((view) => (
+            <ArchiveRecordListCard
+              key={view.id}
+              view={view}
+              onOpenDream={handleOpenDream}
+              onDeleteDream={handleDeleteDream}
+            />
+          ))
         ) : (
           <section className={cn(ui.panel, "space-y-2 p-5 text-center")}>
             <p className="text-lg font-semibold text-[#ffd98a]">맞는 기록을 찾지 못했어요</p>

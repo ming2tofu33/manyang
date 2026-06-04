@@ -43,11 +43,14 @@ describe("ArchiveRecordListCard", () => {
           dreamRecordId: "dream-1",
         }}
         onOpenDream={() => undefined}
+        onDeleteDream={() => undefined}
       />,
     );
 
     expect(markup).toContain("복도를 달린 꿈");
     expect(markup).toContain("자세히 보기");
+    expect(markup).toContain("data-dream-record-delete-action=\"dream-1\"");
+    expect(markup).toContain("/manyang/ui/action-icons/action-trash.png");
     expect(markup).not.toContain("href=\"/archive/records/pawprint-2026-05-25\"");
   });
 });

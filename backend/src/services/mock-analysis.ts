@@ -7,8 +7,7 @@ import type {
   DreamAnalysisResponse,
   DreamCardResponse,
 } from "../contracts/dream";
-import type { RuntimeSymbolEntry, SupportedLocale } from "../contracts/symbol-encyclopedia";
-import { getRuntimeSymbolEntry } from "../data/symbol-encyclopedia";
+import type { SupportedLocale } from "../contracts/symbol-encyclopedia";
 import { analyzeDreamSafetyPolicy, applySafetyPolicyToResponse } from "./dream-safety-policy";
 import { analyzeDreamStructure } from "./structured-dream-analysis";
 import { findRuntimeSymbolMatches, type RuntimeSymbolMatch } from "./symbol-matcher";
@@ -32,7 +31,7 @@ const moodLabels: Record<string, string> = {
   흐릿: "흐릿함",
 };
 
-const commonReaderNote = "마냥은 꿈속 상징과 감정의 연결을 같은 기준으로 차분히 정리했어요.";
+const commonReaderNote = "";
 
 const catReaderProfiles: Record<CatReaderType, CatReaderResponse & { note: string }> = {
   black_cat: {
@@ -97,10 +96,6 @@ function getCatReaderProfile(readerType: CatReaderType | string | undefined): Ca
   return catReaderProfiles[(normalizedReaderType as CatReaderType | undefined) ?? "black_cat"] ?? catReaderProfiles.black_cat;
 }
 
-function fallbackEntries(locale: SupportedLocale): RuntimeSymbolEntry[] {
-  return ["door", "water", "cat"].map((id) => getRuntimeSymbolEntry(id, locale));
-}
-
 // wakeMood가 "분위기: X / 감각: Y" 같은 표시용 복합 라벨이면 감정으로 취급하지 않는다.
 // 구조화된 분위기 정서는 structuredAnalysis.inferredEmotions(=inferredLabels)로 이미 들어온다.
 function isCompositeMoodLabel(value: string): boolean {
@@ -131,16 +126,6 @@ function buildSymbolReadings(matches: RuntimeSymbolMatch[], locale: SupportedLoc
   return matches.slice(0, 5).map((match) => ({
     symbol: match.label,
     reading: symbolReadingFor(match, locale),
-  }));
-}
-
-function buildFallbackSymbolReadings(entries: RuntimeSymbolEntry[], locale: SupportedLocale): DreamAnalysisResponse["symbolReadings"] {
-  return entries.slice(0, 3).map((entry) => ({
-    symbol: entry.label,
-    reading:
-      locale === "en"
-        ? `${entry.label} can be used only as a light fallback clue for ${entry.evidence.lightReadings[0] ?? entry.evidence.coreMeanings[0]}.`
-        : `${entry.label}${topicParticle(entry.label)} ${entry.evidence.lightReadings[0] ?? entry.evidence.coreMeanings[0]}의 단서로 낮게 참고할 수 있어요.`,
   }));
 }
 
@@ -324,8 +309,7 @@ export function analyzeDream(request: DreamAnalysisRequest): DreamAnalysisRespon
   });
   const matches = findRuntimeSymbolMatches(request.dreamText, { locale, limit: 5 });
   const isFallback = matches.length === 0;
-  const fallback = isFallback ? fallbackEntries(locale) : [];
-  const symbols = isFallback ? fallback.map((entry) => entry.label) : matches.map((match) => match.label);
+  const symbols = isFallback ? [] : matches.map((match) => match.label);
   const emotions = inferEmotions(
     request,
     structuredAnalysis.inferredEmotions.map((emotion) => emotion.label),
@@ -344,7 +328,7 @@ export function analyzeDream(request: DreamAnalysisRequest): DreamAnalysisRespon
       : `${summarySubject}${topicParticle(summarySubject) === "은" ? "이" : "가"} 특히 남은 꿈`;
   const interpretation = buildInterpretation(matches, themes, isFallback, locale);
   const smallPrescription = buildSmallPrescription(matches, isFallback, locale);
-  const symbolReadings = isFallback ? buildFallbackSymbolReadings(fallback, locale) : buildSymbolReadings(matches, locale);
+  const symbolReadings = isFallback ? [] : buildSymbolReadings(matches, locale);
   const reader = getCatReaderProfile(request.catReaderType);
 
   const response: DreamAnalysisResponse = {

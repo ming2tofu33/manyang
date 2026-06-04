@@ -392,6 +392,36 @@ describe("analyzeDreamWithLlm", () => {
     expect(result.readingBasis.usedSymbols).not.toEqual(["병원"]);
   });
 
+  test("allows a low-signal LLM draft to return no symbolic readings", async () => {
+    const provider = new FakeDreamReadingProvider({
+      summary: "A faint mood remains from the dream.",
+      interpretation:
+        "The dream does not give one clear object to treat as a symbol. What remains is the hazy feeling itself, so the reading stays with that soft atmosphere instead of forcing an invented image into the receipt.",
+      symbolReadings: [],
+      smallPrescription: "Keep only the one feeling that stayed with you when you woke.",
+      card: {
+        name: "Faint Trace",
+        type: "soft_moon",
+        keywords: ["trace"],
+        summary: "A faint mood remains.",
+        message: "Hold the dream lightly instead of forcing a symbol.",
+        theme: "trace",
+      },
+    });
+
+    const result = await analyzeDreamWithLlm(
+      {
+        dreamText: "I barely remember the dream. Only a strange mood stayed with me.",
+        locale: "en",
+      },
+      { provider, model: "test-model" },
+    );
+
+    expect(result.symbols).toEqual([]);
+    expect(result.symbolReadings).toEqual([]);
+    expect(result.readingBasis.usedSymbols).toEqual([]);
+  });
+
   test("passes vector-only retrieval as candidate evidence without confirming it", async () => {
     const provider = new FakeDreamReadingProvider({
       summary: "벡터 검색으로 병원 근거를 찾은 꿈입니다.",

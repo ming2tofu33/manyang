@@ -10,8 +10,10 @@ import { ReceiptSaveCta } from "@/components/receipt-save-cta";
 import { getCatReaderById, type CatReader } from "@/lib/cat-readers";
 import { DREAM_READING_DISCLAIMER } from "@/lib/disclaimer";
 import {
+  clearLatestAnalysisFromBrowser,
   getLatestAnalysisSnapshotFromBrowser,
   type DreamCompletedPayload,
+  type DreamRecord,
 } from "@/lib/dream-storage";
 import { manyangAssets } from "@/lib/manyang-assets";
 import {
@@ -32,6 +34,7 @@ import {
   createReceiptSvg,
 } from "@/lib/result-actions";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { useArchiveDreamRecords } from "@/lib/use-archive-dream-records";
 import { mergeRemotePawprintResult, useRoutineRecords } from "@/lib/use-routine-records";
 
 const fallbackPayload: DreamCompletedPayload = {
@@ -77,7 +80,7 @@ const fallbackPayload: DreamCompletedPayload = {
       message: "오늘은 미뤄둔 준비물 하나만 먼저 확인해보자냥.",
       theme: "장소와 전환",
     },
-    readerNote: "마냥은 꿈속 상징과 감정의 연결을 같은 기준으로 차분히 정리했어요.",
+    readerNote: "",
   },
 };
 
@@ -167,6 +170,20 @@ type SymbolBasisItem = {
   reading: string;
 };
 
+const hiddenReaderNotes = new Set([
+  "마냥은 꿈속 상징과 감정의 연결을 같은 기준으로 차분히 정리했어요.",
+]);
+
+function getDisplayReaderNote(readerNote?: string): string | undefined {
+  const trimmed = readerNote?.trim();
+
+  if (!trimmed || hiddenReaderNotes.has(trimmed)) {
+    return undefined;
+  }
+
+  return trimmed;
+}
+
 function getSymbolBasisItems(analysis: DreamCompletedPayload["analysis"]): SymbolBasisItem[] {
   const readings = analysis.symbolReadings ?? [];
   const readingBySymbol = new Map(readings.map((reading) => [reading.symbol, reading.reading]));
@@ -181,6 +198,24 @@ function getSymbolBasisItems(analysis: DreamCompletedPayload["analysis"]): Symbo
     symbol,
     reading: readingBySymbol.get(symbol) ?? "꿈에서 잡힌 단서로, 장면과 기분을 읽을 때 함께 참고했어요.",
   }));
+}
+
+function findStoredDreamRecordForReceiptPayload(
+  payload: DreamCompletedPayload,
+  dreamRecords: DreamRecord[],
+): DreamRecord | null {
+  return (
+    dreamRecords.find((record) => {
+      if (record.status === "unavailable") {
+        return false;
+      }
+
+      return (
+        record.analysis.analysisId === payload.analysis.analysisId ||
+        record.analysis.dreamId === payload.analysis.dreamId
+      );
+    }) ?? null
+  );
 }
 
 function createReceiptStreamingWords(text: string): string[] {
@@ -294,11 +329,13 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
     () => null,
   );
   const storedCheckIn = useSyncExternalStore(subscribeToNightCheckIn, getNightCheckInSnapshotFromBrowser, () => null);
+  const { dreamRecords, deleteDreamRecord } = useArchiveDreamRecords();
   const { nightCheckInRecords } = useRoutineRecords();
   const [pawprintCreated, setPawprintCreated] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showPawprintLoginPrompt, setShowPawprintLoginPrompt] = useState(false);
   const [pawprintSaveError, setPawprintSaveError] = useState(false);
+  const [receiptDeleteError, setReceiptDeleteError] = useState(false);
   const completedStoredPayload = storedPayload?.status === "unavailable" ? null : storedPayload;
   const hasStoredPayload = completedStoredPayload !== null;
   const payload = payloadOverride ?? completedStoredPayload ?? fallbackPayload;
@@ -312,12 +349,14 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
   const relatedCheckIn =
     remoteRelatedCheckIn ??
     (isNightCheckInRelatedToDreamDate(storedCheckIn, payload.dreamDate) ? storedCheckIn : null);
+  const storedDreamRecord = findStoredDreamRecordForReceiptPayload(payload, dreamRecords);
   const symbolBasisItems = getSymbolBasisItems(analysis);
+  const displayReaderNote = getDisplayReaderNote(analysis.readerNote);
   const readerNoteStartDelayMs =
     receiptInterpretationStartDelayMs + getReceiptStreamingDurationMs(analysis.interpretation) + receiptTextGapMs;
   const prescriptionStartDelayMs =
     readerNoteStartDelayMs +
-    (analysis.readerNote ? getReceiptStreamingDurationMs(analysis.readerNote) + receiptTextGapMs : 0);
+    (displayReaderNote ? getReceiptStreamingDurationMs(displayReaderNote) + receiptTextGapMs : 0);
 
   useEffect(() => {
     let isMounted = true;
@@ -406,6 +445,34 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
     }
 
     await navigator.clipboard.writeText(text);
+  }
+
+  async function handleDeleteStoredReceipt() {
+    if (!storedDreamRecord) {
+      return;
+    }
+
+    const shouldDelete =
+      typeof window === "undefined" ||
+      window.confirm("이 꿈 영수증을 기록장에서 삭제할까요? 삭제하면 되돌릴 수 없어요.");
+
+    if (!shouldDelete) {
+      return;
+    }
+
+    setReceiptDeleteError(false);
+    const deleted = await deleteDreamRecord(storedDreamRecord.id);
+
+    if (!deleted) {
+      setReceiptDeleteError(true);
+      return;
+    }
+
+    clearLatestAnalysisFromBrowser();
+
+    if (typeof window !== "undefined") {
+      window.location.assign("/archive/records");
+    }
   }
 
   return (
@@ -507,9 +574,9 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
               )}
               overflowGuard
             />
-            {analysis.readerNote ? (
+            {displayReaderNote ? (
               <ReceiptStreamingText
-                text={analysis.readerNote}
+                text={displayReaderNote}
                 label="reader-note"
                 startDelayMs={readerNoteStartDelayMs}
                 className={getReceiptGuardedTextClassName(
@@ -604,6 +671,25 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
         <div data-receipt-save-slot="true">
           <ReceiptSaveCta />
         </div>
+        {storedDreamRecord ? (
+          <div data-receipt-delete-slot="true" data-receipt-delete-action={storedDreamRecord.id}>
+            <AssetTextButton
+              frame={manyangAssets.buttons.mediumSecondary}
+              iconSrc={manyangAssets.actionIcons.trash}
+              onClick={() => void handleDeleteStoredReceipt()}
+              contentClassName="min-h-[3.2rem] px-4 text-base"
+              iconClassName="h-6 w-6"
+              ariaLabel={`${analysis.summary} 기록 삭제`}
+            >
+              기록 삭제
+            </AssetTextButton>
+          </div>
+        ) : null}
+        {receiptDeleteError ? (
+          <p className="rounded-[1rem] border border-[#b98255]/45 bg-[rgba(7,6,18,0.78)] px-4 py-3 text-center text-sm font-semibold leading-6 text-[#ffd98a]">
+            꿈 영수증을 삭제하지 못했어요. 잠시 후 다시 시도해주세요.
+          </p>
+        ) : null}
         {showPawprintLoginPrompt ? (
           <section
             className="animate-ink-fade rounded-[1.1rem] border border-[#b98255]/45 bg-[rgba(7,6,18,0.76)] px-4 py-3 text-sm leading-6 text-[#fff3d7] shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md"

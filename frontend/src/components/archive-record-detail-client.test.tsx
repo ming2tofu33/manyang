@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import type { ArchiveRecordView } from "@/lib/archive-record-view";
+import type { DreamRecord } from "@/lib/dream-storage";
 
 import { RoutineRecordDetailContent } from "./archive-record-detail-client";
 
@@ -30,7 +31,74 @@ const pawprintView: ArchiveRecordView = {
   },
 };
 
+const dreamRecord: DreamRecord = {
+  id: "dream-1",
+  savedAt: "2026-05-25T08:00:00.000Z",
+  dreamText: "I was walking through a hallway.",
+  dreamDate: "2026-05-25",
+  analysis: {
+    dreamId: "runtime-dream-1",
+    analysisId: "analysis-1",
+    cardId: "card-1",
+    reader: {
+      id: "black_cat",
+      name: "Black Cat",
+      access: "free",
+    },
+    summary: "Hallway dream",
+    symbols: ["hallway"],
+    emotions: ["curious"],
+    themes: ["transition"],
+    interpretation: "The hallway points to a transition.",
+    symbolReadings: [],
+    smallPrescription: "Write down one next step.",
+    readingBasis: {
+      usedSymbols: ["hallway"],
+      mainThemes: ["transition"],
+      confidence: 0.82,
+    },
+    card: {
+      name: "Hallway dream",
+      type: "half_moon",
+      keywords: ["hallway"],
+      summary: "Hallway dream",
+      message: "Write down one next step.",
+      theme: "transition",
+    },
+  },
+};
+
+const dreamView: ArchiveRecordView = {
+  id: "dream-dream-1",
+  type: "dream",
+  date: "2026-05-25",
+  sortAt: "2026-05-25T08:00:00.000Z",
+  title: "Hallway dream",
+  categoryLabel: "Dream receipt",
+  summary: "The hallway points to a transition.",
+  metaParts: ["curious", "transition"],
+  tags: ["hallway"],
+  dreamRecordId: "dream-1",
+  searchText: "hallway dream transition",
+  raw: {
+    dreamRecord,
+  },
+};
+
 describe("RoutineRecordDetailContent", () => {
+  it("renders a delete action for saved dream receipts", () => {
+    const markup = renderToStaticMarkup(
+      <RoutineRecordDetailContent
+        view={dreamView}
+        onOpenDream={() => undefined}
+        onDeleteDream={() => undefined}
+      />,
+    );
+
+    expect(markup).toContain("data-dream-record-delete-detail-action=\"dream-1\"");
+    expect(markup).toContain("/manyang/ui/action-icons/action-trash.png");
+  });
+
   it("renders morning footprint detail when local morning data is available", () => {
     const markup = renderToStaticMarkup(
       <RoutineRecordDetailContent view={pawprintView} onOpenDream={() => undefined} />,

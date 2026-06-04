@@ -208,8 +208,9 @@ export function termMatchesText(term: string, normalizedText: string, tokens: st
     return false;
   }
 
-  // 한 단어 or 4글자 이상이면 연속 부분문자열로 빠르게 본다.
-  if (normalizedTerm.includes(" ") || termKey.length >= 4) {
+  // 한국어는 조사/어미가 붙는 경우가 많아 연속 부분문자열을 허용한다.
+  // 영어권 alias는 단어 경계를 지켜야 한다. 예: bare가 barely를 깨우면 안 된다.
+  if (containsHangul(termKey) && (normalizedTerm.includes(" ") || termKey.length >= 4)) {
     if (compactText(normalizedText).includes(termKey)) {
       return true;
     }

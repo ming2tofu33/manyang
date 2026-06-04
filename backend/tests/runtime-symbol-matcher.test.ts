@@ -53,6 +53,15 @@ describe("findRuntimeSymbolMatches", () => {
     expect(matches.find((match) => match.entryId === "door")?.usedFields).toContain("sceneModifiers.locked");
   });
 
+  test("does not match English aliases inside longer words", () => {
+    const matches = findRuntimeSymbolMatches("I barely remember the dream. Only a strange mood stayed with me.", {
+      locale: "en",
+      limit: 5,
+    });
+
+    expect(matches.map((match) => match.entryId)).not.toContain("naked");
+  });
+
   test("matches newly added everyday symbols with v0.2 metadata", () => {
     const matches = findRuntimeSymbolMatches("집에서 열쇠를 찾다가 가방과 신발을 잃어버렸어.", {
       locale: "ko",

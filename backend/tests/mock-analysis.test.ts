@@ -39,7 +39,9 @@ describe("analyzeDream", () => {
       dreamDate: "2026-05-24",
     });
 
-    expect(result.symbols.length).toBeGreaterThan(0);
+    expect(result.symbols).toEqual([]);
+    expect(result.symbolReadings).toEqual([]);
+    expect(result.readingBasis.usedSymbols).toEqual([]);
     expect(result.interpretation).toContain("뚜렷한 상징은 적지만");
     expect(result.smallPrescription).toContain("한 문장");
     expect(result.readingBasis.confidence).toBeLessThan(0.8);
@@ -83,8 +85,9 @@ describe("analyzeDream", () => {
     const white = analyzeDream({ ...request, catReaderType: "white_cat" });
     const gray = analyzeDream({ ...request, catReaderType: "gray_cat" });
 
-    expect(white.readerNote).toBe(black.readerNote);
-    expect(gray.readerNote).toBe(black.readerNote);
+    expect(black.readerNote).toBe("");
+    expect(white.readerNote).toBe("");
+    expect(gray.readerNote).toBe("");
     expect(white.interpretation).toBe(black.interpretation);
     expect(gray.interpretation).toBe(black.interpretation);
     expect(white.smallPrescription).toBe(black.smallPrescription);

@@ -21,7 +21,7 @@ export const DREAM_READING_DRAFT_JSON_SCHEMA = {
     },
     symbolReadings: {
       type: "array",
-      minItems: 1,
+      minItems: 0,
       maxItems: 5,
       items: {
         type: "object",
@@ -178,7 +178,7 @@ export function buildDreamReadingPrompt(input: DreamReadingPromptInput): DreamRe
         ],
       },
       symbolReadings: {
-        count: "One reading per important retrieved symbol.",
+        count: "Zero when no confirmed retrieved symbol exists; otherwise one reading per important retrieved symbol.",
         structure: [
           "Lead with what the symbol MEANS in this dream (its fortune or message), then justify it with the scene detail — not the other way around.",
           "Tie each reading to a scene modifier, quantity, location, action, or emotion when that detail is available.",

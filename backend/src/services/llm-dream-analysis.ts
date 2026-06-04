@@ -139,7 +139,7 @@ function parseDreamReadingDraft(value: unknown): DreamReadingDraft | undefined {
   const smallPrescription = cleanString(value.smallPrescription, 260);
   const card = parseCard(value.card);
 
-  if (!summary || !interpretation || symbolReadings.length === 0 || !smallPrescription || !card) {
+  if (!summary || !interpretation || !smallPrescription || !card) {
     return undefined;
   }
 

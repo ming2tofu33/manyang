@@ -371,6 +371,7 @@ describe("buildDreamReadingPrompt", () => {
 
   test("raises the structured output floor so real LLM drafts cannot be receipt-thin", () => {
     expect(DREAM_READING_DRAFT_JSON_SCHEMA.properties.interpretation.minLength).toBeGreaterThanOrEqual(160);
+    expect(DREAM_READING_DRAFT_JSON_SCHEMA.properties.symbolReadings.minItems).toBe(0);
     expect(
       DREAM_READING_DRAFT_JSON_SCHEMA.properties.symbolReadings.items.properties.reading.minLength,
     ).toBeGreaterThanOrEqual(40);

@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it, vi } from "vitest";
-import type { DreamCompletedPayload } from "@/lib/dream-storage";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { DreamCompletedPayload, DreamRecord } from "@/lib/dream-storage";
 
 const mockedRoutineRecords = vi.hoisted(() => ({
   nightCheckInRecords: [
@@ -16,6 +16,11 @@ const mockedRoutineRecords = vi.hoisted(() => ({
   ],
 }));
 
+const mockedArchiveDreamRecords = vi.hoisted(() => ({
+  dreamRecords: [] as DreamRecord[],
+  deleteDreamRecord: vi.fn(async () => true),
+}));
+
 vi.mock("@/lib/use-routine-records", () => ({
   mergeRemotePawprintResult: vi.fn(),
   useRoutineRecords: () => ({
@@ -28,7 +33,23 @@ vi.mock("@/lib/use-routine-records", () => ({
   }),
 }));
 
+vi.mock("@/lib/use-archive-dream-records", () => ({
+  useArchiveDreamRecords: () => ({
+    dreamRecords: mockedArchiveDreamRecords.dreamRecords,
+    source: "local",
+    isLoadingServerRecords: false,
+    openDreamRecord: vi.fn(),
+    deleteDreamRecord: mockedArchiveDreamRecords.deleteDreamRecord,
+    canViewArchive: true,
+  }),
+}));
+
 import { DreamResultReceipt } from "./dream-result-receipt";
+
+beforeEach(() => {
+  mockedArchiveDreamRecords.dreamRecords = [];
+  mockedArchiveDreamRecords.deleteDreamRecord.mockClear();
+});
 
 function createLongReceiptPayload(): DreamCompletedPayload {
   const longInterpretation = Array.from(
@@ -220,7 +241,7 @@ describe("DreamResultReceipt", () => {
     const markup = renderToStaticMarkup(<DreamResultReceipt />);
 
     expect(markup).toContain("data-receipt-streaming-text=\"interpretation\"");
-    expect(markup).toContain("data-receipt-streaming-text=\"reader-note\"");
+    expect(markup).not.toContain("data-receipt-streaming-text=\"reader-note\"");
     expect(markup).toContain("data-receipt-streaming-text=\"small-prescription\"");
     expect(markup).toContain("class=\"sr-only\">이 꿈은 목적지보다 준비 상태가 더 신경 쓰이는 마음과 연결되어 보인다냥.");
     expect(markup).toContain("aria-hidden=\"true\"");
@@ -232,6 +253,13 @@ describe("DreamResultReceipt", () => {
     expect(markup).not.toContain(
       "class=\"animate-ink-fade mt-6 text-[15px] leading-7 text-[#2f2117]\" style=\"animation-delay:2.6s\"",
     );
+  });
+
+  it("does not render the old generic reader note on the receipt", () => {
+    const markup = renderToStaticMarkup(<DreamResultReceipt payloadOverride={createLongReceiptPayload()} />);
+
+    expect(markup).not.toContain("마냥은 꿈속 상징과 감정의 연결을 같은 기준으로 차분히 정리했어요.");
+    expect(markup).not.toContain("data-receipt-streaming-text=\"reader-note\"");
   });
 
   it("uses a quieter receipt header and reveals tags in a quick sequence", () => {
@@ -287,6 +315,22 @@ describe("DreamResultReceipt", () => {
     expect(markup).not.toContain("data-symbol-basis-panel=\"true\" style=\"animation-delay:9000ms\"");
   });
 
+  it("shows a delete action when the current receipt exists in the archive", () => {
+    const payload = createLongReceiptPayload();
+    const storedRecord: DreamRecord = {
+      ...payload,
+      id: "stored-dream-1",
+      savedAt: "2026-05-29T12:00:00.000Z",
+    };
+    mockedArchiveDreamRecords.dreamRecords = [storedRecord];
+
+    const markup = renderToStaticMarkup(<DreamResultReceipt payloadOverride={payload} />);
+
+    expect(markup).toContain("data-receipt-delete-slot=\"true\"");
+    expect(markup).toContain("data-receipt-delete-action=\"stored-dream-1\"");
+    expect(markup).toContain("/manyang/ui/action-icons/action-trash.png");
+  });
+
   it("reveals the related night record with receipt actions and symbols in the same settled stack", () => {
     const markup = renderToStaticMarkup(<DreamResultReceipt />);
     const completionStackIndex = markup.indexOf("data-receipt-completion-stack=\"true\"");
@@ -310,11 +354,11 @@ describe("DreamResultReceipt", () => {
     const markup = renderToStaticMarkup(<DreamResultReceipt payloadOverride={payload} />);
     const textFrameClassNames = [
       getReceiptTextFrameClassName(markup, "interpretation"),
-      getReceiptTextFrameClassName(markup, "reader-note"),
       getReceiptTextFrameClassName(markup, "small-prescription"),
     ];
 
     expect(markup).toContain("data-receipt-text-frame=\"interpretation\"");
+    expect(markup).not.toContain("data-receipt-text-frame=\"reader-note\"");
     for (const className of textFrameClassNames) {
       expect(className).toContain("overflow-visible");
       expect(className).not.toContain("max-h-[");
