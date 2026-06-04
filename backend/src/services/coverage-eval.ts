@@ -68,35 +68,35 @@ export const COMMON_DREAM_SYMBOLS: CoverageProbe[] = [
   { keyword: "감옥", locale: "ko", existsAs: "prison" },
   { keyword: "연예인", locale: "ko", existsAs: "celebrity" },
 
-  // --- 대응 항목이 없다고 보는 흔한 상징 (coverage_gap 후보) ---
-  { keyword: "해", locale: "ko", existsAs: null }, // 태양 (moon은 있으나 sun 없음)
-  { keyword: "태양", locale: "ko", existsAs: null },
-  { keyword: "하늘", locale: "ko", existsAs: null },
-  { keyword: "배", locale: "ko", existsAs: null }, // boat/ship
-  { keyword: "자전거", locale: "ko", existsAs: null },
-  { keyword: "총", locale: "ko", existsAs: null },
-  { keyword: "경찰", locale: "ko", existsAs: null },
-  { keyword: "군인", locale: "ko", existsAs: null },
-  { keyword: "도둑", locale: "ko", existsAs: null },
-  { keyword: "절", locale: "ko", existsAs: null }, // temple (monk은 있음)
-  { keyword: "교회", locale: "ko", existsAs: null },
-  { keyword: "사자", locale: "ko", existsAs: null },
-  { keyword: "코끼리", locale: "ko", existsAs: null },
-  { keyword: "늑대", locale: "ko", existsAs: null },
-  { keyword: "토끼", locale: "ko", existsAs: null },
-  { keyword: "여우", locale: "ko", existsAs: null },
-  { keyword: "오줌", locale: "ko", existsAs: null },
-  { keyword: "시체", locale: "ko", existsAs: null },
-  { keyword: "키스", locale: "ko", existsAs: null },
-  { keyword: "안개", locale: "ko", existsAs: null },
-  { keyword: "번개", locale: "ko", existsAs: null },
-  { keyword: "보석", locale: "ko", existsAs: null },
-  { keyword: "모자", locale: "ko", existsAs: null },
-  { keyword: "안경", locale: "ko", existsAs: null },
-  { keyword: "선생님", locale: "ko", existsAs: null },
-  { keyword: "할머니", locale: "ko", existsAs: null },
-  { keyword: "편지", locale: "ko", existsAs: null },
-  { keyword: "컴퓨터", locale: "ko", existsAs: null },
+  // --- ENC-06으로 신규 추가된 흔한 상징 (이제 covered 기대) ---
+  { keyword: "해", locale: "ko", existsAs: "sun" },
+  { keyword: "태양", locale: "ko", existsAs: "sun" },
+  { keyword: "하늘", locale: "ko", existsAs: "sky" },
+  { keyword: "배", locale: "ko", existsAs: "boat" }, // boat/ship
+  { keyword: "자전거", locale: "ko", existsAs: "bicycle" },
+  { keyword: "총", locale: "ko", existsAs: "gun" },
+  { keyword: "경찰", locale: "ko", existsAs: "police" },
+  { keyword: "군인", locale: "ko", existsAs: "soldier" },
+  { keyword: "도둑", locale: "ko", existsAs: "thief" },
+  { keyword: "절", locale: "ko", existsAs: "temple" }, // temple (monk과 별개)
+  { keyword: "교회", locale: "ko", existsAs: "church" },
+  { keyword: "사자", locale: "ko", existsAs: "lion" },
+  { keyword: "코끼리", locale: "ko", existsAs: "elephant" },
+  { keyword: "늑대", locale: "ko", existsAs: "wolf" },
+  { keyword: "토끼", locale: "ko", existsAs: "rabbit" },
+  { keyword: "여우", locale: "ko", existsAs: "fox" },
+  { keyword: "오줌", locale: "ko", existsAs: "urine" },
+  { keyword: "시체", locale: "ko", existsAs: "corpse" },
+  { keyword: "키스", locale: "ko", existsAs: "kiss" },
+  { keyword: "안개", locale: "ko", existsAs: "fog" },
+  { keyword: "번개", locale: "ko", existsAs: "lightning" },
+  { keyword: "보석", locale: "ko", existsAs: "gold" }, // gold가 보석을 alias로 덮음
+  { keyword: "모자", locale: "ko", existsAs: "hat" },
+  { keyword: "안경", locale: "ko", existsAs: "glasses" },
+  { keyword: "선생님", locale: "ko", existsAs: "teacher" },
+  { keyword: "할머니", locale: "ko", existsAs: "grandmother" },
+  { keyword: "편지", locale: "ko", existsAs: "letter" },
+  { keyword: "컴퓨터", locale: "ko", existsAs: "computer" },
 ];
 
 export type CoverageStatus = "covered" | "matching_gap" | "coverage_gap" | "over_match";
