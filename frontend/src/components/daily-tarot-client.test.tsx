@@ -8,6 +8,7 @@ import { dailyTarotStorageKey, type DailyTarotReading, type StorageLike } from "
 import {
   DailyTarotClient,
   DailyTarotLoadingPanel,
+  DailyTarotPendingResult,
   DailyTarotRevealPanel,
   getStableDailyTarotReadingSnapshot,
 } from "./daily-tarot-client";
@@ -21,16 +22,28 @@ const foolCard = {
   image: "/manyang/tarot/major/00-the-fool.png",
   keywords: ["start", "possibility"],
   visualSymbols: ["small bag"],
+  symbolMeanings: [
+    {
+      symbol: "small bag",
+      meaning: "The small bag keeps the card focused on what is essential for the first step.",
+    },
+  ],
   mood: "Bright beginning.",
   upright: {
     summary: "New beginning",
     dailyFlow: "A small attempt may shift the day.",
     advice: "Check the basics first.",
+    story: "The card tells a story about stepping into a new path before every answer is visible.",
+    reflectionQuestion: "What small beginning is asking for attention today?",
+    smallAction: "Name one first step that is small enough to try today.",
   },
   reversed: {
     summary: "Rushed start",
     dailyFlow: "Slow down before moving.",
     advice: "Make one safety check first.",
+    story: "The card tells a story about excitement that needs a little more grounding.",
+    reflectionQuestion: "Where am I mistaking speed for readiness?",
+    smallAction: "Pause once and check the practical condition under the idea.",
   },
   contexts: {
     love: "New feeling",
@@ -59,6 +72,17 @@ const foolReading = {
   generated: {
     title: "A small first step opens the day",
     overview: "The selected Fool card is read as a day where a light first step matters more than waiting for perfect certainty.",
+    keywords: ["opening", "choice", "attention"],
+    symbolReadings: [
+      {
+        symbol: "small bag",
+        reading: "The small bag points to keeping only the essentials close while taking the first step.",
+      },
+      {
+        symbol: "cliff edge",
+        reading: "The cliff edge turns the reading toward checking the ground before moving with curiosity.",
+      },
+    ],
     cardReadings: [
       {
         position: "today",
@@ -148,8 +172,27 @@ describe("DailyTarotClient", () => {
     expect(markup).toContain('data-daily-tarot-card-zoom-trigger="true"');
     expect(markup).toContain('data-daily-tarot-zoom-trigger="true"');
     expect(markup).toContain("tarot-result-card-enter w-full text-center");
-    expect(markup).toContain("The Fool");
+    expect(markup).toContain("바보");
     expect(markup).toContain("A small first step opens the day");
+    expect(markup).toContain('data-daily-tarot-card-story="true"');
+    expect(markup).toContain("카드가 전하는 이야기");
+    expect(markup).toContain("바보는 세상이 정한 순서를 다 알기 전에 길 위에 서는 사람의 이야기입니다.");
+    expect(markup).toContain("카드 속 상징");
+    expect(markup).toContain("작은 보따리");
+    expect(markup).toContain("꼭 필요한 감각과 경험");
+    expect(markup).toContain("오늘의 질문");
+    expect(markup).toContain("완벽히 준비되기 전에 작게 시작해볼 수 있을까요?");
+    expect(markup).toContain("작은 조언");
+    expect(markup).toContain("망설이던 일은 가장 쉬운 첫 단계만 오늘 시작하세요.");
+    expect(markup).toContain('data-daily-tarot-keywords="true"');
+    expect(markup).toContain("opening");
+    expect(markup).toContain("choice");
+    expect(markup).toContain("attention");
+    expect(markup).toContain('data-daily-tarot-symbol-readings="true"');
+    expect(markup).toContain('data-daily-tarot-symbol-reading="true"');
+    expect(markup).toContain("small bag");
+    expect(markup).toContain("keeping only the essentials close");
+    expect(markup).toContain("cliff edge");
     expect(markup).toContain("Today");
     expect(markup).toContain("The upright Fool points to a beginning");
     expect(markup).toContain('data-daily-tarot-result-actions="true"');
@@ -208,21 +251,60 @@ describe("DailyTarotClient", () => {
     expect(markup).not.toContain("타로는 오늘의 흐름을 상징적으로 비춰보는 참고용 안내입니다.");
   });
 
-  it("can expand the interpreting card into the result card size before showing the result", () => {
+  it("shows the selected card story while the personalized tarot reading is still generating", () => {
     const markup = renderToStaticMarkup(
-      <DailyTarotLoadingPanel selections={foolReading.cards ?? []} transitionToResult />,
+      <DailyTarotPendingResult selections={foolReading.cards ?? []} />,
     );
 
-    expect(markup).toContain('data-daily-tarot-loading-to-result="true"');
-    expect(markup).toContain("tarot-loading-to-result");
-    expect(markup).toContain("tarot-loading-card-to-result");
-    expect(markup).toContain("--tarot-loading-card-result-scale");
-    expect(markup).toContain("2.92");
-    expect(markup).not.toContain("animate-pulse");
+    expect(markup).toContain('data-daily-tarot-state="generating-result"');
+    expect(markup).toContain('data-daily-tarot-card-story="true"');
+    expect(markup).toContain("카드가 전하는 이야기");
+    expect(markup).toContain("바보는 세상이 정한 순서를 다 알기 전에 길 위에 서는 사람의 이야기입니다.");
+    expect(markup).toContain("오늘의 질문");
+    expect(markup).toContain("작은 조언");
+    expect(markup).toContain('data-daily-tarot-reading-loading="true"');
+    expect(markup).toContain("오늘의 리딩을 완성하고 있어요");
+    expect(markup).toContain("카드가 전하는 이야기를 바탕으로 오늘의 흐름을 읽고 있어요.");
+    expect(markup).not.toContain('data-daily-tarot-result-copy="true"');
+    expect(markup).not.toContain('data-daily-tarot-loading="true"');
+    expect(markup).not.toContain('data-daily-tarot-result-actions="true"');
+    expect(markup).not.toContain("저장하기");
+    expect(markup).not.toContain("공유하기");
+  });
 
+  it("does not expand the interpreting card before showing the result", () => {
+    const markup = renderToStaticMarkup(
+      <DailyTarotLoadingPanel selections={foolReading.cards ?? []} />,
+    );
     const source = readFileSync(path.join(process.cwd(), "src", "components", "daily-tarot-client.tsx"), "utf8");
+    const styles = readFileSync(path.join(process.cwd(), "src", "app", "globals.css"), "utf8");
 
-    expect(source).toContain("const tarotResultTransitionMs = 1200;");
+    expect(markup).not.toContain('data-daily-tarot-loading-to-result="true"');
+    expect(markup).not.toContain("tarot-loading-to-result");
+    expect(markup).not.toContain("tarot-loading-card-to-result");
+    expect(markup).not.toContain("--tarot-loading-card-result-scale");
+    expect(source).not.toContain("tarotResultTransitionMs");
+    expect(source).not.toContain("transitioning-to-result");
+    expect(styles).not.toContain("tarot-loading-card-to-result");
+    expect(styles).not.toContain("@keyframes tarot-loading-card-to-result");
+  });
+
+  it("starts the final tarot reading request before waiting for the reveal timer", () => {
+    const source = readFileSync(path.join(process.cwd(), "src", "components", "daily-tarot-client.tsx"), "utf8");
+    const handleSelectStart = source.indexOf("function handleSelect");
+    const handleRetryStart = source.indexOf("function handleRetry");
+    const handleSelectSource = source.slice(handleSelectStart, handleRetryStart);
+
+    expect(handleSelectStart).toBeGreaterThanOrEqual(0);
+    expect(handleRetryStart).toBeGreaterThan(handleSelectStart);
+    const requestStart = handleSelectSource.indexOf("void submitSelections(nextSelections, { showLoadingImmediately: false });");
+    const revealTimerStart = handleSelectSource.indexOf("revealTimerRef.current = setTimeout");
+
+    expect(requestStart).toBeGreaterThanOrEqual(0);
+    expect(revealTimerStart).toBeGreaterThanOrEqual(0);
+    expect(requestStart).toBeLessThan(revealTimerStart);
+    expect(source).toContain("isGenerating && pendingSelections.length === positions.length");
+    expect(source).toContain("<DailyTarotPendingResult selections={pendingSelections} />");
   });
 
   it("keeps the tarot zoom dialog from exposing horizontal scrolling", () => {

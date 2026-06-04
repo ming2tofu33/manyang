@@ -127,6 +127,7 @@ export type {
   GenerateTarotReadingOptions,
   TarotGeneratedCardReading,
   TarotGeneratedReading,
+  TarotGeneratedSymbolReading,
   TarotReadingInput,
   TarotReadingResult,
   TarotReadingUnavailableReason,

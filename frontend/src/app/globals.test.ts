@@ -139,11 +139,9 @@ describe("global animation styles", () => {
     expect(globalsCss).toContain("transform: scaleX(0.045);");
     expect(globalsCss).toContain("z-index: 2;");
     expect(globalsCss).not.toContain("transform: rotateY(112deg);");
-    expect(globalsCss).toContain(".tarot-loading-to-result");
-    expect(globalsCss).toContain("animation: tarot-loading-panel-to-result 1200ms cubic-bezier(0.22, 1, 0.36, 1) both;");
-    expect(globalsCss).toContain(".tarot-loading-card-to-result");
-    expect(globalsCss).toContain("animation: tarot-loading-card-to-result 1200ms cubic-bezier(0.22, 1, 0.36, 1) both;");
-    expect(globalsCss).toContain("@keyframes tarot-loading-card-to-result");
+    expect(globalsCss).not.toContain(".tarot-loading-to-result");
+    expect(globalsCss).not.toContain(".tarot-loading-card-to-result");
+    expect(globalsCss).not.toContain("@keyframes tarot-loading-card-to-result");
     expect(globalsCss).toContain(".tarot-result-card-enter");
     expect(globalsCss).toContain(".tarot-result-content-enter");
     expect(globalsCss).toContain("@keyframes tarot-result-content-enter");

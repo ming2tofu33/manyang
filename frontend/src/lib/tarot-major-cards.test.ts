@@ -60,16 +60,45 @@ describe("tarot major cards", () => {
     tarotMajorCards.forEach((card) => {
       expect(card.keywords.length).toBeGreaterThanOrEqual(3);
       expect(card.visualSymbols.length).toBeGreaterThanOrEqual(2);
+      expect(card.symbolMeanings.length).toBeGreaterThanOrEqual(2);
+      expect(card.symbolMeanings.every((symbolMeaning) => card.visualSymbols.includes(symbolMeaning.symbol))).toBe(true);
       expectNonTrivialText(card.mood);
       expectNonTrivialText(card.upright.summary);
       expectNonTrivialText(card.upright.dailyFlow);
       expectNonTrivialText(card.upright.advice);
+      expectNonTrivialText(card.upright.story);
+      expectNonTrivialText(card.upright.reflectionQuestion);
+      expectNonTrivialText(card.upright.smallAction);
       expectNonTrivialText(card.reversed.summary);
       expectNonTrivialText(card.reversed.dailyFlow);
       expectNonTrivialText(card.reversed.advice);
+      expectNonTrivialText(card.reversed.story);
+      expectNonTrivialText(card.reversed.reflectionQuestion);
+      expectNonTrivialText(card.reversed.smallAction);
       expect(publicAssetExists(card.image)).toBe(true);
       expect(card.nameEn).toBe(card.nameEn.toUpperCase());
       expect(card.image).toBe(`/manyang/tarot/major/${String(card.id).padStart(2, "0")}-${card.slug}.png`);
+    });
+  });
+
+  test("keeps fixed tarot copy natural for Korean app readers", () => {
+    const fixedTarotCopy = JSON.stringify(tarotMajorCards);
+    const awkwardPhrases = [
+      "차분히",
+      "조용히",
+      "천천히",
+      "조용한 감각",
+      "차분한 확인",
+      "조용한 시간",
+      "작은 행동",
+      "작게 응답",
+      "실행해보세요",
+      "작게 정한 행동",
+      "정리하는 행동",
+    ];
+
+    awkwardPhrases.forEach((phrase) => {
+      expect(fixedTarotCopy).not.toContain(phrase);
     });
   });
 

@@ -255,7 +255,7 @@ function createDailyTarotReadingFromGenerated(
     orientation: primarySelection.orientation,
     position: primarySelection.position,
     cards: selections,
-    keywords: [...primarySelection.card.keywords],
+    keywords: [...generated.keywords],
     title: generated.title,
     message: generated.overview,
     advice: generated.advice,

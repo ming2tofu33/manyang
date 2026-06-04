@@ -12,6 +12,35 @@ export const TAROT_READING_DRAFT_JSON_SCHEMA = {
       type: "string",
       minLength: 80,
     },
+    keywords: {
+      type: "array",
+      minItems: 3,
+      maxItems: 5,
+      items: {
+        type: "string",
+        minLength: 1,
+      },
+    },
+    symbolReadings: {
+      type: "array",
+      minItems: 2,
+      maxItems: 3,
+      items: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          symbol: {
+            type: "string",
+            minLength: 1,
+          },
+          reading: {
+            type: "string",
+            minLength: 40,
+          },
+        },
+        required: ["symbol", "reading"],
+      },
+    },
     cardReadings: {
       type: "array",
       minItems: 1,
@@ -41,7 +70,7 @@ export const TAROT_READING_DRAFT_JSON_SCHEMA = {
       minLength: 40,
     },
   },
-  required: ["title", "overview", "cardReadings", "advice"],
+  required: ["title", "overview", "keywords", "symbolReadings", "cardReadings", "advice"],
 } as const;
 
 export type TarotReadingSpread = "daily_one_card" | "daily_three_card";
@@ -52,6 +81,14 @@ export type TarotPromptCardMeaning = {
   summary: string;
   dailyFlow: string;
   advice: string;
+  story: string;
+  reflectionQuestion: string;
+  smallAction: string;
+};
+
+export type TarotPromptSymbolMeaning = {
+  symbol: string;
+  meaning: string;
 };
 
 export type TarotPromptCard = {
@@ -60,6 +97,7 @@ export type TarotPromptCard = {
   nameEn: string;
   keywords: readonly string[];
   visualSymbols: readonly string[];
+  symbolMeanings: readonly TarotPromptSymbolMeaning[];
   mood: string;
   upright: TarotPromptCardMeaning;
   reversed: TarotPromptCardMeaning;
@@ -121,6 +159,7 @@ export function buildTarotReadingPrompt(input: TarotReadingPromptInput): TarotRe
           nameEn: selection.card.nameEn,
           keywords: selection.card.keywords,
           visualSymbols: selection.card.visualSymbols,
+          symbolMeanings: selection.card.symbolMeanings,
           mood: selection.card.mood,
           selectedMeaning,
           upright: selection.card.upright,
@@ -133,7 +172,13 @@ export function buildTarotReadingPrompt(input: TarotReadingPromptInput): TarotRe
       length: getLengthContract(input.spread, locale),
       style: [
         "Use the supplied card meanings as grounding evidence.",
+        "Treat selectedMeaning.story, symbolMeanings, reflectionQuestion, and smallAction as fixed card reference; do not contradict them.",
+        "Use 3 to 5 short keywords as display chips grounded in the selected card, orientation, and reading.",
+        "Use 2 to 3 symbolReadings selected only from the supplied symbolMeanings.",
+        "Each symbolReading must connect the visible tarot symbol to today's emotional flow, choice, or advice.",
+        "Do not write standalone scene description; use visual details only as interpretation evidence.",
         "Do not invent a different card, orientation, or position.",
+        "Do not invent visual symbols that are absent from visualSymbols.",
         "Do not make medical, legal, financial, death, or fixed future predictions.",
         "Do not mention that you are using local data or a prompt.",
         "Write as a reflective tarot reading, not as a system explanation.",
@@ -148,8 +193,10 @@ export function buildTarotReadingPrompt(input: TarotReadingPromptInput): TarotRe
       "Never change the selected card, position, or orientation.",
       "Use only the provided tarot card reference text and spread structure.",
       "The reading is symbolic guidance for reflection, not a deterministic prediction.",
+      "The app will show a separate fixed section called '카드가 전하는 이야기'; your JSON should provide the personalized '오늘의 리딩' without repeating that section verbatim.",
       "Make the result feel specific to the selected card combination.",
       "For one-card readings, create a concise but satisfying free daily reading.",
+      "For one-card readings, make overview the main daily interpretation and weave at least two visualSymbols into it as meaning, not as description.",
       "For three-card readings, connect situation, flow, and advice into one coherent interpretation.",
       "Avoid generic filler and avoid repeating the same sentence shape across cards.",
       `Return ${locale === "en" ? "English" : "Korean"} JSON that matches the supplied schema exactly.`,

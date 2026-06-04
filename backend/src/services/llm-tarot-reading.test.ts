@@ -10,16 +10,32 @@ function createTarotCard(id: number, nameKo: string) {
     nameEn: `CARD ${id}`,
     keywords: ["focus", "choice"],
     visualSymbols: ["light", "gate"],
+    symbolMeanings: [
+      {
+        symbol: "light",
+        meaning: "The light points to the part of the situation that is already visible.",
+      },
+      {
+        symbol: "gate",
+        meaning: "The gate marks a threshold that can be crossed with one practical choice.",
+      },
+    ],
     mood: "A bright but quiet card mood.",
     upright: {
       summary: "Upright summary",
       dailyFlow: "Upright daily flow",
       advice: "Upright advice",
+      story: "The upright card story turns available focus into a clear next step.",
+      reflectionQuestion: "What part of the situation is already asking for attention?",
+      smallAction: "Choose one visible next step and take it before adding more plans.",
     },
     reversed: {
       summary: "Reversed summary",
       dailyFlow: "Reversed daily flow",
       advice: "Reversed advice",
+      story: "The reversed card story shows focus scattering before the next threshold.",
+      reflectionQuestion: "Where is hesitation turning into avoidable delay?",
+      smallAction: "Remove one distraction before deciding how to cross the threshold.",
     },
   };
 }
@@ -73,6 +89,20 @@ function createProvider(response: unknown): DreamReadingLlmProvider & { requests
   };
 }
 
+const generatedSymbolicFields = {
+  keywords: ["opening", "choice", "attention"],
+  symbolReadings: [
+    {
+      symbol: "light",
+      reading: "The light reads as a visible cue to begin with the part of the situation that is already clear.",
+    },
+    {
+      symbol: "gate",
+      reading: "The gate turns the card into advice about crossing one practical threshold today.",
+    },
+  ],
+};
+
 describe("generateTarotReadingForUser", () => {
   test("returns unavailable without local fallback copy when provider is missing", async () => {
     await expect(generateTarotReadingForUser(oneCardInput)).resolves.toEqual({
@@ -84,6 +114,7 @@ describe("generateTarotReadingForUser", () => {
 
   test("generates a one-card tarot reading from provider JSON", async () => {
     const provider = createProvider({
+      ...generatedSymbolicFields,
       title: "오늘은 가볍게 첫발을 떼는 날",
       overview: "선택한 바보 카드는 오늘 낯선 길 앞에서 너무 많은 확신을 기다리기보다 작은 움직임을 먼저 만들어 보라고 말합니다.",
       cardReadings: [
@@ -115,10 +146,80 @@ describe("generateTarotReadingForUser", () => {
       timeoutMs: 1200,
     });
     expect(provider.requests[0]?.input).toContain("바보");
+    expect(provider.requests[0]?.input).toContain("symbolMeanings");
+    expect(provider.requests[0]?.input).toContain("The upright card story turns available focus into a clear next step.");
+    expect(provider.requests[0]?.input).toContain("What part of the situation is already asking for attention?");
+  });
+
+  test("parses symbolic keywords and symbol readings from one-card provider JSON", async () => {
+    const provider = createProvider({
+      title: "A small opening",
+      overview: "The selected card points to a day where a small opening matters more than a perfect answer.",
+      keywords: ["opening", "choice", "attention"],
+      symbolReadings: [
+        {
+          symbol: "light",
+          reading: "The light reads as a visible cue to begin with the part of the situation that is already clear.",
+        },
+        {
+          symbol: "gate",
+          reading: "The gate turns the card into advice about crossing one practical threshold today.",
+        },
+      ],
+      cardReadings: [
+        {
+          position: "today",
+          heading: "Today",
+          reading: "The card connects its upright tone to a careful first step rather than a rushed conclusion.",
+        },
+      ],
+      advice: "Choose one small action and review the result before deciding the next step.",
+    });
+
+    const result = await generateTarotReadingForUser(oneCardInput, { provider });
+
+    expect(result).toMatchObject({
+      status: "ok",
+      reading: {
+        keywords: ["opening", "choice", "attention"],
+        symbolReadings: [
+          {
+            symbol: "light",
+            reading: "The light reads as a visible cue to begin with the part of the situation that is already clear.",
+          },
+          {
+            symbol: "gate",
+            reading: "The gate turns the card into advice about crossing one practical threshold today.",
+          },
+        ],
+      },
+    });
+  });
+
+  test("rejects one-card provider JSON without symbolic reading fields", async () => {
+    const provider = createProvider({
+      title: "Missing symbolic fields",
+      overview: "The card gives a readable daily tarot overview, but it omits the new symbolic contract.",
+      cardReadings: [
+        {
+          position: "today",
+          heading: "Today",
+          reading: "The card reading itself is present, but the keywords and symbol readings are missing.",
+        },
+      ],
+      advice: "Choose one small action and review the result before deciding the next step.",
+    });
+
+    await expect(generateTarotReadingForUser(oneCardInput, { provider })).resolves.toEqual({
+      status: "unavailable",
+      reason: "invalid_response",
+      retryable: true,
+    });
   });
 
   test("removes provider tail artifacts from parsed tarot copy", async () => {
     const provider = createProvider({
+      ...generatedSymbolicFields,
       title: "Star light",
       overview: "A quiet overview keeps the reading focused on the card imagery.",
       cardReadings: [
@@ -148,6 +249,7 @@ describe("generateTarotReadingForUser", () => {
 
   test("generates a three-card tarot reading only when all spread positions are present", async () => {
     const provider = createProvider({
+      ...generatedSymbolicFields,
       title: "흐름을 조율하며 선택을 좁히는 날",
       overview: "세 장은 지금 손에 든 가능성을 정리하고, 느려진 감각을 통해 더 현실적인 조언으로 이동하는 흐름을 보여줍니다.",
       cardReadings: [
@@ -186,6 +288,7 @@ describe("generateTarotReadingForUser", () => {
 
   test("returns invalid_response when provider JSON does not match the requested spread", async () => {
     const provider = createProvider({
+      ...generatedSymbolicFields,
       title: "불완전한 리딩",
       overview: "이 응답은 세 장 리딩에 필요한 조언 카드가 빠져 있어서 저장 가능한 리딩이 될 수 없습니다.",
       cardReadings: [

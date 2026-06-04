@@ -28,9 +28,16 @@ export type DailyTarotGeneratedCardReading = {
   reading: string;
 };
 
+export type DailyTarotGeneratedSymbolReading = {
+  symbol: string;
+  reading: string;
+};
+
 export type DailyTarotGeneratedReading = {
   title: string;
   overview: string;
+  keywords?: string[];
+  symbolReadings?: DailyTarotGeneratedSymbolReading[];
   cardReadings: DailyTarotGeneratedCardReading[];
   advice: string;
 };
@@ -242,6 +249,24 @@ function isDailyTarotGeneratedCardReading(value: unknown): value is DailyTarotGe
   );
 }
 
+function isDailyTarotGeneratedSymbolReading(value: unknown): value is DailyTarotGeneratedSymbolReading {
+  return (
+    isRecord(value) &&
+    typeof value.symbol === "string" &&
+    value.symbol.trim().length > 0 &&
+    typeof value.reading === "string" &&
+    value.reading.trim().length > 0
+  );
+}
+
+function isOptionalDailyTarotGeneratedKeywords(value: unknown): boolean {
+  return value === undefined || isStringArray(value);
+}
+
+function isOptionalDailyTarotGeneratedSymbolReadings(value: unknown): boolean {
+  return value === undefined || (Array.isArray(value) && value.every(isDailyTarotGeneratedSymbolReading));
+}
+
 function hasExactPositions(
   values: { position: DailyTarotPosition }[],
   expectedPositions: DailyTarotPosition[],
@@ -261,6 +286,8 @@ function isDailyTarotGeneratedReading(value: unknown, spread: TarotSpread): valu
     value.title.trim().length > 0 &&
     typeof value.overview === "string" &&
     value.overview.trim().length > 0 &&
+    isOptionalDailyTarotGeneratedKeywords(value.keywords) &&
+    isOptionalDailyTarotGeneratedSymbolReadings(value.symbolReadings) &&
     cardReadings.every(isDailyTarotGeneratedCardReading) &&
     hasExactPositions(cardReadings, expectedPositionsForSpread(spread)) &&
     typeof value.advice === "string" &&

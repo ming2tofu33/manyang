@@ -15,9 +15,16 @@ export type TarotGeneratedCardReading = {
   reading: string;
 };
 
+export type TarotGeneratedSymbolReading = {
+  symbol: string;
+  reading: string;
+};
+
 export type TarotGeneratedReading = {
   title: string;
   overview: string;
+  keywords: string[];
+  symbolReadings: TarotGeneratedSymbolReading[];
   cardReadings: TarotGeneratedCardReading[];
   advice: string;
 };
@@ -90,6 +97,51 @@ function isTarotReadingPosition(value: unknown): value is TarotReadingPosition {
   return value === "today" || value === "situation" || value === "flow" || value === "advice";
 }
 
+function parseStringArray(value: unknown, maxItems: number, maxItemLength: number): string[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  const seen = new Set<string>();
+  const strings: string[] = [];
+
+  for (const item of value) {
+    const cleaned = cleanString(item, maxItemLength);
+
+    if (!cleaned || seen.has(cleaned)) {
+      continue;
+    }
+
+    seen.add(cleaned);
+    strings.push(cleaned);
+
+    if (strings.length >= maxItems) {
+      break;
+    }
+  }
+
+  return strings;
+}
+
+function parseSymbolReadings(value: unknown): TarotGeneratedSymbolReading[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .flatMap((item) => {
+      if (!isRecord(item)) {
+        return [];
+      }
+
+      const symbol = cleanString(item.symbol, 48);
+      const reading = cleanString(item.reading, 360);
+
+      return symbol && reading ? [{ symbol, reading }] : [];
+    })
+    .slice(0, 3);
+}
+
 function parseCardReadings(value: unknown): TarotGeneratedCardReading[] {
   if (!Array.isArray(value)) {
     return [];
@@ -129,16 +181,27 @@ function parseTarotReadingDraft(input: TarotReadingInput, value: unknown): Tarot
 
   const title = cleanString(value.title, 160);
   const overview = cleanString(value.overview, 1200);
+  const keywords = parseStringArray(value.keywords, 5, 32);
+  const symbolReadings = parseSymbolReadings(value.symbolReadings);
   const cardReadings = parseCardReadings(value.cardReadings);
   const advice = cleanString(value.advice, 360);
 
-  if (!title || !overview || !advice || !hasExactPositions(cardReadings, expectedPositionsForInput(input))) {
+  if (
+    !title ||
+    !overview ||
+    keywords.length < 3 ||
+    symbolReadings.length < 2 ||
+    !advice ||
+    !hasExactPositions(cardReadings, expectedPositionsForInput(input))
+  ) {
     return undefined;
   }
 
   return {
     title,
     overview,
+    keywords,
+    symbolReadings,
     cardReadings,
     advice,
   };

@@ -267,28 +267,24 @@ button {
 
 .receipt-stamp-print {
   opacity: 0;
-  filter: blur(2px);
-  transform: translate3d(0, -0.35rem, 0) rotate(-7deg) scale(1.2);
+  transform: translate3d(0, -0.14rem, 0) rotate(-8deg) scale(1.04);
   animation: receipt-stamp-print 520ms cubic-bezier(0.2, 0.9, 0.18, 1.12) forwards;
   transform-origin: center;
-  will-change: opacity, filter, transform;
+  will-change: opacity, transform;
 }
 
 @keyframes receipt-stamp-print {
   0% {
     opacity: 0;
-    filter: blur(2px);
-    transform: translate3d(0, -0.35rem, 0) rotate(-7deg) scale(1.2);
+    transform: translate3d(0, -0.14rem, 0) rotate(-8deg) scale(1.04);
   }
   48% {
-    opacity: 0.98;
-    filter: blur(0.35px);
-    transform: translate3d(0, 0.06rem, 0) rotate(-7deg) scale(0.96);
+    opacity: 0.88;
+    transform: translate3d(0, 0.04rem, 0) rotate(-8deg) scale(0.98);
   }
   100% {
-    opacity: 0.9;
-    filter: blur(0);
-    transform: translate3d(0, 0, 0) rotate(-7deg) scale(1);
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(-8deg) scale(1);
   }
 }
 
@@ -803,22 +799,6 @@ button {
   }
 }
 
-.tarot-loading-to-result {
-  animation: tarot-loading-panel-to-result 1200ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  will-change: opacity;
-}
-
-.tarot-loading-card-to-result {
-  animation: tarot-loading-card-to-result 1200ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  transform-origin: 50% 50%;
-  will-change: transform, filter;
-}
-
-.tarot-loading-copy-to-result {
-  animation: tarot-loading-copy-to-result 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  will-change: opacity, transform;
-}
-
 .tarot-result-card-enter {
   animation: tarot-result-card-enter 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
   transform-origin: 50% 50%;
@@ -829,49 +809,6 @@ button {
   animation: tarot-result-content-enter 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: var(--tarot-result-enter-delay, 0ms);
   will-change: opacity, transform, filter;
-}
-
-@keyframes tarot-loading-panel-to-result {
-  0% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0.96;
-  }
-}
-
-@keyframes tarot-loading-card-to-result {
-  0% {
-    filter: brightness(1);
-    transform: translate(-50%, -50%) translateX(var(--tarot-loading-card-offset-x, 0px))
-      rotate(var(--tarot-loading-card-rotation, 0deg)) scale(1);
-  }
-
-  58% {
-    filter: brightness(1.08);
-    transform: translate(-50%, -50%) translateX(var(--tarot-loading-card-offset-x, 0px)) translateY(-10px)
-      rotate(var(--tarot-loading-card-rotation, 0deg)) scale(1.18);
-  }
-
-  100% {
-    filter: brightness(1);
-    transform: translate(-50%, -50%) translateX(var(--tarot-loading-card-offset-x, 0px)) translateY(-18px)
-      rotate(var(--tarot-loading-card-rotation, 0deg)) scale(var(--tarot-loading-card-result-scale, 2.92));
-  }
-}
-
-@keyframes tarot-loading-copy-to-result {
-  0%,
-  28% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  100% {
-    opacity: 0;
-    transform: translateY(8px);
-  }
 }
 
 @keyframes tarot-result-card-enter {
@@ -993,9 +930,6 @@ button {
   .tarot-selected-card-reveal-inner,
   .tarot-selected-card-reveal-back,
   .tarot-selected-card-reveal-front,
-  .tarot-loading-to-result,
-  .tarot-loading-card-to-result,
-  .tarot-loading-copy-to-result,
   .tarot-result-card-enter,
   .tarot-result-content-enter {
     animation: none !important;
@@ -1023,16 +957,9 @@ button {
     opacity: 1 !important;
   }
 
-  .tarot-loading-to-result,
-  .tarot-loading-card-to-result,
-  .tarot-loading-copy-to-result,
   .tarot-result-card-enter,
   .tarot-result-content-enter {
     opacity: 1 !important;
     transform: none !important;
-  }
-
-  .tarot-loading-card-to-result {
-    transform: translate(-50%, -50%) !important;
   }
 }

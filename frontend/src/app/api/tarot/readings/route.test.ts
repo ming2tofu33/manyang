@@ -43,6 +43,17 @@ function createThreeCardBody(overrides: Record<string, unknown> = {}) {
 const generatedOneCard = {
   title: "오늘은 첫 걸음이 흐름을 엽니다",
   overview: "바보 카드의 정방향은 오늘 너무 멀리 결론내리기보다 가볍게 시작하는 태도를 통해 흐름이 열린다고 말합니다.",
+  keywords: ["start", "possibility", "small step"],
+  symbolReadings: [
+    {
+      symbol: "light",
+      reading: "The light reads as a small but visible cue to begin without waiting for perfect certainty.",
+    },
+    {
+      symbol: "gate",
+      reading: "The gate points to a threshold where one practical choice can make the day feel more open.",
+    },
+  ],
   cardReadings: [
     {
       position: "today" as const,
@@ -56,6 +67,17 @@ const generatedOneCard = {
 const generatedThreeCard = {
   title: "상황을 정리하고 흐름을 차분히 좁히는 날",
   overview: "세 장은 지금 손에 든 가능성을 살피고, 흐릿한 감각을 지나 실제로 돌볼 수 있는 조언으로 이동하는 흐름을 보여줍니다.",
+  keywords: ["situation", "flow", "advice"],
+  symbolReadings: [
+    {
+      symbol: "light",
+      reading: "The light reads as the part of the spread that can still be clarified through a practical choice.",
+    },
+    {
+      symbol: "gate",
+      reading: "The gate points to the threshold between intention and action across the three cards.",
+    },
+  ],
   cardReadings: [
     {
       position: "situation" as const,
@@ -169,6 +191,7 @@ describe("POST /api/tarot/readings", () => {
       source: "llm",
       spread: "daily_one_card",
       appDate: "2026-05-31",
+      keywords: generatedOneCard.keywords,
       generated: generatedOneCard,
       card: {
         id: 0,
