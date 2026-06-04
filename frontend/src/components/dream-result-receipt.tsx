@@ -341,6 +341,7 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
   const payload = payloadOverride ?? completedStoredPayload ?? fallbackPayload;
 
   const { analysis } = payload;
+  const originalDreamText = payload.dreamText.trim();
   const reader = getCatReaderById(payload.catReaderType ?? analysis.reader?.id);
   const receiptStampSrc = receiptStampImageSrcByAssetKey[reader.assetKey];
   const displayMood = payload.wakeMood ?? analysis.emotions[0] ?? "기록 없음";
@@ -689,6 +690,37 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
           <p className="rounded-[1rem] border border-[#b98255]/45 bg-[rgba(7,6,18,0.78)] px-4 py-3 text-center text-sm font-semibold leading-6 text-[#ffd98a]">
             꿈 영수증을 삭제하지 못했어요. 잠시 후 다시 시도해주세요.
           </p>
+        ) : null}
+        {originalDreamText ? (
+          <details
+            className="group overflow-hidden rounded-[1.15rem] border border-[#b98255]/52 bg-[rgba(7,6,18,0.78)] shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md"
+            data-original-dream-panel="true"
+          >
+            <summary className="flex min-h-[4rem] cursor-pointer list-none items-center gap-3 px-4 py-3 text-[#f2c27d] transition hover:text-[#ffe7b5] [&::-webkit-details-marker]:hidden">
+              <span className="relative h-9 w-9 shrink-0">
+                <Image
+                  src={manyangAssets.actionIcons.pencil}
+                  alt=""
+                  fill
+                  sizes="36px"
+                  unoptimized
+                  className="object-contain"
+                />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-[16px] font-bold">내가 적은 꿈 보기</span>
+                <span className="mt-0.5 block text-[12px] font-medium text-[#caa37b]">
+                  해몽의 바탕이 된 원문을 펼쳐봅니다
+                </span>
+              </span>
+              <span aria-hidden="true" className="text-xl transition group-open:rotate-90">›</span>
+            </summary>
+            <div className="border-t border-[#7c4a38]/45 px-4 pb-4 pt-3">
+              <p className="whitespace-pre-wrap rounded-[0.95rem] border border-[#7c4a38]/58 bg-[rgba(5,4,12,0.62)] px-3 py-3 text-[13px] leading-6 text-[#fff3d7]/84">
+                {originalDreamText}
+              </p>
+            </div>
+          </details>
         ) : null}
         {showPawprintLoginPrompt ? (
           <section

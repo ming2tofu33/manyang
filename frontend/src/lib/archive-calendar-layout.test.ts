@@ -2,10 +2,11 @@ import { describe, expect, it } from "vitest";
 
 import {
   archiveCalendarDateGridStyle,
+  archiveCalendarDateNumberClassName,
   archiveCalendarDayCellClassName,
-  archiveCalendarDreamIconClassName,
-  archiveCalendarNightCheckInIconClassName,
-  archiveCalendarPawprintIconClassName,
+  archiveCalendarMarkerRowClassName,
+  archiveCalendarPrimaryMarkerIconClassName,
+  archiveCalendarSecondaryMarkerIconClassName,
 } from "./archive-calendar-layout";
 
 describe("archive calendar layout", () => {
@@ -20,17 +21,18 @@ describe("archive calendar layout", () => {
 
   it("keeps date numbers high enough for icons below them", () => {
     expect(archiveCalendarDayCellClassName).toContain("items-start");
-    expect(archiveCalendarDayCellClassName).toContain("pt-[0.38rem]");
-    expect(archiveCalendarDreamIconClassName).toContain("top-[1.72rem]");
+    expect(archiveCalendarDayCellClassName).toContain("pt-[0.22rem]");
+    expect(archiveCalendarDateNumberClassName).toContain("h-6");
+    expect(archiveCalendarMarkerRowClassName).toContain("top-[1.78rem]");
   });
 
-  it("positions pawprint markers below dream markers", () => {
-    expect(archiveCalendarPawprintIconClassName).toContain("top-[2.62rem]");
-    expect(archiveCalendarPawprintIconClassName).toContain("h-3");
+  it("keeps the primary record marker slightly larger than secondary markers", () => {
+    expect(archiveCalendarPrimaryMarkerIconClassName).toContain("h-3.5");
+    expect(archiveCalendarSecondaryMarkerIconClassName).toContain("h-3");
   });
 
-  it("positions night check-in markers beside pawprint markers", () => {
-    expect(archiveCalendarNightCheckInIconClassName).toContain("top-[2.6rem]");
-    expect(archiveCalendarNightCheckInIconClassName).toContain("h-3");
+  it("arranges multiple daily markers in a compact row", () => {
+    expect(archiveCalendarMarkerRowClassName).toContain("flex");
+    expect(archiveCalendarMarkerRowClassName).toContain("gap-[0.08rem]");
   });
 });

@@ -13,7 +13,7 @@ export function BottomNav() {
   const active = getActiveNavItem(pathname);
 
   return (
-    <nav className={`${mobileLayout.shellBleedClassName} relative h-[88px] px-0 pb-0`} aria-label="하단 메뉴">
+    <nav className={`${mobileLayout.shellBleedClassName} relative h-[82px] px-0 pb-0`} aria-label="하단 메뉴">
       <Image
         src={manyangAssets.footer.frame}
         alt=""
@@ -22,7 +22,7 @@ export function BottomNav() {
         unoptimized
         className="object-contain object-bottom drop-shadow-[0_0_14px_rgba(0,0,0,0.34)]"
       />
-      <div className="absolute inset-x-[8%] bottom-[0.4rem] top-[0.8rem] grid grid-cols-5">
+      <div className="absolute inset-x-[8%] bottom-[0.3rem] top-[0.62rem] grid grid-cols-5">
         {bottomNavItems.map((item) => {
           const isActive = active?.key === item.key;
           return (

@@ -17,12 +17,18 @@ import {
 } from "@/lib/archive-month";
 import {
   archiveCalendarDateGridStyle,
+  archiveCalendarDateNumberClassName,
   archiveCalendarDayCellClassName,
-  archiveCalendarDreamIconClassName,
-  archiveCalendarNightCheckInIconClassName,
-  archiveCalendarPawprintIconClassName,
+  archiveCalendarMarkerRowClassName,
+  archiveCalendarPrimaryMarkerIconClassName,
+  archiveCalendarSecondaryMarkerIconClassName,
 } from "@/lib/archive-calendar-layout";
 import { formatMonthGridCellDate, getMonthGridCells } from "@/lib/calendar";
+import {
+  getDailyTarotReadingsSnapshotFromBrowser,
+  getEmptyDailyTarotReadingsSnapshot,
+  subscribeToDailyTarot,
+} from "@/lib/daily-tarot";
 import { manyangAssets } from "@/lib/manyang-assets";
 import { countMonthlyNightCheckIns } from "@/lib/night-checkin";
 import { countMonthlyPawprints } from "@/lib/pawprints";
@@ -36,6 +42,13 @@ type ArchiveSummaryCardProps = {
   label: string;
   value: number;
   accentClassName?: string;
+};
+
+type CalendarMarker = {
+  key: string;
+  icon: string;
+  className: string;
+  sizes: string;
 };
 
 function ArchiveSummaryCard({ icon, label, value, accentClassName }: ArchiveSummaryCardProps) {
@@ -63,6 +76,11 @@ function ArchiveSummaryCard({ icon, label, value, accentClassName }: ArchiveSumm
 export function ArchiveCalendar() {
   const { dreamRecords, isLoadingServerRecords, source } = useArchiveDreamRecords();
   const { pawprints, nightCheckInRecords, source: routineSource } = useRoutineRecords();
+  const tarotReadings = useSyncExternalStore(
+    subscribeToDailyTarot,
+    getDailyTarotReadingsSnapshotFromBrowser,
+    getEmptyDailyTarotReadingsSnapshot,
+  );
   const selectedArchiveMonth = useSyncExternalStore(
     subscribeToArchiveMonth,
     getSelectedArchiveMonthSnapshot,
@@ -74,6 +92,7 @@ export function ArchiveCalendar() {
   const monthRange = getArchiveMonthRange({
     dreamRecords,
     pawprints: visiblePawprints,
+    tarotReadings,
     nightCheckInRecords: visibleNightCheckInRecords,
   });
   const archiveMonth = resolveArchiveMonth(selectedArchiveMonth, monthRange);
@@ -90,6 +109,7 @@ export function ArchiveCalendar() {
   const monthlySymbols = countMonthlyDreamSymbols(dreamRecords, archiveMonth.year, archiveMonth.month);
   const dreamDates = new Set<string>();
   const pawprintDates = new Set<string>();
+  const tarotDates = new Set<string>();
   const nightCheckInDates = new Set<string>();
 
   function moveMonth(delta: number) {
@@ -104,6 +124,10 @@ export function ArchiveCalendar() {
 
   for (const pawprint of visiblePawprints) {
     pawprintDates.add(pawprint.appDate);
+  }
+
+  for (const reading of tarotReadings) {
+    tarotDates.add(reading.appDate);
   }
 
   for (const checkIn of visibleNightCheckInRecords) {
@@ -165,8 +189,43 @@ export function ArchiveCalendar() {
             const cellDate = formatMonthGridCellDate(cell);
             const hasDream = dreamDates.has(cellDate);
             const hasPawprint = pawprintDates.has(cellDate);
+            const hasTarot = tarotDates.has(cellDate);
             const hasNightCheckIn = nightCheckInDates.has(cellDate);
-            const hasActivity = hasDream || hasPawprint || hasNightCheckIn;
+            const hasActivity = hasDream || hasPawprint || hasTarot || hasNightCheckIn;
+            const dailyMarkerCandidates: (CalendarMarker | null)[] = [
+              hasDream
+                ? {
+                    key: "dream",
+                    icon: manyangAssets.calendarRecordIcons.dream,
+                    className: archiveCalendarPrimaryMarkerIconClassName,
+                    sizes: "14px",
+                  }
+                : hasPawprint
+                  ? {
+                      key: "pawprint",
+                      icon: manyangAssets.calendarRecordIcons.pawprint,
+                      className: archiveCalendarPrimaryMarkerIconClassName,
+                      sizes: "14px",
+                    }
+                  : null,
+              hasTarot
+                ? {
+                    key: "tarot",
+                    icon: manyangAssets.pageIcons.tarot,
+                    className: archiveCalendarSecondaryMarkerIconClassName,
+                    sizes: "12px",
+                  }
+                : null,
+              hasNightCheckIn
+                ? {
+                    key: "night",
+                    icon: manyangAssets.calendarRecordIcons.night,
+                    className: archiveCalendarSecondaryMarkerIconClassName,
+                    sizes: "12px",
+                  }
+                : null,
+            ];
+            const dailyMarkers = dailyMarkerCandidates.filter((marker): marker is CalendarMarker => marker !== null);
 
             return (
               <span
@@ -174,56 +233,36 @@ export function ArchiveCalendar() {
                 data-calendar-cell-scope={cell.isCurrentMonth ? "current-month" : "adjacent-month"}
                 className={cn(archiveCalendarDayCellClassName, !cell.isCurrentMonth && "opacity-45")}
               >
-                  <span
-                    className={[
-                      "relative grid h-6 w-6 place-items-center rounded-full",
-                      hasDream
-                        ? cn(ui.selectedPill, "border-0")
-                        : hasActivity
-                          ? "bg-[#2b1738]/75 text-[#ffd98a] ring-1 ring-[#d79a34]/60"
-                          : cell.isCurrentMonth
-                            ? "text-[#d6ad78]/82"
-                            : "text-[#b88c63]/78",
-                    ].join(" ")}
-                  >
-                    {hasDream ? (
-                      <span className={archiveCalendarDreamIconClassName}>
-                        <Image
-                          src={manyangAssets.calendarRecordIcons.dream}
-                          alt=""
-                          fill
-                          sizes="14px"
-                          unoptimized
-                          className="object-contain"
-                        />
-                      </span>
-                    ) : null}
-                    {hasPawprint ? (
-                      <span className={archiveCalendarPawprintIconClassName}>
-                        <Image
-                          src={manyangAssets.calendarRecordIcons.pawprint}
-                          alt=""
-                          fill
-                          sizes="12px"
-                          unoptimized
-                          className="object-contain"
-                        />
-                      </span>
-                    ) : null}
-                    {hasNightCheckIn ? (
-                      <span className={archiveCalendarNightCheckInIconClassName}>
-                        <Image
-                          src={manyangAssets.calendarRecordIcons.night}
-                          alt=""
-                          fill
-                          sizes="12px"
-                          unoptimized
-                          className="object-contain"
-                        />
-                      </span>
-                    ) : null}
-                    {cell.day}
-                  </span>
+                <span
+                  className={[
+                    archiveCalendarDateNumberClassName,
+                    hasDream
+                      ? cn(ui.selectedPill, "border-0")
+                      : hasActivity
+                        ? "bg-[#2b1738]/75 text-[#ffd98a] ring-1 ring-[#d79a34]/60"
+                        : cell.isCurrentMonth
+                          ? "text-[#d6ad78]/82"
+                          : "text-[#b88c63]/78",
+                  ].join(" ")}
+                >
+                  {dailyMarkers.length > 0 ? (
+                    <span className={archiveCalendarMarkerRowClassName} data-calendar-day-markers={dailyMarkers.length}>
+                      {dailyMarkers.map((marker) => (
+                        <span key={marker.key} className={marker.className} data-calendar-day-marker={marker.key}>
+                          <Image
+                            src={marker.icon}
+                            alt=""
+                            fill
+                            sizes={marker.sizes}
+                            unoptimized
+                            className="object-contain"
+                          />
+                        </span>
+                      ))}
+                    </span>
+                  ) : null}
+                  {cell.day}
+                </span>
               </span>
             );
           })}

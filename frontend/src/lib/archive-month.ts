@@ -1,5 +1,6 @@
 import type { DreamRecord } from "./dream-storage";
 import { getManyangAppDate } from "./app-date";
+import type { DailyTarotReading } from "./daily-tarot";
 import type { NightCheckInRecord } from "./night-checkin";
 import type { PawprintRecord } from "./pawprints";
 
@@ -16,6 +17,7 @@ export type ArchiveMonthRange = {
 type ArchiveMonthInput = {
   dreamRecords: DreamRecord[];
   pawprints: PawprintRecord[];
+  tarotReadings?: Pick<DailyTarotReading, "appDate">[];
   nightCheckInRecords: NightCheckInRecord[];
 };
 
@@ -83,6 +85,7 @@ export function getArchiveMonthRange(input: ArchiveMonthInput, fallbackDate = ge
   const months = [
     ...input.dreamRecords.map((record) => parseArchiveMonthFromDate(record.dreamDate)),
     ...input.pawprints.map((record) => parseArchiveMonthFromDate(record.appDate)),
+    ...(input.tarotReadings ?? []).map((record) => parseArchiveMonthFromDate(record.appDate)),
     ...input.nightCheckInRecords.map((record) => parseArchiveMonthFromDate(record.checkInDate)),
   ].filter((month): month is ArchiveMonth => month !== null);
   const fallback = parseArchiveMonthFromDate(fallbackDate) ?? { year: new Date().getFullYear(), month: new Date().getMonth() + 1 };

@@ -8,6 +8,7 @@ import {
   parseArchiveMonthFromDate,
   resolveArchiveMonth,
 } from "./archive-month";
+import type { DailyTarotReading } from "./daily-tarot";
 import type { DreamRecord } from "./dream-storage";
 import type { NightCheckInRecord } from "./night-checkin";
 import type { PawprintRecord } from "./pawprints";
@@ -58,6 +59,10 @@ function createNightCheckIn(checkInDate: string): NightCheckInRecord {
   };
 }
 
+function createTarotReading(appDate: string): Pick<DailyTarotReading, "appDate"> {
+  return { appDate };
+}
+
 describe("archive month helpers", () => {
   test("parses archive months from app dates", () => {
     expect(parseArchiveMonthFromDate("2026-05-31")).toEqual({ year: 2026, month: 5 });
@@ -74,6 +79,20 @@ describe("archive month helpers", () => {
     expect(range).toEqual({
       start: { year: 2026, month: 4 },
       end: { year: 2026, month: 8 },
+    });
+  });
+
+  test("includes daily tarot readings in the used month range", () => {
+    const range = getArchiveMonthRange({
+      dreamRecords: [createDreamRecord("2026-05-31")],
+      pawprints: [],
+      tarotReadings: [createTarotReading("2026-09-02")],
+      nightCheckInRecords: [],
+    });
+
+    expect(range).toEqual({
+      start: { year: 2026, month: 5 },
+      end: { year: 2026, month: 9 },
     });
   });
 

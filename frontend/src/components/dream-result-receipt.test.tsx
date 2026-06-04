@@ -315,6 +315,18 @@ describe("DreamResultReceipt", () => {
     expect(markup).not.toContain("data-symbol-basis-panel=\"true\" style=\"animation-delay:9000ms\"");
   });
 
+  it("shows the original dream text below the receipt without putting it inside the paper", () => {
+    const markup = renderToStaticMarkup(<DreamResultReceipt payloadOverride={createLongReceiptPayload()} />);
+    const receiptPaperIndex = markup.indexOf("data-receipt-paper=\"sliced\"");
+    const completionStackIndex = markup.indexOf("data-receipt-completion-stack=\"true\"");
+    const originalDreamIndex = markup.indexOf("data-original-dream-panel=\"true\"");
+
+    expect(originalDreamIndex).toBeGreaterThan(completionStackIndex);
+    expect(originalDreamIndex).toBeGreaterThan(receiptPaperIndex);
+    expect(markup).toContain("내가 적은 꿈 보기");
+    expect(markup).toContain("아주 긴 해석이 필요한 꿈");
+  });
+
   it("shows a delete action when the current receipt exists in the archive", () => {
     const payload = createLongReceiptPayload();
     const storedRecord: DreamRecord = {
@@ -325,10 +337,14 @@ describe("DreamResultReceipt", () => {
     mockedArchiveDreamRecords.dreamRecords = [storedRecord];
 
     const markup = renderToStaticMarkup(<DreamResultReceipt payloadOverride={payload} />);
+    const deleteSlotIndex = markup.indexOf("data-receipt-delete-slot=\"true\"");
+    const originalDreamIndex = markup.indexOf("data-original-dream-panel=\"true\"");
 
     expect(markup).toContain("data-receipt-delete-slot=\"true\"");
     expect(markup).toContain("data-receipt-delete-action=\"stored-dream-1\"");
     expect(markup).toContain("/manyang/ui/action-icons/action-trash.png");
+    expect(deleteSlotIndex).toBeGreaterThan(-1);
+    expect(originalDreamIndex).toBeGreaterThan(deleteSlotIndex);
   });
 
   it("reveals the related night record with receipt actions and symbols in the same settled stack", () => {

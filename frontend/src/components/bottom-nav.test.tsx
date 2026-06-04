@@ -45,10 +45,10 @@ describe("BottomNav", () => {
     expect(markup).toContain(mobileLayout.shellBleedClassName);
     expect(markup).not.toContain("-mx-6");
     expect(markup).not.toContain("w-[calc(100%+3rem)]");
-    expect(markup).toContain("h-[88px]");
+    expect(markup).toContain("h-[82px]");
     expect(markup).toContain("inset-x-[8%]");
-    expect(markup).toContain("top-[0.8rem]");
-    expect(markup).toContain("bottom-[0.4rem]");
+    expect(markup).toContain("top-[0.62rem]");
+    expect(markup).toContain("bottom-[0.3rem]");
     expect(markup).toContain("object-bottom");
   });
 });

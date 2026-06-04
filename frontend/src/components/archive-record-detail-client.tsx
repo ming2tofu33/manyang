@@ -64,11 +64,22 @@ export function RoutineRecordDetailContent({
 }) {
   if (view.type === "dream") {
     const dreamRecordId = view.dreamRecordId ?? view.raw.dreamRecord?.id;
+    const originalDreamText = view.raw.dreamRecord?.dreamText.trim();
 
     return (
-      <section className={cn(ui.panel, "mt-8 space-y-4 p-5 text-center")}>
-        <DetailHeader view={view} />
-        <p className="text-sm leading-6 text-[#fff3d7]/76">이 기록은 꿈 영수증 화면에서 다시 읽을 수 있어요.</p>
+      <div className="mt-6 space-y-4 pb-5">
+        <section className={cn(ui.panel, "space-y-4 p-5 text-center")}>
+          <DetailHeader view={view} />
+          <p className="text-sm leading-6 text-[#fff3d7]/76">이 기록은 꿈 영수증 화면에서 다시 읽을 수 있어요.</p>
+        </section>
+        {originalDreamText ? (
+          <section className={cn(ui.panel, "p-5")} data-dream-original-text-detail="true">
+            <h2 className="mb-2 text-lg font-semibold text-[#ffd98a]">내가 적은 꿈</h2>
+            <p className="whitespace-pre-wrap rounded-[1rem] border border-[#7c4a38]/38 bg-[rgba(8,6,18,0.48)] px-4 py-3 text-sm leading-6 text-[#fff3d7]/84">
+              {originalDreamText}
+            </p>
+          </section>
+        ) : null}
         <div className="mx-auto grid w-full max-w-[17rem] gap-3">
           <AssetTextButton
             frame={manyangAssets.buttons.mediumSecondary}
@@ -93,7 +104,7 @@ export function RoutineRecordDetailContent({
             </div>
           ) : null}
         </div>
-      </section>
+      </div>
     );
   }
 

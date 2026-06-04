@@ -86,6 +86,16 @@ const dreamView: ArchiveRecordView = {
 };
 
 describe("RoutineRecordDetailContent", () => {
+  it("renders the original dream text for saved dream receipts", () => {
+    const markup = renderToStaticMarkup(
+      <RoutineRecordDetailContent view={dreamView} onOpenDream={() => undefined} />,
+    );
+
+    expect(markup).toContain("data-dream-original-text-detail=\"true\"");
+    expect(markup).toContain("내가 적은 꿈");
+    expect(markup).toContain("I was walking through a hallway.");
+  });
+
   it("renders a delete action for saved dream receipts", () => {
     const markup = renderToStaticMarkup(
       <RoutineRecordDetailContent

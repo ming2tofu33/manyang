@@ -9,7 +9,10 @@ import {
   dailyTarotStorageKey,
   getDailyTarotReading,
   getDailyTarotReadingFromBrowser,
+  getDailyTarotReadingsSnapshot,
+  getDailyTarotReadingsSnapshotFromBrowser,
   getEmptyDailyTarotReadingSnapshot,
+  getEmptyDailyTarotReadingsSnapshot,
   getOrCreateDailyTarotGuestIdentity,
   saveDailyTarotReading,
   saveDailyTarotReadingToBrowser,
@@ -343,6 +346,18 @@ describe("daily tarot draw logic", () => {
     expect(getDailyTarotReading(storage, "2026-05-31")).toBeNull();
   });
 
+  test("returns a stable daily tarot readings snapshot for calendar markers", () => {
+    const reading = createGeneratedReading("2026-05-31");
+    const storage = createMemoryStorage({
+      [dailyTarotStorageKey]: JSON.stringify([reading]),
+    });
+    const firstSnapshot = getDailyTarotReadingsSnapshot(storage);
+    const secondSnapshot = getDailyTarotReadingsSnapshot(storage);
+
+    expect(firstSnapshot).toEqual([reading]);
+    expect(secondSnapshot).toBe(firstSnapshot);
+  });
+
   test("exports daily tarot storage constants", () => {
     expect(dailyTarotStorageKey).toBe("manyang:daily-tarot-readings");
     expect(dailyTarotChangedEvent).toBe("manyang:daily-tarot-changed");
@@ -367,6 +382,8 @@ describe("daily tarot browser helpers", () => {
 
     expect(getDailyTarotReadingFromBrowser("2026-05-31")).toBeNull();
     expect(getEmptyDailyTarotReadingSnapshot()).toBeNull();
+    expect(getDailyTarotReadingsSnapshotFromBrowser()).toEqual([]);
+    expect(getEmptyDailyTarotReadingsSnapshot()).toEqual([]);
     expect(() => saveDailyTarotReadingToBrowser(reading)).not.toThrow();
     expect(() => unsubscribe()).not.toThrow();
   });
@@ -388,6 +405,7 @@ describe("daily tarot browser helpers", () => {
 
     expect(getDailyTarotReadingFromBrowser("2026-05-31")).toEqual(reading);
     expect(getDailyTarotReadingFromBrowser("2026-06-01")).toBeNull();
+    expect(getDailyTarotReadingsSnapshotFromBrowser()).toEqual([reading]);
   });
 
   test("dispatches the custom event on browser save", () => {
