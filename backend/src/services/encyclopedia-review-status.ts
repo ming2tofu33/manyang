@@ -27,6 +27,9 @@ export const BICULTURAL_REVIEWED: ReadonlySet<string> = new Set([
   // nature (en을 서양 원형·무의식·Noah 등으로) — 17/17 완결
   "fire", "rain", "snow", "moon", "flood", "mountain", "tree", "flower", "sea", "river",
   "dawn", "rainbow", "wind", "rock", "star", "earthquake",
+  // object (en을 서양 상징으로) — 21/21 완결 (money·feces는 batch1)
+  "door", "window", "key", "mirror", "bag", "shoes", "car", "bus", "train", "airplane",
+  "phone", "bed", "clothes", "gold", "knife", "book", "ring", "photo", "watch",
 ]);
 
 export type CategoryReviewStatus = {
