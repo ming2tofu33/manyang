@@ -451,9 +451,9 @@ export const symbolEntries: SymbolEntry[] = [
       en: localized({
         label: "Searching",
         aliases: ["searching", "looking for", "cannot find", "lost", "wandering"],
-        searchText: "searching, looking for, cannot find, lost, wandering, clue, direction, standard, clarity",
-        coreMeanings: ["seeking", "looking for a standard", "missing piece", "desire for clarity"],
-        lightReadings: ["an honest sign that you are still looking", "gathering the clues you need"],
+        searchText: "searching, looking for, cannot find, lost, wandering, the quest, the seeker, seek and you shall find, clue, direction, clarity",
+        coreMeanings: ["the quest / seeking", "looking for a standard", "missing piece", "desire for clarity"],
+        lightReadings: ["an honest sign that you are still on the quest, still looking", "gathering the clues you need"],
         shadowReadings: ["feeling like something is always missing", "urgency when there is no clear standard"],
         sceneModifiers: {
           cannotFind: modifier("the standard itself feels unclear, not just the answer", ["cannot find", "could not see", "disappeared"], 0.85),
@@ -3226,9 +3226,9 @@ export const symbolEntries: SymbolEntry[] = [
     en: localized({
       label: "Food",
       aliases: ["food", "meal", "eating", "dinner", "delicious food"],
-      searchText: "food, meal, eating, dinner, nourishment, desire, need, sharing, hunger for care",
-      coreMeanings: ["nourishment", "desire", "need", "sharing"],
-      lightReadings: ["taking in what you need", "noticing what wants to be filled"],
+      searchText: "food, meal, eating, the feast, communion, the shared meal, the forbidden fruit, spiritual nourishment, appetite, desire, need, sharing",
+      coreMeanings: ["nourishment", "appetite and desire", "communion and sharing"],
+      lightReadings: ["taking in what you need — feeding what in you was hungry", "the shared meal: care and communion passing between people"],
       shadowReadings: ["hunger that remains unmet", "difficulty digesting an emotion or experience"],
       sceneModifiers: {
         eating: modifier("taking in or digesting what is needed", ["eating", "meal", "delicious"], 0.78),
@@ -3243,7 +3243,7 @@ export const symbolEntries: SymbolEntry[] = [
       avoidExpressions: ["wealth will arrive", "you will gain weight"],
       fortune: {
         valence: "auspicious",
-        auspicious: "A table full of food was traditionally read as an omen of growing wealth and plenty.",
+        auspicious: "In Western symbolism a table full of food is the feast — abundance, communion, and nourishment shared; taking it in reads as feeding what in you had gone hungry.",
       },
     }),
   }),
@@ -3441,8 +3441,8 @@ export const symbolEntries: SymbolEntry[] = [
     en: localized({
       label: "Crying",
       aliases: ["crying", "tears", "sobbed", "weeping", "cried"],
-      searchText: "crying, tears, sobbing, weeping, emotional release, grief, relief, overwhelm",
-      coreMeanings: ["emotional release", "grief", "relief", "overwhelm"],
+      searchText: "crying, tears, sobbing, weeping, catharsis, emotional release, grief, cleansing tears, relief, overwhelm",
+      coreMeanings: ["catharsis / emotional release", "grief", "relief", "overwhelm"],
       lightReadings: ["held emotion finding a way out", "pressure softening through expression"],
       shadowReadings: ["emotion built up beyond capacity", "unspoken sadness"],
       sceneModifiers: {
@@ -3459,7 +3459,7 @@ export const symbolEntries: SymbolEntry[] = [
       fortune: {
         valence: "auspicious",
         auspicious:
-          "Crying in a dream has long been read as an auspicious sign of pent-up worry washing away and the heart feeling lighter.",
+          "In Western terms crying is catharsis — pent-up grief or worry washing through and out, leaving the heart lighter and clearer.",
       },
     }),
   }),
@@ -3501,10 +3501,10 @@ export const symbolEntries: SymbolEntry[] = [
     en: localized({
       label: "Falling",
       aliases: ["falling", "fall", "fell", "falling down", "plummeting", "tripping"],
-      searchText: "falling, falling down, plummeting, tripping, loss of control, instability, fear, loss of support",
-      coreMeanings: ["loss of control", "instability", "fear", "loss of support"],
-      lightReadings: ["recognizing what cannot be held tightly", "a signal to regain center"],
-      shadowReadings: ["anxiety that a situation is slipping away", "support disappearing beneath you"],
+      searchText: "falling, falling down, plummeting, tripping, the Fall, the fall from grace, letting go, surrender, loss of control, instability, fear",
+      coreMeanings: ["loss of control", "the fall (letting go / surrender)", "instability"],
+      lightReadings: ["recognizing what cannot be held tightly — the surrender in letting go", "a signal to regain your center"],
+      shadowReadings: ["anxiety that a situation is slipping away", "the ground of support disappearing beneath you"],
       sceneModifiers: {
         fromHeight: modifier("anxiety around high expectations or position", ["from height", "cliff", "roof"], 0.86, "cautious"),
         endless: modifier("fear feeling like it has no landing point", ["endless fall", "kept falling", "no bottom"], 0.84, "cautious"),
@@ -3561,10 +3561,10 @@ export const symbolEntries: SymbolEntry[] = [
     en: localized({
       label: "Flying",
       aliases: ["flying", "fly", "flew", "flying in the sky", "floating", "levitating", "flight"],
-      searchText: "flying, flying in the sky, floating, levitating, freedom, perspective, escape, ambition",
-      coreMeanings: ["freedom", "perspective", "escape", "ambition"],
-      lightReadings: ["wanting a wider view", "feeling a way out of tight conditions"],
-      shadowReadings: ["wanting to avoid grounded reality", "anxiety that comes with height"],
+      searchText: "flying, flying in the sky, floating, levitating, the soul's flight, the spirit rising, transcendence, freedom, perspective, rising above",
+      coreMeanings: ["the soul's flight / freedom", "transcendence and perspective", "rising above"],
+      lightReadings: ["the spirit rising free — a wider, higher view", "feeling lifted clear of tight conditions"],
+      shadowReadings: ["wanting to rise above grounded reality and avoid it", "anxiety that comes with the height"],
       sceneModifiers: {
         easyFlight: modifier("freedom and possibility feeling natural", ["flying freely", "easy flying", "comfortable"], 0.76),
         unableToControl: modifier("freedom without clear direction", ["could not control", "out of control", "wobbly"], 0.82),
@@ -3579,7 +3579,7 @@ export const symbolEntries: SymbolEntry[] = [
       fortune: {
         valence: "auspicious",
         auspicious:
-          "Lifting off and flying through the sky has traditionally been read as an auspicious sign of breaking free from what held you down and rising to a wider view.",
+          "In Western symbolism flying is the soul's flight — the spirit lifting free of what held it down, rising toward transcendence and a wider view.",
       },
     }),
   }),
@@ -3614,10 +3614,10 @@ export const symbolEntries: SymbolEntry[] = [
     en: localized({
       label: "Swimming",
       aliases: ["swimming", "swim", "swims", "swam", "swimming underwater", "floating", "drowning"],
-      searchText: "swimming, swimming underwater, floating, drowning, emotional navigation, effort, flow, survival",
-      coreMeanings: ["emotional navigation", "effort", "flow", "staying afloat"],
-      lightReadings: ["finding direction inside emotion", "strength to move with a flow"],
-      shadowReadings: ["fear of being submerged by feeling", "fatigue from needing to keep moving"],
+      searchText: "swimming, swimming underwater, floating, drowning, navigating the waters of emotion, the waters of the unconscious, effort, flow, staying afloat",
+      coreMeanings: ["navigating the waters of emotion", "effort and flow", "staying afloat"],
+      lightReadings: ["finding your direction within the waters of feeling", "the strength to move with the current"],
+      shadowReadings: ["fear of being submerged by feeling", "out in deep water — the unconscious rising around you"],
       sceneModifiers: {
         easySwim: modifier("moving with emotion relatively well", ["swam easily", "comfortable swimming", "smooth"], 0.74),
         drowning: modifier("fear of being overwhelmed or submerged", ["drowning", "sinking", "could not breathe"], 0.88),
@@ -3669,9 +3669,9 @@ export const symbolEntries: SymbolEntry[] = [
     en: localized({
       label: "Fighting",
       aliases: ["fighting", "fight", "argument", "physical fight", "quarrel"],
-      searchText: "fighting, argument, physical fight, quarrel, conflict, boundary, anger, assertion",
-      coreMeanings: ["conflict", "boundary", "anger", "assertion"],
-      lightReadings: ["a boundary trying to become clear", "unspoken emotion gaining force"],
+      searchText: "fighting, argument, physical fight, quarrel, the inner conflict, confronting the shadow, the inner battle, asserting a boundary, anger, assertion",
+      coreMeanings: ["inner conflict", "a boundary", "anger and assertion"],
+      lightReadings: ["a boundary trying to become clear", "confronting head-on something you'd been avoiding"],
       shadowReadings: ["anger moving faster than language", "pressure and collision inside a relationship"],
       sceneModifiers: {
         verbal: modifier("trying to express hurt or boundary through words", ["argument", "yelling", "argued"], 0.78),
@@ -3687,7 +3687,7 @@ export const symbolEntries: SymbolEntry[] = [
       fortune: {
         valence: "conditional",
         auspicious:
-          "Quarreling or fighting in a dream was traditionally a reversal omen — pent-up feeling releasing and a stuck relationship or matter turning toward reconciliation.",
+          "In Western symbolism a fight is the inner conflict made visible — confronting the shadow, or finally asserting a boundary; the charge of saying what had gone unsaid.",
         cautious:
           "A fight that drags on harshly can be a gentle nudge to ease tension in a close relationship.",
       },
@@ -3947,10 +3947,10 @@ export const symbolEntries: SymbolEntry[] = [
     en: localized({
       label: "Crowd",
       aliases: ["crowd", "many people", "people", "packed place", "public crowd"],
-      searchText: "crowd, many people, packed place, public crowd, social pressure, visibility, belonging, overwhelm",
-      coreMeanings: ["social pressure", "visibility", "belonging", "overwhelm"],
-      lightReadings: ["checking the feeling of not being alone", "locating yourself in a social flow"],
-      shadowReadings: ["being overwhelmed by many eyes", "anxiety that your voice disappears"],
+      searchText: "crowd, many people, packed place, the mob, the masses, the collective, losing oneself in the crowd, social pressure, visibility, belonging, overwhelm",
+      coreMeanings: ["social pressure and visibility", "belonging", "losing the self in the mass"],
+      lightReadings: ["checking the feeling of not being alone", "locating yourself within a larger social flow"],
+      shadowReadings: ["being overwhelmed by many eyes", "swept into the crowd — your individual self lost in the mass"],
       sceneModifiers: {
         crowded: modifier("social density and attention becoming larger", ["crowded", "packed", "many people"], 0.82),
         watching: modifier("feeling watched or evaluated", ["watching me", "staring", "everyone looked"], 0.84),
@@ -5501,8 +5501,8 @@ export const symbolEntries: SymbolEntry[] = [
     en: localized({
       label: "Anger",
       aliases: ["anger", "rage", "fury", "shouting", "blowing up"],
-      searchText: "anger, rage, fury, shouting, blowing up, release, boundary, conflict, pent-up feeling, catharsis",
-      coreMeanings: ["release", "a boundary", "pent-up feeling"],
+      searchText: "anger, rage, fury, wrath, the shadow's fire, righteous anger, the repressed finding voice, release, a boundary, pent-up feeling",
+      coreMeanings: ["release", "the fire of a boundary", "the repressed finding voice"],
       lightReadings: ["letting out a long-held feeling with relief", "drawing a clear line after holding back"],
       shadowReadings: ["something boiling that will not settle", "conflict rising up and hard to carry"],
       sceneModifiers: {
@@ -5519,7 +5519,7 @@ export const symbolEntries: SymbolEntry[] = [
       fortune: {
         valence: "conditional",
         auspicious:
-          "Venting anger in a dream and feeling relieved was sometimes read as a reverse dream — releasing a long-held feeling.",
+          "In Western terms anger let out cleanly is the fire of a boundary — the repressed finding its voice, the energy that says 'no more'; vented well, it clears the air.",
         cautious:
           "Anger that boils without release was taken as a sign of a feeling to look at and soothe.",
       },
@@ -6208,10 +6208,10 @@ export const symbolEntries: SymbolEntry[] = [
     en: localized({
       label: "Song",
       aliases: ["song", "singing", "listening to a song", "humming", "chorus"],
-      searchText: "song, singing, listening to a song, humming, chorus, expression, joy, release, longing, voice, cheer, harmony",
-      coreMeanings: ["expression", "joy", "release"],
-      lightReadings: ["letting something out in your own voice", "lightness from joining in joyfully"],
-      shadowReadings: ["a stifled feeling when no voice comes", "wanting to sing but swallowing it"],
+      searchText: "song, singing, humming, chorus, the voice of the soul, finding your voice, the muse, the siren's song, harmony, expression, joy, release",
+      coreMeanings: ["the soul finding its voice", "joy and expression", "harmony"],
+      lightReadings: ["letting something out in your own true voice", "harmony — the lightness of joining a song together"],
+      shadowReadings: ["a stifled feeling when no voice will come", "wanting to sing but swallowing it"],
       sceneModifiers: {
         joyfulSinging: modifier("singing joyfully and having fun", ["joyful", "fun", "upbeat", "joined in"], 0.82, "auspicious"),
         beingHeard: modifier("the song heard well or applauded", ["applauded", "heard well", "cheered", "moving"], 0.78, "auspicious"),
@@ -6221,12 +6221,12 @@ export const symbolEntries: SymbolEntry[] = [
       metaphorHooks: ["a feeling let out in your own voice", "a joyful song joined in together"],
       cardTitleSeeds: ["The Night You Sang", "A Place Where Spirits Rose"],
       smallPrescriptions: ["Write down one feeling you would like to express out loud today."],
-      safeReading: "A song means expression, joy, and release; singing joyfully or being applauded reads as good news and a lighter heart.",
+      safeReading: "A song means expression, joy, and release — the soul finding its voice; singing freely reads as that voice flowing.",
       avoidExpressions: ["something joyful will surely happen", "everything will definitely work out"],
       fortune: {
         valence: "conditional",
         auspicious:
-          "Singing joyfully or being applauded was traditionally read as a feeling unwinding and good news coming in.",
+          "In Western symbolism song is the voice of the soul — finding your own voice, harmony, joy let out and shared; being heard or applauded reads as self-expression flowing free.",
         cautious:
           "No voice coming out or a sad song was taken as a nudge to let out a feeling you have swallowed.",
       },
@@ -6456,8 +6456,8 @@ export const symbolEntries: SymbolEntry[] = [
     en: localized({
       label: "Laughter",
       aliases: ["laughter", "laughing brightly", "bursting into laughter", "laughing together", "a smile"],
-      searchText: "laughter, laughing brightly, bursting into laughter, laughing together, smile, joy, blessing, release, lightness, connection, delight, warmth",
-      coreMeanings: ["joy", "release", "lightness"],
+      searchText: "laughter, laughing brightly, bursting into laughter, laughing together, the healing of mirth, the divine comedy, joy, release, lightness, connection, delight",
+      coreMeanings: ["joy and mirth", "release", "lightness"],
       lightReadings: ["laughing brightly as the heart opens up", "a warmth shared as you laugh together"],
       shadowReadings: ["a hollow laugh with emptiness underneath", "a forced smile hiding something"],
       sceneModifiers: {
@@ -6469,12 +6469,12 @@ export const symbolEntries: SymbolEntry[] = [
       metaphorHooks: ["joy opening you up brightly", "a warmth shared in laughter"],
       cardTitleSeeds: ["The Night You Laughed Brightly", "A Place Laughter Spread"],
       smallPrescriptions: ["Bring to mind one moment you laughed brightly today."],
-      safeReading: "Laughter means joy, release, and lightness; laughing brightly or together reads as blessing and good connection.",
+      safeReading: "Laughter means joy, release, and lightness — the healing of mirth; laughing freely or together reads as that joy shared.",
       avoidExpressions: ["good things will surely happen", "everything will definitely go well"],
       fortune: {
         valence: "conditional",
         auspicious:
-          "Laughing brightly or laughing together with others was traditionally an auspicious omen of joy, blessing, and good connection.",
+          "In Western terms bright, shared laughter is joy and release — the healing of mirth, the lightness that opens you and connects people.",
         cautious:
           "A hollow or forced laugh was taken as a nudge to look at something you have been hiding underneath.",
       },
@@ -6518,25 +6518,25 @@ export const symbolEntries: SymbolEntry[] = [
     en: localized({
       label: "Meat",
       aliases: ["meat", "eating meat", "grilled meat", "slab of meat", "barbecue"],
-      searchText: "meat, eating meat, grilled meat, slab of meat, barbecue, abundance, wealth, vitality, reward, fullness, energy, feast",
-      coreMeanings: ["abundance and wealth", "vitality", "a reward"],
-      lightReadings: ["eating heartily and being solidly filled", "a generous reward laid out"],
-      shadowReadings: ["too much, cloying or burdensome", "underdone and unappetizing"],
+      searchText: "meat, eating meat, grilled meat, barbecue, the flesh, carnal appetite, the body's hungers, the fatted calf, the feast, abundance, vitality",
+      coreMeanings: ["carnal appetite / the flesh", "abundance and vitality", "the feast"],
+      lightReadings: ["eating heartily — feeding the body's primal hungers", "the fatted calf: a generous feast of celebration"],
+      shadowReadings: ["too much, cloying or burdensome — appetite overindulged", "underdone and unappetizing"],
       sceneModifiers: {
         eatingHeartily: modifier("eating meat heartily and with relish", ["heartily", "delicious", "hearty", "to the full"], 0.82, "auspicious"),
         sharingFeast: modifier("grilling and sharing meat like a feast", ["together", "grilled", "shared", "feast"], 0.78, "auspicious"),
         rawOrSpoiled: modifier("raw or spoiled meat you won't touch", ["raw", "spoiled", "off-putting", "fishy"], 0.72, "cautious"),
       },
       contextQuestions: ["Did you eat the meat heartily and with relish?", "Was it a shared, festive meal?"],
-      metaphorHooks: ["abundance that fills you solidly", "a generous reward laid out"],
+      metaphorHooks: ["the fatted calf of the feast", "the body's primal hunger fed"],
       cardTitleSeeds: ["The Night of a Hearty Meal", "A Generous Feast"],
       smallPrescriptions: ["Bring to mind one bit of your energy you want to solidly replenish today."],
-      safeReading: "Meat means abundance, wealth, and vitality; eating heartily reads as wealth luck and rising energy.",
+      safeReading: "Meat means the flesh and carnal appetite, abundance, and vitality; eating heartily reads as feeding a deep, bodily hunger.",
       avoidExpressions: ["you will surely get rich", "this affects your health"],
       fortune: {
         valence: "conditional",
         auspicious:
-          "Eating meat heartily, or sharing a generous spread, was traditionally read as abundance, wealth luck, and rising vitality.",
+          "In Western symbolism meat is the flesh and carnal appetite — primal vitality, the fatted calf of the feast; eating heartily reads as feeding a deep, bodily hunger and celebrating plenty.",
         cautious:
           "Raw or spoiled meat you would not touch was taken as a nudge not to rush something still underdone.",
       },
@@ -6580,10 +6580,10 @@ export const symbolEntries: SymbolEntry[] = [
     en: localized({
       label: "Alcohol",
       aliases: ["alcohol", "drinking", "having drinks", "a toast", "drinks"],
-      searchText: "alcohol, drinking, having drinks, a toast, drinks, conviviality, connection, joyful gathering, release, merriment, loosening, excess",
-      coreMeanings: ["conviviality", "loosening up", "connection"],
-      lightReadings: ["sharing cups merrily and mingling", "a warm gathering where hearts loosen and draw close"],
-      shadowReadings: ["drinking too much and swaying", "worry about losing control when tipsy"],
+      searchText: "alcohol, drinking, having drinks, a toast, Dionysus, Bacchus, intoxication, loosening the ego's guard, in vino veritas, conviviality, connection, excess",
+      coreMeanings: ["Dionysian conviviality", "loosening the guard", "connection"],
+      lightReadings: ["sharing cups merrily — Dionysian mingling and warmth", "a gathering where hearts loosen and the guard comes down"],
+      shadowReadings: ["drinking too much and swaying — Dionysian excess tipping over", "worry about losing control, the ego dissolving when tipsy"],
       sceneModifiers: {
         sharingDrinks: modifier("sharing drinks merrily and mingling", ["shared", "toast", "merry", "together"], 0.8, "auspicious"),
         warmGathering: modifier("growing close at a warm gathering", ["warm", "cozy", "close", "chatting"], 0.76, "auspicious"),
@@ -6593,12 +6593,12 @@ export const symbolEntries: SymbolEntry[] = [
       metaphorHooks: ["a merry, mingling gathering", "a moment hearts loosen and draw close"],
       cardTitleSeeds: ["The Night of Shared Cups", "A Warm Gathering"],
       smallPrescriptions: ["Bring to mind one person you would like to spend easy time with today."],
-      safeReading: "Alcohol means conviviality, loosening up, and connection; sharing drinks merrily reads as a joyful gathering and good company.",
+      safeReading: "Alcohol means conviviality, loosening up, and connection; sharing drinks merrily reads as warmth and the guard coming down.",
       avoidExpressions: ["a good gathering will surely come", "this affects your health"],
       fortune: {
         valence: "conditional",
         auspicious:
-          "Sharing drinks merrily or growing close at a warm gathering was traditionally read as a joyful occasion, good company, and mingling.",
+          "In Western symbolism wine and drink are Dionysian — conviviality, the loosening of the ego's guard, warmth and truth shared (in vino veritas); merry sharing reads as connection and release.",
         cautious:
           "Drinking to excess or swaying drunk was taken as a nudge to rein in an overdoing.",
       },
@@ -6642,8 +6642,8 @@ export const symbolEntries: SymbolEntry[] = [
     en: localized({
       label: "Dance",
       aliases: ["dance", "dancing", "dancing joyfully", "a dance", "dancing together"],
-      searchText: "dance, dancing, dancing joyfully, dancing together, joy, freedom, expression, release, exhilaration, harmony, lightness, movement",
-      coreMeanings: ["joy", "freedom", "expression"],
+      searchText: "dance, dancing, dancing joyfully, dancing together, Dionysian ecstasy, the dance of life, the cosmic dance, abandon, joy, freedom, expression, harmony",
+      coreMeanings: ["joy and abandon", "freedom of expression", "harmony"],
       lightReadings: ["the body moving on its own in joyful abandon", "a light loosening as you fall into harmony together"],
       shadowReadings: ["the body stiffening with awkwardness", "the strain of forcing yourself to keep step"],
       sceneModifiers: {
@@ -6660,7 +6660,7 @@ export const symbolEntries: SymbolEntry[] = [
       fortune: {
         valence: "conditional",
         auspicious:
-          "Dancing joyfully or in harmony with others was traditionally read as joy, good things, and a release of the heart.",
+          "In Western symbolism dance is ecstasy and the dance of life — joyful abandon, free expression, the body falling into harmony with itself and others.",
         cautious:
           "Dancing awkwardly or forcing yourself to keep step was taken as a nudge to look at a place you are straining to fit in.",
       },

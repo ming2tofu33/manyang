@@ -33,6 +33,14 @@ export const BICULTURAL_REVIEWED: ReadonlySet<string> = new Set([
   // place (en을 서양 상징으로) — 18/18 완결 (owned_land는 batch1)
   "school", "corridor", "home", "room", "stairs", "elevator", "hospital", "toilet", "bathroom",
   "workplace", "road", "bridge", "kitchen", "grave", "market", "cave", "prison",
+  // action (en을 서양 상징으로) — 10/10 완결 (being_chased는 batch1)
+  "searching", "lost_item", "running", "falling", "flying", "swimming", "fighting", "song", "dance",
+  // food — 3/3 완결
+  "food", "meat", "alcohol",
+  // emotion — 3/3 완결
+  "crying", "anger", "laughter",
+  // abstract — 2/2 완결
+  "many", "crowd",
 ]);
 
 export type CategoryReviewStatus = {

@@ -9,6 +9,7 @@ import {
   getDefaultCatReaderSnapshot,
   getSelectedCatReaderSnapshotFromBrowser,
   subscribeToSelectedCatReader,
+  type CatReaderId,
 } from "@/lib/cat-readers";
 import { manyangAssets } from "@/lib/manyang-assets";
 import { cn, ui } from "@/lib/styles";
@@ -47,30 +48,47 @@ function useSelectedCatReader() {
   return getCatReaderById(selectedCatReaderId);
 }
 
-export function EncyclopediaReaderIntroCard() {
-  const reader = useSelectedCatReader();
+export function getEncyclopediaBannerForCatReader(readerId: CatReaderId): string {
+  const reader = getCatReaderById(readerId);
+
+  return manyangAssets.illustrations.encyclopediaBanners[reader.assetKey];
+}
+
+export function EncyclopediaBackgroundOverlay() {
+  const selectedCatReaderId = useSyncExternalStore(
+    subscribeToSelectedCatReader,
+    getSelectedCatReaderSnapshotFromBrowser,
+    getDefaultCatReaderSnapshot,
+  );
+  const reader = getCatReaderById(selectedCatReaderId);
+  const backgroundSrc = manyangAssets.illustrations.encyclopediaBanners[reader.assetKey];
 
   return (
-    <section className="relative overflow-hidden rounded-[1.35rem] border border-[#7c4a38]/60 bg-[rgba(5,4,12,0.74)] px-4 py-4 shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md">
-      <div className="flex items-center gap-3">
-        <span className="relative h-16 w-16 shrink-0">
-          <Image
-            src={manyangAssets.illustrations[reader.assetKey]}
-            alt={`${reader.name} 백과 안내`}
-            fill
-            sizes="64px"
-            unoptimized
-            className="scale-110 object-contain drop-shadow-[0_0_18px_rgba(215,153,255,0.26)]"
-          />
-        </span>
-        <div className="min-w-0 flex-1">
-          <p className="text-[12px] font-semibold text-[#f0bc7d]">{reader.name} 사전 안내</p>
-          <p className="mt-1 text-[15px] leading-6 text-[#fff3d7]">
-            꿈속의 상징은 마음을 비추는 작은 거울이라냥.
-          </p>
-        </div>
+    <>
+      <div className="absolute inset-x-0 top-0 h-[20.5rem] overflow-hidden">
+        <Image
+          key={backgroundSrc}
+          src={backgroundSrc}
+          alt=""
+          width={1536}
+          height={1024}
+          priority
+          sizes="430px"
+          className="absolute left-1/2 top-0 h-[20.5rem] w-[30.75rem] max-w-none -translate-x-1/2 object-cover opacity-95"
+        />
       </div>
-    </section>
+      <div className="absolute inset-x-0 top-0 h-[12.5rem] bg-[linear-gradient(180deg,rgba(5,4,11,0.54),rgba(5,4,11,0.26)_58%,rgba(5,4,11,0.00))]" />
+      <div className="absolute inset-x-0 top-[13.5rem] h-[10rem] bg-[linear-gradient(180deg,rgba(5,4,11,0.00),rgba(5,4,11,0.86)_62%,rgba(5,4,11,0.99))]" />
+      <section
+        className="absolute left-[11.25rem] right-4 top-[8.85rem] rounded-[1.1rem] border border-[#8c5948]/70 bg-[rgba(8,6,17,0.78)] px-4 py-3 text-left shadow-[0_0_22px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md before:absolute before:left-[-0.43rem] before:top-1/2 before:h-3 before:w-3 before:-translate-y-1/2 before:rotate-45 before:border-b before:border-l before:border-[#8c5948]/70 before:bg-[rgba(8,6,17,0.78)]"
+        data-encyclopedia-speech-bubble="true"
+      >
+        <p className="text-[12px] font-semibold text-[#f0bc7d]">{reader.name} 사전 안내</p>
+        <p className="mt-1 text-[14px] leading-5 text-[#fff3d7]">
+          꿈속의 상징은 마음을 비추는 작은 거울이라냥.
+        </p>
+      </section>
+    </>
   );
 }
 

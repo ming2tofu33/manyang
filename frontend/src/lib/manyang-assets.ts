@@ -23,6 +23,12 @@ export const manyangAssets = {
       cheeseCat: "/manyang/backgrounds/dreamseed-background-cheese-cat-v3.webp",
       grayCat: "/manyang/backgrounds/dreamseed-background-gray-cat-v2.webp",
     },
+    encyclopediaBanners: {
+      blackCat: "/manyang/encyclopedia/encyclopedia-banner-black-cat-v3.webp",
+      whiteCat: "/manyang/encyclopedia/encyclopedia-banner-white-cat-v3.webp",
+      cheeseCat: "/manyang/encyclopedia/encyclopedia-banner-cheese-cat-v3.webp",
+      grayCat: "/manyang/encyclopedia/encyclopedia-banner-gray-cat-v3.webp",
+    },
     morning: "/manyang/backgrounds/morning-illustration.webp",
     blackCatProfile: "/manyang/references/cat-black-profile.webp",
     whiteCatProfile: "/manyang/references/cat-white-profile.webp",

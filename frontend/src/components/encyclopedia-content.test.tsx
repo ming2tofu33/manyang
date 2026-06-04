@@ -13,7 +13,7 @@ describe("EncyclopediaContent", () => {
     }));
     const markup = renderToStaticMarkup(<EncyclopediaContent entries={entries} />);
 
-    expect(markup).toContain('data-encyclopedia-result-count="12/14"');
+    expect(markup).toContain('data-encyclopedia-result-count="14/14"');
     expect(markup).toContain('data-encyclopedia-load-sentinel="true"');
     expect(markup).toContain('href="/encyclopedia/symbol-12"');
     expect(markup).not.toContain('href="/encyclopedia/symbol-13"');
@@ -48,11 +48,12 @@ describe("EncyclopediaContent", () => {
     );
 
     expect(markup).toContain("/manyang/references/cat-black-profile.webp");
-    expect(markup).toContain("사전 안내");
+    expect(markup).toContain("같은 상징");
     expect(markup).toContain("type=\"search\"");
     expect(markup).toContain("placeholder=\"무슨 꿈이 궁금한가요?\"");
     expect(markup).toContain("많이 찾는 꿈해몽");
     expect(markup).toContain("[scrollbar-width:none]");
+    expect(markup).toContain("focus:ring-inset");
     expect(markup).toContain("href=\"/encyclopedia/door\"");
     expect(markup).not.toContain("이번 주");
     expect(markup).not.toContain("사용자 맞춤");

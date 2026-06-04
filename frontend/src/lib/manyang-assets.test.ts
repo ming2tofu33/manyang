@@ -141,6 +141,18 @@ describe("manyang assets", () => {
     expect(manyangAssets.illustrations.dreamseedByCat.grayCat).toBe(
       "/manyang/backgrounds/dreamseed-background-gray-cat-v2.webp",
     );
+    expect(manyangAssets.illustrations.encyclopediaBanners.blackCat).toBe(
+      "/manyang/encyclopedia/encyclopedia-banner-black-cat-v3.webp",
+    );
+    expect(manyangAssets.illustrations.encyclopediaBanners.whiteCat).toBe(
+      "/manyang/encyclopedia/encyclopedia-banner-white-cat-v3.webp",
+    );
+    expect(manyangAssets.illustrations.encyclopediaBanners.cheeseCat).toBe(
+      "/manyang/encyclopedia/encyclopedia-banner-cheese-cat-v3.webp",
+    );
+    expect(manyangAssets.illustrations.encyclopediaBanners.grayCat).toBe(
+      "/manyang/encyclopedia/encyclopedia-banner-gray-cat-v3.webp",
+    );
     expect(manyangAssets.illustrations.morning).toBe("/manyang/backgrounds/morning-illustration.webp");
     expect(manyangAssets.illustrations.blackCatProfile).toBe("/manyang/references/cat-black-profile.webp");
     expect(manyangAssets.illustrations.whiteCatProfile).toBe("/manyang/references/cat-white-profile.webp");
@@ -181,6 +193,10 @@ describe("manyang assets", () => {
       manyangAssets.illustrations.dreamseedByCat.whiteCat,
       manyangAssets.illustrations.dreamseedByCat.cheeseCat,
       manyangAssets.illustrations.dreamseedByCat.grayCat,
+      manyangAssets.illustrations.encyclopediaBanners.blackCat,
+      manyangAssets.illustrations.encyclopediaBanners.whiteCat,
+      manyangAssets.illustrations.encyclopediaBanners.cheeseCat,
+      manyangAssets.illustrations.encyclopediaBanners.grayCat,
       manyangAssets.illustrations.morning,
       manyangAssets.illustrations.blackCatProfile,
       manyangAssets.illustrations.whiteCatProfile,
@@ -228,6 +244,10 @@ describe("manyang assets", () => {
     expect(readImageSize(manyangAssets.illustrations.dreamseedByCat.whiteCat)).toEqual({ width: 1254, height: 1254 });
     expect(readImageSize(manyangAssets.illustrations.dreamseedByCat.cheeseCat)).toEqual({ width: 1254, height: 1254 });
     expect(readImageSize(manyangAssets.illustrations.dreamseedByCat.grayCat)).toEqual({ width: 1254, height: 1254 });
+    expect(readImageSize(manyangAssets.illustrations.encyclopediaBanners.blackCat)).toEqual({ width: 1536, height: 1024 });
+    expect(readImageSize(manyangAssets.illustrations.encyclopediaBanners.whiteCat)).toEqual({ width: 1536, height: 1024 });
+    expect(readImageSize(manyangAssets.illustrations.encyclopediaBanners.cheeseCat)).toEqual({ width: 1536, height: 1024 });
+    expect(readImageSize(manyangAssets.illustrations.encyclopediaBanners.grayCat)).toEqual({ width: 1536, height: 1024 });
     expect(readImageSize(manyangAssets.illustrations.morning)).toEqual({ width: 1254, height: 1254 });
     expect(readImageSize(manyangAssets.illustrations.blackCatProfile)).toEqual({ width: 1254, height: 1254 });
     expect(readImageSize(manyangAssets.illustrations.whiteCatProfile)).toEqual({ width: 1254, height: 1254 });
@@ -272,6 +292,10 @@ describe("manyang assets", () => {
       ["/manyang/backgrounds/dreamseed-background-white-cat-v2.png", manyangAssets.illustrations.dreamseedByCat.whiteCat, 0.2],
       ["/manyang/backgrounds/dreamseed-background-cheese-cat-v3.png", manyangAssets.illustrations.dreamseedByCat.cheeseCat, 0.2],
       ["/manyang/backgrounds/dreamseed-background-gray-cat-v2.png", manyangAssets.illustrations.dreamseedByCat.grayCat, 0.2],
+      ["../ref/encyclopedia-illustrations/encyclopedia-banner-black-cat-v3.png", manyangAssets.illustrations.encyclopediaBanners.blackCat, 0.18],
+      ["../ref/encyclopedia-illustrations/encyclopedia-banner-white-cat-v3.png", manyangAssets.illustrations.encyclopediaBanners.whiteCat, 0.18],
+      ["../ref/encyclopedia-illustrations/encyclopedia-banner-cheese-cat-v3.png", manyangAssets.illustrations.encyclopediaBanners.cheeseCat, 0.18],
+      ["../ref/encyclopedia-illustrations/encyclopedia-banner-gray-cat-v3.png", manyangAssets.illustrations.encyclopediaBanners.grayCat, 0.18],
       ["/manyang/backgrounds/morning-illustration.png", manyangAssets.illustrations.morning, 0.35],
       ["/manyang/references/cat-black-profile.png", manyangAssets.illustrations.blackCatProfile, 0.35],
       ["/manyang/references/cat-white-profile.png", manyangAssets.illustrations.whiteCatProfile, 0.35],

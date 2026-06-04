@@ -74,7 +74,7 @@ export function EncyclopediaSearchClient({
   const visibleLimit = visiblePage.key === filterKey ? visiblePage.limit : initialLimit;
   const visibleEntries = filteredEntries.slice(0, visibleLimit);
   const canLoadMore = visibleEntries.length < filteredEntries.length;
-  const resultCountLabel = `${visibleEntries.length} / ${filteredEntries.length}`;
+  const resultCountLabel = `${filteredEntries.length} / ${entries.length}`;
   const statusMessage = canLoadMore
     ? "상징을 더 펼치는 중이에요..."
     : isFilteredView
@@ -118,8 +118,8 @@ export function EncyclopediaSearchClient({
 
   return (
     <section className="space-y-4">
-      <label className={cn(ui.panel, "flex items-center gap-3 px-4 py-3 text-[#caa37b]")}>
-        <span className="relative h-8 w-8 shrink-0">
+      <label className={cn(ui.panel, "flex items-center gap-3 px-4 py-2.5 text-[#caa37b]")}>
+        <span className="relative h-7 w-7 shrink-0">
           <Image src={manyangAssets.actionIcons.search} alt="" fill sizes="32px" unoptimized className="object-contain" />
         </span>
         <input
@@ -137,7 +137,7 @@ export function EncyclopediaSearchClient({
           <h2 className="text-lg font-semibold text-[#ffd98a]">{isFilteredView ? "검색 결과" : "많이 찾는 꿈해몽"}</h2>
           <span
             className="shrink-0 text-xs font-semibold text-[#caa37b]"
-            data-encyclopedia-result-count={`${visibleEntries.length}/${filteredEntries.length}`}
+            data-encyclopedia-result-count={`${filteredEntries.length}/${entries.length}`}
           >
             {resultCountLabel}개
           </span>
@@ -155,9 +155,10 @@ export function EncyclopediaSearchClient({
                 aria-pressed={isSelected}
                 onClick={() => setSelectedCategory(category)}
                 className={cn(
-                  "shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-[#d799ff]",
+                  "shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition",
+                  ui.insetFocus,
                   isSelected
-                    ? "border-[#c775ff] bg-[#32134d]/78 text-[#f4b5ff] shadow-[0_0_18px_rgba(199,117,255,0.28)]"
+                    ? ui.selectedPill
                     : "border-[#7c4a38]/70 bg-[rgba(8,6,17,0.58)] text-[#f4b65f] hover:border-[#d799ff]/60",
                 )}
               >

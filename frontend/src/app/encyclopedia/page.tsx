@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { AppShell } from "@/components/app-shell";
 import { EncyclopediaContent } from "@/components/encyclopedia-content";
+import { EncyclopediaBackgroundOverlay } from "@/components/encyclopedia-reader-guide-client";
 import { manyangAssets } from "@/lib/manyang-assets";
 import { getIndexableEncyclopediaEntries } from "@/lib/seo-encyclopedia";
 
@@ -25,6 +26,8 @@ export default function EncyclopediaPage() {
   return (
     <AppShell
       background={manyangAssets.backgrounds.default}
+      backgroundLayer={<div className="absolute inset-0 bg-[#05040b]" />}
+      backgroundOverlay={<EncyclopediaBackgroundOverlay />}
       title="꿈해몽 백과"
       subtitle="궁금한 꿈의 상징을 찾아보세요"
       titleIconSrc={manyangAssets.pageIcons.encyclopedia}
