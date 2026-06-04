@@ -1,6 +1,32 @@
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import type { DreamCompletedPayload } from "@/lib/dream-storage";
+
+const mockedRoutineRecords = vi.hoisted(() => ({
+  nightCheckInRecords: [
+    {
+      moodId: "calm",
+      moodLabel: "편안함",
+      conditionId: "settled",
+      conditionLabel: "조용함",
+      note: "잠들기 전 마음이 가라앉아 있었어요.",
+      checkInDate: "2026-05-23",
+      savedAt: "2026-05-23T22:00:00.000Z",
+    },
+  ],
+}));
+
+vi.mock("@/lib/use-routine-records", () => ({
+  mergeRemotePawprintResult: vi.fn(),
+  useRoutineRecords: () => ({
+    pawprints: [],
+    morningMoodRecords: [],
+    nightCheckInRecords: mockedRoutineRecords.nightCheckInRecords,
+    source: "local",
+    isLoadingRoutineRecords: false,
+    canViewRoutines: true,
+  }),
+}));
 
 import { DreamResultReceipt } from "./dream-result-receipt";
 
@@ -125,6 +151,11 @@ describe("DreamResultReceipt", () => {
     expect(markup).toContain("data-receipt-stamp=\"true\"");
     expect(markup).toContain("data-receipt-stamp-reader=\"black_cat\"");
     expect(markup).toContain("/manyang/receipts/stamps/stamp-black-cat-seal.png");
+    expect(markup).toContain("data-receipt-reader-signature=\"true\"");
+    expect(markup).toContain("data-receipt-reader-pawprint=\"true\"");
+    expect(markup).toContain("From. 검은냥");
+    expect(markup).toContain("justify-between");
+    expect(markup).toContain("h-[6.55rem] w-[6.55rem]");
     expect(markup).toContain("receipt-stamp-print");
     expect(markup).toContain("animation-delay:3920ms");
   });
@@ -215,9 +246,9 @@ describe("DreamResultReceipt", () => {
     expect(markup).not.toContain("whitespace-nowrap");
     expect(markup).toContain("2026.05.24");
     expect(markup).toContain("불안함");
-    expect(markup).toContain("검은냥 테마");
+    expect(markup).not.toContain("검은냥 테마");
     expect(markup).not.toContain("밤하늘 테마");
-    expect(markup).not.toContain("From. 검은냥");
+    expect(markup).toContain("From. 검은냥");
     expect(markup).toContain("receipt-tag-pop");
     expect(markup).toContain("data-receipt-symbol-tags=\"true\"");
     expect(markup).toContain("justify-center");
@@ -254,6 +285,24 @@ describe("DreamResultReceipt", () => {
     expect(saveSlotIndex).toBeGreaterThan(actionsIndex);
     expect(symbolPanelIndex).toBeGreaterThan(saveSlotIndex);
     expect(markup).not.toContain("data-symbol-basis-panel=\"true\" style=\"animation-delay:9000ms\"");
+  });
+
+  it("reveals the related night record with receipt actions and symbols in the same settled stack", () => {
+    const markup = renderToStaticMarkup(<DreamResultReceipt />);
+    const completionStackIndex = markup.indexOf("data-receipt-completion-stack=\"true\"");
+    const actionsIndex = markup.indexOf("data-receipt-result-actions=\"true\"");
+    const symbolPanelIndex = markup.indexOf("data-symbol-basis-panel=\"true\"");
+    const nightRecordIndex = markup.indexOf("data-related-night-checkin-panel=\"true\"");
+
+    expect(nightRecordIndex).toBeGreaterThan(-1);
+    expect(nightRecordIndex).toBeGreaterThan(completionStackIndex);
+    expect(nightRecordIndex).toBeGreaterThan(actionsIndex);
+    expect(symbolPanelIndex).toBeGreaterThan(actionsIndex);
+    expect(nightRecordIndex).toBeGreaterThan(symbolPanelIndex);
+    expect(markup).toContain("어젯밤의 기록");
+    expect(markup).toContain("편안함 · 조용함");
+    expect(markup).toContain("잠들기 전 마음이 가라앉아 있었어요.");
+    expect(markup).not.toContain("data-related-night-checkin-panel=\"true\" style=\"animation-delay:9000ms\"");
   });
 
   it("lets long LLM receipt sections expand the receipt instead of clipping generated text", () => {

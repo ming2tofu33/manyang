@@ -318,10 +318,6 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
   const prescriptionStartDelayMs =
     readerNoteStartDelayMs +
     (analysis.readerNote ? getReceiptStreamingDurationMs(analysis.readerNote) + receiptTextGapMs : 0);
-  const afterReceiptTextDelayMs = Math.min(
-    prescriptionStartDelayMs + getReceiptStreamingDurationMs(analysis.smallPrescription) + 360,
-    9000,
-  );
 
   useEffect(() => {
     let isMounted = true;
@@ -489,8 +485,6 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
                 data-receipt-detail-line="true"
               >
                 <span className="max-w-full break-keep">{displayMood}</span>
-                <span aria-hidden="true">·</span>
-                <span className="break-keep">{reader.name} 테마</span>
               </p>
             </div>
             <div className="mt-5 flex flex-nowrap justify-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" data-receipt-symbol-tags="true">
@@ -542,48 +536,43 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
               </p>
             ) : null}
             <div
-              aria-hidden="true"
-              className="relative mt-6 flex shrink-0 items-center justify-center"
+              className="relative mt-6 flex shrink-0 items-end justify-between gap-4 pl-1"
               data-receipt-stamp-space="true"
               style={receiptStampSpaceStyle}
             >
+              <div
+                className="animate-receipt-meta-fade flex min-w-0 items-center gap-1.5 pb-3 text-[18px] leading-none text-[#3c291d]/78"
+                data-receipt-reader-signature="true"
+                style={createReceiptDelayStyle(receiptStampDelayMs)}
+              >
+                <span className="font-serif italic tracking-[0.01em]">From. {reader.name}</span>
+                <span className="relative h-4 w-4 shrink-0 opacity-80" data-receipt-reader-pawprint="true">
+                  <Image
+                    src={manyangAssets.semanticIcons.paw}
+                    alt=""
+                    fill
+                    sizes="16px"
+                    unoptimized
+                    className="object-contain sepia"
+                  />
+                </span>
+              </div>
               <Image
                 src={receiptStampSrc}
                 alt=""
                 width={1254}
                 height={1254}
-                sizes="132px"
+                sizes="104px"
                 unoptimized
                 data-receipt-stamp="true"
                 data-receipt-stamp-reader={reader.id}
-                className="receipt-stamp-print pointer-events-none h-[7.4rem] w-[7.4rem] object-contain mix-blend-multiply"
+                className="receipt-stamp-print pointer-events-none h-[6.55rem] w-[6.55rem] shrink-0 object-contain"
                 style={createReceiptDelayStyle(receiptStampDelayMs)}
               />
             </div>
           </div>
         </section>
       </div>
-      {relatedCheckIn ? (
-        <section
-          className="animate-ink-fade rounded-[1.1rem] border border-[#b98255]/45 bg-[rgba(7,6,18,0.76)] px-4 py-3 text-sm leading-6 text-[#fff3d7] shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md"
-          style={createReceiptDelayStyle(afterReceiptTextDelayMs)}
-        >
-          <p className="flex items-center gap-2 font-semibold text-[#ffd98a]">
-            <span className="relative h-5 w-5">
-              <Image src={manyangAssets.semanticIcons.star} alt="" fill sizes="20px" unoptimized className="object-contain" />
-            </span>
-            어젯밤의 기록
-          </p>
-          <p className="mt-1 text-[#fff3d7]/84">
-            {relatedCheckIn.moodLabel} · {relatedCheckIn.conditionLabel}
-          </p>
-          {relatedCheckIn.note ? (
-            <p className="mt-1 rounded-[0.8rem] border border-[#7c4a38]/55 bg-[rgba(5,4,12,0.58)] px-3 py-2 text-[#d8c7bc]">
-              {relatedCheckIn.note}
-            </p>
-          ) : null}
-        </section>
-      ) : null}
       <div
         className="animate-ink-fade space-y-4"
         data-receipt-completion-stack="true"
@@ -593,81 +582,102 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
           className="grid grid-cols-2 gap-3"
           data-receipt-result-actions="true"
         >
-        <AssetTextButton
-          frame={manyangAssets.buttons.compactPrimary}
-          iconSrc={manyangAssets.actionIcons.download}
-          onClick={handleDownload}
-          contentClassName="min-h-[3.45rem] px-2.5 text-[14px]"
-          iconClassName="h-6 w-6"
-        >
-          저장하기
-        </AssetTextButton>
-        <AssetTextButton
-          frame={manyangAssets.buttons.compactPrimary}
-          iconSrc={manyangAssets.actionIcons.share}
-          onClick={() => void handleShare()}
-          contentClassName="min-h-[3.45rem] px-2.5 text-[14px]"
-          iconClassName="h-6 w-6"
-        >
-          공유하기
-        </AssetTextButton>
+          <AssetTextButton
+            frame={manyangAssets.buttons.compactPrimary}
+            iconSrc={manyangAssets.actionIcons.download}
+            onClick={handleDownload}
+            contentClassName="min-h-[3.45rem] px-2.5 text-[14px]"
+            iconClassName="h-6 w-6"
+          >
+            저장하기
+          </AssetTextButton>
+          <AssetTextButton
+            frame={manyangAssets.buttons.compactPrimary}
+            iconSrc={manyangAssets.actionIcons.share}
+            onClick={() => void handleShare()}
+            contentClassName="min-h-[3.45rem] px-2.5 text-[14px]"
+            iconClassName="h-6 w-6"
+          >
+            공유하기
+          </AssetTextButton>
         </div>
         <div data-receipt-save-slot="true">
           <ReceiptSaveCta />
         </div>
-      {showPawprintLoginPrompt ? (
-        <section
-          className="animate-ink-fade rounded-[1.1rem] border border-[#b98255]/45 bg-[rgba(7,6,18,0.76)] px-4 py-3 text-sm leading-6 text-[#fff3d7] shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md"
-          data-routine-login-cta="receipt-pawprint"
+        {showPawprintLoginPrompt ? (
+          <section
+            className="animate-ink-fade rounded-[1.1rem] border border-[#b98255]/45 bg-[rgba(7,6,18,0.76)] px-4 py-3 text-sm leading-6 text-[#fff3d7] shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md"
+            data-routine-login-cta="receipt-pawprint"
+          >
+            <p className="font-semibold text-[#ffd98a]">로그인하면 저장한 영수증도 발자국으로 남아요.</p>
+            <p className="mt-1 text-[#fff3d7]/78">
+              이미지는 저장됐고, 계정에 로그인하면 이런 기록을 달력에 모을 수 있어요.
+            </p>
+          </section>
+        ) : null}
+        <details
+          className="group overflow-hidden rounded-[1.15rem] border border-[#b98255]/52 bg-[rgba(7,6,18,0.78)] shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md"
+          data-symbol-basis-panel="true"
         >
-          <p className="font-semibold text-[#ffd98a]">로그인하면 저장한 영수증도 발자국으로 남아요.</p>
-          <p className="mt-1 text-[#fff3d7]/78">
-            이미지는 저장됐고, 계정에 로그인하면 이런 기록을 달력에 모을 수 있어요.
-          </p>
-        </section>
-      ) : null}
-      <details
-        className="group overflow-hidden rounded-[1.15rem] border border-[#b98255]/52 bg-[rgba(7,6,18,0.78)] shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md"
-        data-symbol-basis-panel="true"
-      >
-        <summary className="flex min-h-[4rem] cursor-pointer list-none items-center gap-3 px-4 py-3 text-[#f2c27d] transition hover:text-[#ffe7b5] [&::-webkit-details-marker]:hidden">
-          <span className="relative h-9 w-9 shrink-0">
-            <Image src={manyangAssets.actionIcons.book} alt="" fill sizes="36px" unoptimized className="object-contain" />
-          </span>
-          <span className="min-w-0 flex-1">
-            <span className="block text-[16px] font-bold">꿈 영수증에 담긴 상징들</span>
-            <span className="mt-0.5 block text-[12px] font-medium text-[#caa37b]">
-              영수증에 담긴 상징 메모를 펼쳐봅니다
+          <summary className="flex min-h-[4rem] cursor-pointer list-none items-center gap-3 px-4 py-3 text-[#f2c27d] transition hover:text-[#ffe7b5] [&::-webkit-details-marker]:hidden">
+            <span className="relative h-9 w-9 shrink-0">
+              <Image src={manyangAssets.actionIcons.book} alt="" fill sizes="36px" unoptimized className="object-contain" />
             </span>
-          </span>
-          <span aria-hidden="true" className="text-xl transition group-open:rotate-90">›</span>
-        </summary>
-        <div className="space-y-3 border-t border-[#7c4a38]/45 px-4 pb-4 pt-3">
-          <p className="text-sm leading-6 text-[#fff3d7]/82">
-            꿈 영수증에 담긴 상징 메모예요.
-          </p>
-          <div className="space-y-2">
-            {symbolBasisItems.map((item) => (
-              <Link
-                key={item.symbol}
-                href={createResultEncyclopediaHref(item.symbol)}
-                className="block rounded-[0.95rem] border border-[#7c4a38]/58 bg-[rgba(5,4,12,0.62)] px-3 py-3 transition hover:border-[#ffd08a]/72 focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
-              >
-                <span className="flex items-center justify-between gap-3">
-                  <span className="min-w-0">
-                    <span className="block text-[11px] font-semibold text-[#caa37b]">꿈에서 잡힌 상징</span>
-                    <span className="mt-0.5 block font-semibold text-[#ffd98a]">{item.symbol}</span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[16px] font-bold">꿈 영수증에 담긴 상징들</span>
+              <span className="mt-0.5 block text-[12px] font-medium text-[#caa37b]">
+                영수증에 담긴 상징 메모를 펼쳐봅니다
+              </span>
+            </span>
+            <span aria-hidden="true" className="text-xl transition group-open:rotate-90">›</span>
+          </summary>
+          <div className="space-y-3 border-t border-[#7c4a38]/45 px-4 pb-4 pt-3">
+            <p className="text-sm leading-6 text-[#fff3d7]/82">
+              꿈 영수증에 담긴 상징 메모예요.
+            </p>
+            <div className="space-y-2">
+              {symbolBasisItems.map((item) => (
+                <Link
+                  key={item.symbol}
+                  href={createResultEncyclopediaHref(item.symbol)}
+                  className="block rounded-[0.95rem] border border-[#7c4a38]/58 bg-[rgba(5,4,12,0.62)] px-3 py-3 transition hover:border-[#ffd08a]/72 focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
+                >
+                  <span className="flex items-center justify-between gap-3">
+                    <span className="min-w-0">
+                      <span className="block text-[11px] font-semibold text-[#caa37b]">꿈에서 잡힌 상징</span>
+                      <span className="mt-0.5 block font-semibold text-[#ffd98a]">{item.symbol}</span>
+                    </span>
+                    <span className="shrink-0 text-[12px] font-semibold text-[#f2c27d]">
+                      {item.symbol} 백과 더 보기 ›
+                    </span>
                   </span>
-                  <span className="shrink-0 text-[12px] font-semibold text-[#f2c27d]">
-                    {item.symbol} 백과 더 보기 ›
-                  </span>
-                </span>
-                <span className="mt-2 block text-[13px] leading-6 text-[#fff3d7]/82">{item.reading}</span>
-              </Link>
-            ))}
+                  <span className="mt-2 block text-[13px] leading-6 text-[#fff3d7]/82">{item.reading}</span>
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      </details>
+        </details>
+        {relatedCheckIn ? (
+          <section
+            className="animate-ink-fade rounded-[1.1rem] border border-[#b98255]/45 bg-[rgba(7,6,18,0.76)] px-4 py-3 text-sm leading-6 text-[#fff3d7] shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md"
+            data-related-night-checkin-panel="true"
+          >
+            <p className="flex items-center gap-2 font-semibold text-[#ffd98a]">
+              <span className="relative h-5 w-5">
+                <Image src={manyangAssets.semanticIcons.star} alt="" fill sizes="20px" unoptimized className="object-contain" />
+              </span>
+              어젯밤의 기록
+            </p>
+            <p className="mt-1 text-[#fff3d7]/84">
+              {relatedCheckIn.moodLabel} · {relatedCheckIn.conditionLabel}
+            </p>
+            {relatedCheckIn.note ? (
+              <p className="mt-1 rounded-[0.8rem] border border-[#7c4a38]/55 bg-[rgba(5,4,12,0.58)] px-3 py-2 text-[#d8c7bc]">
+                {relatedCheckIn.note}
+              </p>
+            ) : null}
+          </section>
+        ) : null}
       </div>
       {pawprintCreated ? <p className="text-center text-sm font-semibold text-[#f0bc7d]">오늘의 발자국이 남았어요.</p> : null}
       {pawprintSaveError ? <p className="text-center text-sm text-[#f0bc7d]">발자국 저장이 잠시 지연됐어요. 다시 시도해 주세요.</p> : null}

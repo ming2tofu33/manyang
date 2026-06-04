@@ -69,16 +69,28 @@ function createTarotReading(): DailyTarotReading {
     image: "/manyang/tarot/major/00-the-fool.png",
     keywords: ["start", "possibility"],
     visualSymbols: ["small bag"],
+    symbolMeanings: [
+      {
+        symbol: "small bag",
+        meaning: "The small bag keeps the card focused on what is essential for the first step.",
+      },
+    ],
     mood: "Bright beginning.",
     upright: {
       summary: "New beginning",
       dailyFlow: "A small attempt may shift the day.",
       advice: "Check the basics first.",
+      story: "The card tells a story about stepping into a new path before every answer is visible.",
+      reflectionQuestion: "What small beginning is asking for attention today?",
+      smallAction: "Name one first step that is small enough to try today.",
     },
     reversed: {
       summary: "Rushed start",
       dailyFlow: "Slow down before moving.",
       advice: "Make one safety check first.",
+      story: "The card tells a story about excitement that needs a little more grounding.",
+      reflectionQuestion: "Where am I mistaking speed for readiness?",
+      smallAction: "Pause once and check the practical condition under the idea.",
     },
     contexts: {
       love: "New feeling",
@@ -156,7 +168,8 @@ describe("result action helpers", () => {
     const text = createReceiptShareText(createPayload());
 
     expect(text).toContain("복도와 신발이 남은 꿈");
-    expect(text).toContain("테마: 하얀냥");
+    expect(text).toContain("From. 하얀냥");
+    expect(text).not.toContain("테마: 하얀냥");
     expect(text).toContain("복도, 신발, 학교");
     expect(text).toContain("준비물 하나만 먼저 확인해보자냥.");
   });
@@ -166,7 +179,9 @@ describe("result action helpers", () => {
 
     expect(svg).toContain("<svg");
     expect(svg).toContain("복도와 신발이 남은 꿈");
-    expect(svg).toContain("테마: 하얀냥");
+    expect(svg).toContain("From. 하얀냥");
+    expect(svg).not.toContain("테마: 하얀냥");
+    expect(svg).toContain("stamp-text");
     expect(svg).toContain("공통 해몽");
     expect(svg).toContain("준비물 하나만 먼저 확인해보자냥.");
   });

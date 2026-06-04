@@ -114,7 +114,7 @@ export function createReceiptShareText(payload: DreamCompletedPayload): string {
 
   return [
     `오늘의 꿈 영수증: ${payload.analysis.summary}`,
-    `테마: ${reader.name}`,
+    `From. ${reader.name}`,
     `주요 상징: ${payload.analysis.symbols.join(", ")}`,
     `작은 처방: ${payload.analysis.smallPrescription}`,
   ].join("\n");
@@ -136,6 +136,10 @@ export function createReceiptSvg(payload: DreamCompletedPayload): string {
     .body { fill: #2f2117; font: 30px sans-serif; }
     .meta { fill: #5b4029; font: 28px sans-serif; text-anchor: middle; }
     .brand { fill: #f0a23c; font: 700 46px sans-serif; text-anchor: middle; }
+    .signature { fill: #3c291d; font: italic 31px serif; }
+    .stamp { fill: none; stroke: #4f3368; stroke-width: 5; opacity: 0.46; }
+    .stamp-text { fill: #4f3368; font: 700 20px serif; text-anchor: middle; letter-spacing: 2px; opacity: 0.54; }
+    .paw { fill: #4f3368; font: 700 42px sans-serif; text-anchor: middle; opacity: 0.58; }
   </style>
   <rect width="900" height="1300" class="bg"/>
   <text x="450" y="92" class="brand">오늘의 꿈 영수증</text>
@@ -143,13 +147,20 @@ export function createReceiptSvg(payload: DreamCompletedPayload): string {
   <text x="450" y="238" class="meta">DREAM RECEIPT</text>
   <text x="450" y="320" class="title">${escapeXml(payload.analysis.summary)}</text>
   <text x="450" y="380" class="meta">${escapeXml(payload.dreamDate)}  |  ${escapeXml(moodText)}</text>
-  <text x="450" y="425" class="meta">테마: ${escapeXml(reader.name)}</text>
-  <text x="450" y="475" class="label">주요 상징</text>
-  <text x="450" y="535" class="meta">${escapeXml(symbolText)}</text>
-  <text x="450" y="640" class="label">공통 해몽</text>
-  ${renderSvgLines(interpretationLines, 150, 705, 48, "body")}
+  <text x="450" y="465" class="label">주요 상징</text>
+  <text x="450" y="525" class="meta">${escapeXml(symbolText)}</text>
+  <text x="450" y="630" class="label">공통 해몽</text>
+  ${renderSvgLines(interpretationLines, 150, 695, 48, "body")}
   <text x="450" y="1080" class="label">오늘의 작은 처방</text>
   ${renderSvgLines(prescriptionLines, 150, 1138, 46, "body")}
+  <text x="150" y="1240" class="signature">From. ${escapeXml(reader.name)}  🐾</text>
+  <g transform="translate(675 1205) rotate(-8)">
+    <circle r="78" class="stamp"/>
+    <circle r="61" class="stamp"/>
+    <text y="-32" class="stamp-text">MANYANG DREAM</text>
+    <text y="46" class="stamp-text">MYSTIC READER</text>
+    <text y="16" class="paw">🐾</text>
+  </g>
 </svg>`;
 }
 
