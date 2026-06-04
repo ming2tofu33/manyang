@@ -15,16 +15,10 @@ export type TarotGeneratedCardReading = {
   reading: string;
 };
 
-export type TarotGeneratedSymbolReading = {
-  symbol: string;
-  reading: string;
-};
-
 export type TarotGeneratedReading = {
   title: string;
   overview: string;
   keywords: string[];
-  symbolReadings: TarotGeneratedSymbolReading[];
   cardReadings: TarotGeneratedCardReading[];
   advice: string;
 };
@@ -123,25 +117,6 @@ function parseStringArray(value: unknown, maxItems: number, maxItemLength: numbe
   return strings;
 }
 
-function parseSymbolReadings(value: unknown): TarotGeneratedSymbolReading[] {
-  if (!Array.isArray(value)) {
-    return [];
-  }
-
-  return value
-    .flatMap((item) => {
-      if (!isRecord(item)) {
-        return [];
-      }
-
-      const symbol = cleanString(item.symbol, 48);
-      const reading = cleanString(item.reading, 360);
-
-      return symbol && reading ? [{ symbol, reading }] : [];
-    })
-    .slice(0, 3);
-}
-
 function parseCardReadings(value: unknown): TarotGeneratedCardReading[] {
   if (!Array.isArray(value)) {
     return [];
@@ -182,7 +157,6 @@ function parseTarotReadingDraft(input: TarotReadingInput, value: unknown): Tarot
   const title = cleanString(value.title, 160);
   const overview = cleanString(value.overview, 1200);
   const keywords = parseStringArray(value.keywords, 5, 32);
-  const symbolReadings = parseSymbolReadings(value.symbolReadings);
   const cardReadings = parseCardReadings(value.cardReadings);
   const advice = cleanString(value.advice, 360);
 
@@ -190,7 +164,6 @@ function parseTarotReadingDraft(input: TarotReadingInput, value: unknown): Tarot
     !title ||
     !overview ||
     keywords.length < 3 ||
-    symbolReadings.length < 2 ||
     !advice ||
     !hasExactPositions(cardReadings, expectedPositionsForInput(input))
   ) {
@@ -201,7 +174,6 @@ function parseTarotReadingDraft(input: TarotReadingInput, value: unknown): Tarot
     title,
     overview,
     keywords,
-    symbolReadings,
     cardReadings,
     advice,
   };

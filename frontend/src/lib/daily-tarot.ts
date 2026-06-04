@@ -28,16 +28,10 @@ export type DailyTarotGeneratedCardReading = {
   reading: string;
 };
 
-export type DailyTarotGeneratedSymbolReading = {
-  symbol: string;
-  reading: string;
-};
-
 export type DailyTarotGeneratedReading = {
   title: string;
   overview: string;
   keywords?: string[];
-  symbolReadings?: DailyTarotGeneratedSymbolReading[];
   cardReadings: DailyTarotGeneratedCardReading[];
   advice: string;
 };
@@ -73,6 +67,9 @@ export const dailyTarotGuestIdentityStorageKey = "manyang:daily-tarot-guest-id";
 export const pendingDailyTarotDrawIdentityKey = "guest:pending";
 
 const emptyDailyTarotReadingSnapshot: DailyTarotReading | null = null;
+const emptyDailyTarotReadingsSnapshot: DailyTarotReading[] = [];
+
+let dailyTarotReadingsSnapshotCache: { raw: string | null; value: DailyTarotReading[] } | null = null;
 
 export type CreateDailyTarotOptionsConfig = {
   count?: number;
@@ -249,22 +246,8 @@ function isDailyTarotGeneratedCardReading(value: unknown): value is DailyTarotGe
   );
 }
 
-function isDailyTarotGeneratedSymbolReading(value: unknown): value is DailyTarotGeneratedSymbolReading {
-  return (
-    isRecord(value) &&
-    typeof value.symbol === "string" &&
-    value.symbol.trim().length > 0 &&
-    typeof value.reading === "string" &&
-    value.reading.trim().length > 0
-  );
-}
-
 function isOptionalDailyTarotGeneratedKeywords(value: unknown): boolean {
   return value === undefined || isStringArray(value);
-}
-
-function isOptionalDailyTarotGeneratedSymbolReadings(value: unknown): boolean {
-  return value === undefined || (Array.isArray(value) && value.every(isDailyTarotGeneratedSymbolReading));
 }
 
 function hasExactPositions(
@@ -287,7 +270,6 @@ function isDailyTarotGeneratedReading(value: unknown, spread: TarotSpread): valu
     typeof value.overview === "string" &&
     value.overview.trim().length > 0 &&
     isOptionalDailyTarotGeneratedKeywords(value.keywords) &&
-    isOptionalDailyTarotGeneratedSymbolReadings(value.symbolReadings) &&
     cardReadings.every(isDailyTarotGeneratedCardReading) &&
     hasExactPositions(cardReadings, expectedPositionsForSpread(spread)) &&
     typeof value.advice === "string" &&
@@ -330,6 +312,20 @@ function getDailyTarotReadings(storage: StorageLike): DailyTarotReading[] {
   const readings = parseJson<unknown>(storage.getItem(dailyTarotStorageKey), []);
 
   return Array.isArray(readings) ? readings.filter(isStoredDailyTarotReading) : [];
+}
+
+export function getDailyTarotReadingsSnapshot(storage: StorageLike): DailyTarotReading[] {
+  const raw = storage.getItem(dailyTarotStorageKey);
+
+  if (dailyTarotReadingsSnapshotCache?.raw === raw) {
+    return dailyTarotReadingsSnapshotCache.value;
+  }
+
+  const readings = parseJson<unknown>(raw, emptyDailyTarotReadingsSnapshot);
+  const value = Array.isArray(readings) ? readings.filter(isStoredDailyTarotReading) : emptyDailyTarotReadingsSnapshot;
+  dailyTarotReadingsSnapshotCache = { raw, value };
+
+  return value;
 }
 
 function resolveCreateDailyTarotOptionsConfig(
@@ -467,6 +463,12 @@ export function getDailyTarotReadingFromBrowser(
   return storage ? getDailyTarotReading(storage, appDate, spreadOrOptions) : emptyDailyTarotReadingSnapshot;
 }
 
+export function getDailyTarotReadingsSnapshotFromBrowser(): DailyTarotReading[] {
+  const storage = getBrowserStorage();
+
+  return storage ? getDailyTarotReadingsSnapshot(storage) : emptyDailyTarotReadingsSnapshot;
+}
+
 export function saveDailyTarotReadingToBrowser(reading: DailyTarotReading): void {
   const storage = getBrowserStorage();
 
@@ -492,4 +494,8 @@ export function subscribeToDailyTarot(onStoreChange: () => void): () => void {
 
 export function getEmptyDailyTarotReadingSnapshot(): DailyTarotReading | null {
   return emptyDailyTarotReadingSnapshot;
+}
+
+export function getEmptyDailyTarotReadingsSnapshot(): DailyTarotReading[] {
+  return emptyDailyTarotReadingsSnapshot;
 }

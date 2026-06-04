@@ -942,77 +942,6 @@ function DailyTarotResultCardGrid({
   );
 }
 
-function DailyTarotCardStorySection({
-  cards,
-  enterDelay = "120ms",
-}: {
-  cards: DailyTarotCardSelection[];
-  enterDelay?: string;
-}) {
-  const cardStoryEntries = cards.map((selection) => {
-    const meaning = selection.card[selection.orientation];
-    const symbolMeanings = (selection.card.symbolMeanings ?? [])
-      .flatMap((symbolMeaning) => {
-        const symbol = cleanTarotDisplayText(symbolMeaning.symbol);
-        const meaning = cleanTarotDisplayText(symbolMeaning.meaning);
-
-        return symbol && meaning ? [{ symbol, meaning }] : [];
-      })
-      .slice(0, 3);
-
-    return {
-      selection,
-      meaning,
-      symbolMeanings,
-    };
-  });
-
-  return (
-    <div
-      data-daily-tarot-card-story="true"
-      className="tarot-result-content-enter mt-4 space-y-4 rounded-[1rem] border border-[#b98255]/28 bg-[#05040b]/42 p-4 text-left shadow-[0_12px_28px_rgba(0,0,0,0.18)]"
-      style={{ "--tarot-result-enter-delay": enterDelay } as CSSProperties}
-    >
-      <p className="text-[13px] font-bold text-[#ffd98a]">카드가 전하는 이야기</p>
-      {cardStoryEntries.map(({ meaning, selection, symbolMeanings }) => (
-        <div key={`${selection.position}-${selection.card.id}-story`} className="space-y-3 border-t border-[#b98255]/22 pt-3 first:border-t-0 first:pt-0">
-          {cards.length > 1 ? (
-            <p className="text-[12px] font-bold text-[#f4b65f]">
-              {positionLabels[selection.position]} · {selection.card.nameKo} · {orientationLabels[selection.orientation]}
-            </p>
-          ) : null}
-          <p className="text-[13px] leading-6 text-[#fff3d7]/88">{cleanTarotDisplayText(meaning.story)}</p>
-          {symbolMeanings.length > 0 ? (
-            <div>
-              <p className="text-[12px] font-bold text-[#f4b65f]">카드 속 상징</p>
-              <div className="mt-2 space-y-2">
-                {symbolMeanings.map((symbolMeaning) => (
-                  <div key={`${selection.card.id}-${symbolMeaning.symbol}`} className="border-l border-[#f2c27d]/28 pl-3">
-                    <p className="text-[12px] font-bold text-[#ffe7b5]">{symbolMeaning.symbol}</p>
-                    <p className="mt-1 text-[12px] leading-5 text-[#fff3d7]/78">{symbolMeaning.meaning}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : null}
-          <div className="grid gap-2 border-t border-[#b98255]/22 pt-3">
-            <div>
-              <p className="text-[12px] font-bold text-[#f4b65f]">오늘의 질문</p>
-              <p className="mt-1 text-[12px] leading-5 text-[#fff3d7]/82">
-                {cleanTarotDisplayText(meaning.reflectionQuestion)}
-              </p>
-            </div>
-            <div>
-              <p className="text-[12px] font-bold text-[#f4b65f]">작은 조언</p>
-              <p className="mt-1 text-[12px] leading-5 text-[#f2c27d]">{cleanTarotDisplayText(meaning.smallAction)}</p>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 function DailyTarotReadingLoadingSection({ enterDelay = "220ms" }: { enterDelay?: string }) {
   return (
     <div
@@ -1027,7 +956,7 @@ function DailyTarotReadingLoadingSection({ enterDelay = "220ms" }: { enterDelay?
         오늘의 리딩을 완성하고 있어요
       </p>
       <p className="mt-2 text-[13px] leading-6 text-[#fff3d7]/82">
-        카드가 전하는 이야기를 바탕으로 오늘의 흐름을 읽고 있어요.
+        선택한 카드와 방향을 기준으로 오늘의 흐름을 읽고 있어요.
       </p>
       <div className="mt-4 space-y-2" aria-hidden="true">
         <span className="block h-2.5 w-11/12 rounded-full bg-[#f2c27d]/18 animate-pulse" />
@@ -1058,9 +987,7 @@ export function DailyTarotPendingResult({ selections }: { selections: DailyTarot
       className="mx-auto w-full max-w-[28rem] px-4 py-5 text-[#fff3d7]"
     >
       <DailyTarotResultCardGrid cards={cards} onZoom={setZoomedSelection} />
-      <DailyTarotCardStorySection cards={cards} />
       <DailyTarotReadingLoadingSection />
-      <DailyTarotResultDisclaimer enterDelay="320ms" />
 
       {zoomedSelection ? (
         <TarotCardZoomDialog onClose={() => setZoomedSelection(null)} selection={zoomedSelection} />
@@ -1081,24 +1008,18 @@ function DailyTarotResult({
     reading.cards ?? [{ position: reading.position, card: reading.card, orientation: reading.orientation }],
   );
   const generated = reading.generated;
-  const cardReadings = generated?.cardReadings.map((cardReading) => ({
-    ...cardReading,
-    heading: cleanTarotDisplayText(cardReading.heading),
-    reading: cleanTarotDisplayText(cardReading.reading),
-  }));
+  const cardReadings =
+    reading.spread === "daily_three_card"
+      ? generated?.cardReadings.map((cardReading) => ({
+          ...cardReading,
+          heading: cleanTarotDisplayText(cardReading.heading),
+          reading: cleanTarotDisplayText(cardReading.reading),
+        }))
+      : [];
   const keywords = cleanUniqueTarotDisplayTexts(
     generated?.keywords && generated.keywords.length > 0 ? generated.keywords : reading.keywords,
     5,
   );
-  const symbolReadings =
-    generated?.symbolReadings
-      ?.flatMap((symbolReading) => {
-        const symbol = cleanTarotDisplayText(symbolReading.symbol);
-        const reading = cleanTarotDisplayText(symbolReading.reading);
-
-        return symbol && reading ? [{ symbol, reading }] : [];
-      })
-      .slice(0, 3) ?? [];
 
   function handleDownload() {
     const svg = createTarotReadingSvg(reading);
@@ -1133,8 +1054,6 @@ function DailyTarotResult({
     >
       <DailyTarotResultCardGrid cards={cards} onZoom={setZoomedSelection} />
 
-      <DailyTarotCardStorySection cards={cards} />
-
       <div
         data-daily-tarot-result-copy="true"
         className="tarot-result-content-enter mt-5 space-y-3 rounded-[1rem] border border-[#b98255]/35 bg-[#05040b]/54 p-4 shadow-[0_14px_32px_rgba(0,0,0,0.22)]"
@@ -1155,23 +1074,6 @@ function DailyTarotResult({
           </div>
         ) : null}
         <p className="text-[14px] leading-6 text-[#fff3d7]/88">{cleanTarotDisplayText(reading.message)}</p>
-        {symbolReadings.length > 0 ? (
-          <div data-daily-tarot-symbol-readings="true" className="border-t border-[#b98255]/25 pt-3 text-left">
-            <p className="text-[12px] font-bold text-[#f4b65f]">해석의 단서</p>
-            <div className="mt-2 space-y-2">
-              {symbolReadings.map((symbolReading) => (
-                <div
-                  key={symbolReading.symbol}
-                  data-daily-tarot-symbol-reading="true"
-                  className="border-l border-[#f2c27d]/32 pl-3"
-                >
-                  <p className="text-[12px] font-bold text-[#ffe7b5]">{symbolReading.symbol}</p>
-                  <p className="mt-1 text-[12px] leading-5 text-[#fff3d7]/82">{symbolReading.reading}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : null}
         {cardReadings?.map((cardReading) => (
           <div key={cardReading.position} className="border-t border-[#b98255]/25 pt-3 text-left">
             <p className="text-[12px] font-bold text-[#f4b65f]">{cardReading.heading}</p>

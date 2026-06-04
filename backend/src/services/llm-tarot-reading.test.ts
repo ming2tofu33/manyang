@@ -89,18 +89,8 @@ function createProvider(response: unknown): DreamReadingLlmProvider & { requests
   };
 }
 
-const generatedSymbolicFields = {
+const generatedDisplayFields = {
   keywords: ["opening", "choice", "attention"],
-  symbolReadings: [
-    {
-      symbol: "light",
-      reading: "The light reads as a visible cue to begin with the part of the situation that is already clear.",
-    },
-    {
-      symbol: "gate",
-      reading: "The gate turns the card into advice about crossing one practical threshold today.",
-    },
-  ],
 };
 
 describe("generateTarotReadingForUser", () => {
@@ -114,7 +104,7 @@ describe("generateTarotReadingForUser", () => {
 
   test("generates a one-card tarot reading from provider JSON", async () => {
     const provider = createProvider({
-      ...generatedSymbolicFields,
+      ...generatedDisplayFields,
       title: "오늘은 가볍게 첫발을 떼는 날",
       overview: "선택한 바보 카드는 오늘 낯선 길 앞에서 너무 많은 확신을 기다리기보다 작은 움직임을 먼저 만들어 보라고 말합니다.",
       cardReadings: [
@@ -146,26 +136,16 @@ describe("generateTarotReadingForUser", () => {
       timeoutMs: 1200,
     });
     expect(provider.requests[0]?.input).toContain("바보");
-    expect(provider.requests[0]?.input).toContain("symbolMeanings");
-    expect(provider.requests[0]?.input).toContain("The upright card story turns available focus into a clear next step.");
-    expect(provider.requests[0]?.input).toContain("What part of the situation is already asking for attention?");
+    expect(provider.requests[0]?.input).not.toContain("symbolMeanings");
+    expect(provider.requests[0]?.input).not.toContain("The upright card story turns available focus into a clear next step.");
+    expect(provider.requests[0]?.input).not.toContain("What part of the situation is already asking for attention?");
   });
 
-  test("parses symbolic keywords and symbol readings from one-card provider JSON", async () => {
+  test("accepts concise one-card provider JSON without symbolic reading fields", async () => {
     const provider = createProvider({
       title: "A small opening",
       overview: "The selected card points to a day where a small opening matters more than a perfect answer.",
       keywords: ["opening", "choice", "attention"],
-      symbolReadings: [
-        {
-          symbol: "light",
-          reading: "The light reads as a visible cue to begin with the part of the situation that is already clear.",
-        },
-        {
-          symbol: "gate",
-          reading: "The gate turns the card into advice about crossing one practical threshold today.",
-        },
-      ],
       cardReadings: [
         {
           position: "today",
@@ -182,24 +162,14 @@ describe("generateTarotReadingForUser", () => {
       status: "ok",
       reading: {
         keywords: ["opening", "choice", "attention"],
-        symbolReadings: [
-          {
-            symbol: "light",
-            reading: "The light reads as a visible cue to begin with the part of the situation that is already clear.",
-          },
-          {
-            symbol: "gate",
-            reading: "The gate turns the card into advice about crossing one practical threshold today.",
-          },
-        ],
       },
     });
   });
 
-  test("rejects one-card provider JSON without symbolic reading fields", async () => {
+  test("rejects one-card provider JSON without display keywords", async () => {
     const provider = createProvider({
-      title: "Missing symbolic fields",
-      overview: "The card gives a readable daily tarot overview, but it omits the new symbolic contract.",
+      title: "Missing keyword fields",
+      overview: "The card gives a readable daily tarot overview, but it omits the display keyword contract.",
       cardReadings: [
         {
           position: "today",
@@ -219,7 +189,7 @@ describe("generateTarotReadingForUser", () => {
 
   test("removes provider tail artifacts from parsed tarot copy", async () => {
     const provider = createProvider({
-      ...generatedSymbolicFields,
+      ...generatedDisplayFields,
       title: "Star light",
       overview: "A quiet overview keeps the reading focused on the card imagery.",
       cardReadings: [
@@ -249,7 +219,7 @@ describe("generateTarotReadingForUser", () => {
 
   test("generates a three-card tarot reading only when all spread positions are present", async () => {
     const provider = createProvider({
-      ...generatedSymbolicFields,
+      ...generatedDisplayFields,
       title: "흐름을 조율하며 선택을 좁히는 날",
       overview: "세 장은 지금 손에 든 가능성을 정리하고, 느려진 감각을 통해 더 현실적인 조언으로 이동하는 흐름을 보여줍니다.",
       cardReadings: [
@@ -288,7 +258,7 @@ describe("generateTarotReadingForUser", () => {
 
   test("returns invalid_response when provider JSON does not match the requested spread", async () => {
     const provider = createProvider({
-      ...generatedSymbolicFields,
+      ...generatedDisplayFields,
       title: "불완전한 리딩",
       overview: "이 응답은 세 장 리딩에 필요한 조언 카드가 빠져 있어서 저장 가능한 리딩이 될 수 없습니다.",
       cardReadings: [

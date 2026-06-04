@@ -83,7 +83,7 @@ describe("AdminLoadingLab", () => {
     expect(revealMarkup).toContain("1.8s");
 
     expect(loadingMarkup).toContain('data-daily-tarot-state="generating-result"');
-    expect(loadingMarkup).toContain('data-daily-tarot-card-story="true"');
+    expect(loadingMarkup).not.toContain('data-daily-tarot-card-story="true"');
     expect(loadingMarkup).toContain('data-daily-tarot-reading-loading="true"');
     expect(loadingMarkup).toContain("해석 대기");
     expect(loadingMarkup).toContain("API 8.0s");
