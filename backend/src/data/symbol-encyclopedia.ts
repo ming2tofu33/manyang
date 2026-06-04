@@ -324,10 +324,10 @@ export const symbolEntries: SymbolEntry[] = [
         aliases: ["학교", "교실", "강의실", "운동장", "시험장"],
         searchText: "학교, 교실, 강의실, 시험, 수업, 평가, 준비, 과거 기준, 학습",
         coreMeanings: ["평가", "학습", "준비 상태", "과거의 기준"],
-        lightReadings: ["다시 배우고 정리할 기회", "아직 연습 중인 나를 받아들이는 흐름"],
+        lightReadings: ["다시 배우고 정리할 기회", "아직 연습 중인 나를 너그럽게 받아들이는 마음"],
         shadowReadings: ["시험받는 느낌", "과거 기준에 묶이는 부담"],
         sceneModifiers: {
-          exam: modifier("평가받는 감각이나 준비 상태를 확인하는 장면", ["시험", "점수", "채점"], 0.9),
+          exam: modifier("평가받는 느낌이나 준비 상태가 드러나는 장면", ["시험", "점수", "채점"], 0.9),
           lostClassroom: modifier("어디에 들어가야 할지 기준을 찾는 장면", ["교실을 찾", "반을 못 찾", "길을 잃"], 0.85),
           oldSchool: modifier("과거의 기준이나 오래된 기억이 현재 감각에 섞이는 장면", ["예전 학교", "옛날 학교", "초등학교"], 0.75),
         },
@@ -434,7 +434,7 @@ export const symbolEntries: SymbolEntry[] = [
         aliases: ["찾기", "찾", "찾는", "못 찾는", "잃어버린", "헤매는"],
         searchText: "찾기, 못 찾음, 잃어버림, 헤맴, 단서, 방향, 기준, 명확함을 원함",
         coreMeanings: ["탐색", "기준 찾기", "빠진 조각", "명확함에 대한 욕구"],
-        lightReadings: ["아직 답을 찾는 중이라는 정직한 신호", "필요한 단서를 모으는 흐름"],
+        lightReadings: ["아직 답을 찾는 중이라는 정직한 신호", "필요한 단서를 차근차근 모으는 중이라는 뜻"],
         shadowReadings: ["계속 부족한 느낌", "기준이 없어 조급해지는 상태"],
         sceneModifiers: {
           cannotFind: modifier("원하는 답보다 기준 자체가 흐려진 장면", ["못 찾", "안 보이", "없어졌"], 0.85),
@@ -489,7 +489,7 @@ export const symbolEntries: SymbolEntry[] = [
         aliases: ["많이", "수십", "가득", "여러 개", "떼"],
         searchText: "많이, 수십, 가득, 여러 개, 떼, 많음, 압도감, 반복, 강도, 누적",
         coreMeanings: ["강도", "누적", "압도감", "반복 신호"],
-        lightReadings: ["가능성이 여러 갈래로 열리는 장면", "신호가 충분히 커져 알아차리기 쉬워진 상태"],
+        lightReadings: ["가능성이 여러 갈래로 열린다는 뜻", "신호가 충분히 커져 알아차리기 쉬워진 상태"],
         shadowReadings: ["한꺼번에 몰려오는 부담", "어디부터 볼지 모르는 혼란"],
         sceneModifiers: {
           manyAnimals: modifier("살아 있는 신호들이 한꺼번에 움직이는 느낌", ["수십 마리", "떼", "가득"], 0.85),
@@ -682,7 +682,7 @@ export const symbolEntries: SymbolEntry[] = [
         aliases: ["고양이", "냥이", "검은 고양이", "길고양이"],
         searchText: "고양이, 냥이, 검은 고양이, 길고양이, 직감, 독립성, 조용한 관찰, 거리감",
         coreMeanings: ["직감", "독립성", "조용한 관찰", "섬세한 거리감"],
-        lightReadings: ["내 감각을 믿어도 되는 흐름", "거리를 두고 살피는 지혜"],
+        lightReadings: ["내 감각을 믿어도 된다는 신호", "거리를 두고 살피는 지혜"],
         shadowReadings: ["마음을 쉽게 열지 않는 경계", "혼자 해결하려는 습관"],
         sceneModifiers: {
           approaching: modifier("직감이나 도움을 받아들일 준비가 된 장면", ["다가온", "안긴", "따라온"], 0.75),
@@ -745,7 +745,7 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["집", "우리집", "낯선 집", "방", "집안"],
       searchText: "집, 우리집, 낯선 집, 집안, 가족 공간, 사적 영역, 안정감, 내면의 기반",
       coreMeanings: ["자기 영역", "안정감", "사적 공간", "내면의 기반"],
-      lightReadings: ["쉴 수 있는 기준을 다시 찾는 흐름", "내 생활의 중심을 정리하는 장면"],
+      lightReadings: ["쉴 수 있는 자리를 다시 찾으려는 마음", "내 생활의 중심을 다시 정리하려는 뜻"],
       shadowReadings: ["익숙한 곳에서도 편하지 않은 감각", "울타리 안의 부담"],
       sceneModifiers: {
         unfamiliar: modifier("익숙해야 할 곳이 낯설게 느껴지는 장면", ["낯선 집", "모르는 집", "처음 보는 집"], 0.8),
@@ -793,7 +793,7 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["방", "침실", "작은방", "빈방", "내 방"],
       searchText: "방, 침실, 내 방, 빈방, 개인 공간, 혼자 있는 마음, 숨겨진 감정",
       coreMeanings: ["개인 공간", "숨겨진 감정", "혼자 있는 마음", "내면 상태"],
-      lightReadings: ["혼자 정리할 시간이 필요한 흐름", "내 감정을 조용히 들여다보는 장면"],
+      lightReadings: ["혼자 정리할 시간이 필요하다는 뜻", "내 감정을 조용히 들여다보려는 마음"],
       shadowReadings: ["고립감", "문을 닫고 숨고 싶은 마음"],
       sceneModifiers: {
         locked: modifier("사적인 감정에 접근하기 어려운 장면", ["잠긴", "문이 안 열", "들어갈 수 없"], 0.82),
@@ -841,7 +841,7 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["창문", "창가", "유리창", "창", "창밖"],
       searchText: "창문, 창가, 유리창, 창밖, 바깥을 보는 시선, 가능성, 거리 두기",
       coreMeanings: ["바깥을 보는 시선", "가능성", "거리 두기", "관찰"],
-      lightReadings: ["새 관점을 얻는 흐름", "안전한 거리에서 가능성을 살피는 장면"],
+      lightReadings: ["새 관점을 얻는다는 뜻", "안전한 거리에서 가능성을 살피려는 마음"],
       shadowReadings: ["바깥과 분리된 느낌", "보고만 있고 움직이지 못하는 답답함"],
       sceneModifiers: {
         open: modifier("새 공기나 관점이 들어오는 장면", ["열린", "열려", "활짝"], 0.74),
@@ -889,7 +889,7 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["열쇠", "키", "자물쇠", "잠금", "열쇠꾸러미"],
       searchText: "열쇠, 키, 자물쇠, 잠금, 문을 여는 조건, 해결 실마리, 접근 권한",
       coreMeanings: ["접근 권한", "해결 실마리", "조건", "허락"],
-      lightReadings: ["닫힌 문제를 다르게 열어볼 가능성", "필요한 조건을 알아차리는 흐름"],
+      lightReadings: ["닫힌 문제를 다르게 열어볼 가능성", "필요한 조건이 무엇인지 알아차린다는 뜻"],
       shadowReadings: ["아직 허락되지 않은 느낌", "실마리를 잃어버린 답답함"],
       sceneModifiers: {
         lost: modifier("필요한 조건을 아직 찾지 못한 장면", ["잃어버", "없어", "못 찾"], 0.82),
@@ -951,7 +951,7 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["계단", "층계", "사다리", "계단길"],
       searchText: "계단, 층계, 사다리, 올라감, 내려감, 단계, 과정, 노력, 현재 위치",
       coreMeanings: ["단계", "상승과 하강", "과정", "노력"],
-      lightReadings: ["한 단계씩 감당하는 흐름", "현재 위치를 확인하는 장면"],
+      lightReadings: ["한 단계씩 밟아 감당해 나간다는 뜻", "지금 내 위치를 확인하려는 마음"],
       shadowReadings: ["끝이 보이지 않는 부담", "오르내림에 지치는 감각"],
       sceneModifiers: {
         goingUp: modifier("더 높은 기준이나 다음 단계로 향하는 장면", ["올라", "위로", "오르는"], 0.78, "auspicious"),
@@ -1009,7 +1009,7 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["엘리베이터", "승강기", "리프트"],
       searchText: "엘리베이터, 승강기, 리프트, 올라감, 내려감, 빠른 변화, 통제감, 갇힘",
       coreMeanings: ["빠른 변화", "통제감", "상승과 하강", "밀폐된 이동"],
-      lightReadings: ["변화가 빠르게 진행되는 흐름", "직접 걷지 않아도 움직이는 상황"],
+      lightReadings: ["변화가 빠르게 진행된다는 뜻", "직접 걷지 않아도 상황이 움직이는 상태"],
       shadowReadings: ["내가 조절하지 못하는 느낌", "갇힌 채 이동하는 불안"],
       sceneModifiers: {
         stuck: modifier("변화가 멈춘 듯한 답답함", ["멈춘", "갇힌", "안 움직"], 0.84),
@@ -1057,7 +1057,7 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["거울", "비친", "반사", "거울 속", "내 모습"],
       searchText: "거울, 비친 모습, 반사, 내 모습, 자기 인식, 타인의 시선, 정체성",
       coreMeanings: ["자기 인식", "타인의 시선", "비친 모습", "정체성"],
-      lightReadings: ["나를 더 정확히 보려는 흐름", "겉으로 보이는 모습과 마음을 맞춰보는 장면"],
+      lightReadings: ["나를 더 정확히 보려는 마음", "겉모습과 속마음을 맞춰보려는 뜻"],
       shadowReadings: ["왜곡된 자기 평가", "남의 시선에 묶이는 부담"],
       sceneModifiers: {
         distorted: modifier("자기 평가가 왜곡되어 느껴지는 장면", ["이상하게", "일그러", "다르게"], 0.82),
@@ -1105,7 +1105,7 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["가방", "배낭", "짐", "캐리어", "봉투"],
       searchText: "가방, 배낭, 짐, 캐리어, 들고 다니는 기억, 책임, 준비물, 부담",
       coreMeanings: ["짐", "책임", "들고 다니는 기억", "준비 상태"],
-      lightReadings: ["필요한 것을 챙기려는 흐름", "내가 가진 자원을 확인하는 장면"],
+      lightReadings: ["필요한 것을 챙기려는 마음", "내가 가진 자원을 확인하려는 뜻"],
       shadowReadings: ["무겁게 느껴지는 책임", "무엇을 버려야 할지 모르는 부담"],
       sceneModifiers: {
         heavy: modifier("책임이 무겁게 느껴지는 장면", ["무거운", "너무 무거", "들기 힘든"], 0.82),
@@ -1153,7 +1153,7 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["신발", "구두", "운동화", "슬리퍼", "맨발"],
       searchText: "신발, 구두, 운동화, 슬리퍼, 맨발, 이동, 준비 상태, 현실 적응, 발걸음",
       coreMeanings: ["준비 상태", "이동", "현실 적응", "발걸음"],
-      lightReadings: ["다음 걸음을 준비하는 흐름", "내 속도에 맞는 방식을 찾는 장면"],
+      lightReadings: ["다음 걸음을 준비하려는 마음", "내 속도에 맞는 방식을 찾으려는 뜻"],
       shadowReadings: ["준비되지 않은 느낌", "맨몸으로 드러난 듯한 민감함"],
       sceneModifiers: {
         missing: modifier("움직일 준비가 부족하다고 느끼는 장면", ["잃어버", "없어", "못 찾"], 0.84),
@@ -1263,7 +1263,7 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["달리기", "뛰기", "뛰었", "달렸", "도망"],
       searchText: "달리기, 뛰기, 도망, 쫓김, 급함, 추진력, 회피, 따라잡기",
       coreMeanings: ["회피", "추진력", "긴급함", "따라잡기"],
-      lightReadings: ["몸이 먼저 움직일 만큼 에너지가 올라온 상태", "미루던 일을 따라잡으려는 흐름"],
+      lightReadings: ["몸이 먼저 움직일 만큼 에너지가 올라온 상태", "미루던 일을 따라잡으려는 마음"],
       shadowReadings: ["피하고 싶은 압박", "멈추면 안 될 것 같은 불안"],
       sceneModifiers: {
         chased: modifier("압박이나 두려움에서 벗어나려는 장면", ["쫓", "도망", "따라와"], 0.86),
@@ -1439,7 +1439,7 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["바다", "해변", "파도", "해안", "바닷물"],
       searchText: "바다, 해변, 파도, 해안, 바닷물, 큰 감정, 무의식, 압도적 가능성",
       coreMeanings: ["큰 감정", "무의식", "압도적 가능성", "깊이"],
-      lightReadings: ["넓은 가능성을 바라보는 흐름", "감정의 깊이를 인정하는 장면"],
+      lightReadings: ["넓은 가능성을 바라보려는 마음", "감정의 깊이를 인정한다는 뜻"],
       shadowReadings: ["감정의 규모에 압도되는 상태", "어디까지 깊은지 모르는 불안"],
       sceneModifiers: {
         calmSea: modifier("큰 감정이 조용히 펼쳐진 장면", ["잔잔한", "고요한", "평온한"], 0.72, "auspicious"),
@@ -1498,7 +1498,7 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["병원", "진료실", "의사", "간호사", "입원", "응급실"],
       searchText: "병원, 진료실, 의사, 간호사, 입원, 회복 욕구, 돌봄, 취약함, 진단 불안",
       coreMeanings: ["회복 욕구", "돌봄", "취약함", "진단 불안"],
-      lightReadings: ["돌봄이 필요한 상태를 인정하는 흐름", "무리한 부분을 점검하려는 장면"],
+      lightReadings: ["돌봄이 필요하다고 인정한다는 뜻", "무리한 부분을 점검하려는 마음"],
       shadowReadings: ["진단받고 싶거나 두려운 마음", "취약함이 드러나는 불안"],
       sceneModifiers: {
         waiting: modifier("확인을 기다리는 긴장", ["기다", "대기", "순서"], 0.76),
@@ -1654,7 +1654,7 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["개", "강아지", "반려견", "멍멍이", "큰 개"],
       searchText: "개, 강아지, 반려견, 충성, 보호, 관계의 신뢰, 본능적 반응, 경계",
       coreMeanings: ["충성", "보호", "관계의 신뢰", "본능적 반응"],
-      lightReadings: ["믿을 수 있는 관계 감각", "나를 지키려는 본능이 살아 있는 장면"],
+      lightReadings: ["믿을 수 있는 관계 감각", "나를 지키려는 본능이 살아 있다는 뜻"],
       shadowReadings: ["경계심이 커진 상태", "관계에서 짖고 싶은 마음"],
       sceneModifiers: {
         friendly: modifier("신뢰와 친밀감이 살아 있는 장면", ["따라온", "반가워", "꼬리"], 0.72),
@@ -1710,7 +1710,7 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["새", "새떼", "작은 새", "날개", "새장"],
       searchText: "새, 새떼, 작은 새, 날개, 새장, 자유, 소식, 거리감, 시야 확장",
       coreMeanings: ["자유", "소식", "거리감", "시야 확장"],
-      lightReadings: ["더 넓은 관점에서 보는 흐름", "가벼운 생각이나 소식이 떠오르는 장면"],
+      lightReadings: ["더 넓은 관점에서 보려는 마음", "가벼운 생각이나 소식이 떠오른다는 뜻"],
       shadowReadings: ["붙잡을 수 없는 거리감", "날고 싶지만 갇힌 감각"],
       sceneModifiers: {
         flying: modifier("시야와 가능성이 넓어지는 장면", ["날", "날아", "하늘"], 0.75),
@@ -3013,7 +3013,7 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["길", "도로", "긴 길", "골목길", "길을 걷는 꿈"],
       searchText: "길, 도로, 긴 길, 골목길, 길을 걷는 꿈, 방향, 여정, 선택, 앞으로 가는 과정",
       coreMeanings: ["방향", "여정", "선택", "계속되는 과정"],
-      lightReadings: ["앞으로 가야 할 방향을 살피는 장면", "아직 끝나지 않은 과정 속에서 움직이는 마음"],
+      lightReadings: ["앞으로 가야 할 방향을 살피려는 마음", "아직 끝나지 않은 과정 속에서 움직이는 마음"],
       shadowReadings: ["어디로 가야 할지 모르는 불확실성", "길이 멀게 느껴지는 피로"],
       sceneModifiers: {
         longRoad: modifier("과정이 길고 꾸준함을 요구하는 장면", ["긴 길", "끝없는", "멀리"], 0.78),
@@ -3930,7 +3930,7 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["군중", "사람들", "많은 사람", "인파", "사람이 많은 꿈"],
       searchText: "군중, 사람들, 많은 사람, 인파, 사람이 많은 꿈, 주변 시선, 소속감, 압박, 압도감",
       coreMeanings: ["주변 시선", "소속감", "압박", "압도감"],
-      lightReadings: ["혼자가 아니라는 감각을 확인하는 장면", "사회적 흐름 속에서 내 위치를 살피는 마음"],
+      lightReadings: ["혼자가 아니라는 감각을 확인하려는 마음", "사회적 흐름 속에서 내 위치를 살피는 마음"],
       shadowReadings: ["많은 시선에 압도되는 느낌", "내 목소리가 묻히는 불안"],
       sceneModifiers: {
         crowded: modifier("주변 시선과 사회적 밀도가 커진 장면", ["붐비", "가득", "많은 사람"], 0.82),
@@ -3982,7 +3982,7 @@ export const symbolEntries: SymbolEntry[] = [
       shadowReadings: ["과제가 너무 크게 느껴지는 부담", "올라가야 한다는 압박"],
       sceneModifiers: {
         climbing: modifier("목표를 향해 꾸준히 오르는 과정", ["오르", "등산", "올라"], 0.78, "auspicious"),
-        summit: modifier("시야가 넓어지거나 성취감을 확인하는 장면", ["정상", "꼭대기", "위"], 0.76, "auspicious"),
+        summit: modifier("시야가 넓어지고 성취감이 드는 장면", ["정상", "꼭대기", "위"], 0.76, "auspicious"),
         steep: modifier("과제의 난도가 크게 느껴지는 장면", ["가파", "험한", "높은"], 0.84, "cautious"),
       },
       contextQuestions: ["산을 오르고 있었나요, 바라보고 있었나요?", "정상에 도착했나요?"],
@@ -4036,7 +4036,7 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["나무", "큰 나무", "나무가 자라는 꿈", "마른 나무", "숲"],
       searchText: "나무, 큰 나무, 나무가 자라는 꿈, 마른 나무, 숲, 성장, 뿌리, 안정감, 시간, 계절",
       coreMeanings: ["성장", "뿌리", "안정감", "시간"],
-      lightReadings: ["천천히 자라는 힘을 확인하는 장면", "기반을 더 깊게 내리려는 마음"],
+      lightReadings: ["천천히 자라는 힘을 확인한다는 뜻", "기반을 더 깊게 내리려는 마음"],
       shadowReadings: ["성장이 멈춘 듯한 답답함", "뿌리가 약하다고 느끼는 불안"],
       sceneModifiers: {
         growing: modifier("시간이 걸리지만 자라고 있는 가능성", ["자라", "새싹", "커"], 0.78, "auspicious"),

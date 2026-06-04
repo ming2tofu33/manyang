@@ -116,7 +116,7 @@ status: active
 - [ ] ENC-06: 문화 차 큰 2차 배치 ~12개. 동양 고유(용·조상·거북이·귀신·무지개·닭) / 서양 심리 강(거미·나비·곰·고래·벌레·사슴)
 - [ ] ENC-07: **기존 121개 전수**를 카테고리 단위로 ko=동양/en=서양 + B안 재작성. 배치마다 tsc+test+`eval:retrieval`. (41개 완료: 1차 8 + event 6 + person 12 + body 7 + animal/nature 8, **80개 남음**)
 
-  - **결함 스캔 기반 우선순위(2026-06-03)**: 카테고리 순서 대신 `grep`로 잔여 결함을 스캔해 우선 처리. en "In Korean tradition"/"conception dream" 누수 8건(불·비·물고기·용·호랑이·곰·고래·개구리)을 전부 서양(융·신화·변태)으로 교체, 누수 0 확인. ko safeReading "비추는 상징/장소/공간" 14건 → "담은 …"으로 일괄 정리(비추 safeReading 0건, 거울·별 metaphorHook의 올바른 "비추는"은 보존). 남은 결함: lightReadings/shadowReadings "흐름/장면" 접미사(per-symbol 재작성 시 정리).
+  - **결함 스캔 기반 우선순위(2026-06-03)**: 카테고리 순서 대신 `grep`로 잔여 결함을 스캔해 우선 처리. en "In Korean tradition"/"conception dream" 누수 8건(불·비·물고기·용·호랑이·곰·고래·개구리)을 전부 서양(융·신화·변태)으로 교체, 누수 0 확인. ko safeReading "비추는 상징/장소/공간" 14건 → "담은 …"으로 일괄 정리(비추 safeReading 0건, 거울·별 metaphorHook의 올바른 "비추는"은 보존). lightReadings의 "인지동작+흐름/장면" 번역체(알아차리는 흐름/확인하는 장면 등) 23건을 직접 서술로 정리 → **번역체 0건**. 남은 "흐름/장면"(~37)은 "재산이 되는 흐름"·"어우러지는 흐름"처럼 자연스러운 관용 용법이라 보존(churn 방지).
 - [ ] ENC-08: vault YAML 동기화 (또는 YAML을 backend seed에서 생성하는 단방향 소스 결정)
 
 #### ENC-07 카테고리별 진행 (1차 8개 = 일부 완료, 총 121)
