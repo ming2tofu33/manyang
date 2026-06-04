@@ -6122,8 +6122,8 @@ export const symbolEntries: SymbolEntry[] = [
       aliases: ["지진", "땅이 흔들", "지진이 나", "진동", "땅이 갈라"],
       searchText: "지진, 땅이 흔들, 지진이 나, 진동, 땅이 갈라, 큰 변동, 기반 흔들림, 전환, 불안, 무너짐, 흔들림",
       coreMeanings: ["기반 흔들림", "큰 변동", "전환"],
-      lightReadings: ["흔들린 끝에 새 기반이 잡히는 장면", "큰 변동을 무사히 견뎌내는 흐름"],
-      shadowReadings: ["발밑이 무너질 듯 불안한 장면", "기반이 흔들려 조여오는 마음"],
+      lightReadings: ["흔들린 끝에 새 기반이 다시 잡힌다는 뜻", "큰 변동을 무사히 견뎌낸다는 뜻"],
+      shadowReadings: ["발밑이 무너질 듯 불안한 마음", "기반이 흔들려 조여오는 긴장"],
       sceneModifiers: {
         survivingStable: modifier("흔들려도 무사히 버텨내는 장면", ["무사", "버텨", "잡", "안정"], 0.8, "auspicious"),
         groundShaking: modifier("땅이 크게 흔들리거나 진동하는 장면", ["흔들", "진동", "울렁", "휘청"], 0.82, "cautious"),

@@ -22,8 +22,9 @@ export const BICULTURAL_REVIEWED: ReadonlySet<string> = new Set([
   "hair", "body", "blood", "naked", "hand", "foot", "pregnancy",
   // animal (en을 서양 신화·융·변태로 교체)
   "dragon", "tiger", "fish", "bear", "whale", "frog",
-  // nature (en을 서양 원형·무의식·Noah 등으로)
+  // nature (en을 서양 원형·무의식·Noah 등으로) — 17/17 완결
   "fire", "rain", "snow", "moon", "flood", "mountain", "tree", "flower", "sea", "river",
+  "dawn", "rainbow", "wind", "rock", "star", "earthquake",
 ]);
 
 export type CategoryReviewStatus = {

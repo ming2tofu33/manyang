@@ -128,7 +128,7 @@ status: active
 - [x] **person** 12개 ✓ (조상·스님·아기·어머니 = 동양 고유/태몽 vs 융 원형 / stranger·child·father·friend·partner·ex_partner·ghost·celebrity = B안+보편)
 - [ ] **action** 10개 (쫓김✓ / searching·running·falling·flying·swimming·fighting·crying·dance·laughter·exam?)
 - [~] **animal** 21개 (8/21: 뱀·돼지·용·호랑이·물고기·곰·고래·개구리✓ — 동양 길몽 유지/en은 서양 신화·융·변태로 교체 / 남음: cat·dog·bird·cow·mouse·spider·turtle·butterfly·chicken·deer·monkey·horse·insect)
-- [~] **nature** 17개 (11/17: 물·불·비·눈·달·홍수·산·나무·꽃·바다·강✓ — en을 서양 원형(달=anima·홍수=Noah·산=Self·나무=tree of life·바다=무의식)으로 / 남음: dawn·rainbow·wind·rock·star·earthquake)
+- [x] **nature** 17개 ✓ — en을 서양 원형으로(달=anima·홍수=Noah·산=Self·나무=tree of life·바다·강=무의식/생의 행로). 나머지(dawn·rainbow·wind·rock·star·earthquake)는 en이 이미 보편적이라 확인+ko 정리만.
 - [x] **body** 8개 ✓ (치아·임신·머리카락·몸·피·알몸·손·발) — 임신=태몽 vs 창의적 잉태, 나머지 B안. (피=재물 전통은 안전정책상 의도적 배제 유지)
 - [x] **event** 6개 ✓ (죽음·장례식·시험·결혼식·전쟁·사고) — death=동양 역몽 fortune 추가, funeral/wedding/war en fortune 서양으로 재구성, 나머지 B안
 - [ ] **food** 3개 (0 / food·meat·alcohol)
