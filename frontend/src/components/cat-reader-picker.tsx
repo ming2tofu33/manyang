@@ -13,7 +13,7 @@ import {
   type CatReaderId,
 } from "@/lib/cat-readers";
 import { manyangAssets } from "@/lib/manyang-assets";
-import { cn } from "@/lib/styles";
+import { cn, ui } from "@/lib/styles";
 import { useLocale } from "@/lib/use-locale";
 
 type CatReaderPickerProps = {
@@ -111,7 +111,10 @@ export function CatReaderPicker({
         <button
           type="button"
           onClick={() => setIsHomeSheetOpen(true)}
-          className="home-cat-picker-trigger group flex min-h-[4rem] w-full cursor-pointer items-center gap-2.5 rounded-[1.35rem] border border-[#7c4a38]/54 bg-[rgba(6,5,14,0.54)] px-2.5 py-2 text-left shadow-[0_0_18px_rgba(0,0,0,0.2)] ring-1 ring-[#d799ff]/10 backdrop-blur-md transition hover:border-[#d799ff]/58 hover:bg-[rgba(14,9,28,0.7)] focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
+          className={cn(
+            "home-cat-picker-trigger group flex min-h-[4rem] w-full cursor-pointer items-center gap-2.5 rounded-[1.35rem] border border-[#7c4a38]/54 bg-[rgba(6,5,14,0.54)] px-2.5 py-2 text-left shadow-[0_0_18px_rgba(0,0,0,0.2)] ring-1 ring-[#d799ff]/10 backdrop-blur-md transition hover:border-[#d799ff]/58 hover:bg-[rgba(14,9,28,0.7)]",
+            ui.insetFocus,
+          )}
           aria-haspopup="dialog"
           aria-expanded={isHomeSheetOpen}
         >
@@ -174,7 +177,10 @@ export function CatReaderPicker({
                 <button
                   type="button"
                   onClick={closeHomeSheet}
-                  className="rounded-full border border-[#b98255]/45 px-3 py-1.5 text-[12px] font-semibold text-[#f4b65f] transition hover:border-[#d799ff]/60 hover:text-[#ffd98a] focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
+                  className={cn(
+                    "rounded-full border border-[#b98255]/45 px-3 py-1.5 text-[12px] font-semibold text-[#f4b65f] transition hover:border-[#d799ff]/60 hover:text-[#ffd98a]",
+                    ui.insetFocus,
+                  )}
                 >
                   닫기
                 </button>
@@ -196,9 +202,10 @@ export function CatReaderPicker({
                       data-reader-id={reader.id}
                       title={readerCopy.sheetLine}
                       className={cn(
-                        "home-cat-reader-card group flex min-w-0 cursor-pointer items-center gap-2 rounded-[1rem] border bg-[rgba(12,8,24,0.72)] p-2 text-left transition focus:outline-none focus:ring-2 focus:ring-[#d799ff]",
+                        "home-cat-reader-card group flex min-w-0 cursor-pointer items-center gap-2 rounded-[1rem] border bg-[rgba(12,8,24,0.72)] p-2 text-left transition",
+                        ui.insetFocus,
                         isSelected
-                          ? "border-[#f2a6ff] shadow-[0_0_20px_rgba(199,117,255,0.28)]"
+                          ? ui.selectedControl
                           : "border-[#71433f]/70 hover:border-[#d799ff]/70",
                         isPending ? "home-cat-card-glimmer" : null,
                       )}
@@ -296,9 +303,10 @@ export function CatReaderPicker({
               aria-pressed={isSelected}
               title={accessRole === "admin" ? reader.shortDescription : (reader.lockedLabel ?? reader.shortDescription)}
               className={cn(
-                "group min-w-0 rounded-[0.9rem] border bg-[rgba(12,8,24,0.72)] p-1.5 text-center transition focus:outline-none focus:ring-2 focus:ring-[#d799ff]",
+                "group min-w-0 rounded-[0.9rem] border bg-[rgba(12,8,24,0.72)] p-1.5 text-center transition",
+                ui.insetFocus,
                 isSelected
-                  ? "border-[#f2a6ff] shadow-[0_0_20px_rgba(199,117,255,0.32)]"
+                  ? ui.selectedControl
                   : "border-[#71433f]/70 hover:border-[#d799ff]/70",
               )}
             >

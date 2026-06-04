@@ -101,10 +101,9 @@ function OptionButton({ option, isSelected, onClick, disabled = false, iconSize 
       aria-pressed={isSelected}
       disabled={disabled}
       className={cn(
-        "group flex min-h-[2.45rem] items-center justify-center gap-1 rounded-[0.85rem] border border-[#71433f]/75 bg-[rgba(12,8,24,0.72)] px-2 text-[0.82rem] font-semibold text-[#f0c7b9] shadow-[inset_0_0_14px_rgba(255,201,124,0.03)] transition hover:border-[#d799ff]/70 hover:text-[#ffe3b3] focus:outline-none focus:ring-2 focus:ring-[#d799ff] disabled:cursor-not-allowed disabled:opacity-40",
-        isSelected
-          ? "border-[#f2a6ff] bg-[linear-gradient(135deg,rgba(100,45,134,0.88),rgba(31,16,49,0.92))] text-[#ffe7b5] shadow-[0_0_22px_rgba(199,117,255,0.34),inset_0_0_18px_rgba(255,216,138,0.08)]"
-          : "",
+        "group flex min-h-[2.45rem] items-center justify-center gap-1 rounded-[0.85rem] border border-[#71433f]/75 bg-[rgba(12,8,24,0.72)] px-2 text-[0.82rem] font-semibold text-[#f0c7b9] shadow-[inset_0_0_14px_rgba(255,201,124,0.03)] transition hover:border-[#d799ff]/70 hover:text-[#ffe3b3] disabled:cursor-not-allowed disabled:opacity-40",
+        ui.insetFocus,
+        isSelected ? ui.selectedControl : "",
       )}
     >
       <span
@@ -454,7 +453,10 @@ export function DreamEntryForm() {
                   setDraftCatReaderId(readingState.fallbackReaderId);
                   setError("");
                 }}
-                className="mt-2 rounded-full border border-[#b98255]/48 px-3 py-1.5 text-[12px] font-semibold text-[#f4b65f] transition hover:border-[#d799ff]/60 hover:text-[#ffd98a] focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
+                className={cn(
+                  "mt-2 rounded-full border border-[#b98255]/48 px-3 py-1.5 text-[12px] font-semibold text-[#f4b65f] transition hover:border-[#d799ff]/60 hover:text-[#ffd98a]",
+                  ui.insetFocus,
+                )}
               >
                 검은냥으로 바꾸기
               </button>
@@ -561,7 +563,7 @@ export function DreamEntryForm() {
             maxLength={dreamSensationOtherMaxLength}
             onChange={(event) => setOtherSensation(event.target.value)}
             placeholder="그 외 감각이 있다면 직접 적어주세요"
-            className="min-h-[2.45rem] w-full rounded-[0.85rem] border border-[#71433f]/75 bg-[rgba(12,8,24,0.72)] px-3 text-[0.82rem] font-semibold text-[#f0c7b9] placeholder:text-[#9d7f9b] focus:border-[#d799ff]/70 focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
+            className="min-h-[2.45rem] w-full rounded-[0.85rem] border border-[#71433f]/75 bg-[rgba(12,8,24,0.72)] px-3 text-[0.82rem] font-semibold text-[#f0c7b9] placeholder:text-[#9d7f9b] focus:border-[#d799ff]/70 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#d799ff]/72"
           />
         </section>
 

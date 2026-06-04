@@ -2,7 +2,7 @@
 
 import { useLocale } from "@/lib/use-locale";
 import { supportedLocales, type Locale } from "@/lib/locale";
-import { cn } from "@/lib/styles";
+import { cn, ui } from "@/lib/styles";
 
 const localeNameKey = {
   ko: "language.name.ko",
@@ -33,9 +33,10 @@ export function LanguageToggle({ className }: { className?: string }) {
             onClick={() => setLocale(option)}
             aria-pressed={isActive}
             className={cn(
-              "rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition focus:outline-none focus:ring-2 focus:ring-[#d799ff]",
+              "rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition",
+              ui.insetFocus,
               isActive
-                ? "bg-[linear-gradient(135deg,rgba(100,45,134,0.92),rgba(31,16,49,0.94))] text-[#ffe7b5] shadow-[0_0_18px_rgba(199,117,255,0.32)]"
+                ? ui.selectedPill
                 : "text-[#f2c27d]/80 hover:text-[#ffe7b5]",
             )}
           >

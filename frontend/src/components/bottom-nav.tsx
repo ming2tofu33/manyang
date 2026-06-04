@@ -31,7 +31,7 @@ export function BottomNav() {
               href={item.href}
               className={[
                 "relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-[1.5rem] transition",
-                "focus:outline-none focus:ring-2 focus:ring-[#d799ff]",
+                "focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#d799ff]/72",
               ].join(" ")}
               aria-current={isActive ? "page" : undefined}
             >

@@ -42,10 +42,9 @@ function OptionButton({ label, icon, isSelected, onClick }: OptionButtonProps) {
       onClick={onClick}
       aria-pressed={isSelected}
       className={cn(
-        "flex min-h-[2.45rem] items-center gap-1.5 rounded-[0.78rem] border border-[#7c4a38]/70 bg-[rgba(8,6,18,0.70)] px-2 text-left text-[11px] font-semibold leading-[1.16] text-[#e8c7b8] shadow-[inset_0_0_14px_rgba(255,201,124,0.03)] transition hover:border-[#d799ff]/70 hover:text-[#fff0dc] focus:outline-none focus:ring-2 focus:ring-[#d799ff]",
-        isSelected
-          ? "border-[#e29cff] bg-[linear-gradient(135deg,rgba(87,36,118,0.88),rgba(18,11,30,0.92))] text-[#ffe7b5] shadow-[0_0_20px_rgba(199,117,255,0.28),inset_0_0_18px_rgba(255,216,138,0.08)]"
-          : "",
+        "flex min-h-[2.45rem] items-center gap-1.5 rounded-[0.78rem] border border-[#7c4a38]/70 bg-[rgba(8,6,18,0.70)] px-2 text-left text-[11px] font-semibold leading-[1.16] text-[#e8c7b8] shadow-[inset_0_0_14px_rgba(255,201,124,0.03)] transition hover:border-[#d799ff]/70 hover:text-[#fff0dc]",
+        ui.insetFocus,
+        isSelected ? ui.selectedControl : "",
       )}
     >
       <span className="relative h-[1.45rem] w-[1.45rem] shrink-0" aria-hidden="true">

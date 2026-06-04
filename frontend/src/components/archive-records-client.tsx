@@ -112,7 +112,8 @@ export function ArchiveRecordListCard({
       href={view.detailHref ?? "/archive/records"}
       className={cn(
         ui.panel,
-        "group relative block overflow-hidden p-4 transition hover:border-[#ffd08a]/58 focus:outline-none focus:ring-2 focus:ring-[#d799ff]",
+        "group relative block overflow-hidden p-4 transition hover:border-[#ffd08a]/58",
+        ui.insetFocus,
       )}
     >
       <div className="flex items-start gap-3">
@@ -199,7 +200,7 @@ export function ArchiveRecordsClient() {
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="꿈, 상징, 감정을 검색해보세요"
-          className="h-[3.25rem] w-full rounded-full border border-[#b98255]/55 bg-[rgba(8,6,18,0.72)] pl-11 pr-4 text-sm text-[#fff3d7] outline-none placeholder:text-[#fff3d7]/48 focus:border-[#ffd08a]/75 focus:ring-2 focus:ring-[#d799ff]/55"
+          className="h-[3.25rem] w-full rounded-full border border-[#b98255]/55 bg-[rgba(8,6,18,0.72)] pl-11 pr-4 text-sm text-[#fff3d7] outline-none placeholder:text-[#fff3d7]/48 focus:border-[#ffd08a]/75 focus:ring-2 focus:ring-inset focus:ring-[#d799ff]/55"
           aria-label="기록 검색"
         />
       </div>
@@ -214,9 +215,10 @@ export function ArchiveRecordsClient() {
               type="button"
               onClick={() => setSelectedType(tab.type)}
               className={cn(
-                "shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-[#d799ff]",
+                "shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition",
+                ui.insetFocus,
                 isSelected
-                  ? "border-[#d799ff]/76 bg-[rgba(101,47,143,0.68)] text-[#ffe7b5] shadow-[0_0_20px_rgba(183,96,255,0.26)]"
+                  ? ui.selectedPill
                   : "border-[#b98255]/48 bg-[rgba(7,5,15,0.58)] text-[#f2c27d]",
               )}
               aria-pressed={isSelected}

@@ -192,7 +192,10 @@ export function FeaturedDreamRecordCard({
       <button
         type="button"
         onClick={() => onOpen(view)}
-        className="relative z-10 mt-3 flex min-h-11 w-full items-center justify-between rounded-[0.9rem] border border-[#b98255]/45 bg-[rgba(9,7,18,0.58)] px-3 text-sm font-semibold text-[#ffd98a] transition hover:border-[#ffd08a]/70 focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
+        className={cn(
+          "relative z-10 mt-3 flex min-h-11 w-full items-center justify-between rounded-[0.9rem] border border-[#b98255]/45 bg-[rgba(9,7,18,0.58)] px-3 text-sm font-semibold text-[#ffd98a] transition hover:border-[#ffd08a]/70",
+          ui.insetFocus,
+        )}
       >
         <span className="flex items-center gap-2">
           <span className="relative h-5 w-5">
@@ -231,7 +234,7 @@ function RecentArchiveRecordItem({
     </>
   );
   const className =
-    "flex min-h-[4.7rem] w-full items-center gap-3 rounded-[1rem] border border-[#7c4a38]/36 bg-[rgba(10,8,21,0.58)] px-3 py-2.5 text-left shadow-[inset_0_1px_0_rgba(255,226,176,0.05)] transition hover:border-[#ffd08a]/58 hover:bg-[rgba(20,11,34,0.72)] focus:outline-none focus:ring-2 focus:ring-[#d799ff]";
+    "flex min-h-[4.7rem] w-full items-center gap-3 rounded-[1rem] border border-[#7c4a38]/36 bg-[rgba(10,8,21,0.58)] px-3 py-2.5 text-left shadow-[inset_0_1px_0_rgba(255,226,176,0.05)] transition hover:border-[#ffd08a]/58 hover:bg-[rgba(20,11,34,0.72)] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#d799ff]/72";
 
   if (view.type === "dream") {
     return (
@@ -252,7 +255,10 @@ function RecentArchiveEmptySlot({ slot }: { slot: RecentArchiveSlotDefinition })
   return (
     <Link
       href={slot.href}
-      className="group flex min-h-[5.1rem] w-full items-center gap-3 rounded-[1rem] border border-dashed border-[#7c4a38]/46 bg-[rgba(10,8,21,0.34)] px-3 py-2.5 text-left shadow-[inset_0_1px_0_rgba(255,226,176,0.035)] transition hover:border-[#ffd08a]/55 hover:bg-[rgba(20,11,34,0.56)] focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
+      className={cn(
+        "group flex min-h-[5.1rem] w-full items-center gap-3 rounded-[1rem] border border-dashed border-[#7c4a38]/46 bg-[rgba(10,8,21,0.34)] px-3 py-2.5 text-left shadow-[inset_0_1px_0_rgba(255,226,176,0.035)] transition hover:border-[#ffd08a]/55 hover:bg-[rgba(20,11,34,0.56)]",
+        ui.insetFocus,
+      )}
       data-empty-recent-archive-slot={slot.type}
     >
       <span className="opacity-58 transition group-hover:opacity-80">
@@ -287,7 +293,10 @@ export function RecentArchiveRecords({
         <h2 className="text-lg font-semibold text-[#ffd98a]">최근 기록</h2>
         <Link
           href="/archive/records"
-          className="shrink-0 text-sm font-semibold text-[#f0bc7d] transition hover:text-[#ffd98a] focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
+          className={cn(
+            "shrink-0 text-sm font-semibold text-[#f0bc7d] transition hover:text-[#ffd98a]",
+            ui.insetFocus,
+          )}
         >
           전체 보기 ›
         </Link>

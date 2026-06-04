@@ -159,7 +159,10 @@ export function AccountStatusCard({
               aria-controls="account-admin-options"
               aria-expanded={isAdminOptionsOpen}
               onClick={() => setIsAdminOptionsOpen((value) => !value)}
-              className="inline-flex h-9 shrink-0 items-center justify-center rounded-md border border-[#d799ff]/38 bg-[#100b1d]/72 px-2.5 text-[11px] font-semibold text-[#e7b3ff] transition hover:border-[#ffd08a]/62 focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
+              className={cn(
+                "inline-flex h-9 shrink-0 items-center justify-center rounded-md border border-[#d799ff]/38 bg-[#100b1d]/72 px-2.5 text-[11px] font-semibold text-[#e7b3ff] transition hover:border-[#ffd08a]/62",
+                ui.insetFocus,
+              )}
             >
               Admin 옵션
             </button>

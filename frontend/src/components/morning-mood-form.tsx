@@ -47,11 +47,10 @@ function ChoiceChip({ label, icon, isSelected, onClick, compact = false }: Choic
       onClick={onClick}
       aria-pressed={isSelected}
       className={cn(
-        "flex items-center justify-center gap-1.5 rounded-[0.95rem] border border-[#7c4a38]/72 bg-[rgba(8,6,18,0.70)] px-1.5 font-semibold leading-tight text-[#e8c7b8] shadow-[inset_0_0_14px_rgba(255,201,124,0.03)] transition hover:border-[#ffd08a]/70 hover:text-[#fff0dc] focus:outline-none focus:ring-2 focus:ring-[#d799ff]",
+        "flex items-center justify-center gap-1.5 rounded-[0.95rem] border border-[#7c4a38]/72 bg-[rgba(8,6,18,0.70)] px-1.5 font-semibold leading-tight text-[#e8c7b8] shadow-[inset_0_0_14px_rgba(255,201,124,0.03)] transition hover:border-[#ffd08a]/70 hover:text-[#fff0dc]",
+        ui.insetFocus,
         compact ? "min-h-[2.55rem] text-[12.5px]" : "min-h-[2.9rem] text-[13.5px]",
-        isSelected
-          ? "border-[#e29cff] bg-[linear-gradient(135deg,rgba(87,36,118,0.88),rgba(18,11,30,0.92))] text-[#ffe7b5] shadow-[0_0_22px_rgba(199,117,255,0.32),inset_0_0_18px_rgba(255,216,138,0.08)]"
-          : "",
+        isSelected ? ui.selectedControl : "",
       )}
     >
       <span className="relative h-[23px] w-[23px] shrink-0">
@@ -86,6 +85,48 @@ function Panel({ title, iconSrc, children, className }: PanelProps) {
       {children}
     </section>
   );
+}
+
+const morningMoodColorLabels = [
+  "안개 보라",
+  "달빛 노랑",
+  "새벽 파랑",
+  "연한 민트",
+  "먼지 장미",
+  "흐린 회색",
+  "깊은 남색",
+  "비의 파랑",
+  "마른 살구",
+  "흔들린 라일락",
+  "빈 달빛",
+  "옅은 안개",
+] as const;
+
+function getMorningMoodColorLabel(moodLabel: string): string {
+  const optionIndex = morningMoodOptions.findIndex((option) => option.label === moodLabel);
+
+  return morningMoodColorLabels[optionIndex] ?? "아침 빛";
+}
+
+export function createMorningMoodRecordFromFormState(input: {
+  mood: string;
+  bodyFeeling: string;
+  thought: string;
+  moodDate: string;
+  savedRecord?: MorningMoodRecord | null;
+}): MorningMoodRecord {
+  const savedMoodColor =
+    input.savedRecord?.mood === input.mood && input.savedRecord.moodColor.trim()
+      ? input.savedRecord.moodColor
+      : "";
+
+  return createMorningMoodRecord({
+    mood: input.mood,
+    moodColor: savedMoodColor || getMorningMoodColorLabel(input.mood),
+    bodyFeeling: input.bodyFeeling,
+    thought: input.thought,
+    moodDate: input.moodDate,
+  });
 }
 
 export function MorningMoodForm() {
@@ -141,12 +182,12 @@ export function MorningMoodForm() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const record = createMorningMoodRecord({
+    const record = createMorningMoodRecordFromFormState({
       mood: activeMood,
-      moodColor: "",
       bodyFeeling: activeBodyFeeling,
       thought: displayedThought,
       moodDate: todayDate,
+      savedRecord,
     });
 
     saveMorningMoodRecordToBrowser(record);

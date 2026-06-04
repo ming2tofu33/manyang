@@ -117,7 +117,10 @@ function RecordEntryCard({
   const className = cn(
     "flex min-h-[4.85rem] items-center gap-3 rounded-[1.05rem] border px-3 py-2.5 text-left shadow-[inset_0_1px_0_rgba(255,226,176,0.06)] transition",
     availability.isAvailable
-      ? "border-[#9d6545]/58 bg-[rgba(10,8,21,0.68)] hover:border-[#ffd08a]/68 hover:bg-[rgba(20,11,34,0.78)] focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
+      ? cn(
+          "border-[#9d6545]/58 bg-[rgba(10,8,21,0.68)] hover:border-[#ffd08a]/68 hover:bg-[rgba(20,11,34,0.78)]",
+          ui.insetFocus,
+        )
       : "border-[#5f3e34]/42 bg-[rgba(8,7,15,0.44)] opacity-62",
   );
 

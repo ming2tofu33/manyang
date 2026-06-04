@@ -15,4 +15,16 @@ describe("ui style tokens", () => {
     expect(ui.panel).toContain("bg-[rgba(7,6,18,0.76)]");
     expect(ui.panel).toContain("backdrop-blur");
   });
+
+  it("keeps selected controls inside the button box to avoid clipped neon borders", () => {
+    expect(ui.selectedControl).toContain("shadow-[inset_0_0_0_1px");
+    expect(ui.selectedControl).not.toContain("shadow-[0_0_");
+    expect(ui.selectedPill).toContain("shadow-[inset_0_0_0_1px");
+    expect(ui.selectedPill).not.toContain("shadow-[0_0_");
+  });
+
+  it("keeps focus rings inset for controls that may sit inside clipped containers", () => {
+    expect(ui.insetFocus).toContain("focus:ring-inset");
+    expect(ui.insetFocus).not.toContain("focus:ring-2 focus:ring-[#d799ff]");
+  });
 });

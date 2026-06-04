@@ -27,7 +27,7 @@ import { manyangAssets } from "@/lib/manyang-assets";
 import { countMonthlyNightCheckIns } from "@/lib/night-checkin";
 import { countMonthlyPawprints } from "@/lib/pawprints";
 import { mobileLayout } from "@/lib/mobile-layout";
-import { cn } from "@/lib/styles";
+import { cn, ui } from "@/lib/styles";
 import { useArchiveDreamRecords } from "@/lib/use-archive-dream-records";
 import { useRoutineRecords } from "@/lib/use-routine-records";
 
@@ -178,7 +178,7 @@ export function ArchiveCalendar() {
                     className={[
                       "relative grid h-6 w-6 place-items-center rounded-full",
                       hasDream
-                        ? "bg-[#4a2069] text-[#ffd98a] shadow-[0_0_18px_rgba(199,117,255,0.55)]"
+                        ? cn(ui.selectedPill, "border-0")
                         : hasActivity
                           ? "bg-[#2b1738]/75 text-[#ffd98a] ring-1 ring-[#d79a34]/60"
                           : cell.isCurrentMonth
