@@ -411,6 +411,7 @@ export function DreamEntryForm() {
         background={manyangAssets.backgrounds[selectedCatReader.interpretationBackgroundKey]}
         readerImage={manyangAssets.loadingReaders[selectedCatReader.assetKey]}
         introImage={manyangAssets.backgrounds[selectedCatReader.interpretationBackgroundKey]}
+        orbImage={manyangAssets.orbs.catWithStand[selectedCatReader.assetKey]}
       />
       <form onSubmit={handleSubmit} className="mt-1 space-y-4 pb-4">
         <section className="flex items-center gap-3">

@@ -25,6 +25,7 @@ export function DreamLoadingPageClient() {
       background={manyangAssets.backgrounds[reader.interpretationBackgroundKey]}
       readerImage={manyangAssets.loadingReaders[reader.assetKey]}
       introImage={manyangAssets.backgrounds[reader.interpretationBackgroundKey]}
+      orbImage={manyangAssets.orbs.catWithStand[reader.assetKey]}
     />
   );
 }

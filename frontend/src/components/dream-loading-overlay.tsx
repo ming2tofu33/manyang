@@ -10,6 +10,7 @@ type DreamLoadingOverlayProps = {
   background?: string;
   readerImage?: string;
   introImage?: string;
+  orbImage?: string;
   elapsedMs?: number;
 };
 
@@ -18,6 +19,7 @@ export function DreamLoadingOverlay({
   background = manyangAssets.backgrounds.blackCatInterpretation,
   readerImage = manyangAssets.loadingReaders.blackCat,
   introImage = background,
+  orbImage = manyangAssets.orbs.catWithStand.blackCat,
   elapsedMs: elapsedMsOverride,
 }: DreamLoadingOverlayProps) {
   const [mounted, setMounted] = useState(false);
@@ -28,8 +30,8 @@ export function DreamLoadingOverlay({
   const isOrbScene = sequence.scene === "orb";
   const sceneLabel = isReaderScene ? "고양이 등장" : isInterpretationScene ? "해석 중" : "오브 리딩";
   const defaultSupportingMessage = isOrbScene
-    ? "오브가 맑아지면 꿈 영수증을 열게요."
-    : "잠시 뒤 꿈 조각을 오브에 모을게요.";
+    ? "오브가 맑아지면 꿈 영수증을 펼칠게요."
+    : "곧 꿈 조각을 오브에 모을게요.";
 
   useEffect(() => {
     if (!isActive) {
@@ -126,7 +128,7 @@ export function DreamLoadingOverlay({
       <div
         className={cn(
           "relative z-10 flex h-full w-full flex-col items-center px-6 pt-8 text-center",
-          isOrbScene ? "justify-center pb-10" : "justify-end pb-[5.25rem]",
+          isOrbScene ? "justify-start pt-[38dvh] pb-0" : "justify-end pb-[2.65rem]",
         )}
       >
         <div
@@ -143,75 +145,69 @@ export function DreamLoadingOverlay({
           >
             <div className="animate-orb-glow-premium relative h-[17rem] w-[17rem] sm:h-[21rem] sm:w-[21rem]">
               <Image
-                src={manyangAssets.orbs.one}
+                src={orbImage}
                 alt=""
                 fill
                 sizes="100vw"
-                className="animate-orb-1 absolute object-contain drop-shadow-2xl"
-                priority
-              />
-              <Image
-                src={manyangAssets.orbs.two}
-                alt=""
-                fill
-                sizes="100vw"
-                className="animate-orb-2 absolute object-contain drop-shadow-2xl"
-                priority
-              />
-              <Image
-                src={manyangAssets.orbs.three}
-                alt=""
-                fill
-                sizes="100vw"
-                className="animate-orb-3 absolute object-contain drop-shadow-2xl"
+                className="orb-pulse absolute object-contain drop-shadow-2xl"
                 priority
               />
             </div>
           </div>
         </div>
 
-        <div
-          data-loading-copy-panel="true"
-          className={cn(
-            "w-full max-w-[22rem] rounded-[1.15rem] border px-4 py-4 shadow-[0_18px_42px_rgba(0,0,0,0.38),inset_0_0_24px_rgba(255,217,138,0.04)]",
-            isOrbScene
-              ? "border-[#d799ff]/24 bg-[rgba(12,8,24,0.58)]"
-              : "border-[#f0bc7d]/32 bg-[rgba(5,4,11,0.68)]",
-          )}
-        >
-          <p className="mb-2 text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-[#f0bc7d]/74">
-            {sceneLabel}
-          </p>
-          {isOrbScene ? (
+        {isOrbScene ? (
+          <div
+            data-loading-orb-caption="true"
+            className="relative w-full max-w-[22rem] px-3 text-center"
+            aria-live="polite"
+          >
+            <span className="sr-only">진행 단계 {sequence.stepLabel}</span>
             <div
               data-loading-step-indicator="true"
-              className="mb-3 flex items-center gap-2 text-[0.72rem] font-semibold text-[#e8b6ff]/88"
+              className="mb-3 flex items-center justify-center gap-2"
+              aria-hidden="true"
             >
-              <span className="shrink-0">오브 리딩 {sequence.stepLabel}</span>
-              <span className="flex flex-1 gap-1" aria-hidden="true">
-                {Array.from({ length: 4 }).map((_, index) => (
-                  <span
-                    key={index}
-                    className={cn(
-                      "h-1 flex-1 rounded-full",
-                      index <= sequence.stepIndex
-                        ? "bg-[#ffd98a] shadow-[0_0_8px_rgba(255,217,138,0.85)]"
-                        : "bg-[#7b5f85]/55",
-                    )}
-                  />
-                ))}
-              </span>
+              {Array.from({ length: 4 }).map((_, index) => (
+                <span
+                  key={index}
+                  className={cn(
+                    "h-1.5 w-1.5 rotate-45 rounded-[0.08rem] transition duration-500",
+                    index <= sequence.stepIndex
+                      ? "bg-[#ffd98a] shadow-[0_0_10px_rgba(255,217,138,0.95)]"
+                      : "border border-[#b893c6]/38 bg-[#2b1736]/32",
+                  )}
+                />
+              ))}
             </div>
-          ) : null}
 
-          <p className="animate-text-shimmer min-h-[3.2rem] text-balance text-[1.22rem] font-semibold leading-[1.65] tracking-normal sm:text-2xl">
-            {sequence.message}
-          </p>
+            <p className="animate-text-shimmer mx-auto min-h-[3.1rem] max-w-[20rem] text-balance text-[1.22rem] font-semibold leading-[1.62] tracking-normal text-[#fff5dc] drop-shadow-[0_3px_14px_rgba(0,0,0,0.72)] [word-break:keep-all] sm:text-2xl">
+              {sequence.message}
+            </p>
 
-          <p className="mx-auto mt-3 min-h-[2.25rem] max-w-[19rem] text-[0.88rem] font-medium leading-6 text-[#f4cfa8]/78">
-            {sequence.supportingMessage ?? defaultSupportingMessage}
-          </p>
-        </div>
+            <p className="mx-auto mt-2 min-h-[2rem] max-w-[18.5rem] text-[0.84rem] font-medium leading-6 text-[#f4cfa8]/72 drop-shadow-[0_2px_10px_rgba(0,0,0,0.74)] [word-break:keep-all]">
+              {sequence.supportingMessage ?? defaultSupportingMessage}
+            </p>
+          </div>
+        ) : (
+          <div
+            data-loading-copy-panel="true"
+            className="w-full max-w-[20.5rem] rounded-[1rem] border border-[#f0bc7d]/28 bg-[rgba(5,4,11,0.6)] px-3.5 py-3 shadow-[0_14px_34px_rgba(0,0,0,0.34),inset_0_0_20px_rgba(255,217,138,0.035)]"
+            aria-live="polite"
+          >
+            <p className="mb-1.5 text-[0.64rem] font-semibold uppercase tracking-[0.15em] text-[#f0bc7d]/70">
+              {sceneLabel}
+            </p>
+
+            <p className="animate-text-shimmer mx-auto min-h-[2.55rem] max-w-[18.75rem] text-balance text-[1.05rem] font-semibold leading-[1.52] tracking-normal [word-break:keep-all] sm:text-xl">
+              {sequence.message}
+            </p>
+
+            <p className="mx-auto mt-2 min-h-[1.6rem] max-w-[17.25rem] text-[0.76rem] font-medium leading-5 text-[#f4cfa8]/74 [word-break:keep-all]">
+              {sequence.supportingMessage ?? defaultSupportingMessage}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -170,6 +170,18 @@ describe("manyang assets", () => {
     expect(manyangAssets.orbs.one).toBe("/manyang/orbs/orb-1-transparent.webp");
     expect(manyangAssets.orbs.two).toBe("/manyang/orbs/orb-2-transparent.webp");
     expect(manyangAssets.orbs.three).toBe("/manyang/orbs/orb-3-transparent.webp");
+    expect(manyangAssets.orbs.catWithStand.blackCat).toBe(
+      "/manyang/orbs/cat-with-stand/blackcat-orb-with-stand.webp",
+    );
+    expect(manyangAssets.orbs.catWithStand.whiteCat).toBe(
+      "/manyang/orbs/cat-with-stand/whitecat-orb-with-stand.webp",
+    );
+    expect(manyangAssets.orbs.catWithStand.cheeseCat).toBe(
+      "/manyang/orbs/cat-with-stand/cheesecat-orb-with-stand.webp",
+    );
+    expect(manyangAssets.orbs.catWithStand.grayCat).toBe(
+      "/manyang/orbs/cat-with-stand/graycat-orb-with-stand.webp",
+    );
     expect(manyangAssets.receiptStamps.blackCat).toBe("/manyang/receipts/stamps/stamp-black-cat-seal.png");
     expect(manyangAssets.receiptStamps.whiteCat).toBe("/manyang/receipts/stamps/stamp-white-cat-seal.png");
     expect(manyangAssets.receiptStamps.cheeseCat).toBe("/manyang/receipts/stamps/stamp-cheese-cat-seal.png");
@@ -214,6 +226,10 @@ describe("manyang assets", () => {
       manyangAssets.orbs.one,
       manyangAssets.orbs.two,
       manyangAssets.orbs.three,
+      manyangAssets.orbs.catWithStand.blackCat,
+      manyangAssets.orbs.catWithStand.whiteCat,
+      manyangAssets.orbs.catWithStand.cheeseCat,
+      manyangAssets.orbs.catWithStand.grayCat,
       manyangAssets.receiptStamps.blackCat,
       manyangAssets.receiptStamps.whiteCat,
       manyangAssets.receiptStamps.cheeseCat,
@@ -238,7 +254,7 @@ describe("manyang assets", () => {
     expect(readImageSize(manyangAssets.backgrounds.themeFrames.grayCat)).toEqual({ width: 853, height: 1660 });
     expect(readImageSize(manyangAssets.backgrounds.blackCatInterpretation)).toEqual({ width: 853, height: 1844 });
     expect(readImageSize(manyangAssets.backgrounds.whiteCatInterpretation)).toEqual({ width: 853, height: 1844 });
-    expect(readImageSize(manyangAssets.backgrounds.cheeseCatInterpretation)).toEqual({ width: 941, height: 1672 });
+    expect(readImageSize(manyangAssets.backgrounds.cheeseCatInterpretation)).toEqual({ width: 852, height: 1846 });
     expect(readImageSize(manyangAssets.backgrounds.grayCatInterpretation)).toEqual({ width: 852, height: 1846 });
     expect(readImageSize(manyangAssets.illustrations.dreamseedByCat.blackCat)).toEqual({ width: 1254, height: 1254 });
     expect(readImageSize(manyangAssets.illustrations.dreamseedByCat.whiteCat)).toEqual({ width: 1254, height: 1254 });
@@ -261,6 +277,10 @@ describe("manyang assets", () => {
     expect(readImageSize(manyangAssets.orbs.one)).toEqual({ width: 1254, height: 1254 });
     expect(readImageSize(manyangAssets.orbs.two)).toEqual({ width: 1254, height: 1254 });
     expect(readImageSize(manyangAssets.orbs.three)).toEqual({ width: 1254, height: 1254 });
+    expect(readImageSize(manyangAssets.orbs.catWithStand.blackCat)).toEqual({ width: 1024, height: 1024 });
+    expect(readImageSize(manyangAssets.orbs.catWithStand.whiteCat)).toEqual({ width: 1024, height: 1024 });
+    expect(readImageSize(manyangAssets.orbs.catWithStand.cheeseCat)).toEqual({ width: 1024, height: 1024 });
+    expect(readImageSize(manyangAssets.orbs.catWithStand.grayCat)).toEqual({ width: 1024, height: 1024 });
     expect(readImageSize(manyangAssets.receiptStamps.blackCat)).toEqual({ width: 1254, height: 1254 });
     expect(readImageSize(manyangAssets.receiptStamps.whiteCat)).toEqual({ width: 1254, height: 1254 });
     expect(readImageSize(manyangAssets.receiptStamps.cheeseCat)).toEqual({ width: 1254, height: 1254 });
@@ -309,6 +329,14 @@ describe("manyang assets", () => {
       ["/manyang/orbs/orb-1-transparent.png", manyangAssets.orbs.one, 0.35],
       ["/manyang/orbs/orb-2-transparent.png", manyangAssets.orbs.two, 0.35],
       ["/manyang/orbs/orb-3-transparent.png", manyangAssets.orbs.three, 0.35],
+      ["/manyang/orbs/cat-with-stand/blackcat-orb-with-stand.png", manyangAssets.orbs.catWithStand.blackCat, 0.35],
+      ["/manyang/orbs/cat-with-stand/whitecat-orb-with-stand.png", manyangAssets.orbs.catWithStand.whiteCat, 0.35],
+      [
+        "/manyang/orbs/cat-with-stand/cheesecat-orb-with-stand.png",
+        manyangAssets.orbs.catWithStand.cheeseCat,
+        0.35,
+      ],
+      ["/manyang/orbs/cat-with-stand/graycat-orb-with-stand.png", manyangAssets.orbs.catWithStand.grayCat, 0.35],
     ].forEach(([sourceAssetPath, optimizedAssetPath, maxRatio]) => {
       const sourcePath = (sourceAssetPath as string).startsWith("../")
         ? path.join(process.cwd(), sourceAssetPath as string)

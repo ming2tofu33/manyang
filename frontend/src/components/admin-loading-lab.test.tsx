@@ -33,7 +33,7 @@ describe("AdminLoadingLab", () => {
   });
 
   it("keeps the collapsed control sheet reduced to the pull handle", () => {
-    const markup = renderToStaticMarkup(<AdminLoadingLab initialMode="dream" initialDreamElapsedMs={10000} />);
+    const markup = renderToStaticMarkup(<AdminLoadingLab initialMode="dream" initialDreamElapsedMs={13000} />);
 
     expect(markup).toContain('data-admin-loading-lab-state="active"');
     expect(markup).toContain('data-admin-loading-lab-mode="dream"');
@@ -48,7 +48,7 @@ describe("AdminLoadingLab", () => {
     expect(markup).not.toContain("꿈해몽 타임라인");
     expect(markup).not.toContain("고양이 등장");
     expect(markup).not.toContain("0.0s - 3.0s");
-    expect(markup).not.toContain("20.0s+");
+    expect(markup).not.toContain("25.0s+");
   });
 
   it("can render the control sheet expanded for detailed timeline checks", () => {
@@ -61,10 +61,10 @@ describe("AdminLoadingLab", () => {
     expect(markup).toContain("꿈해몽 타임라인");
     expect(markup).toContain("고양이 등장");
     expect(markup).toContain("0.0s - 3.0s");
-    expect(markup).toContain("3.0s - 10.0s");
-    expect(markup).toContain("10.0s - 20.0s+");
-    expect(markup).toContain("20.0s+");
-    expect(markup).toContain("25.0s / 55.0s");
+    expect(markup).toContain("3.0s - 13.0s");
+    expect(markup).toContain("13.0s - 25.0s+");
+    expect(markup).toContain("25.0s+");
+    expect(markup).toContain("30.0s / 55.0s");
     expect(markup).toContain("Midnight");
     expect(markup).toContain("Luna");
   });

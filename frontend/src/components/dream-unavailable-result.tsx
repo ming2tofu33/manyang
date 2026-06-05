@@ -54,6 +54,7 @@ export function DreamUnavailableResult({
         background={manyangAssets.backgrounds[reader.interpretationBackgroundKey]}
         readerImage={manyangAssets.loadingReaders[reader.assetKey]}
         introImage={manyangAssets.backgrounds[reader.interpretationBackgroundKey]}
+        orbImage={manyangAssets.orbs.catWithStand[reader.assetKey]}
       />
       <div className="mx-auto flex min-h-[calc(100dvh-8rem)] w-full max-w-[24rem] flex-col justify-center px-5 py-8">
         <section className="space-y-5 rounded-[1.2rem] border border-[#e2ab6b]/55 bg-[rgba(18,10,28,0.84)] px-5 py-6 shadow-[0_18px_44px_rgba(4,3,10,0.36),inset_0_0_24px_rgba(255,211,143,0.05)]">

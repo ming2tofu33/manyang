@@ -48,9 +48,9 @@ const tarotApiWaitOptions = [3_000, 8_000, 17_000, 30_000] as const;
 const dreamJumpPoints = [
   { label: "0s", elapsedMs: 0 },
   { label: "3s", elapsedMs: DREAM_LOADING_READER_SCENE_MS },
-  { label: "10s", elapsedMs: DREAM_LOADING_READER_SCENE_MS + DREAM_LOADING_INTERPRETATION_SCENE_MS },
-  { label: "20s", elapsedMs: DREAM_LOADING_MINIMUM_MS },
-  { label: "25s", elapsedMs: 25_000 },
+  { label: "13s", elapsedMs: DREAM_LOADING_READER_SCENE_MS + DREAM_LOADING_INTERPRETATION_SCENE_MS },
+  { label: "25s", elapsedMs: DREAM_LOADING_MINIMUM_MS },
+  { label: "30s", elapsedMs: 30_000 },
   { label: "55s", elapsedMs: 55_000 },
 ] as const;
 
@@ -323,6 +323,7 @@ export function AdminLoadingLab({
           background={manyangAssets.backgrounds[reader.interpretationBackgroundKey]}
           readerImage={manyangAssets.loadingReaders[reader.assetKey]}
           introImage={manyangAssets.backgrounds[reader.interpretationBackgroundKey]}
+          orbImage={manyangAssets.orbs.catWithStand[reader.assetKey]}
         />
       ) : (
         <div className="mt-4 pb-5" data-admin-loading-tarot-preview="true">
@@ -423,10 +424,10 @@ export function AdminLoadingLab({
                 <div className="mt-3 space-y-3">
                   <AdminLoadingPanel title="꿈해몽 타임라인">
                     <TimelineRow active={dreamSequence.scene === "reader"} label="고양이 등장" time="0.0s - 3.0s" />
-                    <TimelineRow active={dreamSequence.scene === "interpretation"} label="해석 배경" time="3.0s - 10.0s" />
-                    <TimelineRow active={dreamSequence.scene === "orb"} label={`오브 단계 ${dreamSequence.stepLabel}`} time="10.0s - 20.0s+" />
-                    <TimelineRow active={dreamSequence.canFinish} label="결과 이동 가능" time="20.0s+" />
-                    <TimelineRow active={dreamElapsedMs >= 25_000} label="긴 대기 문구" time="25.0s / 55.0s" />
+                    <TimelineRow active={dreamSequence.scene === "interpretation"} label="해석 배경" time="3.0s - 13.0s" />
+                    <TimelineRow active={dreamSequence.scene === "orb"} label={`오브 단계 ${dreamSequence.stepLabel}`} time="13.0s - 25.0s+" />
+                    <TimelineRow active={dreamSequence.canFinish} label="결과 이동 가능" time="25.0s+" />
+                    <TimelineRow active={dreamElapsedMs >= 30_000} label="긴 대기 문구" time="30.0s / 55.0s" />
                   </AdminLoadingPanel>
 
                   <div className="flex flex-wrap gap-2">

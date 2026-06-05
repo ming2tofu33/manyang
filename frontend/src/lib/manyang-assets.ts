@@ -53,6 +53,12 @@ export const manyangAssets = {
     one: "/manyang/orbs/orb-1-transparent.webp",
     two: "/manyang/orbs/orb-2-transparent.webp",
     three: "/manyang/orbs/orb-3-transparent.webp",
+    catWithStand: {
+      blackCat: "/manyang/orbs/cat-with-stand/blackcat-orb-with-stand.webp",
+      whiteCat: "/manyang/orbs/cat-with-stand/whitecat-orb-with-stand.webp",
+      cheeseCat: "/manyang/orbs/cat-with-stand/cheesecat-orb-with-stand.webp",
+      grayCat: "/manyang/orbs/cat-with-stand/graycat-orb-with-stand.webp",
+    },
   },
   receiptStamps: {
     blackCat: "/manyang/receipts/stamps/stamp-black-cat-seal.png",
