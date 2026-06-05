@@ -76,7 +76,7 @@ status: active
 | ENC-03 | 어색한 표제어 라벨 감사 | done | P1 | 땅·여럿·변기·잃어버린 물건·알몸 + en Land 재명명, 골든/mock 테스트 갱신 |
 | ENC-04 | 이중문화 원칙 확정(ko=동양/en=서양) | done | P0 | 스타일 가이드 §0-A + memory, locale=문화 분기, 번역본 금지 |
 | ENC-05 | 1차 배치 8항목 재작성(B안+이중문화) | done | P0 | 땅·뱀·똥·돼지·물·치아·돈·쫓김 ko/en, sceneModifier 6개 확장, fortune 문화 분리 |
-| ENC-06 | 2차 배치: 동양 고유 + 서양 심리 강 | todo | P0 | 용·조상·거북이·귀신·무지개 / 거미·나비·곰·고래 등 문화 차 큰 ~12개 |
+| ENC-06 | coverage_gap 신규 심볼 26개 추가 | done | P0 | 해/태양·하늘·안개·번개·사자·코끼리·늑대·토끼·여우·경찰·군인·도둑·선생님·할머니·절·교회·배·자전거·총·모자·안경·편지·컴퓨터·오줌·시체·키스 — coverage 72/72(0 gap), 총 147 심볼 |
 | ENC-07 | 나머지 ~101개 전수 재작성 | todo | P0 | 전 항목 ko=동양/en=서양 + B안 정보화, 우회동사 제거, sceneModifier 5~7개, fortune 분리 |
 | ENC-08 | vault YAML(05-Content/symbols) 동기화 | todo | P1 | 변경 항목 YAML 반영(라벨 변경 포함), PyYAML 파싱 확인 |
 | RAG-IMP-01 | 검색 평가셋 + recall@k/precision 하니스 | done | P0 | `retrieval-eval.ts` 32케이스(ID 기반), `npm run eval:retrieval`, 회귀 테스트, baseline 저장 |
@@ -113,7 +113,7 @@ status: active
 ### Phase A — 콘텐츠 (ENC)
 
 - [x] ENC-01~05 완료 (가이드/조사, 필드 제거, 라벨 감사, 이중문화, 1차 8항목)
-- [ ] ENC-06: 문화 차 큰 2차 배치 ~12개. 동양 고유(용·조상·거북이·귀신·무지개·닭) / 서양 심리 강(거미·나비·곰·고래·벌레·사슴)
+- [x] ENC-06 ✓ **완결**: coverage_gap 26개 신규 심볼을 처음부터 이중문화(ko=동양/en=서양)로 추가. nature(해/태양→sun·하늘·안개·번개) / animal(사자=King of Beasts·코끼리=Ganesha/memory·늑대=the shadow/pack·토끼=white rabbit·여우=Reynard) / person(경찰=superego·군인=the warrior·도둑=the shadow that takes·선생님=the Mentor·할머니=Wise Old Woman) / place(절=inner sanctum·교회=sanctuary) / object(배=Charon's vessel·자전거·총=decisive force·모자=persona·안경=lens·편지·컴퓨터) / body·event·action(오줌=release·시체=what has died·키스=awakening kiss). `eval:coverage` 72/72(gap 0, over_match 0), 총 147 심볼, retrieval micro 0.912 유지. 보석→gold alias·할머니→grandmother로 over_match 2건 해소.
 - [x] ENC-07 ✓ **완결 (121/121)**: 기존 121개 전수를 ko=동양/en=서양 + B안으로 재작성. 전 카테고리(animal·nature·object·place·person·body·event·action·food·emotion·abstract) 완료. `npm run enc:status` = reviewed 121 / pending 0. action·food·emotion·abstract 막bat치: 음식=the feast·communion(재물 제거), 고기=the flesh·fatted calf(재물 제거), 술=Dionysian·in vino veritas, 날기=the soul's flight, 떨어짐=the Fall, 싸움=confronting the shadow(역몽 제거), 분노=the shadow's fire(역몽 제거), 울음=catharsis, 노래=the voice of the soul(길조 제거), 춤=Dionysian ecstasy(길조 제거), 군중=the collective/mob, 동굴/집=무의식·psyche. (running·lost_item·many = 보편 심리/구조 modifier라 en 이미 보편적)
 
   - **결함 스캔 기반 우선순위(2026-06-03)**: 카테고리 순서 대신 `grep`로 잔여 결함을 스캔해 우선 처리. en "In Korean tradition"/"conception dream" 누수 8건(불·비·물고기·용·호랑이·곰·고래·개구리)을 전부 서양(융·신화·변태)으로 교체, 누수 0 확인. ko safeReading "비추는 상징/장소/공간" 14건 → "담은 …"으로 일괄 정리(비추 safeReading 0건, 거울·별 metaphorHook의 올바른 "비추는"은 보존). lightReadings의 "인지동작+흐름/장면" 번역체(알아차리는 흐름/확인하는 장면 등) 23건을 직접 서술로 정리 → **번역체 0건**. 남은 "흐름/장면"(~37)은 "재산이 되는 흐름"·"어우러지는 흐름"처럼 자연스러운 관용 용법이라 보존(churn 방지).

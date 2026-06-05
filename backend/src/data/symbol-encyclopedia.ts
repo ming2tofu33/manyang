@@ -2396,7 +2396,7 @@ export const symbolEntries: SymbolEntry[] = [
     sourceBasis: ["everyday place symbolism", "body metaphor", "scene function"],
     ko: localized({
       label: "변기",
-      aliases: ["변기", "화장실", "소변", "볼일 보는 꿈"],
+      aliases: ["변기", "화장실", "수세식", "볼일 보는 꿈"],
       searchText: "변기, 화장실, 소변, 볼일, 배출, 해소, 사생활, 부끄러움, 숨기고 싶은 감정",
       coreMeanings: ["배출", "해소", "사생활", "노출 불안"],
       lightReadings: ["쌓인 것을 내보내고 싶어 하는 마음", "혼자 정리할 공간을 찾는 장면"],
@@ -4953,8 +4953,8 @@ export const symbolEntries: SymbolEntry[] = [
     sourceBasis: ["east asian folklore", "family metaphor", "scene function"],
     ko: localized({
       label: "조상",
-      aliases: ["조상", "조상님", "돌아가신", "할아버지", "할머니", "선조", "제사"],
-      searchText: "조상, 돌아가신 분, 할아버지, 할머니, 선조, 제사, 도움, 길조, 뿌리, 메시지, 그리움",
+      aliases: ["조상", "조상님", "돌아가신", "할아버지", "선조", "제사"],
+      searchText: "조상, 돌아가신 분, 할아버지, 선조, 제사, 도움, 길조, 뿌리, 메시지, 그리움",
       coreMeanings: ["도움", "뿌리", "복", "그리움"],
       lightReadings: [
         "조상이 평온하게 웃거나 무언가 건네주는 꿈은 전통적으로 뿌리의 도움과 복, 좋은 소식을 알리는 길몽으로 푼다",
@@ -4985,8 +4985,8 @@ export const symbolEntries: SymbolEntry[] = [
     }),
     en: localized({
       label: "Ancestor",
-      aliases: ["ancestor", "late grandfather", "late grandmother", "deceased relative", "forefather", "memorial rite"],
-      searchText: "ancestor, late grandfather, late grandmother, deceased relative, forefather, guidance, blessing, roots, message, longing",
+      aliases: ["ancestor", "late grandfather", "deceased relative", "forefather", "ancestors", "memorial rite"],
+      searchText: "ancestor, late grandfather, deceased relative, forefather, guidance, blessing, roots, message, longing",
       coreMeanings: ["inner guidance", "roots", "grief", "memory"],
       lightReadings: [
         "A calm, kindly ancestor often pictures inner guidance — Jung's 'wise elder', or a comforting visit from memory",
@@ -8946,7 +8946,7 @@ export const symbolEntries: SymbolEntry[] = [
     sourceBasis: ["east asian folklore", "psychological metaphor", "product safety rule"],
     ko: localized({
       label: "시체",
-      aliases: ["시체", "주검", "시신", "송장", "죽은 사람"],
+      aliases: ["시체", "주검", "시신", "송장", "시체를 보"],
       searchText: "시체, 주검, 시신, 송장, 죽은 사람, 끝맺음, 죽음의 상징, 애도, 보내줌, 지나간 것, 마무리",
       coreMeanings: ["끝맺음", "보내줌·애도", "지나간 것"],
       lightReadings: ["한 장이 완전히 끝나 매듭지어지는 장면", "이제는 보내줘도 될 것을 마주하는 마음"],

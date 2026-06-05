@@ -41,6 +41,13 @@ export const BICULTURAL_REVIEWED: ReadonlySet<string> = new Set([
   "crying", "anger", "laughter",
   // abstract — 2/2 완결
   "many", "crowd",
+  // ENC-06: coverage_gap 26개 신규 (ko=동양/en=서양 처음부터 이중문화 작성)
+  "sun", "sky", "fog", "lightning", // nature
+  "lion", "elephant", "wolf", "rabbit", "fox", // animal
+  "police", "soldier", "thief", "teacher", "grandmother", // person
+  "temple", "church", // place
+  "boat", "bicycle", "gun", "hat", "glasses", "letter", "computer", // object
+  "urine", "corpse", "kiss", // body/event/action
 ]);
 
 export type CategoryReviewStatus = {
