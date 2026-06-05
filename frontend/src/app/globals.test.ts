@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, test } from "vitest";
 
-const globalsCss = readFileSync(path.join(process.cwd(), "src", "app", "globals.css"), "utf8");
+const globalsCss = readFileSync(path.join(process.cwd(), "src", "app", "globals.css"), "utf8").replace(/\r\n/g, "\n");
 
 function getRuleBody(selector: string) {
   const selectorIndex = globalsCss.indexOf(selector);
