@@ -129,6 +129,85 @@ function buildSymbolReadings(matches: RuntimeSymbolMatch[], locale: SupportedLoc
   }));
 }
 
+// 특정 심볼(조합)에 붙는 맞춤 해석/처방/카드. 위에서부터 먼저 매치되는 것을 쓴다(다심볼 조합 → 단일 심볼 순).
+// 새 조합을 추가할 때 함수를 고치지 말고 이 표에 한 줄을 더한다.
+type LocaleText = Record<SupportedLocale, string>;
+type ComboCard = Record<SupportedLocale, Omit<DreamCardResponse, "summary">>;
+type SymbolComboOverride = {
+  requires: string[];
+  interpretation?: LocaleText;
+  smallPrescription?: LocaleText;
+  card?: ComboCard;
+};
+
+const SYMBOL_COMBO_OVERRIDES: SymbolComboOverride[] = [
+  {
+    requires: ["snake", "owned_land"],
+    interpretation: {
+      ko: "이 꿈은 불길함으로 몰아가기보다, 내 영역 안에서 조용히 커지고 있던 감각들이 한꺼번에 모습을 드러낸 장면으로 읽을 수 있어요. 큰 구렁이와 많은 뱀은 하나의 작은 사건보다 여러 갈래의 힘이나 가능성이 동시에 움직이는 느낌에 가깝습니다.",
+      en: "Rather than treating this as a bad omen, the dream can be read as a scene where signals inside your own territory become visible at once. The snake and the land point less to a fixed event and more to alert energy moving through a space you feel responsible for.",
+    },
+    smallPrescription: {
+      ko: "오늘은 내가 지켜야 한다고 느끼는 영역 하나를 적고, 실제로 챙길 수 있는 작은 행동 하나만 정해보세요.",
+      en: "Name one area of life you feel responsible for protecting, then choose one small way to tend it today.",
+    },
+    card: {
+      ko: {
+        name: "땅 아래 깨어난 구렁이",
+        type: "earth_moon",
+        keywords: ["영역", "생명력", "경계", "압도감"],
+        message: "한꺼번에 올라온 감각을 불길함으로 몰지 말고, 지금 내 영역에서 무엇이 커지고 있는지 살펴보자냥.",
+        theme: "영역",
+      },
+      en: {
+        name: "Signals on My Ground",
+        type: "earth_moon",
+        keywords: ["territory", "life force", "boundary", "overwhelm"],
+        message: "Treat the rising signals as something to notice, not as a fixed omen.",
+        theme: "territory",
+      },
+    },
+  },
+  {
+    requires: ["door", "corridor"],
+    interpretation: {
+      ko: "이 꿈은 목적지가 없다는 뜻보다, 다음 장면으로 들어가기 전 기준을 찾는 전환 구간에 가까워 보여요. 문이나 복도는 선택 앞에서 잠시 멈춰 방향을 살피는 마음을 보여줄 수 있습니다.",
+      en: "This dream looks less like having no destination and more like standing in a transition zone before the next scene. The door and corridor can show a mind pausing at a threshold while it tries to find a usable direction.",
+    },
+  },
+  {
+    requires: ["door"],
+    smallPrescription: {
+      ko: "오늘 결정해야 하는 일 하나에 임시 기준을 붙여보자냥.",
+      en: "Give one decision today a temporary standard before choosing.",
+    },
+  },
+  {
+    requires: ["water"],
+    smallPrescription: {
+      ko: "오늘은 감정을 해결하려 하기보다 이름 하나만 붙여보자냥.",
+      en: "Name one feeling today instead of trying to solve it immediately.",
+    },
+  },
+];
+
+function comboOverrideField<K extends "interpretation" | "smallPrescription" | "card">(
+  symbolIds: string[],
+  field: K,
+): NonNullable<SymbolComboOverride[K]> | undefined {
+  const present = new Set(symbolIds);
+
+  for (const override of SYMBOL_COMBO_OVERRIDES) {
+    const value = override[field];
+
+    if (value && override.requires.every((id) => present.has(id))) {
+      return value as NonNullable<SymbolComboOverride[K]>;
+    }
+  }
+
+  return undefined;
+}
+
 function buildInterpretation(matches: RuntimeSymbolMatch[], themes: string[], isFallback: boolean, locale: SupportedLocale): string {
   if (isFallback) {
     return locale === "en"
@@ -136,22 +215,10 @@ function buildInterpretation(matches: RuntimeSymbolMatch[], themes: string[], is
       : "뚜렷한 상징은 적지만, 남아 있는 느낌 자체가 오늘 마음의 온도를 보여주는 단서일 수 있어요. 꿈을 억지로 맞히기보다 흐릿한 감각을 한 문장으로 남겨보면 좋겠다냥.";
   }
 
-  const symbolIds = matches.map((match) => match.entryId);
+  const override = comboOverrideField(matches.map((match) => match.entryId), "interpretation");
 
-  if (symbolIds.includes("snake") && symbolIds.includes("owned_land")) {
-    if (locale === "en") {
-      return "Rather than treating this as a bad omen, the dream can be read as a scene where signals inside your own territory become visible at once. The snake and the land point less to a fixed event and more to alert energy moving through a space you feel responsible for.";
-    }
-
-    return "이 꿈은 불길함으로 몰아가기보다, 내 영역 안에서 조용히 커지고 있던 감각들이 한꺼번에 모습을 드러낸 장면으로 읽을 수 있어요. 큰 구렁이와 많은 뱀은 하나의 작은 사건보다 여러 갈래의 힘이나 가능성이 동시에 움직이는 느낌에 가깝습니다.";
-  }
-
-  if (symbolIds.includes("door") && symbolIds.includes("corridor")) {
-    if (locale === "en") {
-      return "This dream looks less like having no destination and more like standing in a transition zone before the next scene. The door and corridor can show a mind pausing at a threshold while it tries to find a usable direction.";
-    }
-
-    return "이 꿈은 목적지가 없다는 뜻보다, 다음 장면으로 들어가기 전 기준을 찾는 전환 구간에 가까워 보여요. 문이나 복도는 선택 앞에서 잠시 멈춰 방향을 살피는 마음을 보여줄 수 있습니다.";
+  if (override) {
+    return override[locale];
   }
 
   const [firstMatch, secondMatch] = matches;
@@ -176,30 +243,10 @@ function buildSmallPrescription(matches: RuntimeSymbolMatch[], isFallback: boole
       : "기억나는 감각을 한 문장으로 적어두자냥.";
   }
 
-  const symbolIds = matches.map((match) => match.entryId);
+  const override = comboOverrideField(matches.map((match) => match.entryId), "smallPrescription");
 
-  if (symbolIds.includes("snake") && symbolIds.includes("owned_land")) {
-    if (locale === "en") {
-      return "Name one area of life you feel responsible for protecting, then choose one small way to tend it today.";
-    }
-
-    return "오늘은 내가 지켜야 한다고 느끼는 영역 하나를 적고, 실제로 챙길 수 있는 작은 행동 하나만 정해보세요.";
-  }
-
-  if (symbolIds.includes("door")) {
-    if (locale === "en") {
-      return "Give one decision today a temporary standard before choosing.";
-    }
-
-    return "오늘 결정해야 하는 일 하나에 임시 기준을 붙여보자냥.";
-  }
-
-  if (symbolIds.includes("water")) {
-    if (locale === "en") {
-      return "Name one feeling today instead of trying to solve it immediately.";
-    }
-
-    return "오늘은 감정을 해결하려 하기보다 이름 하나만 붙여보자냥.";
+  if (override) {
+    return override[locale];
   }
 
   return locale === "en"
@@ -229,35 +276,18 @@ function buildCard(
     };
   }
 
-  const symbolIds = matches.map((match) => match.entryId);
+  const cardOverride = comboOverrideField(matches.map((match) => match.entryId), "card");
+
+  if (cardOverride) {
+    return { ...cardOverride[locale], summary };
+  }
+
   const primary = matches[0];
   const keywords = unique([
     ...themes.slice(0, 3),
     ...(primary?.evidence.coreMeanings.slice(0, 2) ?? []),
   ]).slice(0, 4);
   const emotion = emotions[0] ?? "잔상";
-
-  if (symbolIds.includes("snake") && symbolIds.includes("owned_land")) {
-    if (locale === "en") {
-      return {
-        name: "Signals on My Ground",
-        type: "earth_moon",
-        keywords: unique(["territory", "life force", "boundary", "overwhelm"]).slice(0, 4),
-        summary,
-        message: "Treat the rising signals as something to notice, not as a fixed omen.",
-        theme: "territory",
-      };
-    }
-
-    return {
-      name: "땅 아래 깨어난 구렁이",
-      type: "earth_moon",
-      keywords: unique(["영역", "생명력", "경계", "압도감"]).slice(0, 4),
-      summary,
-      message: "한꺼번에 올라온 감각을 불길함으로 몰지 말고, 지금 내 영역에서 무엇이 커지고 있는지 살펴보자냥.",
-      theme: "영역",
-    };
-  }
 
   return {
     name:

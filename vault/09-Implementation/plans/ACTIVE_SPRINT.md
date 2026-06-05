@@ -87,7 +87,7 @@ status: active
 | RAG-IMP-06 | 무매칭/저매칭 폴백 전략 | todo | P2 | 미등록 꿈에도 안전한 일반 grounding 제공 |
 | RAG-IMP-07 | 타로 카드 데이터 테이블 분리 | todo | P2 | 78장 의미를 RAG 아닌 버전관리 lookup 데이터로 정리 |
 | RAG-IMP-08 | coverage eval(심볼 충분도) | done | P0 | `coverage-eval.ts` 72개 흔한 상징 탐침, matching/coverage 갭 분리, `npm run eval:coverage`, 회귀 테스트 |
-| RAG-IMP-09 | 하드코딩 정리 | todo | P2 | `mock-analysis.ts` 심볼조합 if-체인(snake+owned_land 등), `structured-dream-analysis.ts` LEGACY_* 맵·searching/many 특수분기를 데이터 주도로 |
+| RAG-IMP-09 | 하드코딩 정리 | done | P2 | 흩뿌린 if-체인을 데이터 표로: mock-analysis `SYMBOL_COMBO_OVERRIDES`(3함수 6블록→1표), structured `SYMBOL_EMOTION_SIGNALS`·`SCENE_QUERY_RULES`(trigger 선언형)·`AMBIGUOUS_SCENE_OVERRIDES`(searching 3곳 통합). 동작 보존(167 테스트·eval 불변), 새 조합=표에 한 줄 |
 | ENC-09 | 미해결 matching 케이스 | todo | P1 | retrieval-eval 잔여 miss: 우수수→teeth(형태소), 도망쳤어→chased(패러프레이즈), molar→teeth, en chased 보강 |
 
 ## Encyclopedia Quality & RAG Sprint (2026-06-03)

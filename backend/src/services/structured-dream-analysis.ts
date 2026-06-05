@@ -305,6 +305,50 @@ const LEGACY_THEME_BY_SYMBOL: Record<string, { ko: string; en: string }> = {
   many: { ko: "압도감", en: "overwhelm" },
 };
 
+type LocaleText = Record<SupportedLocale, string>;
+
+// 특정 심볼이 잡히면 더해지는 정서 신호(약한 신호). 새 심볼→정서는 함수가 아니라 이 표에 한 줄을 더한다.
+const SYMBOL_EMOTION_SIGNALS: Record<string, { label: LocaleText; evidence: LocaleText; confidence: number }> = {
+  many: { label: { ko: "놀람", en: "surprise" }, evidence: { ko: "많은 수", en: "many" }, confidence: 0.55 },
+  being_chased: { label: { ko: "긴박감", en: "urgency" }, evidence: { ko: "쫓김", en: "being chased" }, confidence: 0.62 },
+};
+
+// 심볼/모디파이어 조합 → 벡터 검색용 장면 쿼리. 각 규칙은 trigger 중 하나라도 충족되면 발동한다.
+// trigger 충족 = allIds 모두 존재 && (anyIds 미지정이거나 하나 이상 존재) && (anyModifierKeys 미지정이거나 하나 이상 존재).
+type SceneQueryTrigger = { allIds?: string[]; anyIds?: string[]; anyModifierKeys?: string[] };
+type SceneQueryRule = { locale: SupportedLocale; sceneQuery: string; triggers: SceneQueryTrigger[] };
+
+const SCENE_QUERY_RULES: SceneQueryRule[] = [
+  { locale: "ko", sceneQuery: "많은 뱀이 내 영역에 있음", triggers: [{ allIds: ["owned_land"], anyIds: ["snake", "many"] }] },
+  {
+    locale: "ko",
+    sceneQuery: "교실을 찾기",
+    triggers: [{ anyModifierKeys: ["school:lostClassroom"] }, { allIds: ["school", "searching"] }],
+  },
+  { locale: "ko", sceneQuery: "문이 계속 바뀜", triggers: [{ anyModifierKeys: ["door:changing"] }] },
+];
+
+function sceneQueryTriggerMatches(trigger: SceneQueryTrigger, ids: Set<string>, modifierKeys: Set<string>): boolean {
+  const allIdsPresent = (trigger.allIds ?? []).every((id) => ids.has(id));
+  const anyIdPresent = !trigger.anyIds || trigger.anyIds.some((id) => ids.has(id));
+  const anyModifierPresent = !trigger.anyModifierKeys || trigger.anyModifierKeys.some((key) => modifierKeys.has(key));
+
+  return allIdsPresent && anyIdPresent && anyModifierPresent;
+}
+
+// 텍스트가 흐릿/모호할 때(잘 모르겠어, blurry…) 특정 심볼의 역할·신뢰도·중요도를 낮춰 잡는 보정.
+// 지금은 "찾기(searching)"만 해당 — 모호한 장면에서 과대평가되지 않도록. 함수 흩뿌림 대신 이 표로 모은다.
+const AMBIGUOUS_SCENE_OVERRIDES: Record<string, { role: string; confidence: number; importance: 1 | 2 | 3 | 4 | 5 }> = {
+  searching: { role: "ambiguousSearching", confidence: 0.68, importance: 3 },
+};
+
+function ambiguousOverrideFor(
+  match: MatchedSymbol,
+  isAmbiguousSearching: boolean,
+): { role: string; confidence: number; importance: 1 | 2 | 3 | 4 | 5 } | undefined {
+  return isAmbiguousSearching ? AMBIGUOUS_SCENE_OVERRIDES[match.entry.id] : undefined;
+}
+
 function unique(values: string[]): string[] {
   return [...new Set(values.map((value) => value.trim()).filter(Boolean))];
 }
@@ -379,8 +423,10 @@ function confidenceFor(match: MatchedSymbol): number {
 }
 
 function roleFor(match: MatchedSymbol, isAmbiguousSearching: boolean): string {
-  if (match.entry.id === "searching" && isAmbiguousSearching) {
-    return "ambiguousSearching";
+  const override = ambiguousOverrideFor(match, isAmbiguousSearching);
+
+  if (override) {
+    return override.role;
   }
 
   if (match.matchedModifiers.length > 0) {
@@ -400,7 +446,7 @@ function roleFor(match: MatchedSymbol, isAmbiguousSearching: boolean): string {
 
 function buildCandidate(match: MatchedSymbol, isAmbiguousSearching: boolean): SymbolCandidate {
   const matchedTerm = match.matchedAliases[0] ?? match.matchedModifiers[0]?.matchedTerms[0] ?? match.entry.label;
-  const confidence = match.entry.id === "searching" && isAmbiguousSearching ? 0.68 : confidenceFor(match);
+  const override = ambiguousOverrideFor(match, isAmbiguousSearching);
 
   return {
     text: matchedTerm,
@@ -410,8 +456,8 @@ function buildCandidate(match: MatchedSymbol, isAmbiguousSearching: boolean): Sy
     evidenceText: matchedTerm,
     roleInDream: roleFor(match, isAmbiguousSearching),
     source: "explicit",
-    importance: match.entry.id === "searching" && isAmbiguousSearching ? 3 : symbolImportance(match.entry, match.matchedModifiers),
-    confidence,
+    importance: override?.importance ?? symbolImportance(match.entry, match.matchedModifiers),
+    confidence: override?.confidence ?? confidenceFor(match),
   };
 }
 
@@ -440,21 +486,10 @@ function modifierQueriesFor(match: MatchedSymbol): string[] {
 function legacySceneQueries(matches: MatchedSymbol[], locale: SupportedLocale): string[] {
   const ids = new Set(matches.map((match) => match.entry.id));
   const modifierKeys = new Set(matches.flatMap((match) => match.matchedModifiers.map((modifier) => `${match.entry.id}:${modifier.key}`)));
-  const queries: string[] = [];
 
-  if (locale === "ko" && ids.has("owned_land") && (ids.has("snake") || ids.has("many"))) {
-    queries.push("많은 뱀이 내 영역에 있음");
-  }
-
-  if (locale === "ko" && (modifierKeys.has("school:lostClassroom") || (ids.has("school") && ids.has("searching")))) {
-    queries.push("교실을 찾기");
-  }
-
-  if (locale === "ko" && modifierKeys.has("door:changing")) {
-    queries.push("문이 계속 바뀜");
-  }
-
-  return queries;
+  return SCENE_QUERY_RULES.filter(
+    (rule) => rule.locale === locale && rule.triggers.some((trigger) => sceneQueryTriggerMatches(trigger, ids, modifierKeys)),
+  ).map((rule) => rule.sceneQuery);
 }
 
 function buildThemes(matches: MatchedSymbol[], locale: SupportedLocale, isAmbiguousSearching: boolean): ThemeSignal[] {
@@ -499,27 +534,15 @@ function uniqueThemes(themes: ThemeSignal[]): ThemeSignal[] {
 
 function inferEmotions(matches: MatchedSymbol[], locale: SupportedLocale): EmotionSignal[] {
   const ids = new Set(matches.map((match) => match.entry.id));
-  const emotions: EmotionSignal[] = [];
 
-  if (ids.has("many")) {
-    emotions.push({
-      label: locale === "ko" ? "놀람" : "surprise",
-      source: "text",
-      evidenceText: locale === "ko" ? "많은 수" : "many",
-      confidence: 0.55,
-    });
-  }
-
-  if (ids.has("being_chased")) {
-    emotions.push({
-      label: locale === "ko" ? "긴박감" : "urgency",
-      source: "text",
-      evidenceText: locale === "ko" ? "쫓김" : "being chased",
-      confidence: 0.62,
-    });
-  }
-
-  return emotions;
+  return Object.entries(SYMBOL_EMOTION_SIGNALS)
+    .filter(([id]) => ids.has(id))
+    .map(([, signal]) => ({
+      label: signal.label[locale],
+      source: "text" as const,
+      evidenceText: signal.evidence[locale],
+      confidence: signal.confidence,
+    }));
 }
 
 function unmatchedEnglishSceneCandidates(
