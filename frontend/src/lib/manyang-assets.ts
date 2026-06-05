@@ -162,9 +162,10 @@ export const manyangAssets = {
     star: "/manyang/ui/semantic-icons/semantic-star.png",
   },
   calendarRecordIcons: {
-    dream: "/manyang/ui/calendar-record-icons/calendar-record-dream.png",
-    pawprint: "/manyang/ui/calendar-record-icons/calendar-record-pawprint.png",
-    night: "/manyang/ui/calendar-record-icons/calendar-record-night.png",
+    dream: "/manyang/ui/calendar-record-icons/calendar-record-dream-gold-v3.png",
+    pawprint: "/manyang/ui/calendar-record-icons/calendar-record-pawprint-gold-v2.png",
+    tarot: "/manyang/ui/calendar-record-icons/calendar-record-tarot-gold-v3.png",
+    night: "/manyang/ui/calendar-record-icons/calendar-record-night-gold-v2.png",
     symbol: "/manyang/ui/calendar-record-icons/calendar-record-symbol.png",
   },
   encyclopediaIcons: {

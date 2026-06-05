@@ -17,9 +17,9 @@ describe("ArchiveCalendar", () => {
   it("uses separated calendar record symbols for summary cards and date markers", () => {
     const markup = renderToStaticMarkup(<ArchiveCalendar />);
 
-    expect(markup).toContain("/manyang/ui/calendar-record-icons/calendar-record-dream.png");
-    expect(markup).toContain("/manyang/ui/calendar-record-icons/calendar-record-pawprint.png");
-    expect(markup).toContain("/manyang/ui/calendar-record-icons/calendar-record-night.png");
+    expect(markup).toContain("/manyang/ui/calendar-record-icons/calendar-record-dream-gold-v3.png");
+    expect(markup).toContain("/manyang/ui/calendar-record-icons/calendar-record-pawprint-gold-v2.png");
+    expect(markup).toContain("/manyang/ui/calendar-record-icons/calendar-record-night-gold-v2.png");
     expect(markup).toContain("/manyang/ui/calendar-record-icons/calendar-record-symbol.png");
   });
 

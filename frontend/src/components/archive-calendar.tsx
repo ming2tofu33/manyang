@@ -211,7 +211,7 @@ export function ArchiveCalendar() {
               hasTarot
                 ? {
                     key: "tarot",
-                    icon: manyangAssets.pageIcons.tarot,
+                    icon: manyangAssets.calendarRecordIcons.tarot,
                     className: archiveCalendarSecondaryMarkerIconClassName,
                     sizes: "12px",
                   }

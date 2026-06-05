@@ -482,10 +482,18 @@ describe("manyang assets", () => {
   });
 
   test("exposes calendar record and encyclopedia category icon assets", () => {
-    expect(Object.keys(manyangAssets.calendarRecordIcons)).toHaveLength(4);
-    expect(manyangAssets.calendarRecordIcons.dream).toBe("/manyang/ui/calendar-record-icons/calendar-record-dream.png");
+    expect(Object.keys(manyangAssets.calendarRecordIcons)).toHaveLength(5);
+    expect(manyangAssets.calendarRecordIcons.dream).toBe(
+      "/manyang/ui/calendar-record-icons/calendar-record-dream-gold-v3.png",
+    );
     expect(manyangAssets.calendarRecordIcons.pawprint).toBe(
-      "/manyang/ui/calendar-record-icons/calendar-record-pawprint.png",
+      "/manyang/ui/calendar-record-icons/calendar-record-pawprint-gold-v2.png",
+    );
+    expect(manyangAssets.calendarRecordIcons.tarot).toBe(
+      "/manyang/ui/calendar-record-icons/calendar-record-tarot-gold-v3.png",
+    );
+    expect(manyangAssets.calendarRecordIcons.night).toBe(
+      "/manyang/ui/calendar-record-icons/calendar-record-night-gold-v2.png",
     );
 
     Object.values(manyangAssets.calendarRecordIcons).forEach((assetPath) => {
