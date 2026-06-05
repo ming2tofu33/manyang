@@ -17,11 +17,12 @@ describe("retrieval eval harness", () => {
 
     // 2026-06-03 baseline: micro 0.842 / macro 0.781 / precision 0.698.
     // After alias + lemma-friendly aliases (water/funeral/being_chased 등): micro 0.912 / macro 0.891 / precision 0.823.
+    // 2026-06-04 RAG-IMP-04 (past-tense/molar aliases, "와서" suffix): micro 1.0 / macro 1.0 / precision 0.885 — all tags 1.0.
     // (Lexical only — no lemma/vector. Hybrid+lemma reaches macro ~0.938, measured via `npm run eval:retrieval:vector`.)
     // Floors sit just under the improved numbers to lock the gain and catch regressions.
-    expect(report.aggregate.microRecall).toBeGreaterThanOrEqual(0.9);
-    expect(report.aggregate.macroRecall).toBeGreaterThanOrEqual(0.87);
-    expect(report.aggregate.macroPrecision).toBeGreaterThanOrEqual(0.8);
+    expect(report.aggregate.microRecall).toBeGreaterThanOrEqual(0.95);
+    expect(report.aggregate.macroRecall).toBeGreaterThanOrEqual(0.95);
+    expect(report.aggregate.macroPrecision).toBeGreaterThanOrEqual(0.85);
 
     const common = report.aggregate.byTag.common;
     const tradition = report.aggregate.byTag.tradition;

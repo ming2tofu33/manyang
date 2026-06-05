@@ -1260,7 +1260,7 @@ export const symbolEntries: SymbolEntry[] = [
     sourceBasis: ["embodied metaphor", "action symbolism", "scene function"],
     ko: localized({
       label: "달리기",
-      aliases: ["달리기", "뛰기", "뛰었", "달렸", "도망"],
+      aliases: ["달리기", "뛰기", "뛰었", "달렸", "도망", "도망쳤"],
       searchText: "달리기, 뛰기, 도망, 쫓김, 급함, 추진력, 회피, 따라잡기",
       coreMeanings: ["회피", "추진력", "긴급함", "따라잡기"],
       lightReadings: ["몸이 먼저 움직일 만큼 에너지가 올라온 상태", "미루던 일을 따라잡으려는 마음"],
@@ -2106,7 +2106,7 @@ export const symbolEntries: SymbolEntry[] = [
     sourceBasis: ["event symbolism", "transition metaphor", "product safety rule"],
     ko: localized({
       label: "죽음",
-      aliases: ["죽음", "죽는 꿈", "사망", "죽었다", "죽은 사람", "임종"],
+      aliases: ["죽음", "죽는 꿈", "사망", "죽었다", "죽었", "죽은", "죽은 사람", "임종"],
       searchText: "죽음, 죽는 꿈, 사망, 죽었다, 끝남, 전환, 상실 불안, 놓아보내기, 변화의 문턱",
       coreMeanings: ["끝남", "전환", "재생", "놓아보내기"],
       lightReadings: [
@@ -2876,7 +2876,7 @@ export const symbolEntries: SymbolEntry[] = [
     sourceBasis: ["body symbolism", "speech metaphor", "product safety rule"],
     ko: localized({
       label: "치아",
-      aliases: ["치아", "이빨", "이가 빠지", "이 빠지", "이빨 빠지", "이가 흔들", "이가 빠지는 꿈", "앞니", "어금니", "윗니", "아랫니"],
+      aliases: ["치아", "이빨", "이가 빠지", "이 빠지", "이빨 빠지", "이가 빠졌", "이 빠졌", "이빨 빠졌", "이가 흔들", "이가 빠지는 꿈", "앞니", "어금니", "윗니", "아랫니"],
       searchText: "치아, 이빨, 이가 빠지는 꿈, 앞니, 어금니, 윗니, 아랫니, 구설, 걱정, 자신감, 말",
       coreMeanings: ["구설·걱정", "자신감", "말", "건강"],
       lightReadings: [
@@ -2911,7 +2911,7 @@ export const symbolEntries: SymbolEntry[] = [
     }),
     en: localized({
       label: "Teeth",
-      aliases: ["teeth", "tooth", "teeth falling out", "broken tooth", "front teeth"],
+      aliases: ["teeth", "tooth", "teeth falling out", "broken tooth", "front teeth", "molar", "molars"],
       searchText: "teeth, tooth, teeth falling out, broken tooth, mouth, speech, confidence, appearance, loss anxiety",
       coreMeanings: ["anxiety", "loss of control", "self-image", "powerlessness"],
       lightReadings: [

@@ -82,7 +82,7 @@ status: active
 | RAG-IMP-01 | 검색 평가셋 + recall@k/precision 하니스 | done | P0 | `retrieval-eval.ts` 32케이스(ID 기반), `npm run eval:retrieval`, 회귀 테스트, baseline 저장 |
 | RAG-IMP-02 | 벡터 경로 실서비스 활성화(하이브리드) | done | P0 | ko/en 인덱스(872청크, text-embedding-3-small) 빌드 → `output/rag/`, `.env` 활성, 하이브리드 eval로 lift 확인 |
 | RAG-IMP-03 | 형태소 lemma를 matcher/structure에 연결 | done | P1 | 라이브 경로는 이미 lemma 공급(llm-dream-analysis), retriever가 매처로 전달. eval에도 연결. 단 lemma는 **lemma친화 alias가 있어야** 효과(아래 RAG-IMP-04와 조합) |
-| RAG-IMP-04 | 트리거/searchText 동의어 확장 | doing | P1 | (일부 완료: 흙탕물·장례식장·chasing alias) 남은 recall 구멍 동의어·구어체·활용형 보강 |
+| RAG-IMP-04 | 트리거/searchText 동의어 확장 | done | P1 | eval 미스 4건(teeth·death·chased·en-teeth) 폐쇄: 과거형 구문 alias(이가 빠졌/도망쳤), 죽은/죽었, molar(s), KOREAN_SUFFIXES에 "와서" 추가. **micro/macro recall 1.0, precision@5 0.885, 전 태그 1.0** |
 | RAG-IMP-05 | 재랭킹/임계값 튜닝 | doing | P1 | (완료: 벡터 explicit-동반 임계값 0.68→0.62 — en teeth 0.628 구제, precision 0.738 유지) 남은: exact 포화·일반어 라벨 과매치 |
 | RAG-IMP-06 | 무매칭/저매칭 폴백 전략 | todo | P2 | 미등록 꿈에도 안전한 일반 grounding 제공 |
 | RAG-IMP-07 | 타로 카드 데이터 테이블 분리 | todo | P2 | 78장 의미를 RAG 아닌 버전관리 lookup 데이터로 정리 |
@@ -146,7 +146,7 @@ status: active
 - [~] RAG-IMP-05: 벡터 explicit-동반 임계값 0.68→0.62 (`dream-rag-retriever.ts`). 진단 결과 한국어 짧은 구어체(도망쳤어→being_chased)는 벡터 점수가 노이즈 바닥(0.38)이라 임계값으로 못 잡음 → **RAG-IMP-03(형태소/lemma)** 필요. precision 0.738 유지.
 - [x] RAG-IMP-02: ko/en 인덱스 빌드(`npm run build:rag-index`, 각 872청크) → `output/rag/dream-rag-{ko,en}.json`, `.env` 활성(이미 라우트 배선됨). **하이브리드 eval(`npm run eval:retrieval:vector`): macro recall 0.859→0.891, sensitive 0.5→0.833.** 벡터가 alias-갭(이가 우수수 빠졌어→teeth)을 precision 붕괴 없이 의미로 잡음. 남은 미스(도망쳤어→chased, molar→teeth)는 threshold 튜닝(RAG-IMP-05) 대상. 주의: 인덱스(각 38MB)는 `output/`(gitignore) → 배포 시 빌드 스텝 필요.
 - [ ] RAG-IMP-03: 매처/구조분석 경로에 lemma 공급(현재 LLM 경로 한정), `safeLemmatize` 폴백
-- [ ] RAG-IMP-04: 평가셋에서 드러난 recall 구멍부터 trigger/searchText 동의어 보강
+- [x] RAG-IMP-04 ✓: 평가셋 recall 구멍 4건 전부 폐쇄. 핵심 인사이트 = 한국어 과거형 축약(빠지+었→빠졌, 도망치+었→도망쳤)은 어간이 바뀌어 현재형 alias로 못 잡으니 **과거형 구문 alias를 따로** 넣어야 하고, 오다/가다 불규칙 연결어미 "와서"는 KOREAN_SUFFIXES에 없어 "뒤따라"가 "뒤따라와서"를 못 잡았다(추가함). 결과 micro/macro recall 1.0·precision@5 0.885·perfect-recall 1.0. retrieval-eval.test floor를 0.95/0.95/0.85로 상향해 gain 고정.
 - [ ] RAG-IMP-05: 재랭킹 — exact 포화 완화, 일반어 라벨 과매치 보정(예: "땅" 라벨이 snake를 제친 사례)
 - [ ] RAG-IMP-06: 저/무매칭 폴백
 - [ ] RAG-IMP-07: 타로 카드 의미를 버전관리 lookup 데이터로 분리(타로는 닫힌 집합이라 RAG 대상 아님)
