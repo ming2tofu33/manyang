@@ -192,12 +192,14 @@ describe("result action helpers", () => {
     );
   });
 
-  test("creates tarot share text with card, orientation, and advice", () => {
+  test("creates tarot share text with card, orientation, and card message", () => {
     const text = createTarotReadingShareText(createTarotReading());
 
     expect(text).toContain("오늘의 타로");
     expect(text).toContain("The Fool · 정방향");
     expect(text).toContain("A small first step opens the day");
+    expect(text).toContain("카드 메시지: Choose one small action.");
+    expect(text).not.toContain("조언: Choose one small action.");
     expect(text).toContain("Choose one small action.");
   });
 
@@ -207,6 +209,8 @@ describe("result action helpers", () => {
     expect(svg).toContain("<svg");
     expect(svg).toContain("A small first step opens");
     expect(svg).toContain("THE FOOL");
+    expect(svg).toContain("카드 메시지");
+    expect(svg).not.toContain(">조언<");
     expect(svg).toContain("Choose one small action.");
   });
 });

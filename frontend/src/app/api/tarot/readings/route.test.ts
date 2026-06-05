@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
 
+import { getTarotMajorCardById } from "@/lib/tarot-major-cards";
+
 import { handleTarotReadingRequest, resolveTarotLlmTimeoutMs } from "./route";
 
 afterEach(() => {
@@ -112,20 +114,32 @@ describe("POST /api/tarot/readings", () => {
     expect(generateTarotReadingForUser).not.toHaveBeenCalled();
   });
 
-  test("locks three-card tarot readings for non-Moon Pass users", async () => {
-    const generateTarotReadingForUser = vi.fn();
+  test("allows three-card tarot readings for free users during the event", async () => {
+    const generateTarotReadingForUser = vi.fn(async () => ({
+      status: "ok" as const,
+      reading: generatedThreeCard,
+    }));
     const response = await handleTarotReadingRequest(createJsonRequest(createThreeCardBody()), {
       getAuthenticatedUserId: async () => "00000000-0000-4000-8000-000000000001",
       getAccessPlanForUser: async () => "free_account",
+      createProvider: () => ({ generateJson: async () => generatedThreeCard }),
       generateTarotReadingForUser,
+      persistCompletedTarotReading: async () => undefined,
     });
 
-    expect(response.status).toBe(403);
+    expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({
-      error: "tarot reading is locked",
-      reason: "tarot_three_card_locked",
+      source: "llm",
+      spread: "daily_three_card",
+      generated: {
+        cardReadings: [
+          { position: "situation" },
+          { position: "flow" },
+          { position: "advice" },
+        ],
+      },
     });
-    expect(generateTarotReadingForUser).not.toHaveBeenCalled();
+    expect(generateTarotReadingForUser).toHaveBeenCalled();
   });
 
   test("returns unavailable and does not persist when the provider is missing", async () => {
@@ -172,7 +186,11 @@ describe("POST /api/tarot/readings", () => {
       spread: "daily_one_card",
       appDate: "2026-05-31",
       keywords: generatedOneCard.keywords,
-      generated: generatedOneCard,
+      advice: getTarotMajorCardById(0)?.upright.advice,
+      generated: {
+        ...generatedOneCard,
+        advice: getTarotMajorCardById(0)?.upright.advice,
+      },
       card: {
         id: 0,
       },
@@ -186,6 +204,7 @@ describe("POST /api/tarot/readings", () => {
         },
       ],
     });
+    expect(body.advice).not.toBe(generatedOneCard.advice);
     expect(generateTarotReadingForUser).toHaveBeenCalledWith(
       expect.objectContaining({
         spread: "daily_one_card",
@@ -219,10 +238,14 @@ describe("POST /api/tarot/readings", () => {
     });
 
     expect(response.status).toBe(200);
-    await expect(response.json()).resolves.toMatchObject({
+    const body = await response.json();
+
+    expect(body).toMatchObject({
       source: "llm",
       spread: "daily_three_card",
+      advice: getTarotMajorCardById(2)?.upright.advice,
       generated: {
+        advice: getTarotMajorCardById(2)?.upright.advice,
         cardReadings: [
           { position: "situation" },
           { position: "flow" },
@@ -235,5 +258,6 @@ describe("POST /api/tarot/readings", () => {
         { position: "advice", card: { id: 2 } },
       ],
     });
+    expect(body.advice).not.toBe(generatedThreeCard.advice);
   });
 });

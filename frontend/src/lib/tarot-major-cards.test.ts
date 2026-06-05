@@ -11,6 +11,22 @@ const expectNonTrivialText = (value: string) => {
   expect(value.trim().length).toBeGreaterThanOrEqual(12);
 };
 
+const collectStringValues = (value: unknown): string[] => {
+  if (typeof value === "string") {
+    return [value];
+  }
+
+  if (Array.isArray(value)) {
+    return value.flatMap((item) => collectStringValues(item));
+  }
+
+  if (typeof value === "object" && value !== null) {
+    return Object.values(value).flatMap((item) => collectStringValues(item));
+  }
+
+  return [];
+};
+
 const expectedSlugs = [
   "the-fool",
   "the-magician",
@@ -60,18 +76,22 @@ describe("tarot major cards", () => {
     tarotMajorCards.forEach((card) => {
       expect(card.keywords.length).toBeGreaterThanOrEqual(3);
       expect(card.visualSymbols.length).toBeGreaterThanOrEqual(2);
+      expect(card.symbolMeanings.length).toBeGreaterThanOrEqual(3);
+      card.symbolMeanings.forEach((symbolMeaning) => {
+        expect(symbolMeaning.symbol.trim().length).toBeGreaterThanOrEqual(1);
+        expectNonTrivialText(symbolMeaning.meaning);
+      });
       expectNonTrivialText(card.mood);
       expectNonTrivialText(card.upright.summary);
       expectNonTrivialText(card.upright.dailyFlow);
       expectNonTrivialText(card.upright.advice);
+      expectNonTrivialText(card.upright.story);
       expectNonTrivialText(card.reversed.summary);
       expectNonTrivialText(card.reversed.dailyFlow);
       expectNonTrivialText(card.reversed.advice);
-      expect("symbolMeanings" in card).toBe(false);
-      expect("story" in card.upright).toBe(false);
+      expectNonTrivialText(card.reversed.story);
       expect("reflectionQuestion" in card.upright).toBe(false);
       expect("smallAction" in card.upright).toBe(false);
-      expect("story" in card.reversed).toBe(false);
       expect("reflectionQuestion" in card.reversed).toBe(false);
       expect("smallAction" in card.reversed).toBe(false);
       expect(publicAssetExists(card.image)).toBe(true);
@@ -80,21 +100,38 @@ describe("tarot major cards", () => {
     });
   });
 
-  test("keeps the original concise tarot dictionary wording", () => {
+  test("keeps tarot dictionary copy away from repeated AI-like filler patterns", () => {
+    const bannedCopyPatterns = [/차분/, /조용/, /흐름/, /작은 행동/, /행동 하나/, /충분합니다/];
+
+    tarotMajorCards.forEach((card) => {
+      collectStringValues(card).forEach((text) => {
+        bannedCopyPatterns.forEach((pattern) => {
+          expect(text).not.toMatch(pattern);
+        });
+      });
+    });
+  });
+
+  test("uses scene-led tarot wording for the rewritten card messages", () => {
     expect(getTarotMajorCardById(2)).toMatchObject({
-      mood: "겉으로 드러난 정보보다 조용한 감각과 숨은 흐름이 중요한 분위기입니다.",
+      symbolMeanings: expect.arrayContaining([
+        expect.objectContaining({ symbol: "베일" }),
+      ]),
       upright: {
-        advice: "말을 늘리기보다 정보를 모으고 내면의 감각을 차분히 확인하세요.",
+        story: expect.stringContaining("아직 다 드러나지 않은"),
+        advice: "여사제는 아직 다 드러나지 않은 일을 가리킵니다. 지금 보이는 말보다 숨겨진 맥락이 더 중요할 수 있습니다.",
       },
     });
     expect(getTarotMajorCardById(8)).toMatchObject({
       upright: {
-        dailyFlow: "강한 반응보다 차분한 태도가 더 큰 영향력을 만들 수 있습니다.",
+        story: expect.stringContaining("사자를 억누르지"),
+        advice: "힘 카드는 크게 밀어붙이는 장면이 아닙니다. 사자를 억누르지 않고 다루는 그림처럼, 오늘 필요한 힘은 끝까지 태도를 잃지 않는 쪽에 가깝습니다.",
       },
     });
     expect(getTarotMajorCardById(17)).toMatchObject({
       reversed: {
-        advice: "거창한 확신보다 오늘 회복을 돕는 작은 행동 하나를 선택하세요.",
+        story: expect.stringContaining("눈이 어둠에 익숙해진"),
+        advice: "별 역방향은 희망이 사라졌다는 뜻보다, 아직 눈이 어둠에 익숙해진 상태에 가깝습니다. 남아 있는 빛의 단서를 너무 빨리 의심하지 않는 게 중요합니다.",
       },
     });
   });

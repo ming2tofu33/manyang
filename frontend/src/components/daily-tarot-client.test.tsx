@@ -3,13 +3,21 @@ import path from "node:path";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, describe, expect, it } from "vitest";
 
-import { dailyTarotStorageKey, type DailyTarotReading, type StorageLike } from "@/lib/daily-tarot";
+import {
+  createDailyTarotOptions,
+  dailyTarotStorageKey,
+  type DailyTarotPosition,
+  type DailyTarotReading,
+  type StorageLike,
+} from "@/lib/daily-tarot";
+import { getTarotMajorCardById } from "@/lib/tarot-major-cards";
 
 import {
   DailyTarotClient,
   DailyTarotLoadingPanel,
   DailyTarotPendingResult,
   DailyTarotRevealPanel,
+  createPreparedDailyTarotSelections,
   getStableDailyTarotReadingSnapshot,
 } from "./daily-tarot-client";
 
@@ -126,14 +134,66 @@ describe("DailyTarotClient", () => {
     expect(markup).toContain("tarot-shuffle-intro");
     expect(markup).not.toContain("rounded-[1.2rem] bg-[#05040b]");
     expect(markup).toContain("카드를 섞고 있어요");
+    expect(markup).toContain("마음이 닿는 뒷면을 터치해 오늘의 카드를 열어보세요.");
     expect(markup).not.toContain("h-[11rem] w-[11rem]");
     expect(markup).not.toContain("bg-[#f2c27d]/7");
     expect(markup).toContain("오늘의 한 장");
     expect(markup).toContain("3장 리딩");
-    expect(markup).toContain('data-daily-tarot-premium-tag="moon-pass"');
-    expect(markup).toContain("Moon Pass");
+    expect(markup).toContain('data-daily-tarot-free-event-tag="tarot-three-card"');
+    expect(markup).toContain("무료 이벤트");
+    expect(markup).not.toContain('data-daily-tarot-premium-tag="moon-pass"');
     expect(markup).toContain('data-daily-tarot-deck');
     expect(markup).not.toContain("타로는 오늘의 흐름을 상징적으로 비춰보는 참고용 안내입니다.");
+  });
+
+  it("uses the same opening card prompt before position-specific three-card picks", () => {
+    const source = readFileSync(path.join(process.cwd(), "src", "components", "daily-tarot-client.tsx"), "utf8");
+
+    expect(source).toContain('const initialDrawInstruction = "마음이 닿는 뒷면을 터치해 오늘의 카드를 열어보세요."');
+    expect(source).toContain("pendingSelections.length === 0");
+    expect(source).toContain(': selectedSpread === "daily_three_card"');
+    expect(source).toContain("`${positionLabels[nextPosition]} 카드를 골라 주세요.`");
+  });
+
+  it("prepares fixed cards for the current spread before the user opens a card", () => {
+    const options = createDailyTarotOptions("2026-06-02", { drawIdentityKey: "user:early-request" });
+    const positions = ["situation", "flow", "advice"] satisfies DailyTarotPosition[];
+    const preparedSelections = createPreparedDailyTarotSelections(options, positions);
+    const centerIndex = Math.floor(options.length / 2);
+
+    expect(preparedSelections).toHaveLength(3);
+    expect(preparedSelections.map((selection) => selection.position)).toEqual(positions);
+    expect(preparedSelections.map((selection) => selection.card.id)).toEqual([
+      options[centerIndex]?.cardId,
+      options[centerIndex + 1]?.cardId,
+      options[centerIndex + 2]?.cardId,
+    ]);
+    expect(preparedSelections.map((selection) => selection.orientation)).toEqual([
+      options[centerIndex]?.orientation,
+      options[centerIndex + 1]?.orientation,
+      options[centerIndex + 2]?.orientation,
+    ]);
+  });
+
+  it("starts the tarot reading request from prepared shuffle selections before card selection", () => {
+    const source = readFileSync(path.join(process.cwd(), "src", "components", "daily-tarot-client.tsx"), "utf8");
+    const preselectStart = source.indexOf("const preparedSelections = useMemo");
+    const effectStart = source.indexOf("void submitSelections(preparedSelections");
+    const handleSelectStart = source.indexOf("function handleSelect");
+
+    expect(preselectStart).toBeGreaterThanOrEqual(0);
+    expect(effectStart).toBeGreaterThan(preselectStart);
+    expect(handleSelectStart).toBeGreaterThan(effectStart);
+    expect(source).toContain("updatePendingSelections: false");
+    expect(source).toContain("preparedSelections[pendingSelections.length]");
+  });
+
+  it("keeps prefetched tarot readings hidden until the prepared cards are opened", () => {
+    const source = readFileSync(path.join(process.cwd(), "src", "components", "daily-tarot-client.tsx"), "utf8");
+
+    expect(source).toContain("openedReadingRequestKey");
+    expect(source).toContain("openedSelectedReadingForDate");
+    expect(source).toContain("setOpenedReadingRequestKey(preparedRequestKey)");
   });
 
   it("renders an existing LLM reading as the result without hidden options", () => {
@@ -172,8 +232,9 @@ describe("DailyTarotClient", () => {
     expect(markup).toContain("공유하기");
     expect(markup).not.toContain("오늘 ·");
     expect(markup).toContain("3장 리딩");
-    expect(markup).toContain('data-daily-tarot-premium-tag="moon-pass"');
-    expect(markup).toContain("Moon Pass");
+    expect(markup).toContain('data-daily-tarot-free-event-tag="tarot-three-card"');
+    expect(markup).toContain("무료 이벤트");
+    expect(markup).not.toContain('data-daily-tarot-premium-tag="moon-pass"');
     expect(markup).not.toContain("data-daily-tarot-option");
     expect(markup).toContain("타로는 오늘의 흐름을 상징적으로 비춰보는 참고용 안내입니다.");
   });
@@ -234,6 +295,12 @@ describe("DailyTarotClient", () => {
     expect(markup).not.toContain("오늘의 질문");
     expect(markup).not.toContain("작은 조언");
     expect(markup).toContain('data-daily-tarot-reading-loading="true"');
+    expect(markup).toContain('data-daily-tarot-fixed-guidance="true"');
+    expect(markup).toContain("카드 메시지");
+    expect(markup).not.toContain("카드가 먼저 건네는 조언");
+    expect(markup).toContain(getTarotMajorCardById(0)?.keywords[0] ?? "");
+    expect(markup).toContain(getTarotMajorCardById(0)?.keywords[1] ?? "");
+    expect(markup).toContain(getTarotMajorCardById(0)?.upright.advice ?? "");
     expect(markup).toContain("오늘의 리딩을 완성하고 있어요");
     expect(markup).toContain("선택한 카드와 방향을 기준으로 오늘의 흐름을 읽고 있어요.");
     expect(markup).not.toContain('data-daily-tarot-result-copy="true"');
@@ -260,7 +327,7 @@ describe("DailyTarotClient", () => {
     expect(styles).not.toContain("@keyframes tarot-loading-card-to-result");
   });
 
-  it("starts the final tarot reading request before waiting for the reveal timer", () => {
+  it("uses the prepared tarot request before waiting for the reveal timer", () => {
     const source = readFileSync(path.join(process.cwd(), "src", "components", "daily-tarot-client.tsx"), "utf8");
     const handleSelectStart = source.indexOf("function handleSelect");
     const handleRetryStart = source.indexOf("function handleRetry");
@@ -268,12 +335,15 @@ describe("DailyTarotClient", () => {
 
     expect(handleSelectStart).toBeGreaterThanOrEqual(0);
     expect(handleRetryStart).toBeGreaterThan(handleSelectStart);
-    const requestStart = handleSelectSource.indexOf("void submitSelections(nextSelections, { showLoadingImmediately: false });");
+    const preparedSelectionStart = handleSelectSource.indexOf("preparedSelections[pendingSelections.length]");
+    const fallbackRequestStart = handleSelectSource.indexOf("void submitSelections(nextSelections");
     const revealTimerStart = handleSelectSource.indexOf("revealTimerRef.current = setTimeout");
 
-    expect(requestStart).toBeGreaterThanOrEqual(0);
+    expect(preparedSelectionStart).toBeGreaterThanOrEqual(0);
+    expect(fallbackRequestStart).toBeGreaterThanOrEqual(0);
     expect(revealTimerStart).toBeGreaterThanOrEqual(0);
-    expect(requestStart).toBeLessThan(revealTimerStart);
+    expect(preparedSelectionStart).toBeLessThan(revealTimerStart);
+    expect(fallbackRequestStart).toBeLessThan(revealTimerStart);
     expect(source).toContain("isGenerating && pendingSelections.length === positions.length");
     expect(source).toContain("<DailyTarotPendingResult selections={pendingSelections} />");
   });

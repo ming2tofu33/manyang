@@ -17,12 +17,14 @@ import {
 import { getAuthenticatedAccessPlan, getAuthenticatedUserId } from "@/lib/supabase/server";
 import type {
   DailyTarotCardSelection,
+  DailyTarotGeneratedReading,
   DailyTarotPosition,
   DailyTarotReading,
   TarotOrientation,
   TarotSpread,
 } from "@/lib/daily-tarot";
-import { isPaidAccessPlan, type AccessPlan } from "@/lib/access-policy";
+import type { AccessPlan } from "@/lib/access-policy";
+import { canUseTarotThreeCardReading } from "@/lib/tarot-event";
 
 export const runtime = "nodejs";
 
@@ -238,12 +240,30 @@ function createReadingId(spread: TarotSpread, appDate: string): string {
   return `daily-tarot-${spread}-${appDate}`;
 }
 
+function resolveDictionaryAdvice(selections: DailyTarotCardSelection[]): string {
+  const adviceSelection = selections.find((selection) => selection.position === "advice") ?? selections[0];
+
+  return adviceSelection?.card[adviceSelection.orientation].advice ?? "";
+}
+
+function createGeneratedReadingWithDictionaryAdvice(
+  generated: Extract<TarotReadingResult, { status: "ok" }>["reading"],
+  advice: string,
+): DailyTarotGeneratedReading {
+  return {
+    ...generated,
+    advice,
+  };
+}
+
 function createDailyTarotReadingFromGenerated(
   input: TarotReadingRequestBody,
   selections: DailyTarotCardSelection[],
   generated: Extract<TarotReadingResult, { status: "ok" }>["reading"],
 ): DailyTarotReading {
   const primarySelection = selections[0] as DailyTarotCardSelection & { card: TarotMajorCard };
+  const advice = resolveDictionaryAdvice(selections);
+  const generatedWithAdvice = createGeneratedReadingWithDictionaryAdvice(generated, advice);
 
   return {
     id: createReadingId(input.spread, input.appDate),
@@ -258,8 +278,8 @@ function createDailyTarotReadingFromGenerated(
     keywords: [...generated.keywords],
     title: generated.title,
     message: generated.overview,
-    advice: generated.advice,
-    generated,
+    advice,
+    generated: generatedWithAdvice,
   };
 }
 
@@ -330,7 +350,10 @@ export async function handleTarotReadingRequest(
   const accessPlan = await resolvedDependencies.getAccessPlanForUser(userId);
   const isAdmin = userId ? await resolvedDependencies.isAdminUser(userId) : false;
 
-  if (validatedBody.value.spread === "daily_three_card" && !isAdmin && !isPaidAccessPlan(accessPlan)) {
+  if (
+    validatedBody.value.spread === "daily_three_card" &&
+    !canUseTarotThreeCardReading({ accessPlan, isAdmin })
+  ) {
     return Response.json(
       {
         error: "tarot reading is locked",

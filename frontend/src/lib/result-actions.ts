@@ -171,9 +171,9 @@ const tarotOrientationLabels = {
 
 const tarotPositionLabels = {
   today: "오늘",
-  situation: "지금 상태",
-  flow: "이어질 변화",
-  advice: "오늘의 선택",
+  situation: "지금의 상태",
+  flow: "이어지는 흐름",
+  advice: "오늘의 조언",
 } satisfies Record<DailyTarotPosition, string>;
 
 function getTarotReadingCards(reading: DailyTarotReading): DailyTarotCardSelection[] {
@@ -208,7 +208,7 @@ export function createTarotReadingShareText(reading: DailyTarotReading): string 
     `오늘의 타로: ${reading.title}`,
     `카드: ${cardLines.join(" / ")}`,
     `흐름: ${reading.message}`,
-    `조언: ${reading.advice}`,
+    `카드 메시지: ${reading.advice}`,
   ].join("\n");
 }
 
@@ -241,7 +241,7 @@ export function createTarotReadingSvg(reading: DailyTarotReading): string {
   ${renderSvgLines(cardLines, 150, 520, 48, "body")}
   <text x="450" y="700" class="label">오늘의 흐름</text>
   ${renderSvgLines(messageLines, 150, 765, 46, "body")}
-  <text x="450" y="1050" class="label">조언</text>
+  <text x="450" y="1050" class="label">카드 메시지</text>
   ${renderSvgLines(adviceLines, 150, 1112, 46, "body")}
 </svg>`;
 }
