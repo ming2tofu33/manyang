@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 import {
   catReaders,
@@ -6,12 +6,15 @@ import {
   freeCatReaders,
   getCatReaderById,
   getCatReaderDreamReadingState,
+  getDefaultCatReaderSnapshot,
   getSelectedCatReaderId,
   getSelectedCatReaderSnapshot,
   isCatReaderDreamReadingAvailable,
   resolveCatReaderForDreamReading,
   saveSelectedCatReaderId,
+  selectedCatReaderChangedEvent,
   selectedCatReaderKey,
+  subscribeToSelectedCatReader,
   type StorageLike,
 } from "./cat-readers";
 
@@ -22,6 +25,31 @@ function createMemoryStorage(initialEntries: Record<string, string> = {}): Stora
     getItem: (key) => data.get(key) ?? null,
     setItem: (key, value) => data.set(key, value),
     removeItem: (key) => data.delete(key),
+  };
+}
+
+function createFakeEventTarget() {
+  const listeners = new Map<string, Set<EventListenerOrEventListenerObject>>();
+
+  return {
+    addEventListener: (type: string, listener: EventListenerOrEventListenerObject) => {
+      const currentListeners = listeners.get(type) ?? new Set<EventListenerOrEventListenerObject>();
+      currentListeners.add(listener);
+      listeners.set(type, currentListeners);
+    },
+    removeEventListener: (type: string, listener: EventListenerOrEventListenerObject) => {
+      listeners.get(type)?.delete(listener);
+    },
+    emit: (type: string) => {
+      listeners.get(type)?.forEach((listener) => {
+        if (typeof listener === "function") {
+          listener({ type } as Event);
+          return;
+        }
+
+        listener.handleEvent({ type } as Event);
+      });
+    },
   };
 }
 
@@ -166,6 +194,11 @@ describe("cat readers", () => {
     expect(getSelectedCatReaderId(storage)).toBe("black_cat");
   });
 
+  test("uses black cat as the default browser snapshot", () => {
+    expect(getDefaultCatReaderSnapshot()).toBe("black_cat");
+    expect(getSelectedCatReaderId(createMemoryStorage())).toBe("black_cat");
+  });
+
   test("returns stable selected reader snapshot references while storage is unchanged", () => {
     const storage = createMemoryStorage({ [selectedCatReaderKey]: "cheese_cat" });
 
@@ -176,5 +209,64 @@ describe("cat readers", () => {
     const storage = createMemoryStorage({ [selectedCatReaderKey]: "orange_cat" });
 
     expect(getSelectedCatReaderId(storage)).toBe("cheese_cat");
+  });
+
+  test("refreshes selected reader subscriptions when browser navigation restores a cached page", () => {
+    const previousWindow = globalThis.window;
+    const previousDocument = globalThis.document;
+    const fakeWindow = createFakeEventTarget();
+    const fakeDocument = {
+      ...createFakeEventTarget(),
+      visibilityState: "visible",
+    };
+    const onStoreChange = vi.fn();
+
+    Object.defineProperty(globalThis, "window", {
+      configurable: true,
+      value: fakeWindow,
+      writable: true,
+    });
+    Object.defineProperty(globalThis, "document", {
+      configurable: true,
+      value: fakeDocument,
+      writable: true,
+    });
+
+    try {
+      const unsubscribe = subscribeToSelectedCatReader(onStoreChange);
+
+      fakeWindow.emit("pageshow");
+      fakeWindow.emit("popstate");
+      fakeWindow.emit("focus");
+      fakeWindow.emit("storage");
+      fakeWindow.emit(selectedCatReaderChangedEvent);
+
+      expect(onStoreChange).toHaveBeenCalledTimes(5);
+
+      fakeDocument.visibilityState = "hidden";
+      fakeDocument.emit("visibilitychange");
+      expect(onStoreChange).toHaveBeenCalledTimes(5);
+
+      fakeDocument.visibilityState = "visible";
+      fakeDocument.emit("visibilitychange");
+      expect(onStoreChange).toHaveBeenCalledTimes(6);
+
+      unsubscribe();
+      fakeWindow.emit("pageshow");
+      fakeDocument.emit("visibilitychange");
+
+      expect(onStoreChange).toHaveBeenCalledTimes(6);
+    } finally {
+      Object.defineProperty(globalThis, "window", {
+        configurable: true,
+        value: previousWindow,
+        writable: true,
+      });
+      Object.defineProperty(globalThis, "document", {
+        configurable: true,
+        value: previousDocument,
+        writable: true,
+      });
+    }
   });
 });

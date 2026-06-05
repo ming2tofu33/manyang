@@ -23,7 +23,7 @@ describe("ProfileRoom", () => {
 
     expect(markup).toContain('data-account-status-card="guest"');
     expect(markup).toContain("아직 임시 손님 모드예요");
-    expect(markup).toContain("대표 고양이 설정");
+    expect(markup).toContain("고양이 테마 설정");
     expect(markup).toContain("Moon Pass");
     expect(markup).toContain("앱 설정");
     expect(markup).toContain("기록 관리");

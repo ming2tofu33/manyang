@@ -321,7 +321,7 @@ export function ProfileRoom() {
 
       <section data-profile-section="reader" className="space-y-2">
         <SectionHeader
-          title="대표 고양이 설정"
+          title="고양이 테마 설정"
           description="고양이에 따라 홈 배경과 꿈 영수증 분위기만 달라져요."
         />
         <CatReaderPicker

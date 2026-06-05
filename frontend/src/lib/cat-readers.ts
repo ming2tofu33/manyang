@@ -241,11 +241,31 @@ export function subscribeToSelectedCatReader(onStoreChange: () => void): () => v
     return () => undefined;
   }
 
+  const handleVisibilityChange = () => {
+    if (typeof document === "undefined" || document.visibilityState === "visible") {
+      onStoreChange();
+    }
+  };
+
   window.addEventListener("storage", onStoreChange);
   window.addEventListener(selectedCatReaderChangedEvent, onStoreChange);
+  window.addEventListener("pageshow", onStoreChange);
+  window.addEventListener("popstate", onStoreChange);
+  window.addEventListener("focus", onStoreChange);
+
+  if (typeof document !== "undefined") {
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+  }
 
   return () => {
     window.removeEventListener("storage", onStoreChange);
     window.removeEventListener(selectedCatReaderChangedEvent, onStoreChange);
+    window.removeEventListener("pageshow", onStoreChange);
+    window.removeEventListener("popstate", onStoreChange);
+    window.removeEventListener("focus", onStoreChange);
+
+    if (typeof document !== "undefined") {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    }
   };
 }
