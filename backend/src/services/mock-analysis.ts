@@ -208,8 +208,18 @@ function comboOverrideField<K extends "interpretation" | "smallPrescription" | "
   return undefined;
 }
 
-function buildInterpretation(matches: RuntimeSymbolMatch[], themes: string[], isFallback: boolean, locale: SupportedLocale): string {
+function buildInterpretation(
+  matches: RuntimeSymbolMatch[],
+  themes: string[],
+  isFallback: boolean,
+  locale: SupportedLocale,
+  fallbackGrounding?: string,
+): string {
   if (isFallback) {
+    if (fallbackGrounding) {
+      return fallbackGrounding;
+    }
+
     return locale === "en"
       ? "The dream does not offer a clear registered symbol, but the feeling that remains can still be a small clue. Rather than forcing an answer, keep one sentence about the atmosphere of the dream."
       : "뚜렷한 상징은 적지만, 남아 있는 느낌 자체가 오늘 마음의 온도를 보여주는 단서일 수 있어요. 꿈을 억지로 맞히기보다 흐릿한 감각을 한 문장으로 남겨보면 좋겠다냥.";
@@ -356,7 +366,7 @@ export function analyzeDream(request: DreamAnalysisRequest): DreamAnalysisRespon
     : isFallback
       ? "희미한 느낌이 남은 꿈"
       : `${summarySubject}${topicParticle(summarySubject) === "은" ? "이" : "가"} 특히 남은 꿈`;
-  const interpretation = buildInterpretation(matches, themes, isFallback, locale);
+  const interpretation = buildInterpretation(matches, themes, isFallback, locale, structuredAnalysis.fallbackGrounding);
   const smallPrescription = buildSmallPrescription(matches, isFallback, locale);
   const symbolReadings = isFallback ? [] : buildSymbolReadings(matches, locale);
   const reader = getCatReaderProfile(request.catReaderType);

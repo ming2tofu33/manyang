@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 
+import { GENERAL_DREAM_GROUNDING } from "../src/services/dream-fallback-grounding";
 import { analyzeDream } from "../src/services/mock-analysis";
 
 describe("analyzeDream", () => {
@@ -42,7 +43,8 @@ describe("analyzeDream", () => {
     expect(result.symbols).toEqual([]);
     expect(result.symbolReadings).toEqual([]);
     expect(result.readingBasis.usedSymbols).toEqual([]);
-    expect(result.interpretation).toContain("뚜렷한 상징은 적지만");
+    // RAG-IMP-06: 무매칭이면 안전 grounding 데이터 세트의 문장으로 폴백한다.
+    expect(GENERAL_DREAM_GROUNDING.map((line) => line.ko)).toContain(result.interpretation);
     expect(result.smallPrescription).toContain("한 문장");
     expect(result.readingBasis.confidence).toBeLessThan(0.8);
   });

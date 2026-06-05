@@ -135,6 +135,9 @@ export function buildDreamReadingPrompt(input: DreamReadingPromptInput): DreamRe
       inferredEmotions: input.structuredAnalysis.inferredEmotions,
       themes: input.structuredAnalysis.themes,
       safetySignals: input.structuredAnalysis.safetySignals,
+      ...(input.structuredAnalysis.fallbackGrounding
+        ? { fallbackGrounding: input.structuredAnalysis.fallbackGrounding }
+        : {}),
     },
     userSelectedFeeling: {
       atmospheres: input.structuredAnalysis.selectedAtmosphereLabels,
@@ -213,6 +216,7 @@ export function buildDreamReadingPrompt(input: DreamReadingPromptInput): DreamRe
       "Never contradict an explicitly selected feeling or sensation; if it is absent or empty, fall back to inferredEmotions and the dream scene.",
       "nightContext is the user's mood, body condition, and optional one-line note from the night before sleep. Use it only as soft emotional context for tone, framing, and smallPrescription; never claim it caused, predicted, or controlled the dream.",
       "Do not invent new symbols or sources. Never make illness, medical, death, or self-harm predictions, and never frame any fortune as an absolute guarantee or a financial instruction to act on.",
+      "When no symbol evidence is provided (retrievedSymbolEvidence is empty) and structuredAnalysis.fallbackGrounding is present, the dream had no registered symbol: do NOT invent symbolism or fortune. Ground the reading on structuredAnalysis.fallbackGrounding and the dreamer's stated feeling — read the mood and impression the dream left, warmly and safely, and keep fortune claims out entirely.",
       "Do not expose internal source regions such as East Asian, Western, Korean, or RAG to the user.",
       "This is an entertainment fortune reading: use a confident, declarative voice for the dream's meaning, the dreamer's inner state, and traditional fortune. Do not stack hedges (avoid filling sentences with ~일 수 있습니다 / ~로 읽힙니다 / 가능성이 큽니다); say what the dream means. Reserve hedged or conditional wording for health, illness, death, and real-world outcomes, where blockedClaims always wins.",
       "When safetyPolicy.allowedPlayfulClaims is non-empty, lean into the fun: this is an entertainment fortune, so be bold and concrete about luck, wealth, and love. If allowedPlayfulClaims is empty, stay serious and skip fortune-telling.",

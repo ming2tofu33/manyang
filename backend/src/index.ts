@@ -152,6 +152,8 @@ export {
 } from "./services/openai-embeddings-provider";
 export type { OpenAIEmbeddingsProviderOptions } from "./services/openai-embeddings-provider";
 export { analyzeDreamStructure } from "./services/structured-dream-analysis";
+export { GENERAL_DREAM_GROUNDING, resolveFallbackGrounding } from "./services/dream-fallback-grounding";
+export type { FallbackGroundingInput } from "./services/dream-fallback-grounding";
 export type {
   EmotionSignal,
   FortuneReading,

@@ -1,5 +1,6 @@
 import { getRuntimeSymbolEntries } from "../data/symbol-encyclopedia";
 import type { RuntimeSymbolEntry, SupportedLocale, SymbolCategory } from "../contracts/symbol-encyclopedia";
+import { resolveFallbackGrounding } from "./dream-fallback-grounding";
 import {
   compactText as compact,
   matchedTerms,
@@ -80,6 +81,8 @@ export type StructuredDreamAnalysis = {
   readingTone: "warm" | "heavy" | "neutral";
   /** 확신도(vivid/hazy 등). low면 단정 말고 양면으로 기운다. */
   readingCertainty: "high" | "normal" | "low";
+  /** 등록 상징이 하나도 안 잡혔을 때(무매칭/저매칭) 기댈 안전·보편 grounding 한 문장. 매칭되면 undefined. */
+  fallbackGrounding?: string;
   language: SupportedLocale;
 };
 
@@ -643,6 +646,16 @@ export function analyzeDreamStructure(request: StructuredDreamAnalysisRequest): 
   ];
   const inferredEmotions = dedupeEmotions([...atmosphereEmotions, ...inferEmotions(matchedSymbols, language)]);
 
+  // 무매칭/저매칭: explicit 상징이 하나도 없으면(영어 unmatched-scene 토큰만 있는 경우 포함) 안전 grounding으로 폴백.
+  const hasSymbolGrounding = symbolCandidates.some((candidate) => candidate.source === "explicit");
+  const fallbackGrounding = hasSymbolGrounding
+    ? undefined
+    : resolveFallbackGrounding({
+        locale: language,
+        anchorLabels: [...selectedAtmosphereLabels, ...inferredEmotions.map((emotion) => emotion.label)],
+        salt: normalizedText.length,
+      });
+
   return {
     normalizedText,
     summary: sceneFacts.length > 0 ? sceneFacts.slice(0, 3).join(", ") : normalizedText.slice(0, 80),
@@ -661,6 +674,7 @@ export function analyzeDreamStructure(request: StructuredDreamAnalysisRequest): 
     fortuneReadings: resolveFortuneReadings(matchedSymbols),
     readingTone: resolveReadingTone(request.dreamAtmospheres, request.dreamSensations),
     readingCertainty: resolveReadingCertainty(request.dreamAtmospheres, request.dreamSensations),
+    ...(fallbackGrounding ? { fallbackGrounding } : {}),
     language,
   };
 }

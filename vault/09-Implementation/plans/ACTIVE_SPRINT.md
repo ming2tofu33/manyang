@@ -84,7 +84,7 @@ status: active
 | RAG-IMP-03 | 형태소 lemma를 matcher/structure에 연결 | done | P1 | 라이브 경로는 이미 lemma 공급(llm-dream-analysis), retriever가 매처로 전달. eval에도 연결. 단 lemma는 **lemma친화 alias가 있어야** 효과(아래 RAG-IMP-04와 조합) |
 | RAG-IMP-04 | 트리거/searchText 동의어 확장 | done | P1 | eval 미스 4건(teeth·death·chased·en-teeth) 폐쇄: 과거형 구문 alias(이가 빠졌/도망쳤), 죽은/죽었, molar(s), KOREAN_SUFFIXES에 "와서" 추가. **micro/macro recall 1.0, precision@5 0.885, 전 태그 1.0** |
 | RAG-IMP-05 | 재랭킹/임계값 튜닝 | doing | P1 | (완료: 벡터 explicit-동반 임계값 0.68→0.62 — en teeth 0.628 구제, precision 0.738 유지) 남은: exact 포화·일반어 라벨 과매치 |
-| RAG-IMP-06 | 무매칭/저매칭 폴백 전략 | todo | P2 | 미등록 꿈에도 안전한 일반 grounding 제공 |
+| RAG-IMP-06 | 무매칭/저매칭 폴백 전략 | done | P2 | `dream-fallback-grounding.ts` 안전·보편 grounding 데이터 세트 + 리졸버. structured가 explicit 상징 0이면 `fallbackGrounding` 세팅(남은 감정/분위기 앵커), mock baseline·LLM 프롬프트가 그것에 기대 — 상징 날조 대신 "남은 느낌"을 읽음. evidence-gate 유지, 점/의료 금지. 7 신규 테스트 |
 | RAG-IMP-07 | 타로 카드 데이터 테이블 분리 | todo | P2 | 78장 의미를 RAG 아닌 버전관리 lookup 데이터로 정리 |
 | RAG-IMP-08 | coverage eval(심볼 충분도) | done | P0 | `coverage-eval.ts` 72개 흔한 상징 탐침, matching/coverage 갭 분리, `npm run eval:coverage`, 회귀 테스트 |
 | RAG-IMP-09 | 하드코딩 정리 | done | P2 | 흩뿌린 if-체인을 데이터 표로: mock-analysis `SYMBOL_COMBO_OVERRIDES`(3함수 6블록→1표), structured `SYMBOL_EMOTION_SIGNALS`·`SCENE_QUERY_RULES`(trigger 선언형)·`AMBIGUOUS_SCENE_OVERRIDES`(searching 3곳 통합). 동작 보존(167 테스트·eval 불변), 새 조합=표에 한 줄 |
