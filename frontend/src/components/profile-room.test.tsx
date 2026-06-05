@@ -30,7 +30,7 @@ describe("ProfileRoom", () => {
     expect(markup).toContain("도움말");
   });
 
-  it("marks unimplemented room menus as coming soon instead of active mock buttons", () => {
+  it("renders implemented profile menus as real actions", () => {
     const markup = renderToStaticMarkup(<ProfileRoom />);
 
     [
@@ -52,10 +52,37 @@ describe("ProfileRoom", () => {
     expect(markup).not.toContain("Moon Guest");
     expect(markup).not.toContain("도민님");
 
-    expect(markup.match(/data-profile-menu-status="coming-soon"/g) ?? []).toHaveLength(10);
-    expect(markup.match(/data-profile-menu-disabled="true"/g) ?? []).toHaveLength(10);
-    expect(markup.match(/준비 중/g) ?? []).toHaveLength(11);
+    expect(markup).toContain('data-profile-menu-action="feedback"');
+    expect(markup).toContain('data-profile-menu-action="record-export"');
+    expect(markup).toContain('data-profile-menu-action="record-delete"');
+    expect(markup).toContain('data-profile-menu-action="terms"');
+    expect(markup).toContain('data-profile-menu-action="privacy-policy"');
+    expect(markup).toContain('data-profile-menu-action="app-version"');
+    expect(markup).toContain('href="/terms"');
+    expect(markup).toContain('href="/privacy"');
+
+    expect(markup.match(/data-profile-menu-status="coming-soon"/g) ?? []).toHaveLength(4);
+    expect(markup.match(/data-profile-menu-disabled="true"/g) ?? []).toHaveLength(4);
+    expect(markup.match(/준비 중/g) ?? []).toHaveLength(4);
     expect(markup).not.toContain('data-profile-menu-action="mock-button"');
+  });
+
+  it("shows the current access plan in the Moon Pass section", () => {
+    const markup = renderToStaticMarkup(<ProfileRoom />);
+
+    expect(markup).toContain('data-profile-plan-status="guest"');
+    expect(markup).toContain("현재 플랜");
+    expect(markup).toContain("게스트 모드");
+  });
+
+  it("keeps unsupported profile menus visibly deferred", () => {
+    const markup = renderToStaticMarkup(<ProfileRoom />);
+
+    expect(markup).toContain("알림과 루틴");
+    expect(markup).toContain("개인정보와 보안");
+    expect(markup).toContain("화면 테마");
+    expect(markup).toContain("기록 백업");
+    expect(markup.match(/data-profile-menu-status="coming-soon"/g) ?? []).toHaveLength(4);
   });
 
   it("keeps profile menu icons compact", () => {

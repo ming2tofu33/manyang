@@ -308,7 +308,7 @@ function isStoredDailyTarotReading(value: unknown): value is DailyTarotReading {
   );
 }
 
-function getDailyTarotReadings(storage: StorageLike): DailyTarotReading[] {
+export function getDailyTarotReadings(storage: StorageLike): DailyTarotReading[] {
   const readings = parseJson<unknown>(storage.getItem(dailyTarotStorageKey), []);
 
   return Array.isArray(readings) ? readings.filter(isStoredDailyTarotReading) : [];

@@ -222,6 +222,24 @@ export async function persistCompletedTarotReading(
   return tarotReadingId;
 }
 
+export async function listTarotReadingsForUser(
+  userId: string,
+  pool = getManyangDbPool(),
+): Promise<DailyTarotReading[]> {
+  const result = await pool.query<{ raw_reading: DailyTarotReading }>(
+    `
+      select raw_reading
+      from manyang.tarot_readings
+      where user_id = $1
+      order by app_date desc, created_at desc
+      limit 120
+    `,
+    [userId],
+  );
+
+  return result.rows.map((row) => row.raw_reading);
+}
+
 export async function isAdminUser(userId: string, pool = getManyangDbPool()): Promise<boolean> {
   const result = await pool.query<{ is_admin: boolean }>(
     `
@@ -628,6 +646,18 @@ export async function deleteDreamRecordForUser(
   );
 
   return (result.rowCount ?? 0) > 0;
+}
+
+export async function deleteAllProductRecordsForUser(userId: string, pool = getManyangDbPool()): Promise<void> {
+  await withTransaction(pool, async (client) => {
+    await client.query("delete from manyang.dream_entries where user_id = $1", [userId]);
+    await client.query("delete from manyang.user_symbol_history where user_id = $1", [userId]);
+    await client.query("delete from manyang.pawprints where user_id = $1", [userId]);
+    await client.query("delete from manyang.morning_checkins where user_id = $1", [userId]);
+    await client.query("delete from manyang.night_checkins where user_id = $1", [userId]);
+    await client.query("delete from manyang.tarot_readings where user_id = $1", [userId]);
+    await client.query("delete from manyang.reading_usage where user_id = $1", [userId]);
+  });
 }
 
 export type PersistPawprintForUserInput = PawprintInput & {
