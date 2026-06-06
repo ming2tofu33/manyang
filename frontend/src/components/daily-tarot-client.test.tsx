@@ -77,13 +77,7 @@ const foolReading = {
     title: "A small first step opens the day",
     overview: "The selected Fool card is read as a day where a light first step matters more than waiting for perfect certainty.",
     keywords: ["opening", "choice", "attention"],
-    cardReadings: [
-      {
-        position: "today",
-        heading: "Today",
-        reading: "The upright Fool points to a beginning that becomes useful once it is tested gently in real life.",
-      },
-    ],
+    cardReadings: [],
     advice: "Check the basics first.",
   },
   keywords: ["start", "possibility"],
@@ -293,7 +287,8 @@ describe("DailyTarotClient", () => {
     expect(markup).toContain('data-daily-tarot-zoom-trigger="true"');
     expect(markup).toContain("tarot-result-card-enter w-full text-center");
     expect(markup).toContain("바보");
-    expect(markup).toContain("A small first step opens the day");
+    expect(markup).toContain("오늘의 타로");
+    expect(markup).not.toContain("A small first step opens the day");
     expect(markup).not.toContain('data-daily-tarot-card-story="true"');
     expect(markup).not.toContain("카드가 전하는 이야기");
     expect(markup).not.toContain("The card tells a story about stepping into a new path");
@@ -308,7 +303,6 @@ describe("DailyTarotClient", () => {
     expect(markup).not.toContain('data-daily-tarot-symbol-reading="true"');
     expect(markup).not.toContain("keeping only the essentials close");
     expect(markup).not.toContain("cliff edge");
-    expect(markup).not.toContain("The upright Fool points to a beginning");
     expect(markup).toContain('data-daily-tarot-result-actions="true"');
     expect(markup).toContain("저장하기");
     expect(markup).toContain("공유하기");

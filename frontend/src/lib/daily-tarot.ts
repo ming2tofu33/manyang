@@ -61,6 +61,7 @@ export type CreateDailyTarotReadingInput = {
   drawIdentityKey?: string | null;
 };
 
+export const dailyTarotDisplayTitle = "오늘의 타로";
 export const dailyTarotStorageKey = "manyang:daily-tarot-readings";
 export const dailyTarotChangedEvent = "manyang:daily-tarot-changed";
 export const dailyTarotGuestIdentityStorageKey = "manyang:daily-tarot-guest-id";

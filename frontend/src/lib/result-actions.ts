@@ -1,6 +1,12 @@
 import type { DreamCompletedPayload } from "./dream-storage";
 import { getCatReaderById } from "./cat-readers";
-import type { DailyTarotCardSelection, DailyTarotPosition, DailyTarotReading, TarotOrientation } from "./daily-tarot";
+import {
+  dailyTarotDisplayTitle,
+  type DailyTarotCardSelection,
+  type DailyTarotPosition,
+  type DailyTarotReading,
+  type TarotOrientation,
+} from "./daily-tarot";
 
 const symbolSlugMap: Record<string, string> = {
   문: "door",
@@ -205,7 +211,7 @@ export function createTarotReadingShareText(reading: DailyTarotReading): string 
   });
 
   return [
-    `오늘의 타로: ${reading.title}`,
+    dailyTarotDisplayTitle,
     `카드: ${cardLines.join(" / ")}`,
     `흐름: ${reading.message}`,
     `카드 메시지: ${reading.advice}`,
@@ -218,7 +224,7 @@ export function createTarotReadingSvg(reading: DailyTarotReading): string {
 
     return `${label}${selection.card.nameKo} / ${selection.card.nameEn} · ${tarotOrientationLabels[selection.orientation]}`;
   });
-  const titleLines = wrapText(reading.title, 24).slice(0, 2);
+  const titleLines = wrapText(dailyTarotDisplayTitle, 24).slice(0, 2);
   const messageLines = wrapText(reading.message, 30).slice(0, 6);
   const adviceLines = wrapText(reading.advice, 30).slice(0, 4);
 

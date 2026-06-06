@@ -18,6 +18,7 @@ import { AssetTextButton } from "@/components/asset-primitives";
 import {
   createDailyTarotOptions,
   createDailyTarotUserIdentityKey,
+  dailyTarotDisplayTitle,
   dailyTarotStorageKey,
   getDailyTarotReadingFromBrowser,
   getOrCreateDailyTarotGuestIdentityFromBrowser,
@@ -1201,7 +1202,7 @@ function DailyTarotResult({
         style={{ "--tarot-result-enter-delay": "220ms" } as CSSProperties}
       >
         <p className="text-[12px] font-bold text-[#f4b65f]">오늘의 리딩</p>
-        <p className="text-[15px] font-bold leading-6 text-[#ffe7b5]">{cleanTarotDisplayText(reading.title)}</p>
+        <p className="text-[15px] font-bold leading-6 text-[#ffe7b5]">{dailyTarotDisplayTitle}</p>
         {keywords.length > 0 ? (
           <div data-daily-tarot-keywords="true" className="flex flex-wrap gap-1.5">
             {keywords.map((keyword) => (

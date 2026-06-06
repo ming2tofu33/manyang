@@ -113,13 +113,7 @@ function createTarotReading(): DailyTarotReading {
     generated: {
       title: "A small first step opens the day",
       overview: "The selected Fool card is read as a day where a light first step matters.",
-      cardReadings: [
-        {
-          position: "today",
-          heading: "Today",
-          reading: "The upright Fool points to a beginning.",
-        },
-      ],
+      cardReadings: [],
       advice: "Choose one small action.",
     },
     keywords: ["start", "possibility"],
@@ -197,7 +191,7 @@ describe("result action helpers", () => {
 
     expect(text).toContain("오늘의 타로");
     expect(text).toContain("The Fool · 정방향");
-    expect(text).toContain("A small first step opens the day");
+    expect(text).not.toContain("A small first step opens the day");
     expect(text).toContain("카드 메시지: Choose one small action.");
     expect(text).not.toContain("조언: Choose one small action.");
     expect(text).toContain("Choose one small action.");
@@ -207,7 +201,8 @@ describe("result action helpers", () => {
     const svg = createTarotReadingSvg(createTarotReading());
 
     expect(svg).toContain("<svg");
-    expect(svg).toContain("A small first step opens");
+    expect(svg).toContain("오늘의 타로");
+    expect(svg).not.toContain("A small first step opens");
     expect(svg).toContain("THE FOOL");
     expect(svg).toContain("카드 메시지");
     expect(svg).not.toContain(">조언<");
