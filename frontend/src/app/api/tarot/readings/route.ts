@@ -8,13 +8,23 @@ import {
   type TarotReadingResult,
 } from "@manyang/backend";
 
+import { randomUUID } from "node:crypto";
+
 import { getTarotMajorCardById, type TarotMajorCard } from "@/lib/tarot-major-cards";
 import {
   persistCompletedTarotReading,
   findCompletedTarotReadingForUser,
   isAdminUser as isAdminUserFromDb,
+  hasReadingUsageForGuestOnDate,
+  incrementReadingUsageForGuest,
   type PersistCompletedTarotReadingInput,
+  type ReadingUsageFeatureKey,
 } from "@/lib/server/manyang-db";
+import {
+  createGuestIdCookie,
+  resolveGuestSession,
+  type GuestSession,
+} from "@/lib/server/guest-session";
 import { getAuthenticatedAccessPlan, getAuthenticatedUserId } from "@/lib/supabase/server";
 import type {
   DailyTarotCardSelection,
@@ -108,6 +118,17 @@ export type TarotReadingsRouteDependencies = {
     spread: TarotSpread,
   ) => Promise<DailyTarotReading | null>;
   logTarotEvent?: (event: TarotReadingLogEvent) => void;
+  hasReadingUsageForGuestOnDate?: (
+    guestId: string,
+    usageDate: string,
+    featureKey: ReadingUsageFeatureKey,
+  ) => Promise<boolean>;
+  incrementReadingUsageForGuest?: (
+    guestId: string,
+    usageDate: string,
+    featureKey: ReadingUsageFeatureKey,
+  ) => Promise<void>;
+  createGuestId?: () => string;
 };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -372,6 +393,37 @@ async function findExistingTarotReadingBestEffort(
   }
 }
 
+function createJsonResponse(body: unknown, init?: ResponseInit, guestSession?: GuestSession | null): Response {
+  const response = Response.json(body, init);
+
+  if (guestSession?.shouldSetCookie) {
+    response.headers.append("set-cookie", createGuestIdCookie(guestSession.guestId));
+  }
+
+  return response;
+}
+
+function tarotUsageFeatureKey(spread: TarotSpread): ReadingUsageFeatureKey {
+  return spread === "daily_three_card" ? "tarot_three_card" : "tarot_one_card";
+}
+
+async function incrementGuestTarotUsageBestEffort(
+  guestSession: GuestSession | null,
+  appDate: string,
+  spread: TarotSpread,
+  increment: (guestId: string, usageDate: string, featureKey: ReadingUsageFeatureKey) => Promise<void>,
+): Promise<void> {
+  if (!guestSession) {
+    return;
+  }
+
+  try {
+    await increment(guestSession.guestId, appDate, tarotUsageFeatureKey(spread));
+  } catch {
+    // 리딩은 그대로 반환된다. 사용량 기록 실패가 사용자 경험을 막지 않는다.
+  }
+}
+
 export async function handleTarotReadingRequest(
   request: Request,
   dependencies: TarotReadingsRouteDependencies = {},
@@ -385,6 +437,9 @@ export async function handleTarotReadingRequest(
     persistCompletedTarotReading,
     findCompletedTarotReadingForUser,
     logTarotEvent: logTarotReadingEvent,
+    hasReadingUsageForGuestOnDate,
+    incrementReadingUsageForGuest,
+    createGuestId: randomUUID,
     ...dependencies,
   };
 
@@ -422,11 +477,14 @@ export async function handleTarotReadingRequest(
     }
   }
 
+  // 게스트만 레이트리밋 대상이다. 로그인 유저는 위 단락이 하루 LLM 호출을 묶는다.
+  const guestSession = userId ? null : resolveGuestSession(request, resolvedDependencies.createGuestId);
+
   if (
     validatedBody.value.spread === "daily_three_card" &&
     !canUseTarotThreeCardReading({ accessPlan, isAdmin })
   ) {
-    return Response.json(
+    return createJsonResponse(
       {
         error: "tarot reading is locked",
         reason: "tarot_three_card_locked",
@@ -434,7 +492,30 @@ export async function handleTarotReadingRequest(
         message: "상황, 흐름, 조언을 연결하는 세 장 타로는 Moon Pass에서 열려요.",
       },
       { status: 403 },
+      guestSession,
     );
+  }
+
+  if (guestSession) {
+    const featureKey = tarotUsageFeatureKey(validatedBody.value.spread);
+    const alreadyUsed = await resolvedDependencies.hasReadingUsageForGuestOnDate(
+      guestSession.guestId,
+      validatedBody.value.appDate,
+      featureKey,
+    );
+
+    if (alreadyUsed) {
+      return createJsonResponse(
+        {
+          error: "tarot reading is rate limited",
+          reason: "tarot_rate_limited",
+          retryable: false,
+          message: "오늘의 무료 타로는 이미 펼쳤어요. 내일 다시 만나요.",
+        },
+        { status: 429 },
+        guestSession,
+      );
+    }
   }
 
   let provider: DreamReadingLlmProvider | undefined;
@@ -451,7 +532,7 @@ export async function handleTarotReadingRequest(
         appDate: validatedBody.value.appDate,
         authenticated: Boolean(userId),
       });
-      return Response.json(createUnavailablePayload("provider_missing", false), { status: 503 });
+      return createJsonResponse(createUnavailablePayload("provider_missing", false), { status: 503 }, guestSession);
     }
 
     throw error;
@@ -466,7 +547,7 @@ export async function handleTarotReadingRequest(
       appDate: validatedBody.value.appDate,
       authenticated: Boolean(userId),
     });
-    return Response.json(createUnavailablePayload("provider_missing", false), { status: 503 });
+    return createJsonResponse(createUnavailablePayload("provider_missing", false), { status: 503 }, guestSession);
   }
 
   const selections = validatedBody.value.selections.map(resolveSelection);
@@ -495,7 +576,7 @@ export async function handleTarotReadingRequest(
       appDate: validatedBody.value.appDate,
       authenticated: Boolean(userId),
     });
-    return Response.json(createUnavailablePayload(result.reason, result.retryable), { status: 503 });
+    return createJsonResponse(createUnavailablePayload(result.reason, result.retryable), { status: 503 }, guestSession);
   }
 
   const reading = createDailyTarotReadingFromGenerated(validatedBody.value, selections, result.reading);
@@ -506,7 +587,14 @@ export async function handleTarotReadingRequest(
     resolvedDependencies.persistCompletedTarotReading,
   );
 
-  return Response.json(reading);
+  await incrementGuestTarotUsageBestEffort(
+    guestSession,
+    validatedBody.value.appDate,
+    validatedBody.value.spread,
+    resolvedDependencies.incrementReadingUsageForGuest,
+  );
+
+  return createJsonResponse(reading, undefined, guestSession);
 }
 
 export async function POST(request: Request): Promise<Response> {

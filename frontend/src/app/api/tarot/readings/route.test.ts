@@ -359,6 +359,57 @@ describe("POST /api/tarot/readings", () => {
     );
   });
 
+  test("rate-limits a guest who already used today's one-card reading", async () => {
+    const generateTarotReadingForUser = vi.fn();
+    const response = await handleTarotReadingRequest(createJsonRequest(createOneCardBody()), {
+      getAuthenticatedUserId: async () => null,
+      getAccessPlanForUser: async () => "guest",
+      hasReadingUsageForGuestOnDate: async () => true,
+      createGuestId: () => "00000000-0000-4000-8000-000000000abc",
+      createProvider: () => ({ generateJson: async () => generatedOneCard }),
+      generateTarotReadingForUser,
+    });
+
+    expect(response.status).toBe(429);
+    await expect(response.json()).resolves.toMatchObject({ reason: "tarot_rate_limited" });
+    expect(generateTarotReadingForUser).not.toHaveBeenCalled();
+  });
+
+  test("allows and records a guest's first one-card reading of the day", async () => {
+    const incrementReadingUsageForGuest = vi.fn(async () => undefined);
+    const generateTarotReadingForUser = vi.fn(async () => ({
+      status: "ok" as const,
+      reading: generatedOneCard,
+    }));
+
+    const response = await handleTarotReadingRequest(
+      new Request("http://localhost/api/tarot/readings", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          cookie: "manyang_guest_id=00000000-0000-4000-8000-000000000abc",
+        },
+        body: JSON.stringify(createOneCardBody()),
+      }),
+      {
+        getAuthenticatedUserId: async () => null,
+        getAccessPlanForUser: async () => "guest",
+        hasReadingUsageForGuestOnDate: async () => false,
+        incrementReadingUsageForGuest,
+        createProvider: () => ({ generateJson: async () => generatedOneCard }),
+        generateTarotReadingForUser,
+        persistCompletedTarotReading: async () => undefined,
+      },
+    );
+
+    expect(response.status).toBe(200);
+    expect(incrementReadingUsageForGuest).toHaveBeenCalledWith(
+      "00000000-0000-4000-8000-000000000abc",
+      "2026-05-31",
+      "tarot_one_card",
+    );
+  });
+
   test("logs an observability event when the provider is missing", async () => {
     const logTarotEvent = vi.fn();
     const response = await handleTarotReadingRequest(createJsonRequest(createOneCardBody()), {
