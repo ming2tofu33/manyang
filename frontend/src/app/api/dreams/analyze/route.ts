@@ -32,6 +32,11 @@ import {
   type AccessPlan,
 } from "@/lib/access-policy";
 import { getManyangAppDate } from "@/lib/app-date";
+import {
+  createGuestIdCookie,
+  resolveGuestSession,
+  type GuestSession,
+} from "@/lib/server/guest-session";
 import { getAuthenticatedAccessPlan, getAuthenticatedUserId } from "@/lib/supabase/server";
 import type { PersistCompletedDreamReadingInput } from "@/lib/manyang-dream-records";
 
@@ -49,13 +54,6 @@ const FEELING_ID_MAX_LENGTH = 32;
 const FEELING_OTHER_MAX_LENGTH = 30;
 const validLocales = new Set(["ko", "en"]);
 const validCatReaderTypes = new Set(["black_cat", "white_cat", "cheese_cat", "gray_cat"]);
-const guestIdCookieName = "manyang_guest_id";
-const guestIdCookieMaxAgeSeconds = 60 * 60 * 24 * 400;
-
-type GuestSession = {
-  guestId: string;
-  shouldSetCookie: boolean;
-};
 
 type DreamAnalyzeValidationResult =
   | {
@@ -94,60 +92,6 @@ export type DreamAnalyzeRouteDependencies = {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function isValidGuestId(value: string | undefined): value is string {
-  return Boolean(
-    value &&
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value),
-  );
-}
-
-function getRequestCookie(request: Request, cookieName: string): string | undefined {
-  const cookieHeader = request.headers.get("cookie");
-
-  if (!cookieHeader) {
-    return undefined;
-  }
-
-  for (const cookiePart of cookieHeader.split(";")) {
-    const [name, ...valueParts] = cookiePart.trim().split("=");
-
-    if (name === cookieName) {
-      return valueParts.join("=");
-    }
-  }
-
-  return undefined;
-}
-
-function resolveGuestSession(request: Request, createGuestId: () => string): GuestSession {
-  const existingGuestId = getRequestCookie(request, guestIdCookieName);
-
-  if (isValidGuestId(existingGuestId)) {
-    return {
-      guestId: existingGuestId,
-      shouldSetCookie: false,
-    };
-  }
-
-  return {
-    guestId: createGuestId(),
-    shouldSetCookie: true,
-  };
-}
-
-function createGuestIdCookie(guestId: string, env: EnvLike = process.env): string {
-  return [
-    `${guestIdCookieName}=${guestId}`,
-    "Path=/",
-    `Max-Age=${guestIdCookieMaxAgeSeconds}`,
-    "HttpOnly",
-    "SameSite=Lax",
-    env.NODE_ENV === "production" ? "Secure" : "",
-  ]
-    .filter(Boolean)
-    .join("; ");
 }
 
 function createJsonResponse(body: unknown, init?: ResponseInit, guestSession?: GuestSession | null): Response {
