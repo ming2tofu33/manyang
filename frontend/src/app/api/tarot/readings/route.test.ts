@@ -426,4 +426,59 @@ describe("POST /api/tarot/readings", () => {
       expect.objectContaining({ type: "unavailable", reason: "provider_missing" }),
     );
   });
+
+  test("rate-limits a guest's three-card reading with the three-card feature key", async () => {
+    const hasReadingUsageForGuestOnDate = vi.fn(async () => true);
+    const generateTarotReadingForUser = vi.fn();
+    const response = await handleTarotReadingRequest(createJsonRequest(createThreeCardBody()), {
+      getAuthenticatedUserId: async () => null,
+      getAccessPlanForUser: async () => "guest",
+      hasReadingUsageForGuestOnDate,
+      createGuestId: () => "00000000-0000-4000-8000-000000000abc",
+      createProvider: () => ({ generateJson: async () => generatedThreeCard }),
+      generateTarotReadingForUser,
+    });
+
+    expect(response.status).toBe(429);
+    expect(hasReadingUsageForGuestOnDate).toHaveBeenCalledWith(
+      "00000000-0000-4000-8000-000000000abc",
+      "2026-05-31",
+      "tarot_three_card",
+    );
+    expect(generateTarotReadingForUser).not.toHaveBeenCalled();
+  });
+
+  test("sets a guest cookie on the rate-limited response so new guests get a stable id", async () => {
+    const response = await handleTarotReadingRequest(createJsonRequest(createOneCardBody()), {
+      getAuthenticatedUserId: async () => null,
+      getAccessPlanForUser: async () => "guest",
+      hasReadingUsageForGuestOnDate: async () => true,
+      createGuestId: () => "00000000-0000-4000-8000-000000000abc",
+      createProvider: () => ({ generateJson: async () => generatedOneCard }),
+      generateTarotReadingForUser: vi.fn(),
+    });
+
+    expect(response.status).toBe(429);
+    expect(response.headers.get("set-cookie")).toContain("manyang_guest_id=00000000-0000-4000-8000-000000000abc");
+  });
+
+  test("does not record guest usage when the reading is unavailable", async () => {
+    const incrementReadingUsageForGuest = vi.fn(async () => undefined);
+    const response = await handleTarotReadingRequest(createJsonRequest(createOneCardBody()), {
+      getAuthenticatedUserId: async () => null,
+      getAccessPlanForUser: async () => "guest",
+      hasReadingUsageForGuestOnDate: async () => false,
+      incrementReadingUsageForGuest,
+      createGuestId: () => "00000000-0000-4000-8000-000000000abc",
+      createProvider: () => ({ generateJson: async () => generatedOneCard }),
+      generateTarotReadingForUser: async () => ({
+        status: "unavailable" as const,
+        reason: "timeout" as const,
+        retryable: true,
+      }),
+    });
+
+    expect(response.status).toBe(503);
+    expect(incrementReadingUsageForGuest).not.toHaveBeenCalled();
+  });
 });
