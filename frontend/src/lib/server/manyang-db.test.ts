@@ -2,6 +2,7 @@ import { describe, expect, test, vi } from "vitest";
 
 import {
   deleteAllProductRecordsForUser,
+  findCompletedTarotReadingForUser,
   getActiveSubscriptionPlanForUser,
   hasReadingUsageForGuestOnDate,
   hasReadingUsageForUserOnDate,
@@ -121,6 +122,38 @@ describe("manyang db helpers", () => {
       { id: "tarot-1", appDate: "2026-06-05" },
     ]);
     expect(pool.query).toHaveBeenCalledWith(expect.stringContaining("from manyang.tarot_readings"), ["user-1"]);
+  });
+
+  test("returns the stored tarot reading for a user, date, and spread", async () => {
+    const pool = {
+      query: vi.fn(async () => ({
+        rows: [{ raw_reading: { id: "daily-tarot-daily_one_card-2026-06-05", appDate: "2026-06-05" } }],
+      })),
+    };
+
+    await expect(
+      findCompletedTarotReadingForUser(
+        "user-1",
+        "2026-06-05",
+        "daily_one_card",
+        pool as never,
+      ),
+    ).resolves.toEqual({ id: "daily-tarot-daily_one_card-2026-06-05", appDate: "2026-06-05" });
+    expect(pool.query).toHaveBeenCalledWith(expect.stringContaining("from manyang.tarot_readings"), [
+      "user-1",
+      "2026-06-05",
+      "daily_one_card",
+    ]);
+  });
+
+  test("returns null when no tarot reading exists for the user, date, and spread", async () => {
+    const pool = {
+      query: vi.fn(async () => ({ rows: [] })),
+    };
+
+    await expect(
+      findCompletedTarotReadingForUser("user-1", "2026-06-05", "daily_three_card", pool as never),
+    ).resolves.toBeNull();
   });
 
   test("deletes all product records for a user in a transaction", async () => {

@@ -11,7 +11,7 @@ import type { DreamCompletedPayload, DreamRecord } from "@/lib/dream-storage";
 import type { MorningMoodRecord } from "@/lib/morning-mood";
 import type { NightCheckInRecord } from "@/lib/night-checkin";
 import type { PawprintInput, PawprintRecord, PawprintSaveResult, PawprintSource } from "@/lib/pawprints";
-import type { DailyTarotReading } from "@/lib/daily-tarot";
+import type { DailyTarotReading, TarotSpread } from "@/lib/daily-tarot";
 import { getSupabaseDatabaseUrl } from "@/lib/supabase/env";
 
 let manyangPool: Pool | null = null;
@@ -220,6 +220,32 @@ export async function persistCompletedTarotReading(
   }
 
   return tarotReadingId;
+}
+
+/**
+ * 같은 유저가 같은 날 같은 스프레드로 이미 받은 타로 리딩이 있으면 그대로 돌려준다.
+ * 타로 리딩은 (user, app_date, spread)당 결정론적으로 1개이므로, 재요청 시 LLM을
+ * 다시 부르지 않고 저장본을 반환해 비용을 아낀다(같은 날 → 같은 리딩).
+ */
+export async function findCompletedTarotReadingForUser(
+  userId: string,
+  appDate: string,
+  spread: TarotSpread,
+  pool = getManyangDbPool(),
+): Promise<DailyTarotReading | null> {
+  const result = await pool.query<{ raw_reading: DailyTarotReading }>(
+    `
+      select raw_reading
+      from manyang.tarot_readings
+      where user_id = $1
+        and app_date = $2::date
+        and spread = $3
+      limit 1
+    `,
+    [userId, appDate, spread],
+  );
+
+  return result.rows[0]?.raw_reading ?? null;
 }
 
 export async function listTarotReadingsForUser(
