@@ -20,10 +20,10 @@ export const nightCheckInCopy = {
   helper: "오늘의 기분이 내일 꿈 해몽의 작은 단서가 돼요.",
   moodTitle: "오늘 하루의 기분은 어땠나요?",
   conditionTitle: "지금 몸 컨디션은 어떤가요?",
-  noteLabel: "오늘 마음에 남은 한 줄",
+  noteLabel: "짧게 남기고 싶은 말",
   optionalLabel: "(선택)",
-  notePlaceholder: "오늘 가장 오래 남은 장면이나 감정을 적어주세요.",
-  noteHint: "꿈을 정하는 기록이 아니라, 내일 꿈을 읽을 때 참고할 하루의 맥락이에요.",
+  notePlaceholder: "예: 오늘은 그냥 조금 피곤했어요.",
+  noteHint: "내일 꿈을 읽을 때 참고할 하루의 가벼운 메모예요.",
   savedTitle: "오늘 밤의 기록을 남겼어요.",
   submit: "밤의 기록 남기기",
   submitAgain: "밤의 기록 다시 남기기",
@@ -37,6 +37,9 @@ export const nightCheckInMoods = [
   { id: "excited", label: "설렘", icon: "excited" },
   { id: "low", label: "가라앉음", icon: "low" },
   { id: "mixed", label: "복잡함", icon: "complex" },
+  { id: "proud", label: "뿌듯함", icon: "relieved" },
+  { id: "lonely", label: "외로움", icon: "lonely" },
+  { id: "neutral", label: "무덤덤함", icon: "empty" },
 ] as const satisfies readonly NightCheckInOption[];
 
 export const nightCheckInConditions = [

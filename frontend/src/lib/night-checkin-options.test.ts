@@ -29,6 +29,9 @@ describe("night check-in options", () => {
       "설렘",
       "가라앉음",
       "복잡함",
+      "뿌듯함",
+      "외로움",
+      "무덤덤함",
     ]);
     expect(nightCheckInConditions.map((option) => option.label)).toEqual([
       "가벼움",
@@ -44,6 +47,7 @@ describe("night check-in options", () => {
 
   test("looks up options by id", () => {
     expect(getNightCheckInMoodById("anxious")?.label).toBe("불안함");
+    expect(getNightCheckInMoodById("proud")?.label).toBe("뿌듯함");
     expect(getNightCheckInConditionById("tense")?.label).toBe("긴장됨");
     expect(getNightCheckInMoodById("missing")).toBeUndefined();
     expect(getNightCheckInConditionById("missing")).toBeUndefined();
@@ -51,5 +55,7 @@ describe("night check-in options", () => {
 
   test("keeps the note short", () => {
     expect(nightCheckInNoteMaxLength).toBe(100);
+    expect(nightCheckInCopy.noteLabel).toBe("짧게 남기고 싶은 말");
+    expect(nightCheckInCopy.notePlaceholder).toBe("예: 오늘은 그냥 조금 피곤했어요.");
   });
 });
