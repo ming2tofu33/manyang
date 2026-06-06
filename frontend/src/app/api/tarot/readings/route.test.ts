@@ -123,6 +123,7 @@ describe("POST /api/tarot/readings", () => {
     const response = await handleTarotReadingRequest(createJsonRequest(createThreeCardBody()), {
       getAuthenticatedUserId: async () => "00000000-0000-4000-8000-000000000001",
       getAccessPlanForUser: async () => "free_account",
+      findCompletedTarotReadingForUser: async () => null,
       createProvider: () => ({ generateJson: async () => generatedThreeCard }),
       generateTarotReadingForUser,
       persistCompletedTarotReading: async () => undefined,
@@ -148,6 +149,7 @@ describe("POST /api/tarot/readings", () => {
     const response = await handleTarotReadingRequest(createJsonRequest(createOneCardBody()), {
       getAuthenticatedUserId: async () => "00000000-0000-4000-8000-000000000001",
       getAccessPlanForUser: async () => "free_account",
+      findCompletedTarotReadingForUser: async () => null,
       createProvider: () => undefined,
       persistCompletedTarotReading,
     });
@@ -174,6 +176,7 @@ describe("POST /api/tarot/readings", () => {
     const response = await handleTarotReadingRequest(createJsonRequest(createOneCardBody()), {
       getAuthenticatedUserId: async () => "00000000-0000-4000-8000-000000000001",
       getAccessPlanForUser: async () => "free_account",
+      findCompletedTarotReadingForUser: async () => null,
       createProvider: () => ({ generateJson: async () => generatedOneCard }),
       generateTarotReadingForUser,
       persistCompletedTarotReading,
@@ -299,6 +302,7 @@ describe("POST /api/tarot/readings", () => {
     const response = await handleTarotReadingRequest(createJsonRequest(createThreeCardBody()), {
       getAuthenticatedUserId: async () => "00000000-0000-4000-8000-000000000001",
       getAccessPlanForUser: async () => "moon_pass",
+      findCompletedTarotReadingForUser: async () => null,
       createProvider: () => ({ generateJson: async () => generatedThreeCard }),
       generateTarotReadingForUser,
       persistCompletedTarotReading: async () => undefined,
