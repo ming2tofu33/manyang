@@ -421,7 +421,7 @@ export function createDailyTarotReading(input: CreateDailyTarotReadingInput): Da
     keywords: [...card.keywords],
     title: orientationContent.summary,
     message: orientationContent.dailyFlow,
-    advice: orientationContent.advice,
+    advice: orientationContent.cardMessage,
   };
 }
 

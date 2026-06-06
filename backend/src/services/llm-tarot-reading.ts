@@ -20,7 +20,6 @@ export type TarotGeneratedReading = {
   overview: string;
   keywords: string[];
   cardReadings: TarotGeneratedCardReading[];
-  advice: string;
 };
 
 export type TarotReadingUnavailableReason = "provider_missing" | "timeout" | "invalid_response" | "provider_error";
@@ -158,13 +157,11 @@ function parseTarotReadingDraft(input: TarotReadingInput, value: unknown): Tarot
   const overview = cleanString(value.overview, 1200);
   const keywords = parseStringArray(value.keywords, 5, 32);
   const cardReadings = parseCardReadings(value.cardReadings);
-  const advice = cleanString(value.advice, 360);
 
   if (
     !title ||
     !overview ||
     keywords.length < 3 ||
-    !advice ||
     !hasExactPositions(cardReadings, expectedPositionsForInput(input))
   ) {
     return undefined;
@@ -175,7 +172,6 @@ function parseTarotReadingDraft(input: TarotReadingInput, value: unknown): Tarot
     overview,
     keywords,
     cardReadings,
-    advice,
   };
 }
 

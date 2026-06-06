@@ -84,12 +84,16 @@ describe("tarot major cards", () => {
       expectNonTrivialText(card.mood);
       expectNonTrivialText(card.upright.summary);
       expectNonTrivialText(card.upright.dailyFlow);
-      expectNonTrivialText(card.upright.advice);
-      expectNonTrivialText(card.upright.story);
+      expectNonTrivialText(card.upright.cardMessage);
+      expectNonTrivialText(card.upright.readingScene);
       expectNonTrivialText(card.reversed.summary);
       expectNonTrivialText(card.reversed.dailyFlow);
-      expectNonTrivialText(card.reversed.advice);
-      expectNonTrivialText(card.reversed.story);
+      expectNonTrivialText(card.reversed.cardMessage);
+      expectNonTrivialText(card.reversed.readingScene);
+      expect("advice" in card.upright).toBe(false);
+      expect("story" in card.upright).toBe(false);
+      expect("advice" in card.reversed).toBe(false);
+      expect("story" in card.reversed).toBe(false);
       expect("reflectionQuestion" in card.upright).toBe(false);
       expect("smallAction" in card.upright).toBe(false);
       expect("reflectionQuestion" in card.reversed).toBe(false);
@@ -118,20 +122,20 @@ describe("tarot major cards", () => {
         expect.objectContaining({ symbol: "베일" }),
       ]),
       upright: {
-        story: expect.stringContaining("아직 다 드러나지 않은"),
-        advice: "여사제는 아직 다 드러나지 않은 일을 가리킵니다. 지금 보이는 말보다 숨겨진 맥락이 더 중요할 수 있습니다.",
+        readingScene: expect.stringContaining("아직 다 드러나지 않은"),
+        cardMessage: "여사제는 아직 다 드러나지 않은 일을 가리킵니다. 지금 보이는 말보다 숨겨진 맥락이 더 중요할 수 있습니다.",
       },
     });
     expect(getTarotMajorCardById(8)).toMatchObject({
       upright: {
-        story: expect.stringContaining("사자를 억누르지"),
-        advice: "힘 카드는 크게 밀어붙이는 장면이 아닙니다. 사자를 억누르지 않고 다루는 그림처럼, 오늘 필요한 힘은 끝까지 태도를 잃지 않는 쪽에 가깝습니다.",
+        readingScene: expect.stringContaining("사자를 억누르지"),
+        cardMessage: "힘 카드는 크게 밀어붙이는 장면이 아닙니다. 사자를 억누르지 않고 다루는 그림처럼, 오늘 필요한 힘은 끝까지 태도를 잃지 않는 쪽에 가깝습니다.",
       },
     });
     expect(getTarotMajorCardById(17)).toMatchObject({
       reversed: {
-        story: expect.stringContaining("눈이 어둠에 익숙해진"),
-        advice: "별 역방향은 희망이 사라졌다는 뜻보다, 아직 눈이 어둠에 익숙해진 상태에 가깝습니다. 남아 있는 빛의 단서를 너무 빨리 의심하지 않는 게 중요합니다.",
+        readingScene: expect.stringContaining("눈이 어둠에 익숙해진"),
+        cardMessage: "별 역방향은 희망이 사라졌다는 뜻보다, 아직 눈이 어둠에 익숙해진 상태에 가깝습니다. 남아 있는 빛의 단서를 너무 빨리 의심하지 않는 게 중요합니다.",
       },
     });
   });

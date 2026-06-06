@@ -281,19 +281,19 @@ function createReadingId(spread: TarotSpread, appDate: string): string {
   return `daily-tarot-${spread}-${appDate}`;
 }
 
-function resolveDictionaryAdvice(selections: DailyTarotCardSelection[]): string {
+function resolvePrimaryDictionaryCardMessage(selections: DailyTarotCardSelection[]): string {
   const adviceSelection = selections.find((selection) => selection.position === "advice") ?? selections[0];
 
-  return adviceSelection?.card[adviceSelection.orientation].advice ?? "";
+  return adviceSelection?.card[adviceSelection.orientation].cardMessage ?? "";
 }
 
 function createGeneratedReadingWithDictionaryAdvice(
   generated: Extract<TarotReadingResult, { status: "ok" }>["reading"],
-  advice: string,
+  cardMessage: string,
 ): DailyTarotGeneratedReading {
   return {
     ...generated,
-    advice,
+    advice: cardMessage,
   };
 }
 
@@ -303,8 +303,8 @@ function createDailyTarotReadingFromGenerated(
   generated: Extract<TarotReadingResult, { status: "ok" }>["reading"],
 ): DailyTarotReading {
   const primarySelection = selections[0] as DailyTarotCardSelection & { card: TarotMajorCard };
-  const advice = resolveDictionaryAdvice(selections);
-  const generatedWithAdvice = createGeneratedReadingWithDictionaryAdvice(generated, advice);
+  const cardMessage = resolvePrimaryDictionaryCardMessage(selections);
+  const generatedWithAdvice = createGeneratedReadingWithDictionaryAdvice(generated, cardMessage);
 
   return {
     id: createReadingId(input.spread, input.appDate),
@@ -319,7 +319,7 @@ function createDailyTarotReadingFromGenerated(
     keywords: [...generated.keywords],
     title: generated.title,
     message: generated.overview,
-    advice,
+    advice: cardMessage,
     generated: generatedWithAdvice,
   };
 }

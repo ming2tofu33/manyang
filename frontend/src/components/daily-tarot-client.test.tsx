@@ -30,16 +30,24 @@ const foolCard = {
   image: "/manyang/tarot/major/00-the-fool.png",
   keywords: ["start", "possibility"],
   visualSymbols: ["small bag"],
+  symbolMeanings: [
+    {
+      symbol: "small bag",
+      meaning: "The small bag keeps only what is needed for the first step.",
+    },
+  ],
   mood: "Bright beginning.",
   upright: {
     summary: "New beginning",
     dailyFlow: "A small attempt may shift the day.",
-    advice: "Check the basics first.",
+    cardMessage: "Check the basics first.",
+    readingScene: "The card opens at the edge of a new path.",
   },
   reversed: {
     summary: "Rushed start",
     dailyFlow: "Slow down before moving.",
-    advice: "Make one safety check first.",
+    cardMessage: "Make one safety check first.",
+    readingScene: "The card tilts toward a start that needs one more look.",
   },
   contexts: {
     love: "New feeling",
@@ -76,12 +84,86 @@ const foolReading = {
         reading: "The upright Fool points to a beginning that becomes useful once it is tested gently in real life.",
       },
     ],
-    advice: "Choose one small action and review the result before deciding the next step.",
+    advice: "Check the basics first.",
   },
   keywords: ["start", "possibility"],
   title: "A small first step opens the day",
   message: "The selected Fool card is read as a day where a light first step matters more than waiting for perfect certainty.",
-  advice: "Choose one small action and review the result before deciding the next step.",
+  advice: "Check the basics first.",
+} satisfies DailyTarotReading;
+
+function createMockTarotCard(id: number, nameKo: string, cardMessage: string) {
+  return {
+    ...foolCard,
+    id,
+    slug: `test-card-${id}`,
+    nameEn: `TEST CARD ${id}`,
+    nameKo,
+    image: `/manyang/tarot/major/00-the-fool.png`,
+    keywords: [`keyword-${id}`, `tone-${id}`],
+    upright: {
+      ...foolCard.upright,
+      cardMessage,
+      readingScene: `${nameKo} upright scene.`,
+    },
+    reversed: {
+      ...foolCard.reversed,
+      cardMessage: `${cardMessage} reversed`,
+      readingScene: `${nameKo} reversed scene.`,
+    },
+  };
+}
+
+const threeCardReading = {
+  ...foolReading,
+  id: "daily-tarot-daily_three_card-2026-05-31",
+  spread: "daily_three_card",
+  card: createMockTarotCard(100, "상황 카드", "상황 카드는 지금 드러난 조건을 먼저 보라고 말합니다."),
+  orientation: "upright",
+  position: "situation",
+  cards: [
+    {
+      position: "situation",
+      orientation: "upright",
+      card: createMockTarotCard(100, "상황 카드", "상황 카드는 지금 드러난 조건을 먼저 보라고 말합니다."),
+    },
+    {
+      position: "flow",
+      orientation: "upright",
+      card: createMockTarotCard(101, "다음 장면 카드", "다음 장면 카드는 뒤따르는 변화를 너무 빨리 단정하지 말라고 말합니다."),
+    },
+    {
+      position: "advice",
+      orientation: "upright",
+      card: createMockTarotCard(102, "조언 카드", "조언 카드는 이미 확인한 단서를 기준으로 선택하라고 말합니다."),
+    },
+  ],
+  generated: {
+    title: "세 장이 이어서 보여주는 오늘",
+    overview: "세 장의 카드는 현재의 조건, 뒤따르는 변화, 마지막 판단 기준을 한 번에 묶어 읽도록 구성되어 있습니다.",
+    keywords: ["condition", "next", "choice"],
+    cardReadings: [
+      {
+        position: "situation",
+        heading: "지금의 상태",
+        reading: "상황 카드는 현재 장면을 설명합니다.",
+      },
+      {
+        position: "flow",
+        heading: "이어지는 국면",
+        reading: "다음 장면 카드는 뒤따르는 변화를 설명합니다.",
+      },
+      {
+        position: "advice",
+        heading: "판단 기준",
+        reading: "조언 카드는 마지막 기준을 설명합니다.",
+      },
+    ],
+    advice: "조언 카드는 이미 확인한 단서를 기준으로 선택하라고 말합니다.",
+  },
+  title: "세 장이 이어서 보여주는 오늘",
+  message: "세 장의 카드는 현재의 조건, 뒤따르는 변화, 마지막 판단 기준을 한 번에 묶어 읽도록 구성되어 있습니다.",
+  advice: "조언 카드는 이미 확인한 단서를 기준으로 선택하라고 말합니다.",
 } satisfies DailyTarotReading;
 
 function createMemoryStorage(initialEntries: Record<string, string> = {}): StorageLike {
@@ -300,7 +382,7 @@ describe("DailyTarotClient", () => {
     expect(markup).not.toContain("카드가 먼저 건네는 조언");
     expect(markup).toContain(getTarotMajorCardById(0)?.keywords[0] ?? "");
     expect(markup).toContain(getTarotMajorCardById(0)?.keywords[1] ?? "");
-    expect(markup).toContain(getTarotMajorCardById(0)?.upright.advice ?? "");
+    expect(markup).toContain(getTarotMajorCardById(0)?.upright.cardMessage ?? "");
     expect(markup).toContain("오늘의 리딩을 완성하고 있어요");
     expect(markup).toContain("선택한 카드와 방향을 기준으로 오늘의 흐름을 읽고 있어요.");
     expect(markup).not.toContain('data-daily-tarot-result-copy="true"');
@@ -308,6 +390,32 @@ describe("DailyTarotClient", () => {
     expect(markup).not.toContain('data-daily-tarot-result-actions="true"');
     expect(markup).not.toContain("저장하기");
     expect(markup).not.toContain("공유하기");
+  });
+
+  it("shows every selected card message while a three-card tarot reading is generating", () => {
+    const markup = renderToStaticMarkup(
+      <DailyTarotPendingResult selections={threeCardReading.cards ?? []} />,
+    );
+
+    expect(markup).toContain('data-daily-tarot-card-messages="true"');
+    expect(markup).toContain("상황 카드");
+    expect(markup).toContain("다음 장면 카드");
+    expect(markup).toContain("조언 카드");
+    expect(markup).toContain("상황 카드는 지금 드러난 조건을 먼저 보라고 말합니다.");
+    expect(markup).toContain("다음 장면 카드는 뒤따르는 변화를 너무 빨리 단정하지 말라고 말합니다.");
+    expect(markup).toContain("조언 카드는 이미 확인한 단서를 기준으로 선택하라고 말합니다.");
+  });
+
+  it("shows every selected card message in the completed three-card result", () => {
+    const markup = renderToStaticMarkup(
+      <DailyTarotClient appDate="2026-05-31" initialReading={threeCardReading} />,
+    );
+
+    expect(markup).toContain('data-daily-tarot-state="result"');
+    expect(markup).toContain('data-daily-tarot-card-messages="true"');
+    expect(markup).toContain("상황 카드는 지금 드러난 조건을 먼저 보라고 말합니다.");
+    expect(markup).toContain("다음 장면 카드는 뒤따르는 변화를 너무 빨리 단정하지 말라고 말합니다.");
+    expect(markup).toContain("조언 카드는 이미 확인한 단서를 기준으로 선택하라고 말합니다.");
   });
 
   it("does not expand the interpreting card before showing the result", () => {

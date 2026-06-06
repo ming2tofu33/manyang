@@ -214,7 +214,7 @@ describe("daily tarot draw logic", () => {
       orientation: "reversed",
       position: "today",
       message: card?.reversed.dailyFlow,
-      advice: card?.reversed.advice,
+      advice: card?.reversed.cardMessage,
     });
   });
 
@@ -232,7 +232,7 @@ describe("daily tarot draw logic", () => {
     expect(reading).toMatchObject({
       title: card?.upright.summary,
       message: card?.upright.dailyFlow,
-      advice: card?.upright.advice,
+      advice: card?.upright.cardMessage,
       orientation: "upright",
     });
   });

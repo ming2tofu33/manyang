@@ -24,16 +24,16 @@ function createTarotCard(id: number, nameKo: string) {
     upright: {
       summary: "Upright summary",
       dailyFlow: "Upright daily flow",
-      advice: "Upright advice",
-      story: "The upright card story turns available focus into a clear next step.",
+      cardMessage: "Upright card message",
+      readingScene: "The upright card scene turns available focus into a clear next step.",
       reflectionQuestion: "What part of the situation is already asking for attention?",
       smallAction: "Choose one visible next step and take it before adding more plans.",
     },
     reversed: {
       summary: "Reversed summary",
       dailyFlow: "Reversed daily flow",
-      advice: "Reversed advice",
-      story: "The reversed card story shows focus scattering before the next threshold.",
+      cardMessage: "Reversed card message",
+      readingScene: "The reversed card scene shows focus scattering before the next threshold.",
       reflectionQuestion: "Where is hesitation turning into avoidable delay?",
       smallAction: "Remove one distraction before deciding how to cross the threshold.",
     },
@@ -136,9 +136,45 @@ describe("generateTarotReadingForUser", () => {
       timeoutMs: 1200,
     });
     expect(provider.requests[0]?.input).toContain("바보");
-    expect(provider.requests[0]?.input).not.toContain("symbolMeanings");
-    expect(provider.requests[0]?.input).not.toContain("The upright card story turns available focus into a clear next step.");
+    expect(provider.requests[0]?.input).toContain("symbolMeanings");
+    expect(provider.requests[0]?.input).toContain("The upright card scene turns available focus into a clear next step.");
+    expect(provider.requests[0]?.input).toContain("cardMessage");
+    expect(provider.requests[0]?.input).toContain("readingScene");
+    expect(provider.requests[0]?.input).not.toContain("selectedMeaning.story");
+    expect(provider.requests[0]?.input).toContain("The light points to the part of the situation that is already visible.");
     expect(provider.requests[0]?.input).not.toContain("What part of the situation is already asking for attention?");
+    expect(provider.requests[0]?.input).not.toContain("Choose one visible next step and take it before adding more plans.");
+    expect(provider.requests[0]?.instructions).toContain("카드의 상징과 장면을 근거로");
+    expect(provider.requests[0]?.instructions).toContain("모든 출력 필드에서 절대 사용하지 마세요");
+    expect(provider.requests[0]?.instructions).toContain("이어지는 국면");
+    expect(provider.requests[0]?.instructions).not.toContain("You are Manyang's production tarot-reading engine.");
+  });
+
+  test("requests tarot drafts without a final advice field", async () => {
+    const provider = createProvider({
+      ...generatedDisplayFields,
+      title: "A small opening",
+      overview: "The selected card points to a day where a small opening matters more than a perfect answer.",
+      cardReadings: [
+        {
+          position: "today",
+          heading: "Today",
+          reading: "The card connects its upright tone to a careful first step rather than a rushed conclusion.",
+        },
+      ],
+      advice: "This provider advice should not be part of the tarot draft contract.",
+    });
+
+    await generateTarotReadingForUser(oneCardInput, { provider });
+
+    const schema = provider.requests[0]?.jsonSchema as
+      | { properties?: Record<string, unknown>; required?: string[] }
+      | undefined;
+
+    expect(schema?.properties).not.toHaveProperty("advice");
+    expect(schema?.required).not.toContain("advice");
+    expect(provider.requests[0]?.input).not.toContain("advice one practical sentence");
+    expect(provider.requests[0]?.instructions).toContain("마지막 행동 지시나 최종 조언을 만들지 마세요");
   });
 
   test("accepts concise one-card provider JSON without symbolic reading fields", async () => {
@@ -153,7 +189,6 @@ describe("generateTarotReadingForUser", () => {
           reading: "The card connects its upright tone to a careful first step rather than a rushed conclusion.",
         },
       ],
-      advice: "Choose one small action and review the result before deciding the next step.",
     });
 
     const result = await generateTarotReadingForUser(oneCardInput, { provider });
@@ -162,6 +197,11 @@ describe("generateTarotReadingForUser", () => {
       status: "ok",
       reading: {
         keywords: ["opening", "choice", "attention"],
+      },
+    });
+    expect(result).not.toMatchObject({
+      reading: {
+        advice: expect.any(String),
       },
     });
   });
@@ -191,7 +231,7 @@ describe("generateTarotReadingForUser", () => {
     const provider = createProvider({
       ...generatedDisplayFields,
       title: "Star light",
-      overview: "A quiet overview keeps the reading focused on the card imagery.",
+      overview: "A quiet overview keeps the reading focused on the card imagery. }} PMID:}",
       cardReadings: [
         {
           position: "today",
@@ -199,7 +239,6 @@ describe("generateTarotReadingForUser", () => {
           reading: "The card points to a small but visible recovery signal. }} PMID:}",
         },
       ],
-      advice: "Protect the small rhythm that is starting to return. }} PMID:}",
     });
 
     const result = await generateTarotReadingForUser(oneCardInput, { provider });
@@ -207,12 +246,12 @@ describe("generateTarotReadingForUser", () => {
     expect(result).toMatchObject({
       status: "ok",
       reading: {
+        overview: "A quiet overview keeps the reading focused on the card imagery.",
         cardReadings: [
           {
             reading: "The card points to a small but visible recovery signal.",
           },
         ],
-        advice: "Protect the small rhythm that is starting to return.",
       },
     });
   });

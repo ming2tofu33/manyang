@@ -977,17 +977,32 @@ function resolveDailyTarotResultSelections(selections: DailyTarotCardSelection[]
   }));
 }
 
-function resolveDictionaryAdviceFromSelections(selections: DailyTarotCardSelection[]): string {
-  const adviceSelection = selections.find((selection) => selection.position === "advice") ?? selections[0];
-
-  return adviceSelection?.card[adviceSelection.orientation].advice ?? "";
-}
-
 function resolveDictionaryKeywordsFromSelections(selections: DailyTarotCardSelection[]): string[] {
   return cleanUniqueTarotDisplayTexts(
     selections.flatMap((selection) => selection.card.keywords),
     5,
   );
+}
+
+function resolveDictionaryCardMessagesFromSelections(selections: DailyTarotCardSelection[]) {
+  return selections.flatMap((selection) => {
+    const message = cleanTarotDisplayText(selection.card[selection.orientation].cardMessage);
+
+    if (!message) {
+      return [];
+    }
+
+    return [
+      {
+        key: `${selection.position}-${selection.card.id}-${selection.orientation}`,
+        label:
+          selections.length > 1
+            ? `${positionLabels[selection.position]} · ${selection.card.nameKo} · ${orientationLabels[selection.orientation]}`
+            : "카드 메시지",
+        message,
+      },
+    ];
+  });
 }
 
 function DailyTarotResultCardGrid({
@@ -1013,15 +1028,17 @@ function DailyTarotResultCardGrid({
 
 function DailyTarotFixedGuidanceSection({
   enterDelay = "140ms",
+  showKeywords = true,
   selections,
 }: {
   enterDelay?: string;
+  showKeywords?: boolean;
   selections: DailyTarotCardSelection[];
 }) {
-  const keywords = resolveDictionaryKeywordsFromSelections(selections);
-  const advice = cleanTarotDisplayText(resolveDictionaryAdviceFromSelections(selections));
+  const keywords = showKeywords ? resolveDictionaryKeywordsFromSelections(selections) : [];
+  const cardMessages = resolveDictionaryCardMessagesFromSelections(selections);
 
-  if (keywords.length === 0 && !advice) {
+  if (keywords.length === 0 && cardMessages.length === 0) {
     return null;
   }
 
@@ -1046,10 +1063,19 @@ function DailyTarotFixedGuidanceSection({
           </div>
         </>
       ) : null}
-      {advice ? (
+      {cardMessages.length > 0 ? (
         <div className={keywords.length > 0 ? "mt-3 border-t border-[#b98255]/25 pt-3" : ""}>
           <p className="text-[12px] font-bold text-[#f4b65f]">카드 메시지</p>
-          <p className="mt-1 text-[13px] leading-6 text-[#f2c27d]">{advice}</p>
+          <div data-daily-tarot-card-messages="true" className="mt-2 space-y-3">
+            {cardMessages.map((cardMessage) => (
+              <div key={cardMessage.key} className="text-[13px] leading-6">
+                {cardMessages.length > 1 ? (
+                  <p className="mb-1 text-[11px] font-bold text-[#c7a98a]">{cardMessage.label}</p>
+                ) : null}
+                <p className="text-[#f2c27d]">{cardMessage.message}</p>
+              </div>
+            ))}
+          </div>
         </div>
       ) : null}
     </div>
@@ -1195,15 +1221,14 @@ function DailyTarotResult({
             <p className="mt-1 text-[13px] leading-6 text-[#fff3d7]/88">{cardReading.reading}</p>
           </div>
         ))}
-        <p className="border-t border-[#b98255]/25 pt-3 text-[13px] leading-6 text-[#f2c27d]">
-          {cleanTarotDisplayText(reading.advice)}
-        </p>
       </div>
+
+      <DailyTarotFixedGuidanceSection enterDelay="320ms" selections={cards} showKeywords={false} />
 
       <div
         className="tarot-result-content-enter mt-4 grid grid-cols-2 gap-3"
         data-daily-tarot-result-actions="true"
-        style={{ "--tarot-result-enter-delay": "320ms" } as CSSProperties}
+        style={{ "--tarot-result-enter-delay": "420ms" } as CSSProperties}
       >
         <AssetTextButton
           frame={manyangAssets.buttons.compactPrimary}
@@ -1230,14 +1255,14 @@ function DailyTarotResult({
           type="button"
           onClick={onSelectThreeCard}
           className="tarot-result-content-enter mx-auto mt-4 flex items-center justify-center gap-2 rounded-full border border-[#f2c27d]/55 bg-[#05040b]/54 px-5 py-2.5 text-[13px] font-bold text-[#f2c27d] shadow-[0_10px_24px_rgba(0,0,0,0.22)] focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
-          style={{ "--tarot-result-enter-delay": "420ms" } as CSSProperties}
+          style={{ "--tarot-result-enter-delay": "520ms" } as CSSProperties}
         >
           3장 리딩
           <TarotThreeCardAccessTag />
         </button>
       ) : null}
 
-      <DailyTarotResultDisclaimer />
+      <DailyTarotResultDisclaimer enterDelay="620ms" />
 
       {zoomedSelection ? (
         <TarotCardZoomDialog onClose={() => setZoomedSelection(null)} selection={zoomedSelection} />
@@ -1325,7 +1350,9 @@ export function DailyTarotClient({
 }: DailyTarotClientProps) {
   const [drawIdentityKey, setDrawIdentityKey] = useState(() => createInitialDailyTarotDrawIdentityKey(initialUserId));
   const options = useMemo(() => createDailyTarotOptions(appDate, { drawIdentityKey }), [appDate, drawIdentityKey]);
-  const [selectedSpread, setSelectedSpread] = useState<TarotSpread>("daily_one_card");
+  const [selectedSpread, setSelectedSpread] = useState<TarotSpread>(() =>
+    !ignoreStoredReading && isCompletedLlmReading(initialReading) ? initialReading.spread : "daily_one_card",
+  );
   const [selectedReading, setSelectedReading] = useState<DailyTarotReading | null>(
     !ignoreStoredReading && isCompletedLlmReading(initialReading) ? initialReading : null,
   );

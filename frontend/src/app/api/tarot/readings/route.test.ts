@@ -190,10 +190,10 @@ describe("POST /api/tarot/readings", () => {
       spread: "daily_one_card",
       appDate: "2026-05-31",
       keywords: generatedOneCard.keywords,
-      advice: getTarotMajorCardById(0)?.upright.advice,
+      advice: getTarotMajorCardById(0)?.upright.cardMessage,
       generated: {
         ...generatedOneCard,
-        advice: getTarotMajorCardById(0)?.upright.advice,
+        advice: getTarotMajorCardById(0)?.upright.cardMessage,
       },
       card: {
         id: 0,
@@ -314,9 +314,9 @@ describe("POST /api/tarot/readings", () => {
     expect(body).toMatchObject({
       source: "llm",
       spread: "daily_three_card",
-      advice: getTarotMajorCardById(2)?.upright.advice,
+      advice: getTarotMajorCardById(2)?.upright.cardMessage,
       generated: {
-        advice: getTarotMajorCardById(2)?.upright.advice,
+        advice: getTarotMajorCardById(2)?.upright.cardMessage,
         cardReadings: [
           { position: "situation" },
           { position: "flow" },
