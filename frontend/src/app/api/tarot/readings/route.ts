@@ -11,6 +11,7 @@ import {
 import { getTarotMajorCardById, type TarotMajorCard } from "@/lib/tarot-major-cards";
 import {
   persistCompletedTarotReading,
+  findCompletedTarotReadingForUser,
   isAdminUser as isAdminUserFromDb,
   type PersistCompletedTarotReadingInput,
 } from "@/lib/server/manyang-db";
@@ -67,6 +68,11 @@ export type TarotReadingsRouteDependencies = {
     options?: GenerateTarotReadingOptions,
   ) => Promise<TarotReadingResult>;
   persistCompletedTarotReading?: (input: PersistCompletedTarotReadingInput) => Promise<unknown>;
+  findCompletedTarotReadingForUser?: (
+    userId: string,
+    appDate: string,
+    spread: TarotSpread,
+  ) => Promise<DailyTarotReading | null>;
 };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -318,6 +324,19 @@ async function persistCompletedTarotReadingBestEffort(
   }
 }
 
+async function findExistingTarotReadingBestEffort(
+  userId: string,
+  appDate: string,
+  spread: TarotSpread,
+  find: (userId: string, appDate: string, spread: TarotSpread) => Promise<DailyTarotReading | null>,
+): Promise<DailyTarotReading | null> {
+  try {
+    return await find(userId, appDate, spread);
+  } catch {
+    return null;
+  }
+}
+
 export async function handleTarotReadingRequest(
   request: Request,
   dependencies: TarotReadingsRouteDependencies = {},
@@ -329,6 +348,7 @@ export async function handleTarotReadingRequest(
     createProvider: createDefaultProvider,
     generateTarotReadingForUser,
     persistCompletedTarotReading,
+    findCompletedTarotReadingForUser,
     ...dependencies,
   };
 
@@ -349,6 +369,22 @@ export async function handleTarotReadingRequest(
   const userId = await resolvedDependencies.getAuthenticatedUserId();
   const accessPlan = await resolvedDependencies.getAccessPlanForUser(userId);
   const isAdmin = userId ? await resolvedDependencies.isAdminUser(userId) : false;
+
+  // 재요청 단락: 로그인 유저가 같은 날 같은 스프레드로 이미 받은 리딩이 있으면
+  // LLM을 다시 부르지 않고 저장본을 그대로 돌려준다(같은 날 → 같은 리딩, 추가 비용 없음).
+  // 어드민은 재테스트를 위해 통과시킨다.
+  if (userId && !isAdmin) {
+    const existingReading = await findExistingTarotReadingBestEffort(
+      userId,
+      validatedBody.value.appDate,
+      validatedBody.value.spread,
+      resolvedDependencies.findCompletedTarotReadingForUser,
+    );
+
+    if (existingReading) {
+      return Response.json(existingReading);
+    }
+  }
 
   if (
     validatedBody.value.spread === "daily_three_card" &&

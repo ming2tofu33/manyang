@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 import { getTarotMajorCardById } from "@/lib/tarot-major-cards";
+import type { DailyTarotReading } from "@/lib/daily-tarot";
 
 import { handleTarotReadingRequest, resolveTarotLlmTimeoutMs } from "./route";
 
@@ -221,6 +222,72 @@ describe("POST /api/tarot/readings", () => {
       userId: "00000000-0000-4000-8000-000000000001",
       reading: body,
     });
+  });
+
+  test("returns the existing reading without calling the LLM for returning users", async () => {
+    const existingReading = {
+      id: "daily-tarot-daily_one_card-2026-05-31",
+      spread: "daily_one_card",
+      source: "llm",
+      appDate: "2026-05-31",
+      selectedAt: "2026-05-31T09:00:00.000Z",
+      card: { id: 0 },
+      orientation: "upright",
+      position: "today",
+      cards: [{ position: "today", orientation: "upright", card: { id: 0 } }],
+      keywords: ["start"],
+      title: "stored title",
+      message: "stored overview",
+      advice: "stored advice",
+      generated: generatedOneCard,
+    } as unknown as DailyTarotReading;
+    const generateTarotReadingForUser = vi.fn();
+    const findCompletedTarotReadingForUser = vi.fn(async () => existingReading);
+    const persistCompletedTarotReading = vi.fn();
+
+    const response = await handleTarotReadingRequest(createJsonRequest(createOneCardBody()), {
+      getAuthenticatedUserId: async () => "00000000-0000-4000-8000-000000000001",
+      getAccessPlanForUser: async () => "free_account",
+      isAdminUser: async () => false,
+      findCompletedTarotReadingForUser,
+      createProvider: () => ({ generateJson: async () => generatedOneCard }),
+      generateTarotReadingForUser,
+      persistCompletedTarotReading,
+    });
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({ id: existingReading.id, source: "llm" });
+    expect(findCompletedTarotReadingForUser).toHaveBeenCalledWith(
+      "00000000-0000-4000-8000-000000000001",
+      "2026-05-31",
+      "daily_one_card",
+    );
+    expect(generateTarotReadingForUser).not.toHaveBeenCalled();
+    expect(persistCompletedTarotReading).not.toHaveBeenCalled();
+  });
+
+  test("regenerates for admins so they can retest", async () => {
+    const findCompletedTarotReadingForUser = vi.fn(
+      async () => ({ id: "stale" }) as unknown as DailyTarotReading,
+    );
+    const generateTarotReadingForUser = vi.fn(async () => ({
+      status: "ok" as const,
+      reading: generatedOneCard,
+    }));
+
+    const response = await handleTarotReadingRequest(createJsonRequest(createOneCardBody()), {
+      getAuthenticatedUserId: async () => "00000000-0000-4000-8000-000000000001",
+      getAccessPlanForUser: async () => "free_account",
+      isAdminUser: async () => true,
+      findCompletedTarotReadingForUser,
+      createProvider: () => ({ generateJson: async () => generatedOneCard }),
+      generateTarotReadingForUser,
+      persistCompletedTarotReading: async () => undefined,
+    });
+
+    expect(response.status).toBe(200);
+    expect(findCompletedTarotReadingForUser).not.toHaveBeenCalled();
+    expect(generateTarotReadingForUser).toHaveBeenCalled();
   });
 
   test("returns a generated three-card tarot reading for Moon Pass users", async () => {
