@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useSyncExternalStore } from "react";
 
 import { AssetImageTextButton } from "./asset-primitives";
 import {
@@ -18,10 +18,7 @@ import { getNightCheckInSnapshotFromBrowser, subscribeToNightCheckIn } from "@/l
 import { cn } from "@/lib/styles";
 import { useAccessPlan } from "@/lib/use-access-plan";
 import { useAdminLabTimeOverride } from "@/lib/use-admin-lab-time-override";
-
-function getCurrentDateSnapshot(): Date | null {
-  return null;
-}
+import { useCurrentAppDate } from "@/lib/use-current-app-date";
 
 export function PrimaryDreamButton() {
   return (
@@ -66,21 +63,15 @@ function DailyTarotButton() {
   );
 }
 
-export function TodayHomeActions() {
+export function TodayHomeActions({ currentDate: currentDateOverride }: { currentDate?: Date } = {}) {
   const accessState = useAccessPlan();
   const adminLabTime = useAdminLabTimeOverride(accessState.role);
   const checkIn = useSyncExternalStore(subscribeToNightCheckIn, getNightCheckInSnapshotFromBrowser, () => null);
-  const [currentDate, setCurrentDate] = useState<Date | null>(getCurrentDateSnapshot);
+  const currentDate = useCurrentAppDate();
 
-  useEffect(() => {
-    const timer = window.setTimeout(() => setCurrentDate(new Date()), 0);
-
-    return () => window.clearTimeout(timer);
-  }, []);
-
-  const currentHomeDate = adminLabTime.forcedDate ?? currentDate ?? new Date("2026-05-24T08:00:00");
-  const homeState = getHomeState(currentHomeDate, checkIn);
-  const isNight = homeState.mode === "night";
+  const currentHomeDate = currentDateOverride ?? adminLabTime.forcedDate ?? currentDate;
+  const homeState = currentHomeDate ? getHomeState(currentHomeDate, checkIn) : null;
+  const isNight = homeState?.mode === "night";
 
   return (
     <div
@@ -94,12 +85,12 @@ export function TodayHomeActions() {
             homeActionQuestionClassName,
             "text-[#fff3d7] [text-shadow:0_0_14px_rgba(0,0,0,0.82)]",
             "text-[var(--manyang-cat-home-text)] [text-shadow:var(--manyang-cat-home-text-shadow)]",
-            homeState.checkInBadge ? "max-w-[19rem] text-[14px] leading-5" : "text-[15px]",
+            homeState?.checkInBadge ? "max-w-[19rem] text-[14px] leading-5" : "text-[15px]",
           )}
         >
-          {homeState.question}
+          {homeState?.question ?? "오늘의 기록 시간을 확인하고 있어요"}
         </p>
-        {homeState.checkInBadge ? (
+        {homeState?.checkInBadge ? (
           <p className="mx-auto mt-1.5 max-w-[18rem] rounded-full border border-[color:var(--manyang-cat-badge-border)] bg-[var(--manyang-cat-badge-bg)] px-3 py-1.5 text-[12px] font-semibold text-[var(--manyang-cat-badge-text)] backdrop-blur-md">
             {homeState.checkInBadge}
           </p>
@@ -109,7 +100,7 @@ export function TodayHomeActions() {
       <div className={cn(isNight ? nightHomeActionGroupClassName : homeActionGroupClassName)}>
         <PrimaryDreamButton />
         <DailyTarotButton />
-        {isNight ? null : <SecondaryForgotLink />}
+        {homeState && !isNight ? <SecondaryForgotLink /> : null}
       </div>
     </div>
   );

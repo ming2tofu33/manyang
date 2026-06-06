@@ -4,6 +4,7 @@ import Image from "next/image";
 import { FormEvent, useEffect, useState, useSyncExternalStore } from "react";
 
 import { AssetTextButton } from "@/components/asset-primitives";
+import { RoutineRecordAvailabilityNotice } from "@/components/routine-record-availability-notice";
 import { manyangAssets, type KeywordIconName } from "@/lib/manyang-assets";
 import {
   createNightCheckInRecord,
@@ -23,10 +24,12 @@ import {
   nightCheckInMoods,
   nightCheckInNoteMaxLength,
 } from "@/lib/night-checkin-options";
+import { getArchiveRecordEntryState } from "@/lib/record-entry-availability";
 import { saveNightCheckInToApi } from "@/lib/routine-record-api";
 import { cn, ui } from "@/lib/styles";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { mergeRemoteNightCheckInRecord } from "@/lib/use-routine-records";
+import { useCurrentAppDate } from "@/lib/use-current-app-date";
 
 type OptionButtonProps = {
   label: string;
@@ -55,8 +58,9 @@ function OptionButton({ label, icon, isSelected, onClick }: OptionButtonProps) {
   );
 }
 
-export function NightCheckInForm() {
+export function NightCheckInForm({ currentDate }: { currentDate?: Date } = {}) {
   const storedCheckIn = useSyncExternalStore(subscribeToNightCheckIn, getNightCheckInSnapshotFromBrowser, () => null);
+  const liveDate = useCurrentAppDate();
   const [selectedMoodId, setSelectedMoodId] = useState<string | null>(null);
   const [selectedConditionId, setSelectedConditionId] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
@@ -65,6 +69,8 @@ export function NightCheckInForm() {
   const [isSavingRoutineRecord, setIsSavingRoutineRecord] = useState(false);
   const [routineSaveError, setRoutineSaveError] = useState(false);
   const [showGuestPersistencePrompt, setShowGuestPersistencePrompt] = useState(true);
+  const availabilityDate = currentDate ?? liveDate;
+  const nightAvailability = availabilityDate ? getArchiveRecordEntryState(availabilityDate).night : null;
   const todayDate = getNightCheckInAppDate();
   const savedCheckIn = savedCheckInOverride ?? storedCheckIn;
   const hasSavedCheckInToday = savedCheckIn?.checkInDate === todayDate;
@@ -105,6 +111,10 @@ export function NightCheckInForm() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (!nightAvailability?.isAvailable) {
+      return;
+    }
 
     const record = createNightCheckInRecord({
       moodId: selectedMood.id,
@@ -148,9 +158,33 @@ export function NightCheckInForm() {
     saveNightCheckInToBrowser(saveResult.record, { isAuthenticated });
   }
 
+  if (!nightAvailability) {
+    return (
+      <RoutineRecordAvailabilityNotice
+        title="기록 가능 시간을 확인하고 있어요"
+        description="잠시 후 지금 남길 수 있는 기록이 열려요."
+        ctaHref="/"
+        ctaLabel="오늘 화면으로 돌아가기"
+        iconSrc={manyangAssets.pageIcons.nightRecord}
+      />
+    );
+  }
+
+  if (!nightAvailability.isAvailable) {
+    return (
+      <RoutineRecordAvailabilityNotice
+        title="지금은 꿈의 발자국 시간이에요"
+        description={nightAvailability.disabledReason ?? "저녁 6시부터 밤의 기록을 남길 수 있어요."}
+        ctaHref="/morning"
+        ctaLabel="꿈의 발자국 남기기"
+        iconSrc={manyangAssets.pageIcons.morningPawprint}
+      />
+    );
+  }
+
   return (
     <form onSubmit={handleSubmit} className="mt-0 space-y-1.5 pb-2">
-      <section className="relative -mt-7 h-[16rem]">
+      <section className="relative -mt-7 h-[17.25rem]">
         <div className="absolute right-7 top-[3.35rem] max-w-[9.6rem] rounded-[1rem] border border-[#8b563f]/70 bg-[rgba(7,6,17,0.72)] px-3 py-2 text-center text-[12px] font-semibold leading-[1.35] text-[#d8c7bc] shadow-[0_0_18px_rgba(0,0,0,0.34)]">
           오늘의 느낌은
           <br />
@@ -162,7 +196,7 @@ export function NightCheckInForm() {
         </div>
       </section>
 
-      <section className="relative z-10 -mt-8 rounded-[1.05rem] border border-[#7c4a38]/72 bg-[rgba(5,4,12,0.78)] p-2 shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md">
+      <section className="relative z-10 -mt-2 rounded-[1.05rem] border border-[#7c4a38]/72 bg-[rgba(5,4,12,0.78)] p-2 shadow-[0_0_28px_rgba(0,0,0,0.28)] ring-1 ring-[#d799ff]/10 backdrop-blur-md">
         <div className="mb-2 flex items-center gap-2 text-[#ffd98a]">
           <span className="relative h-5 w-5">
             <Image src={manyangAssets.sectionIcons.nightMood} alt="" fill sizes="20px" unoptimized className="object-contain opacity-90" />

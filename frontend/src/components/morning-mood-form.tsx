@@ -4,6 +4,7 @@ import Image from "next/image";
 import { FormEvent, type ReactNode, useEffect, useState, useSyncExternalStore } from "react";
 
 import { AssetImageTextButton, AssetTextButton } from "@/components/asset-primitives";
+import { RoutineRecordAvailabilityNotice } from "@/components/routine-record-availability-notice";
 import { getManyangAppDate } from "@/lib/app-date";
 import {
   createMorningMoodRecord,
@@ -28,7 +29,9 @@ import {
   morningMoodOptions,
 } from "@/lib/morning-mood-options";
 import { manyangAssets, type KeywordIconName } from "@/lib/manyang-assets";
+import { getArchiveRecordEntryState } from "@/lib/record-entry-availability";
 import { cn, ui } from "@/lib/styles";
+import { useCurrentAppDate } from "@/lib/use-current-app-date";
 
 type ChoiceChipProps = {
   label: string;
@@ -129,12 +132,13 @@ export function createMorningMoodRecordFromFormState(input: {
   });
 }
 
-export function MorningMoodForm() {
+export function MorningMoodForm({ currentDate }: { currentDate?: Date } = {}) {
   const storedRecords = useSyncExternalStore(
     subscribeToMorningMood,
     getMorningMoodRecordsSnapshotFromBrowser,
     getEmptyMorningMoodRecordsSnapshot,
   );
+  const liveDate = useCurrentAppDate();
   const todayDate = getManyangAppDate();
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [selectedBodyFeeling, setSelectedBodyFeeling] = useState<string | null>(null);
@@ -145,6 +149,8 @@ export function MorningMoodForm() {
   const [isSavingRoutineRecord, setIsSavingRoutineRecord] = useState(false);
   const [routineSaveError, setRoutineSaveError] = useState(false);
   const [showGuestPersistencePrompt, setShowGuestPersistencePrompt] = useState(true);
+  const availabilityDate = currentDate ?? liveDate;
+  const morningAvailability = availabilityDate ? getArchiveRecordEntryState(availabilityDate).morning : null;
   const savedRecord =
     savedRecordOverride ?? storedRecords.find((record) => record.moodDate === todayDate) ?? null;
   const activeMood = selectedMood ?? savedRecord?.mood ?? "";
@@ -181,6 +187,10 @@ export function MorningMoodForm() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (!morningAvailability?.isAvailable) {
+      return;
+    }
 
     const record = createMorningMoodRecordFromFormState({
       mood: activeMood,
@@ -237,9 +247,51 @@ export function MorningMoodForm() {
     setPawprintCreated(pawprintResult.created);
   }
 
+  if (!morningAvailability) {
+    return (
+      <RoutineRecordAvailabilityNotice
+        title="기록 가능 시간을 확인하고 있어요"
+        description="잠시 후 지금 남길 수 있는 기록이 열려요."
+        ctaHref="/"
+        ctaLabel="오늘 화면으로 돌아가기"
+        iconSrc={manyangAssets.pageIcons.morningPawprint}
+      />
+    );
+  }
+
+  if (!morningAvailability.isAvailable) {
+    return (
+      <RoutineRecordAvailabilityNotice
+        title="지금은 밤의 기록 시간이에요"
+        description={morningAvailability.disabledReason ?? "아침 5시부터 꿈의 발자국을 남길 수 있어요."}
+        ctaHref="/night"
+        ctaLabel="밤의 기록 남기기"
+        iconSrc={manyangAssets.pageIcons.nightRecord}
+      />
+    );
+  }
+
   return (
     <form onSubmit={handleSubmit} className="mt-0 space-y-2.5 pb-5">
-      <section className="h-[13rem]" aria-hidden="true" />
+      <section className="relative h-[13rem]" data-morning-pawprint-hero="true">
+        <div
+          className="absolute left-4 top-[0.85rem] max-w-[12.75rem] rounded-[1rem] border border-[#8b563f]/70 bg-[rgba(7,6,17,0.72)] px-3 py-2 text-center text-[11.5px] font-semibold leading-[1.38] text-[#d8c7bc] shadow-[0_0_18px_rgba(0,0,0,0.34)]"
+          data-morning-pawprint-speech="true"
+        >
+          <span className="whitespace-pre-line">{morningMoodCopy.pageSubtitle}</span>
+          <span className="relative ml-1 inline-block h-4 w-4 translate-y-0.5">
+            <Image src={manyangAssets.semanticIcons.paw} alt="" fill sizes="16px" unoptimized className="object-contain opacity-80" />
+          </span>
+          <span
+            className="absolute -right-[0.62rem] bottom-3 h-0 w-0 border-y-[0.55rem] border-l-[0.72rem] border-y-transparent border-l-[#8b563f]/70"
+            aria-hidden="true"
+          />
+          <span
+            className="absolute -right-[0.5rem] bottom-[0.84rem] h-0 w-0 border-y-[0.47rem] border-l-[0.62rem] border-y-transparent border-l-[rgba(7,6,17,0.72)]"
+            aria-hidden="true"
+          />
+        </div>
+      </section>
 
       <Panel title={morningMoodCopy.moodTitle} iconSrc={manyangAssets.sectionIcons.morningMood}>
         <div className="grid grid-cols-3 gap-1.5">

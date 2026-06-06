@@ -10,10 +10,13 @@ describe("archive record entry availability", () => {
 
   test("enables morning records from 05:00 until before 18:00 Korea time", () => {
     const morningState = getArchiveRecordEntryState(new Date("2026-05-31T23:00:00.000Z"));
+    const lastMorningState = getArchiveRecordEntryState(new Date("2026-06-01T08:59:00.000Z"));
     const eveningState = getArchiveRecordEntryState(new Date("2026-06-01T09:00:00.000Z"));
 
     expect(morningState.morning.isAvailable).toBe(true);
     expect(morningState.night.isAvailable).toBe(false);
+    expect(lastMorningState.morning.isAvailable).toBe(true);
+    expect(lastMorningState.night.isAvailable).toBe(false);
     expect(eveningState.morning.isAvailable).toBe(false);
     expect(eveningState.night.isAvailable).toBe(true);
   });

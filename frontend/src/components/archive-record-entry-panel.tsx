@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
 
 import {
   type ArchiveRecordEntryAvailability,
@@ -13,6 +12,7 @@ import { manyangAssets } from "@/lib/manyang-assets";
 import { cn, ui } from "@/lib/styles";
 import { useAccessPlan } from "@/lib/use-access-plan";
 import { useAdminLabTimeOverride } from "@/lib/use-admin-lab-time-override";
+import { useCurrentAppDate } from "@/lib/use-current-app-date";
 
 type ArchiveRecordEntryDefinition = {
   key: ArchiveRecordEntryKey;
@@ -22,32 +22,23 @@ type ArchiveRecordEntryDefinition = {
   icon: string;
 };
 
-const fallbackArchiveEntryDate = new Date("2026-05-24T08:00:00.000+09:00");
-
-let currentArchiveEntryDateSnapshot: Date | null = null;
-
-function getCurrentArchiveEntryDateSnapshot(): Date {
-  currentArchiveEntryDateSnapshot ??= new Date();
-
-  return currentArchiveEntryDateSnapshot;
-}
-
-function getServerArchiveEntryDateSnapshot(): Date | null {
-  return null;
-}
-
-function subscribeToArchiveEntryDate(onStoreChange: () => void): () => void {
-  if (typeof window === "undefined") {
-    return () => undefined;
-  }
-
-  const timer = window.setInterval(() => {
-    currentArchiveEntryDateSnapshot = new Date();
-    onStoreChange();
-  }, 60_000);
-
-  return () => window.clearInterval(timer);
-}
+const pendingEntryState = {
+  dream: {
+    key: "dream",
+    isAvailable: true,
+    disabledReason: null,
+  },
+  morning: {
+    key: "morning",
+    isAvailable: false,
+    disabledReason: "기록 가능 시간을 확인하고 있어요.",
+  },
+  night: {
+    key: "night",
+    isAvailable: false,
+    disabledReason: "기록 가능 시간을 확인하고 있어요.",
+  },
+} as const satisfies ReturnType<typeof getArchiveRecordEntryState>;
 
 const recordEntries: ArchiveRecordEntryDefinition[] = [
   {
@@ -152,13 +143,9 @@ function RecordEntryCard({
 export function ArchiveRecordEntryPanel({ currentDate }: { currentDate?: Date }) {
   const accessState = useAccessPlan();
   const adminLabTime = useAdminLabTimeOverride(accessState.role);
-  const liveDate = useSyncExternalStore(
-    subscribeToArchiveEntryDate,
-    getCurrentArchiveEntryDateSnapshot,
-    getServerArchiveEntryDateSnapshot,
-  );
-  const activeDate = currentDate ?? adminLabTime.forcedDate ?? liveDate ?? fallbackArchiveEntryDate;
-  const entryState = getArchiveRecordEntryState(activeDate);
+  const liveDate = useCurrentAppDate();
+  const activeDate = currentDate ?? adminLabTime.forcedDate ?? liveDate;
+  const entryState = activeDate ? getArchiveRecordEntryState(activeDate) : pendingEntryState;
 
   return (
     <section

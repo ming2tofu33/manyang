@@ -25,6 +25,8 @@ vi.mock("@/lib/home-mode", async (importOriginal) => {
 
 import { PrimaryDreamButton, TodayHomeActions } from "./today-home-actions";
 
+const morningDate = new Date("2026-06-01T01:00:00.000Z");
+
 describe("TodayHomeActions", () => {
   beforeEach(() => {
     mockedHomeState.value = {
@@ -38,7 +40,7 @@ describe("TodayHomeActions", () => {
   });
 
   it("renders the primary dream button as dream telling copy", () => {
-    const markup = renderToStaticMarkup(<TodayHomeActions />);
+    const markup = renderToStaticMarkup(<TodayHomeActions currentDate={morningDate} />);
 
     expect(markup).toContain("꿈 들려주기");
     expect(markup).not.toContain("꿈 해몽하기");
@@ -57,7 +59,7 @@ describe("TodayHomeActions", () => {
   });
 
   it("renders the forgotten-dream action as a text link", () => {
-    const markup = renderToStaticMarkup(<TodayHomeActions />);
+    const markup = renderToStaticMarkup(<TodayHomeActions currentDate={morningDate} />);
 
     expect(markup).toContain('href="/morning"');
     expect(markup).toContain("기억나지 않아요");
@@ -68,7 +70,7 @@ describe("TodayHomeActions", () => {
   });
 
   it("keeps daily tarot as the second home action", () => {
-    const markup = renderToStaticMarkup(<TodayHomeActions />);
+    const markup = renderToStaticMarkup(<TodayHomeActions currentDate={morningDate} />);
 
     expect(markup).toContain('href="/tarot"');
     expect(markup).toContain("오늘의 타로 보기");
@@ -79,7 +81,7 @@ describe("TodayHomeActions", () => {
   });
 
   it("does not render home cat theme switching controls", () => {
-    const markup = renderToStaticMarkup(<TodayHomeActions />);
+    const markup = renderToStaticMarkup(<TodayHomeActions currentDate={morningDate} />);
 
     expect(markup).not.toContain("오늘의 테마");
     expect(markup).not.toContain("바꾸기");
@@ -97,7 +99,7 @@ describe("TodayHomeActions", () => {
       checkInBadge: null,
     };
 
-    const markup = renderToStaticMarkup(<TodayHomeActions />);
+    const markup = renderToStaticMarkup(<TodayHomeActions currentDate={morningDate} />);
 
     expect(markup).toContain("꿈 들려주기");
     expect(markup).not.toContain('href="/night"');
@@ -106,7 +108,7 @@ describe("TodayHomeActions", () => {
   });
 
   it("does not render the legacy dream seed home CTA", () => {
-    const markup = renderToStaticMarkup(<TodayHomeActions />);
+    const markup = renderToStaticMarkup(<TodayHomeActions currentDate={morningDate} />);
 
     expect(markup).not.toContain('href="/seed"');
     expect(markup).not.toContain("꿈 씨앗 심기");
