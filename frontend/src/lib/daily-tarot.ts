@@ -210,8 +210,23 @@ function isDailyTarotPosition(value: unknown): value is DailyTarotPosition {
   return value === "today" || value === "situation" || value === "flow" || value === "advice";
 }
 
-function expectedPositionsForSpread(spread: TarotSpread): DailyTarotPosition[] {
+function expectedSelectionPositionsForSpread(spread: TarotSpread): DailyTarotPosition[] {
   return spread === "daily_three_card" ? ["situation", "flow", "advice"] : ["today"];
+}
+
+function expectedGeneratedCardReadingPositionsForSpread(spread: TarotSpread): DailyTarotPosition[] {
+  return spread === "daily_three_card" ? ["situation", "flow", "advice"] : [];
+}
+
+function hasExpectedGeneratedCardReadingsForSpread(
+  cardReadings: DailyTarotGeneratedCardReading[],
+  spread: TarotSpread,
+): boolean {
+  if (spread === "daily_one_card") {
+    return hasExactPositions(cardReadings, []) || hasExactPositions(cardReadings, ["today"]);
+  }
+
+  return hasExactPositions(cardReadings, expectedGeneratedCardReadingPositionsForSpread(spread));
 }
 
 function isValidStoredDrawIdentityKey(value: unknown): value is string | undefined {
@@ -271,7 +286,7 @@ function isDailyTarotGeneratedReading(value: unknown, spread: TarotSpread): valu
     value.overview.trim().length > 0 &&
     isOptionalDailyTarotGeneratedKeywords(value.keywords) &&
     cardReadings.every(isDailyTarotGeneratedCardReading) &&
-    hasExactPositions(cardReadings, expectedPositionsForSpread(spread)) &&
+    hasExpectedGeneratedCardReadingsForSpread(cardReadings, spread) &&
     typeof value.advice === "string" &&
     value.advice.trim().length > 0
   );
@@ -299,7 +314,7 @@ function isStoredDailyTarotReading(value: unknown): value is DailyTarotReading {
     isTarotOrientation(value.orientation) &&
     isDailyTarotPosition(value.position) &&
     cards.every(isDailyTarotCardSelection) &&
-    hasExactPositions(cards, expectedPositionsForSpread(spread)) &&
+    hasExactPositions(cards, expectedSelectionPositionsForSpread(spread)) &&
     isDailyTarotGeneratedReading(generated, spread) &&
     isStringArray(value.keywords) &&
     typeof value.title === "string" &&

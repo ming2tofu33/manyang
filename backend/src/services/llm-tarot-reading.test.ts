@@ -9,33 +9,33 @@ function createTarotCard(id: number, nameKo: string) {
     nameKo,
     nameEn: `CARD ${id}`,
     keywords: ["focus", "choice"],
-    visualSymbols: ["light", "gate"],
+    visualSymbols: ["빛", "문"],
     symbolMeanings: [
       {
-        symbol: "light",
-        meaning: "The light points to the part of the situation that is already visible.",
+        symbol: "빛",
+        meaning: "이미 드러난 부분과 아직 보이지 않는 부분 사이의 차이를 비춥니다.",
       },
       {
-        symbol: "gate",
-        meaning: "The gate marks a threshold that can be crossed with one practical choice.",
+        symbol: "문",
+        meaning: "한 장면에서 다음 장면으로 넘어가는 경계를 뜻합니다.",
       },
     ],
-    mood: "A bright but quiet card mood.",
+    mood: "밝지만 긴장이 남아 있는 카드 분위기입니다.",
     upright: {
-      summary: "Upright summary",
-      dailyFlow: "Upright daily flow",
-      cardMessage: "Upright card message",
-      readingScene: "The upright card scene turns available focus into a clear next step.",
-      reflectionQuestion: "What part of the situation is already asking for attention?",
-      smallAction: "Choose one visible next step and take it before adding more plans.",
+      summary: "정방향 요약",
+      dailyFlow: "정방향 하루 흐름",
+      cardMessage: "정방향 카드 메시지",
+      readingScene: "정방향 장면은 이미 보이는 단서가 다음 선택의 기준이 되는 모습을 보여줍니다.",
+      reflectionQuestion: "무엇이 이미 드러나 있나요?",
+      smallAction: "보이는 일을 하나 실행하세요.",
     },
     reversed: {
-      summary: "Reversed summary",
-      dailyFlow: "Reversed daily flow",
-      cardMessage: "Reversed card message",
-      readingScene: "The reversed card scene shows focus scattering before the next threshold.",
-      reflectionQuestion: "Where is hesitation turning into avoidable delay?",
-      smallAction: "Remove one distraction before deciding how to cross the threshold.",
+      summary: "역방향 요약",
+      dailyFlow: "역방향 하루 흐름",
+      cardMessage: "역방향 카드 메시지",
+      readingScene: "역방향 장면은 생각이 흩어진 채 문턱 앞에서 머무르는 모습을 보여줍니다.",
+      reflectionQuestion: "무엇을 미루고 있나요?",
+      smallAction: "방해 요소 하나를 치우세요.",
     },
   };
 }
@@ -90,7 +90,7 @@ function createProvider(response: unknown): DreamReadingLlmProvider & { requests
 }
 
 const generatedDisplayFields = {
-  keywords: ["opening", "choice", "attention"],
+  keywords: ["시작", "선택", "관찰"],
 };
 
 describe("generateTarotReadingForUser", () => {
@@ -102,19 +102,14 @@ describe("generateTarotReadingForUser", () => {
     });
   });
 
-  test("generates a one-card tarot reading from provider JSON", async () => {
+  test("generates a one-card tarot reading from overview-focused provider JSON", async () => {
     const provider = createProvider({
       ...generatedDisplayFields,
-      title: "오늘은 가볍게 첫발을 떼는 날",
-      overview: "선택한 바보 카드는 오늘 낯선 길 앞에서 너무 많은 확신을 기다리기보다 작은 움직임을 먼저 만들어 보라고 말합니다.",
-      cardReadings: [
-        {
-          position: "today",
-          heading: "오늘의 핵심",
-          reading: "정방향 바보는 시작의 가벼움을 보여주며, 오늘은 완벽한 계획보다 작게 열어 보는 태도가 잘 맞습니다.",
-        },
-      ],
-      advice: "오늘은 크게 결론내리기보다 한 가지 작은 시도를 정하고, 그 결과를 보고 다음 걸음을 정하세요.",
+      title: "오늘은 첫 장면을 여는 날",
+      overview:
+        "바보 카드의 정방향은 아직 모든 조건이 정리되지 않았어도 새 장면 앞에 선 마음을 비춥니다. 절벽 끝의 여행자는 확신보다 열린 감각을 먼저 들고 있고, 작은 보따리는 지금 손에 있는 경험만으로도 하루를 시작할 수 있음을 보여줍니다.",
+      cardReadings: [],
+      advice: "이 provider advice는 결과에 포함되지 않아야 합니다.",
     });
 
     const result = await generateTarotReadingForUser(oneCardInput, { provider, providerTimeoutMs: 1200 });
@@ -122,32 +117,63 @@ describe("generateTarotReadingForUser", () => {
     expect(result).toMatchObject({
       status: "ok",
       reading: {
-        title: "오늘은 가볍게 첫발을 떼는 날",
-        cardReadings: [
-          {
-            position: "today",
-            heading: "오늘의 핵심",
-          },
-        ],
+        title: "오늘은 첫 장면을 여는 날",
+        overview: expect.stringContaining("바보 카드의 정방향"),
+        cardReadings: [],
       },
     });
     expect(provider.requests[0]).toMatchObject({
       schemaName: "tarot_reading_draft",
       timeoutMs: 1200,
     });
-    expect(provider.requests[0]?.input).toContain("바보");
-    expect(provider.requests[0]?.input).toContain("symbolMeanings");
-    expect(provider.requests[0]?.input).toContain("The upright card scene turns available focus into a clear next step.");
-    expect(provider.requests[0]?.input).toContain("cardMessage");
-    expect(provider.requests[0]?.input).toContain("readingScene");
-    expect(provider.requests[0]?.input).not.toContain("selectedMeaning.story");
-    expect(provider.requests[0]?.input).toContain("The light points to the part of the situation that is already visible.");
-    expect(provider.requests[0]?.input).not.toContain("What part of the situation is already asking for attention?");
-    expect(provider.requests[0]?.input).not.toContain("Choose one visible next step and take it before adding more plans.");
-    expect(provider.requests[0]?.instructions).toContain("카드의 상징과 장면을 근거로");
-    expect(provider.requests[0]?.instructions).toContain("모든 출력 필드에서 절대 사용하지 마세요");
-    expect(provider.requests[0]?.instructions).toContain("이어지는 국면");
-    expect(provider.requests[0]?.instructions).not.toContain("You are Manyang's production tarot-reading engine.");
+
+    const request = provider.requests[0];
+    const input = JSON.parse(request?.input ?? "{}") as {
+      outputContract?: { spread?: string; length?: string; style?: string[] };
+    };
+    const styleContract = input.outputContract?.style?.join("\n") ?? "";
+
+    expect(request?.input).toContain("바보");
+    expect(request?.input).toContain("symbolMeanings");
+    expect(request?.input).toContain("정방향 장면은 이미 보이는 단서가 다음 선택의 기준이 되는 모습을 보여줍니다.");
+    expect(request?.input).toContain("cardMessage");
+    expect(request?.input).toContain("readingScene");
+    expect(request?.input).not.toContain("selectedMeaning.story");
+    expect(request?.input).not.toContain("무엇이 이미 드러나 있나요?");
+    expect(request?.input).not.toContain("보이는 일을 하나 실행하세요.");
+    expect(input.outputContract?.spread).toContain("cardReadings as an empty array");
+    expect(input.outputContract?.length).toContain("cardReadings must be empty");
+    expect(styleContract).toContain("한 장 리딩은 cardReadings를 빈 배열로 두고 overview");
+    expect(styleContract).not.toContain("세 장 리딩은 overview에서 세 카드의 관계");
+    expect(styleContract).toContain("cardMessage");
+    expect(styleContract).toContain("차분, 조용, 작은 행동, 행동 하나, 충분합니다");
+    expect(styleContract).not.toContain("차분, 조용, 흐름, 작은 행동");
+    expect(request?.instructions).toContain("한 장 리딩에서는 cardReadings를 만들지 마세요");
+    expect(request?.instructions).toContain("overview가 사용자에게 보이는 본문입니다");
+    expect(request?.instructions).not.toContain("세 장 리딩은 overview에서 세 장의 관계");
+    expect(request?.instructions).not.toContain("You are Manyang's production tarot-reading engine.");
+  });
+
+  test("rejects one-card provider JSON that still returns per-card readings", async () => {
+    const provider = createProvider({
+      ...generatedDisplayFields,
+      title: "오늘은 첫 장면을 여는 날",
+      overview:
+        "바보 카드의 정방향은 새 장면 앞에 선 마음을 비춥니다. 절벽 끝의 여행자는 확신보다 열린 감각을 먼저 들고 있고, 작은 보따리는 지금 손에 있는 경험만으로도 하루를 시작할 수 있음을 보여줍니다.",
+      cardReadings: [
+        {
+          position: "today",
+          heading: "오늘",
+          reading: "이 필드는 한 장 리딩에서 더 이상 생성하면 안 되는 카드별 본문입니다.",
+        },
+      ],
+    });
+
+    await expect(generateTarotReadingForUser(oneCardInput, { provider })).resolves.toEqual({
+      status: "unavailable",
+      reason: "invalid_response",
+      retryable: true,
+    });
   });
 
   test("requests tarot drafts without a final advice field", async () => {
@@ -155,13 +181,7 @@ describe("generateTarotReadingForUser", () => {
       ...generatedDisplayFields,
       title: "A small opening",
       overview: "The selected card points to a day where a small opening matters more than a perfect answer.",
-      cardReadings: [
-        {
-          position: "today",
-          heading: "Today",
-          reading: "The card connects its upright tone to a careful first step rather than a rushed conclusion.",
-        },
-      ],
+      cardReadings: [],
       advice: "This provider advice should not be part of the tarot draft contract.",
     });
 
@@ -173,6 +193,7 @@ describe("generateTarotReadingForUser", () => {
 
     expect(schema?.properties).not.toHaveProperty("advice");
     expect(schema?.required).not.toContain("advice");
+    expect(schema?.properties?.cardReadings).toMatchObject({ minItems: 0 });
     expect(provider.requests[0]?.input).not.toContain("advice one practical sentence");
     expect(provider.requests[0]?.instructions).toContain("마지막 행동 지시나 최종 조언을 만들지 마세요");
   });
@@ -182,13 +203,7 @@ describe("generateTarotReadingForUser", () => {
       title: "A small opening",
       overview: "The selected card points to a day where a small opening matters more than a perfect answer.",
       keywords: ["opening", "choice", "attention"],
-      cardReadings: [
-        {
-          position: "today",
-          heading: "Today",
-          reading: "The card connects its upright tone to a careful first step rather than a rushed conclusion.",
-        },
-      ],
+      cardReadings: [],
     });
 
     const result = await generateTarotReadingForUser(oneCardInput, { provider });
@@ -197,6 +212,7 @@ describe("generateTarotReadingForUser", () => {
       status: "ok",
       reading: {
         keywords: ["opening", "choice", "attention"],
+        cardReadings: [],
       },
     });
     expect(result).not.toMatchObject({
@@ -210,13 +226,7 @@ describe("generateTarotReadingForUser", () => {
     const provider = createProvider({
       title: "Missing keyword fields",
       overview: "The card gives a readable daily tarot overview, but it omits the display keyword contract.",
-      cardReadings: [
-        {
-          position: "today",
-          heading: "Today",
-          reading: "The card reading itself is present, but the keywords and symbol readings are missing.",
-        },
-      ],
+      cardReadings: [],
       advice: "Choose one small action and review the result before deciding the next step.",
     });
 
@@ -231,14 +241,8 @@ describe("generateTarotReadingForUser", () => {
     const provider = createProvider({
       ...generatedDisplayFields,
       title: "Star light",
-      overview: "A quiet overview keeps the reading focused on the card imagery. }} PMID:}",
-      cardReadings: [
-        {
-          position: "today",
-          heading: "The Star",
-          reading: "The card points to a small but visible recovery signal. }} PMID:}",
-        },
-      ],
+      overview: "The overview keeps the reading focused on the card imagery. }} PMID:}",
+      cardReadings: [],
     });
 
     const result = await generateTarotReadingForUser(oneCardInput, { provider });
@@ -246,12 +250,8 @@ describe("generateTarotReadingForUser", () => {
     expect(result).toMatchObject({
       status: "ok",
       reading: {
-        overview: "A quiet overview keeps the reading focused on the card imagery.",
-        cardReadings: [
-          {
-            reading: "The card points to a small but visible recovery signal.",
-          },
-        ],
+        overview: "The overview keeps the reading focused on the card imagery.",
+        cardReadings: [],
       },
     });
   });
@@ -259,26 +259,27 @@ describe("generateTarotReadingForUser", () => {
   test("generates a three-card tarot reading only when all spread positions are present", async () => {
     const provider = createProvider({
       ...generatedDisplayFields,
-      title: "흐름을 조율하며 선택을 좁히는 날",
-      overview: "세 장은 지금 손에 든 가능성을 정리하고, 느려진 감각을 통해 더 현실적인 조언으로 이동하는 흐름을 보여줍니다.",
+      title: "세 장이 관계를 좁히는 날",
+      overview:
+        "세 장은 지금 손에 든 조건을 먼저 확인하고, 이어지는 국면에서 직감과 사실이 섞이기 쉬운 지점을 지나, 마지막에는 무엇을 기준으로 판단할지 보여줍니다.",
       cardReadings: [
         {
           position: "situation",
-          heading: "상황",
+          heading: "현재 조건",
           reading: "마법사는 이미 사용할 수 있는 도구가 있음을 보여주며, 지금 상황은 준비 부족보다 실행 방식의 선택에 가깝습니다.",
         },
         {
           position: "flow",
-          heading: "흐름",
-          reading: "역방향 여사제는 직감과 추측이 섞이기 쉬운 흐름이라, 확인되지 않은 느낌을 사실처럼 다루지 말라고 말합니다.",
+          heading: "이어지는 국면",
+          reading: "역방향 여사제는 직감과 추측이 섞이기 쉬운 장면이라, 확인되지 않은 느낌을 사실처럼 다루지 말라고 말합니다.",
         },
         {
           position: "advice",
-          heading: "조언",
-          reading: "여황제는 무리하게 밀어붙이기보다 결과가 자랄 환경을 먼저 정리하는 편이 오늘의 조언이라고 읽힙니다.",
+          heading: "판단 기준",
+          reading: "여황제는 무리하게 바꾸기보다 결과가 자랄 수 있는 환경을 먼저 정리하는 편이 오늘의 기준이라고 말합니다.",
         },
       ],
-      advice: "오늘은 하나를 바로 밀어붙이기보다 확인할 것, 기다릴 것, 돌볼 것을 나누어 적어 보세요.",
+      advice: "이 provider advice는 결과에 포함되지 않아야 합니다.",
     });
 
     const result = await generateTarotReadingForUser(threeCardInput, { provider });
@@ -293,13 +294,24 @@ describe("generateTarotReadingForUser", () => {
         ],
       },
     });
+
+    const request = provider.requests[0];
+    const input = JSON.parse(request?.input ?? "{}") as {
+      outputContract?: { style?: string[] };
+    };
+    const styleContract = input.outputContract?.style?.join("\n") ?? "";
+
+    expect(styleContract).toContain("세 장 리딩은 overview에서 세 카드의 관계");
+    expect(styleContract).not.toContain("한 장 리딩은 cardReadings를 빈 배열");
+    expect(request?.instructions).toContain("세 장 리딩은 overview에서 세 장의 관계");
+    expect(request?.instructions).not.toContain("한 장 리딩에서는 cardReadings를 만들지 마세요");
   });
 
   test("returns invalid_response when provider JSON does not match the requested spread", async () => {
     const provider = createProvider({
       ...generatedDisplayFields,
       title: "불완전한 리딩",
-      overview: "이 응답은 세 장 리딩에 필요한 조언 카드가 빠져 있어서 저장 가능한 리딩이 될 수 없습니다.",
+      overview: "이 응답은 세 장 리딩에 필요한 조언 카드가 빠져 있어 저장 가능한 리딩이 될 수 없습니다.",
       cardReadings: [
         {
           position: "situation",

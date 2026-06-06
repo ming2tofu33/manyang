@@ -137,7 +137,7 @@ function parseCardReadings(value: unknown): TarotGeneratedCardReading[] {
 }
 
 function expectedPositionsForInput(input: TarotReadingInput): TarotReadingPosition[] {
-  return input.spread === "daily_three_card" ? ["situation", "flow", "advice"] : ["today"];
+  return input.spread === "daily_three_card" ? ["situation", "flow", "advice"] : [];
 }
 
 function hasExactPositions(readings: TarotGeneratedCardReading[], expectedPositions: TarotReadingPosition[]): boolean {
@@ -156,12 +156,18 @@ function parseTarotReadingDraft(input: TarotReadingInput, value: unknown): Tarot
   const title = cleanString(value.title, 160);
   const overview = cleanString(value.overview, 1200);
   const keywords = parseStringArray(value.keywords, 5, 32);
+
+  if (!Array.isArray(value.cardReadings)) {
+    return undefined;
+  }
+
   const cardReadings = parseCardReadings(value.cardReadings);
 
   if (
     !title ||
     !overview ||
     keywords.length < 3 ||
+    cardReadings.length !== value.cardReadings.length ||
     !hasExactPositions(cardReadings, expectedPositionsForInput(input))
   ) {
     return undefined;

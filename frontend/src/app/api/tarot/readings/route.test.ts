@@ -44,41 +44,37 @@ function createThreeCardBody(overrides: Record<string, unknown> = {}) {
 }
 
 const generatedOneCard = {
-  title: "오늘은 첫 걸음이 흐름을 엽니다",
-  overview: "바보 카드의 정방향은 오늘 너무 멀리 결론내리기보다 가볍게 시작하는 태도를 통해 흐름이 열린다고 말합니다.",
-  keywords: ["start", "possibility", "small step"],
-  cardReadings: [
-    {
-      position: "today" as const,
-      heading: "오늘의 핵심",
-      reading: "정방향 바보는 준비가 완벽하지 않아도 작은 선택 하나가 하루의 방향을 바꿀 수 있음을 보여줍니다.",
-    },
-  ],
-  advice: "오늘은 부담 없는 첫 행동 하나를 정하고 그 결과를 본 뒤 다음 걸음을 고르세요.",
+  title: "오늘은 첫 장면을 여는 날",
+  overview:
+    "바보 카드의 정방향은 아직 모든 조건이 정리되지 않았어도 새 장면 앞에 선 마음을 비춥니다. 절벽 끝의 여행자는 확신보다 열린 감각을 먼저 들고 있고, 작은 보따리는 지금 손에 있는 경험만으로도 하루를 시작할 수 있음을 보여줍니다.",
+  keywords: ["start", "possibility", "attention"],
+  cardReadings: [],
+  advice: "이 provider advice는 결과에 포함되지 않아야 합니다.",
 };
 
 const generatedThreeCard = {
-  title: "상황을 정리하고 흐름을 차분히 좁히는 날",
-  overview: "세 장은 지금 손에 든 가능성을 살피고, 흐릿한 감각을 지나 실제로 돌볼 수 있는 조언으로 이동하는 흐름을 보여줍니다.",
+  title: "세 장이 관계를 좁히는 날",
+  overview:
+    "세 장은 지금 손에 든 조건을 먼저 확인하고, 이어지는 국면에서 직감과 사실이 섞이기 쉬운 지점을 지나, 마지막에는 무엇을 기준으로 판단할지 보여줍니다.",
   keywords: ["situation", "flow", "advice"],
   cardReadings: [
     {
       position: "situation" as const,
-      heading: "상황",
+      heading: "현재 조건",
       reading: "바보는 현재 상황이 아직 닫힌 결론보다 열린 가능성에 가깝다는 점을 보여줍니다.",
     },
     {
       position: "flow" as const,
-      heading: "흐름",
-      reading: "역방향 마법사는 말과 아이디어가 실제 실행으로 이어지는지 점검해야 하는 흐름을 말합니다.",
+      heading: "이어지는 국면",
+      reading: "역방향 마법사는 말과 아이디어가 실제 실행으로 이어지는지 확인해야 하는 장면을 말합니다.",
     },
     {
       position: "advice" as const,
-      heading: "조언",
-      reading: "여사제는 바로 답을 내기보다 조용히 반복되는 신호를 확인하라고 조언합니다.",
+      heading: "판단 기준",
+      reading: "여사제는 바로 답을 내기보다 반복되는 신호와 실제 근거를 함께 보라고 말합니다.",
     },
   ],
-  advice: "오늘은 시작할 일과 더 확인할 일을 나누어 적어 두는 편이 좋습니다.",
+  advice: "이 provider advice는 결과에 포함되지 않아야 합니다.",
 };
 
 describe("POST /api/tarot/readings", () => {

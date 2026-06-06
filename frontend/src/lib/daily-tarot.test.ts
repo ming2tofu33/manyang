@@ -76,14 +76,17 @@ function createGeneratedReading(
     source: "llm",
     cards,
     generated: {
-      title: spread === "daily_three_card" ? "세 장이 보여주는 오늘의 흐름" : "오늘의 한 장이 건네는 흐름",
+      title: spread === "daily_three_card" ? "세 장이 보여주는 오늘의 관계" : "오늘의 한 장이 건네는 장면",
       overview: "LLM이 선택된 카드와 방향을 기준으로 생성한 오늘의 타로 해석입니다.",
-      cardReadings: cards.map((selection) => ({
-        position: selection.position,
-        heading: selection.position === "today" ? "오늘의 핵심" : selection.position,
-        reading: `${selection.card.nameKo} ${selection.orientation} 해석입니다.`,
-      })),
-      advice: "오늘은 카드가 보여준 흐름을 작은 행동 하나로 옮겨 보세요.",
+      cardReadings:
+        spread === "daily_three_card"
+          ? cards.map((selection) => ({
+              position: selection.position,
+              heading: selection.position,
+              reading: `${selection.card.nameKo} ${selection.orientation} 해석입니다.`,
+            }))
+          : [],
+      advice: "카드가 보여준 장면을 기준으로 오늘의 선택을 살펴보세요.",
     },
   };
 }
@@ -255,6 +258,34 @@ describe("daily tarot draw logic", () => {
 
     expect(getDailyTarotReading(storage, "2026-05-31")).toEqual(reading);
     expect(getDailyTarotReading(storage, "2026-06-01")).toBeNull();
+  });
+
+  test("keeps legacy one-card generated card readings readable in stored history", () => {
+    const baseReading = createGeneratedReading("2026-05-31", "daily_one_card");
+    const generated = baseReading.generated;
+
+    if (!generated) {
+      throw new Error("Missing generated tarot test reading");
+    }
+
+    const legacyReading = {
+      ...baseReading,
+      generated: {
+        ...generated,
+        cardReadings: [
+          {
+            position: "today" as const,
+            heading: "오늘",
+            reading: "기존 저장본에 남아 있던 한 장 리딩의 카드별 본문입니다.",
+          },
+        ],
+      },
+    } satisfies DailyTarotReading;
+    const storage = createMemoryStorage({
+      [dailyTarotStorageKey]: JSON.stringify([legacyReading]),
+    });
+
+    expect(getDailyTarotReading(storage, "2026-05-31")).toEqual(legacyReading);
   });
 
   test("keeps stored daily tarot readings separated by draw identity", () => {
