@@ -8,6 +8,7 @@ type MorningMoodOption = {
 
 export const morningMoodCopy = {
   pageTitle: "꿈의 발자국",
+  pageScrollSubtitle: "사라진 꿈 대신, 아침에 남은 느낌을 남겨요.",
   pageSubtitle: "꿈은 흐릿해도 괜찮다냥.\n아침에 남은 느낌만 적어보자냥.",
   moodTitle: "아침에 일어났을 때 기분은 어땠나요?",
   bodyTitle: "몸은 어떤 느낌인가요?",

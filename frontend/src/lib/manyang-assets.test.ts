@@ -141,6 +141,18 @@ describe("manyang assets", () => {
     expect(manyangAssets.illustrations.dreamseedByCat.grayCat).toBe(
       "/manyang/backgrounds/dreamseed-background-gray-cat-v2.webp",
     );
+    expect(manyangAssets.illustrations.morningByCat.blackCat).toBe(
+      "/manyang/backgrounds/morning-record-black-cat-v3.webp",
+    );
+    expect(manyangAssets.illustrations.morningByCat.whiteCat).toBe(
+      "/manyang/backgrounds/morning-record-white-cat-v1.webp",
+    );
+    expect(manyangAssets.illustrations.morningByCat.cheeseCat).toBe(
+      "/manyang/backgrounds/morning-record-cheese-cat-v1.webp",
+    );
+    expect(manyangAssets.illustrations.morningByCat.grayCat).toBe(
+      "/manyang/backgrounds/morning-record-gray-cat-v3.webp",
+    );
     expect(manyangAssets.illustrations.encyclopediaBanners.blackCat).toBe(
       "/manyang/encyclopedia/encyclopedia-banner-black-cat-v3.webp",
     );
@@ -205,6 +217,10 @@ describe("manyang assets", () => {
       manyangAssets.illustrations.dreamseedByCat.whiteCat,
       manyangAssets.illustrations.dreamseedByCat.cheeseCat,
       manyangAssets.illustrations.dreamseedByCat.grayCat,
+      manyangAssets.illustrations.morningByCat.blackCat,
+      manyangAssets.illustrations.morningByCat.whiteCat,
+      manyangAssets.illustrations.morningByCat.cheeseCat,
+      manyangAssets.illustrations.morningByCat.grayCat,
       manyangAssets.illustrations.encyclopediaBanners.blackCat,
       manyangAssets.illustrations.encyclopediaBanners.whiteCat,
       manyangAssets.illustrations.encyclopediaBanners.cheeseCat,
@@ -260,6 +276,10 @@ describe("manyang assets", () => {
     expect(readImageSize(manyangAssets.illustrations.dreamseedByCat.whiteCat)).toEqual({ width: 1254, height: 1254 });
     expect(readImageSize(manyangAssets.illustrations.dreamseedByCat.cheeseCat)).toEqual({ width: 1254, height: 1254 });
     expect(readImageSize(manyangAssets.illustrations.dreamseedByCat.grayCat)).toEqual({ width: 1254, height: 1254 });
+    expect(readImageSize(manyangAssets.illustrations.morningByCat.blackCat)).toEqual({ width: 1024, height: 1024 });
+    expect(readImageSize(manyangAssets.illustrations.morningByCat.whiteCat)).toEqual({ width: 1024, height: 1024 });
+    expect(readImageSize(manyangAssets.illustrations.morningByCat.cheeseCat)).toEqual({ width: 1024, height: 1024 });
+    expect(readImageSize(manyangAssets.illustrations.morningByCat.grayCat)).toEqual({ width: 1024, height: 1024 });
     expect(readImageSize(manyangAssets.illustrations.encyclopediaBanners.blackCat)).toEqual({ width: 1536, height: 1024 });
     expect(readImageSize(manyangAssets.illustrations.encyclopediaBanners.whiteCat)).toEqual({ width: 1536, height: 1024 });
     expect(readImageSize(manyangAssets.illustrations.encyclopediaBanners.cheeseCat)).toEqual({ width: 1536, height: 1024 });
@@ -312,6 +332,10 @@ describe("manyang assets", () => {
       ["/manyang/backgrounds/dreamseed-background-white-cat-v2.png", manyangAssets.illustrations.dreamseedByCat.whiteCat, 0.2],
       ["/manyang/backgrounds/dreamseed-background-cheese-cat-v3.png", manyangAssets.illustrations.dreamseedByCat.cheeseCat, 0.2],
       ["/manyang/backgrounds/dreamseed-background-gray-cat-v2.png", manyangAssets.illustrations.dreamseedByCat.grayCat, 0.2],
+      ["/manyang/backgrounds/morning-record-black-cat-v3.png", manyangAssets.illustrations.morningByCat.blackCat, 0.2],
+      ["/manyang/backgrounds/morning-record-white-cat-v1.png", manyangAssets.illustrations.morningByCat.whiteCat, 0.2],
+      ["/manyang/backgrounds/morning-record-cheese-cat-v1.png", manyangAssets.illustrations.morningByCat.cheeseCat, 0.2],
+      ["/manyang/backgrounds/morning-record-gray-cat-v3.png", manyangAssets.illustrations.morningByCat.grayCat, 0.2],
       ["../ref/encyclopedia-illustrations/encyclopedia-banner-black-cat-v3.png", manyangAssets.illustrations.encyclopediaBanners.blackCat, 0.18],
       ["../ref/encyclopedia-illustrations/encyclopedia-banner-white-cat-v3.png", manyangAssets.illustrations.encyclopediaBanners.whiteCat, 0.18],
       ["../ref/encyclopedia-illustrations/encyclopedia-banner-cheese-cat-v3.png", manyangAssets.illustrations.encyclopediaBanners.cheeseCat, 0.18],

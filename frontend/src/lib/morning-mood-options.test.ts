@@ -9,6 +9,8 @@ import {
 describe("morning mood options", () => {
   test("uses the shortened footprint page title", () => {
     expect(morningMoodCopy.pageTitle).toBe("꿈의 발자국");
+    expect(morningMoodCopy.pageScrollSubtitle).toBe("사라진 꿈 대신, 아침에 남은 느낌을 남겨요.");
+    expect(morningMoodCopy.pageSubtitle).toBe("꿈은 흐릿해도 괜찮다냥.\n아침에 남은 느낌만 적어보자냥.");
   });
 
   test("defines the reference morning mood options in display order", () => {

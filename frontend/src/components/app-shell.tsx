@@ -111,14 +111,13 @@ export function AppShell({
               {title ? (
                 <div className="min-w-0 flex-1 px-3 text-center">
                   {titleIconSrc ? (
-                    <span className="relative mx-auto mb-1.5 block h-9 w-9">
-                      <Image src={titleIconSrc} alt="" fill sizes="36px" unoptimized className="object-contain" />
+                    <span className="relative mx-auto mb-1.5 block h-11 w-11">
+                      <Image src={titleIconSrc} alt="" fill sizes="44px" unoptimized className="object-contain" />
                     </span>
                   ) : null}
                   <p className={`text-[1.72rem] font-semibold leading-tight text-[#ffd98a] ${ui.textGlow}`}>
                     {title}
                   </p>
-                  {subtitle ? <p className="mt-1.5 whitespace-pre-line text-[15px] leading-6 text-[#fff3d7]/88">{subtitle}</p> : null}
                 </div>
               ) : null}
 
@@ -139,7 +138,17 @@ export function AppShell({
             )}
             data-app-shell-content-mode={contentMode}
           >
-            <div className="flex min-h-full flex-col">{children}</div>
+            <div className="flex min-h-full flex-col">
+              {subtitle ? (
+                <p
+                  className="shrink-0 px-3 pb-3 text-center text-[15px] leading-6 text-[#fff3d7]/88"
+                  data-app-shell-scroll-subtitle="true"
+                >
+                  <span className="whitespace-pre-line">{subtitle}</span>
+                </p>
+              ) : null}
+              {children}
+            </div>
           </div>
           {showBottomNav ? <BottomNav /> : null}
         </div>

@@ -99,6 +99,35 @@ describe("AppShell", () => {
     expect(markup).not.toContain("share");
   });
 
+  test("uses a larger centered title icon for task pages", () => {
+    const markup = renderToStaticMarkup(
+      <AppShell title="꿈의 발자국" titleIconSrc="/manyang/ui/page-icons/page-morning-pawprint.png" showBottomNav={false}>
+        <div>content</div>
+      </AppShell>,
+    );
+
+    expect(markup).toContain("relative mx-auto mb-1.5 block h-11 w-11");
+    expect(markup).toContain("/manyang/ui/page-icons/page-morning-pawprint.png");
+    expect(markup).not.toContain("relative mx-auto mb-1.5 block h-9 w-9");
+  });
+
+  test("keeps the subtitle in the scroll area while the title remains in the header", () => {
+    const markup = renderToStaticMarkup(
+      <AppShell title="밤의 기록" subtitle="잠들기 전의 마음과 몸 상태를 짧게 남겨요." showBottomNav={false}>
+        <div>content</div>
+      </AppShell>,
+    );
+    const headerIndex = markup.indexOf("<header");
+    const contentModeIndex = markup.indexOf('data-app-shell-content-mode="scroll"');
+    const subtitleIndex = markup.indexOf('data-app-shell-scroll-subtitle="true"');
+
+    expect(headerIndex).toBeGreaterThan(-1);
+    expect(contentModeIndex).toBeGreaterThan(headerIndex);
+    expect(subtitleIndex).toBeGreaterThan(contentModeIndex);
+    expect(markup).toContain("잠들기 전의 마음과 몸 상태를 짧게 남겨요.");
+    expect(markup).not.toContain("mt-1.5 whitespace-pre-line text-[15px] leading-6");
+  });
+
   test("uses shared mobile shell width tokens for the content inset", () => {
     const markup = renderToStaticMarkup(
       <AppShell showHeader={false} showBottomNav={false}>

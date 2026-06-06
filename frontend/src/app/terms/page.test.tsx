@@ -8,7 +8,11 @@ describe("TermsPage", () => {
     const markup = renderToStaticMarkup(<TermsPage />);
 
     expect(markup).toContain("이용약관");
-    expect(markup).toContain("오락과 자기 성찰");
+    expect(markup).toContain("AI 리딩은 전문 상담이나 진단을 대체하지 않습니다");
+    expect(markup).toContain("기록 내보내기");
+    expect(markup).toContain("사용자 책임과 금지행위");
     expect(markup).toContain("Moon Pass");
+    expect(markup).toContain("청약철회");
+    expect(markup).toContain("고의 또는 중대한 과실");
   });
 });
