@@ -331,4 +331,48 @@ describe("POST /api/tarot/readings", () => {
     });
     expect(body.advice).not.toBe(generatedThreeCard.advice);
   });
+
+  test("logs an observability event when the reading is unavailable", async () => {
+    const logTarotEvent = vi.fn();
+    const generateTarotReadingForUser = vi.fn(async (_input, options) => {
+      options?.onProviderError?.(new Error("boom"));
+      return { status: "unavailable" as const, reason: "timeout" as const, retryable: true };
+    });
+
+    const response = await handleTarotReadingRequest(createJsonRequest(createOneCardBody()), {
+      getAuthenticatedUserId: async () => "00000000-0000-4000-8000-000000000001",
+      getAccessPlanForUser: async () => "free_account",
+      isAdminUser: async () => false,
+      findCompletedTarotReadingForUser: async () => null,
+      createProvider: () => ({ generateJson: async () => ({}) }),
+      generateTarotReadingForUser,
+      persistCompletedTarotReading: async () => undefined,
+      logTarotEvent,
+    });
+
+    expect(response.status).toBe(503);
+    expect(logTarotEvent).toHaveBeenCalledWith(
+      expect.objectContaining({ type: "provider_error", spread: "daily_one_card" }),
+    );
+    expect(logTarotEvent).toHaveBeenCalledWith(
+      expect.objectContaining({ type: "unavailable", reason: "timeout", spread: "daily_one_card" }),
+    );
+  });
+
+  test("logs an observability event when the provider is missing", async () => {
+    const logTarotEvent = vi.fn();
+    const response = await handleTarotReadingRequest(createJsonRequest(createOneCardBody()), {
+      getAuthenticatedUserId: async () => "00000000-0000-4000-8000-000000000001",
+      getAccessPlanForUser: async () => "free_account",
+      isAdminUser: async () => false,
+      findCompletedTarotReadingForUser: async () => null,
+      createProvider: () => undefined,
+      logTarotEvent,
+    });
+
+    expect(response.status).toBe(503);
+    expect(logTarotEvent).toHaveBeenCalledWith(
+      expect.objectContaining({ type: "unavailable", reason: "provider_missing" }),
+    );
+  });
 });

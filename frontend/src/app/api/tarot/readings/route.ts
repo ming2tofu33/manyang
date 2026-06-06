@@ -31,6 +31,40 @@ export const runtime = "nodejs";
 
 type EnvLike = Record<string, string | undefined>;
 
+type TarotReadingLogEvent =
+  | {
+      type: "provider_error";
+      spread: TarotSpread;
+      appDate: string;
+      authenticated: boolean;
+      error: unknown;
+    }
+  | {
+      type: "unavailable";
+      reason: Extract<TarotReadingResult, { status: "unavailable" }>["reason"];
+      retryable: boolean;
+      spread: TarotSpread;
+      appDate: string;
+      authenticated: boolean;
+    };
+
+function logTarotReadingEvent(event: TarotReadingLogEvent): void {
+  const base = {
+    scope: "tarot_reading",
+    type: event.type,
+    spread: event.spread,
+    appDate: event.appDate,
+    authenticated: event.authenticated,
+  };
+
+  if (event.type === "provider_error") {
+    console.error(JSON.stringify(base), event.error);
+    return;
+  }
+
+  console.warn(JSON.stringify({ ...base, reason: event.reason, retryable: event.retryable }));
+}
+
 type TarotReadingSelectionRequest = {
   cardId: number;
   orientation: TarotOrientation;
@@ -73,6 +107,7 @@ export type TarotReadingsRouteDependencies = {
     appDate: string,
     spread: TarotSpread,
   ) => Promise<DailyTarotReading | null>;
+  logTarotEvent?: (event: TarotReadingLogEvent) => void;
 };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -349,6 +384,7 @@ export async function handleTarotReadingRequest(
     generateTarotReadingForUser,
     persistCompletedTarotReading,
     findCompletedTarotReadingForUser,
+    logTarotEvent: logTarotReadingEvent,
     ...dependencies,
   };
 
@@ -407,6 +443,14 @@ export async function handleTarotReadingRequest(
     provider = resolvedDependencies.createProvider();
   } catch (error) {
     if (error instanceof LlmProviderConfigurationError) {
+      resolvedDependencies.logTarotEvent({
+        type: "unavailable",
+        reason: "provider_missing",
+        retryable: false,
+        spread: validatedBody.value.spread,
+        appDate: validatedBody.value.appDate,
+        authenticated: Boolean(userId),
+      });
       return Response.json(createUnavailablePayload("provider_missing", false), { status: 503 });
     }
 
@@ -414,16 +458,43 @@ export async function handleTarotReadingRequest(
   }
 
   if (!provider) {
+    resolvedDependencies.logTarotEvent({
+      type: "unavailable",
+      reason: "provider_missing",
+      retryable: false,
+      spread: validatedBody.value.spread,
+      appDate: validatedBody.value.appDate,
+      authenticated: Boolean(userId),
+    });
     return Response.json(createUnavailablePayload("provider_missing", false), { status: 503 });
   }
 
   const selections = validatedBody.value.selections.map(resolveSelection);
   const result = await resolvedDependencies.generateTarotReadingForUser(
     createTarotReadingInput(validatedBody.value, selections),
-    { provider, providerTimeoutMs: resolveTarotLlmTimeoutMs() },
+    {
+      provider,
+      providerTimeoutMs: resolveTarotLlmTimeoutMs(),
+      onProviderError: (error) =>
+        resolvedDependencies.logTarotEvent({
+          type: "provider_error",
+          spread: validatedBody.value.spread,
+          appDate: validatedBody.value.appDate,
+          authenticated: Boolean(userId),
+          error,
+        }),
+    },
   );
 
   if (result.status === "unavailable") {
+    resolvedDependencies.logTarotEvent({
+      type: "unavailable",
+      reason: result.reason,
+      retryable: result.retryable,
+      spread: validatedBody.value.spread,
+      appDate: validatedBody.value.appDate,
+      authenticated: Boolean(userId),
+    });
     return Response.json(createUnavailablePayload(result.reason, result.retryable), { status: 503 });
   }
 
