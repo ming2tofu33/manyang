@@ -226,13 +226,13 @@ function buildLiteralSceneSentence(
 
   if (visibleTerms.length === 0) {
     return locale === "en"
-      ? "Other vivid details are kept as literal dream details rather than evidence for a prediction, diagnosis, or guarantee."
-      : "함께 나온 다른 세부 장면은 그대로의 장면으로 두고, 그 자체에 예언이나 진단의 의미를 붙이지 않습니다.";
+      ? "Other vivid details are kept as plain scene, not signs to read meaning into."
+      : "함께 나온 다른 장면은 그대로 두고, 따로 의미를 붙이지 않습니다.";
   }
 
   return locale === "en"
-    ? `Details such as ${visibleTerms.join(", ")} are kept visible as literal dream details, but they are not used as evidence for a prediction, diagnosis, or guarantee.`
-    : `${visibleTerms.join(", ")} 같은 세부 장면은 꿈에 나온 그대로의 장면으로 언급하되, 그 자체에 예언이나 진단의 의미를 붙이지 않습니다.`;
+    ? `Details such as ${visibleTerms.join(", ")} are kept as plain scene, not signs to read meaning into.`
+    : `${visibleTerms.join(", ")} 같은 장면은 그대로 두고, 따로 의미를 붙이지 않습니다.`;
 }
 
 function scrubSceneOnlySymbolicInference(

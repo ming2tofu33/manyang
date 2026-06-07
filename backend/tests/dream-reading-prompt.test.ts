@@ -394,7 +394,7 @@ describe("buildDreamReadingPrompt", () => {
     expect(prompt.instructions).toContain("this is REQUIRED, not optional");
     // summary는 평결만, '한줄 해몽:' 같은 라벨 접두어 금지.
     expect(payload.outputContract?.summary).toContain("Do NOT prefix it with any label");
-    expect(payload.outputContract?.interpretation?.length).toContain("2 to 4 short paragraphs");
+    expect(payload.outputContract?.interpretation?.length).toContain("3 to 4 full paragraphs");
     expect(payload.outputContract?.interpretation?.structure).toEqual(
       expect.arrayContaining([
         expect.stringContaining("Open with what the dream MEANS or foretells"),
@@ -410,6 +410,39 @@ describe("buildDreamReadingPrompt", () => {
     expect(payload.outputContract?.symbolReadings?.structure).toEqual(
       expect.arrayContaining([expect.stringContaining("what the symbol MEANS in this dream")]),
     );
+  });
+
+  test("guides smallPrescription away from homework and toward a permissive closing", () => {
+    const request = {
+      dreamText: "프로젝트 때문에 같이 일하는 남자가 자꾸 꿈에 나와. 친절하고 다정하고, 꿈에서도 일을 잘해.",
+      locale: "ko" as const,
+      dreamAtmospheres: ["warm", "eerie"],
+      dreamSensations: ["vivid"],
+    };
+    const prompt = buildDreamReadingPrompt({
+      request,
+      baseline: analyzeDream(request),
+      structuredAnalysis: analyzeDreamStructure(request),
+      matches: findRuntimeSymbolMatches(request.dreamText, { locale: request.locale, limit: 5 }),
+    });
+    const payload = JSON.parse(prompt.input) as {
+      outputContract?: {
+        smallPrescription?: {
+          shape?: string;
+        };
+      };
+    };
+
+    expect(payload.outputContract?.smallPrescription?.shape).toContain("must not sound like homework");
+    expect(payload.outputContract?.smallPrescription?.shape).toContain("It should sound like “it is okay to…”");
+    expect(payload.outputContract?.smallPrescription?.shape).toContain("괜찮습니다");
+    expect(payload.outputContract?.smallPrescription?.shape).toContain("충분합니다");
+    expect(payload.outputContract?.smallPrescription?.shape).toContain("두어도 좋습니다");
+    expect(prompt.instructions).toContain("Do not end smallPrescription with homework");
+    expect(prompt.instructions).toContain("적어보세요");
+    expect(prompt.instructions).toContain("확인해보세요");
+    expect(prompt.instructions).toContain("살펴보세요");
+    expect(prompt.instructions).toContain("Prefer permissive endings");
   });
 
   test("raises the structured output floor so real LLM drafts cannot be receipt-thin", () => {

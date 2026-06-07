@@ -98,8 +98,8 @@ function compactSymbolEvidence(match: RuntimeSymbolMatch, evidenceStatus: "confi
 
 function getInterpretationLengthContract(locale: SupportedDreamPromptLocale): string {
   return locale === "en"
-    ? "2 to 4 short paragraphs, about 120 to 190 English words. Do not compress the reading into one short generic paragraph."
-    : "2 to 4 short paragraphs, about 450 to 750 Korean characters. Do not compress the reading into one short generic paragraph.";
+    ? "3 to 4 full paragraphs, about 140 to 210 English words. This reading tends to come out too short — do NOT stop at 2-3 sentences. Reach the full length through DEPTH, not padding: develop each main meaning concretely (why the dream reads this way, what it points to, how a specific scene detail supports it) and give the key symbols room. Never repeat or add filler to reach length."
+    : "3 to 4 full paragraphs, 500 to 800 Korean characters. This reading tends to come out too short — do NOT stop at 2-3 sentences. Reach the full length through DEPTH, not padding: develop each main meaning concretely (why the dream reads this way, what it points to, how a specific scene detail supports it) and give the key symbols room to breathe. Never repeat or add filler just to reach length.";
 }
 
 function buildSelectedFeelingInterpretationLens(

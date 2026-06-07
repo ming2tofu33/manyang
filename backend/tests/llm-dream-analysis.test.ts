@@ -296,7 +296,7 @@ describe("analyzeDreamWithLlm", () => {
     );
 
     expect(result.interpretation).toContain("병원");
-    expect(result.interpretation).toContain("그대로의 장면");
+    expect(result.interpretation).toContain("그대로 두고");
     expect(result.interpretation).not.toContain("에너지가 빠져나가는");
     expect(result.interpretation).not.toContain("암은 큰 두려움을 예지");
   });
@@ -334,7 +334,7 @@ describe("analyzeDreamWithLlm", () => {
 
     expect(result.interpretation).toContain("병원");
     expect(result.interpretation).toContain("암");
-    expect(result.interpretation).toContain("그대로의 장면");
+    expect(result.interpretation).toContain("그대로 두고");
     expect(result.interpretation).not.toContain("에너지가 빠져나가는");
     expect(result.interpretation).not.toContain("암은 큰 두려움을 예지");
   });
