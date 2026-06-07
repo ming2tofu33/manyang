@@ -54,6 +54,42 @@ function rankReasonFor(matchType: RetrievalMatchType, matchedText: string[], mod
   return `${matchDescription}${evidenceDescription}${modifierDescription}`;
 }
 
+function contextTermsMatch(terms: string[] | undefined, normalizedText: string, tokens: string[]): boolean {
+  return (terms ?? []).some((term) => triggerMatchesText(term, normalizedText, tokens));
+}
+
+function isRejectedByDisambiguation(
+  entry: RuntimeSymbolEntry,
+  locale: SupportedLocale,
+  normalizedText: string,
+  tokens: string[],
+  matchedText: string[],
+): boolean {
+  const rules = entry.disambiguation?.[locale] ?? [];
+
+  for (const rule of rules) {
+    if (!matchedText.some((term) => normalizeText(term) === normalizeText(rule.alias))) {
+      continue;
+    }
+
+    if (contextTermsMatch(rule.rejectWhen, normalizedText, tokens)) {
+      return true;
+    }
+
+    if (contextTermsMatch(rule.confirmWhen, normalizedText, tokens)) {
+      continue;
+    }
+
+    // candidate_only is metadata for the future candidate-evidence lane. The current matcher
+    // preserves bare keyword coverage and only rejects when an explicit reject context appears.
+    if (rule.fallback === "reject") {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 export function findRuntimeSymbolMatches(text: string, options: RuntimeSymbolMatchOptions = {}): RuntimeSymbolMatch[] {
   const locale = options.locale ?? "ko";
   const limit = options.limit ?? 5;
@@ -67,6 +103,10 @@ export function findRuntimeSymbolMatches(text: string, options: RuntimeSymbolMat
       const modifierKeys = sceneModifierMatches(entry, normalizedText, tokens);
 
       if (matchedText.length === 0) {
+        return [];
+      }
+
+      if (isRejectedByDisambiguation(entry, locale, normalizedText, tokens, matchedText)) {
         return [];
       }
 

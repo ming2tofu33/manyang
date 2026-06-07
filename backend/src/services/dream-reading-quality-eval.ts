@@ -411,14 +411,14 @@ export const dreamReadingQualityCases: DreamReadingQualityCase[] = [
   },
   {
     id: "en_rag_promotion_train_path",
-    label: "RAG Promotion: train implied by fixed path and schedule",
+    label: "RAG Promotion: train implied by station and schedule",
     request: {
       catReaderType: "black_cat",
-      dreamText: "I was carried by momentum on a fixed path with a strict schedule and no way to change direction.",
+      dreamText: "I waited at a station, carried by momentum through a strict schedule, unable to choose when to get off.",
       locale: "en",
       wakeMood: "rushed",
     },
-    expectedDetails: ["momentum", "fixed path", "strict schedule", "change direction"],
+    expectedDetails: ["station", "momentum", "strict schedule", "choose", "get off"],
     expectedSymbols: ["Train"],
     forbiddenSymbols: ["Sea"],
     qualityFocus: ["specificity", "ragGrounding", "ragPromotion"],

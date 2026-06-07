@@ -27,15 +27,15 @@ export const RETRIEVAL_EVAL_CASES: RetrievalEvalCase[] = [
   { id: "ko_rain_flood", locale: "ko", tag: "common", dreamText: "비가 쏟아지더니 홍수가 나서 길이 잠겼어.", expected: ["rain", "flood", "road"] },
   { id: "ko_cat_mirror", locale: "ko", tag: "common", dreamText: "거울 앞에 고양이가 앉아서 나를 빤히 봤어.", expected: ["mirror", "cat"] },
   { id: "ko_exam", locale: "ko", tag: "common", dreamText: "시험을 보는데 하나도 못 풀고 시간이 없었어.", expected: ["exam"] },
-  { id: "ko_wedding_crowd", locale: "ko", tag: "common", dreamText: "결혼식장에 사람들이 가득 모여 있었어.", expected: ["wedding", "crowd"] },
+  { id: "ko_wedding_crowd", locale: "ko", tag: "common", dreamText: "결혼식장에 사람들이 가득 모여 있었어.", expected: ["wedding", "crowd", "many"] },
   { id: "ko_money_bag", locale: "ko", tag: "common", dreamText: "가방 안에서 돈이 계속 나왔어.", expected: ["money", "bag"] },
   { id: "ko_pig_home", locale: "ko", tag: "common", dreamText: "돼지가 집 안으로 들어왔어.", expected: ["pig", "home"] },
 
   // --- ko tradition (전통 길흉이 강한 상징) ---
   { id: "ko_feces_step", locale: "ko", tag: "tradition", dreamText: "길에서 똥을 밟아서 신발에 잔뜩 묻었어.", expected: ["feces", "road", "shoes"] },
-  { id: "ko_dragon", locale: "ko", tag: "tradition", dreamText: "용이 하늘로 승천하는 걸 봤어.", expected: ["dragon"] },
+  { id: "ko_dragon", locale: "ko", tag: "tradition", dreamText: "용이 하늘로 승천하는 걸 봤어.", expected: ["dragon", "sky"] },
   { id: "ko_ancestor", locale: "ko", tag: "tradition", dreamText: "돌아가신 조상님이 꿈에 나타나셨어.", expected: ["ancestor"] },
-  { id: "ko_pig_arms", locale: "ko", tag: "tradition", dreamText: "통통한 돼지를 품에 안았어.", expected: ["pig"] },
+  { id: "ko_pig_arms", locale: "ko", tag: "tradition", dreamText: "통통한 돼지를 품에 안았어.", expected: ["pig", "hug"] },
 
   // --- ko sensitive (안전 정책 대상) ---
   { id: "ko_hospital_blood", locale: "ko", tag: "sensitive", dreamText: "병원에 있었고 몸에서 피가 났어.", expected: ["hospital", "blood", "body"] },
@@ -45,23 +45,23 @@ export const RETRIEVAL_EVAL_CASES: RetrievalEvalCase[] = [
   // --- ko paraphrase (표제어/alias가 그대로 안 나오는 구어체) ---
   { id: "ko_chased_para", locale: "ko", tag: "paraphrase", dreamText: "누군가 계속 뒤따라와서 죽어라 도망쳤어.", expected: ["being_chased", "running"] },
   { id: "ko_sink_fall_para", locale: "ko", tag: "paraphrase", dreamText: "발밑이 푹 꺼지면서 아래로 떨어졌어.", expected: ["falling"] },
-  { id: "ko_teeth_para", locale: "ko", tag: "paraphrase", dreamText: "어금니가 흔들흔들하더니 손에 빠져나왔어.", expected: ["teeth"] },
-  { id: "ko_water_para", locale: "ko", tag: "paraphrase", dreamText: "흙탕물에 잠겨서 숨이 막혔어.", expected: ["water"] },
+  { id: "ko_teeth_para", locale: "ko", tag: "paraphrase", dreamText: "어금니가 흔들흔들하더니 손에 빠져나왔어.", expected: ["teeth", "hand"] },
+  { id: "ko_water_para", locale: "ko", tag: "paraphrase", dreamText: "흙탕물에 잠겨서 숨이 막혔어.", expected: ["water", "mud"] },
   { id: "ko_snake_para", locale: "ko", tag: "paraphrase", dreamText: "기다란 뱀 한 마리가 다리를 칭칭 감았어.", expected: ["snake"] },
-  { id: "ko_baby_para", locale: "ko", tag: "paraphrase", dreamText: "갓난아기를 품에 안고 젖을 먹였어.", expected: ["baby"] },
-  { id: "ko_partner_para", locale: "ko", tag: "paraphrase", dreamText: "헤어진 옛 애인이 꿈에 나왔어.", expected: ["ex_partner"] },
+  { id: "ko_baby_para", locale: "ko", tag: "paraphrase", dreamText: "갓난아기를 품에 안고 젖을 먹였어.", expected: ["baby", "hug"] },
+  { id: "ko_partner_para", locale: "ko", tag: "paraphrase", dreamText: "헤어진 옛 애인이 꿈에 나왔어.", expected: ["ex_partner", "partner"] },
 
   // --- en common ---
   { id: "en_snake_land", locale: "en", tag: "en", dreamText: "I was bitten by a huge snake on my own land.", expected: ["snake", "owned_land"] },
   { id: "en_fall_teeth", locale: "en", tag: "en", dreamText: "I was falling and my teeth were crumbling.", expected: ["falling", "teeth"] },
   { id: "en_chased", locale: "en", tag: "en", dreamText: "Something was chasing me and my legs would not move.", expected: ["being_chased"] },
-  { id: "en_money_bag", locale: "en", tag: "en", dreamText: "I found a lot of money in my bag.", expected: ["money", "bag"] },
-  { id: "en_water_drown", locale: "en", tag: "en", dreamText: "I was drowning in muddy water.", expected: ["water"] },
+  { id: "en_money_bag", locale: "en", tag: "en", dreamText: "I found a lot of money in my bag.", expected: ["money", "bag", "many"] },
+  { id: "en_water_drown", locale: "en", tag: "en", dreamText: "I was drowning in muddy water.", expected: ["water", "mud"] },
   { id: "en_pig_home", locale: "en", tag: "en", dreamText: "A pig came into my house.", expected: ["pig", "home"] },
 
   // --- en paraphrase ---
   { id: "en_chased_para", locale: "en", tag: "paraphrase", dreamText: "I could not escape the figure following me.", expected: ["being_chased"] },
-  { id: "en_teeth_para", locale: "en", tag: "paraphrase", dreamText: "One of my molars wobbled and came loose in my hand.", expected: ["teeth"] },
+  { id: "en_teeth_para", locale: "en", tag: "paraphrase", dreamText: "One of my molars wobbled and came loose in my hand.", expected: ["teeth", "hand"] },
 ];
 
 export type RetrievalCaseResult = {

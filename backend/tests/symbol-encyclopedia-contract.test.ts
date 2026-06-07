@@ -135,4 +135,68 @@ describe("symbol encyclopedia contract", () => {
     expect(entry.facets).toContain("hidden_movement");
     expect(entry.universalMeanings).toContain("change");
   });
+
+  test("allows optional disambiguation rules for risky localized aliases", () => {
+    const entry: SymbolEntry = {
+      id: "horse",
+      status: "active",
+      editorialStatus: "approved",
+      category: "animal",
+      subcategory: "mammal",
+      facets: ["advancement", "momentum", "travel"],
+      symbolRole: ["primary_candidate"],
+      safetyLevel: "safe",
+      accessTier: "free",
+      embeddingProfile: {
+        chunkTypes: ["searchText", "sceneModifier", "safeReading", "metaphorHook"],
+      },
+      universalMeanings: ["advancement", "momentum", "travel"],
+      relatedIds: ["running"],
+      sourceBasis: ["everyday metaphor"],
+      disambiguation: {
+        ko: [
+          {
+            alias: "말",
+            confirmWhen: ["말을 타", "백마", "망아지"],
+            rejectWhen: ["말을 걸", "말을 하", "대화", "얘기"],
+            fallback: "candidate_only",
+          },
+        ],
+      },
+      locales: {
+        ko: {
+          label: "말",
+          aliases: ["말", "백마", "망아지"],
+          searchText: "말, 백마, 전진",
+          coreMeanings: ["전진", "활력", "이동"],
+          lightReadings: ["앞으로 나아가는 기운"],
+          shadowReadings: ["속도를 감당하기 어려움"],
+          sceneModifiers: {},
+          contextQuestions: ["말을 타고 있었나요?"],
+          metaphorHooks: ["달리는 말"],
+          cardTitleSeeds: ["달리는 말"],
+          smallPrescriptions: ["오늘 움직일 방향 하나를 정해보세요."],
+          safeReading: "말은 전진과 활력을 보여줄 수 있어요.",
+          avoidExpressions: ["무조건 성공한다"],
+        },
+        en: {
+          label: "Horse",
+          aliases: ["horse", "white horse", "colt"],
+          searchText: "horse, vitality, movement",
+          coreMeanings: ["movement", "vitality", "freedom"],
+          lightReadings: ["life force moving forward"],
+          shadowReadings: ["runaway force"],
+          sceneModifiers: {},
+          contextQuestions: ["Were you riding it?"],
+          metaphorHooks: ["the running horse"],
+          cardTitleSeeds: ["The Running Horse"],
+          smallPrescriptions: ["Choose one direction for today."],
+          safeReading: "A horse can point to movement and vitality.",
+          avoidExpressions: ["success is guaranteed"],
+        },
+      },
+    };
+
+    expect(entry.disambiguation?.ko?.[0]?.fallback).toBe("candidate_only");
+  });
 });

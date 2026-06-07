@@ -63,6 +63,51 @@ describe("retrieveDreamEvidence", () => {
     expect(matches).toEqual([]);
   });
 
+  test("does not confirm disambiguated Korean homonym false positives", () => {
+    const speechEvidence = retrieveDreamEvidenceSet({
+      dreamText: "꿈에서 돼지가 나와서 나한테 말을 거는 꿈을 꿨어.",
+      locale: "ko",
+      limit: 5,
+    });
+    expect(speechEvidence.confirmedEvidence.map((match) => match.entryId)).toContain("pig");
+    expect(speechEvidence.confirmedEvidence.map((match) => match.entryId)).not.toContain("horse");
+
+    const teaEvidence = retrieveDreamEvidenceSet({
+      dreamText: "차를 마시는 꿈을 꿨어.",
+      locale: "ko",
+      limit: 5,
+    });
+    expect(teaEvidence.confirmedEvidence.map((match) => match.entryId)).not.toContain("car");
+
+    const stomachEvidence = retrieveDreamEvidenceSet({
+      dreamText: "배가 아픈 꿈을 꿨어.",
+      locale: "ko",
+      limit: 5,
+    });
+    expect(stomachEvidence.confirmedEvidence.map((match) => match.entryId)).not.toContain("boat");
+
+    const eyeEvidence = retrieveDreamEvidenceSet({
+      dreamText: "눈이 나를 바라보는 꿈을 꿨어.",
+      locale: "ko",
+      limit: 5,
+    });
+    expect(eyeEvidence.confirmedEvidence.map((match) => match.entryId)).toContain("eye");
+    expect(eyeEvidence.confirmedEvidence.map((match) => match.entryId)).not.toContain("snow");
+  });
+
+  test("confirms the specific apple symbol when the dream text means fruit", () => {
+    const evidence = retrieveDreamEvidenceSet({
+      dreamText: "빨간 사과를 먹는 꿈을 꿨어.",
+      locale: "ko",
+      limit: 5,
+    });
+
+    expect(evidence.confirmedEvidence.map((match) => match.entryId)).toContain("apple");
+    expect(evidence.confirmedEvidence.find((match) => match.entryId === "apple")?.matchedText).toEqual(
+      expect.arrayContaining(["사과", "빨간 사과", "사과를 먹"]),
+    );
+  });
+
   test("does not introduce broad semantic chunk symbols when explicit symbols are already present", () => {
     const evidence = retrieveDreamEvidenceSet({
       dreamText:

@@ -54,6 +54,15 @@ export type SymbolFortune = {
   cautious?: string;
 };
 
+export type SymbolDisambiguationRule = {
+  alias: string;
+  confirmWhen?: string[];
+  rejectWhen?: string[];
+  fallback: "candidate_only" | "reject";
+};
+
+export type SymbolDisambiguation = Partial<Record<SupportedLocale, SymbolDisambiguationRule[]>>;
+
 export type EmbeddingProfile = {
   chunkTypes: EmbeddingChunkType[];
 };
@@ -90,6 +99,7 @@ export type SymbolEntry = {
   universalMeanings: string[];
   relatedIds: string[];
   sourceBasis: string[];
+  disambiguation?: SymbolDisambiguation;
   locales: Record<SupportedLocale, LocalizedSymbolEntry>;
 };
 
@@ -105,6 +115,7 @@ export type RuntimeSymbolEntry = {
   aliases: string[];
   searchText: string;
   relatedIds: string[];
+  disambiguation?: SymbolDisambiguation;
   evidence: {
     coreMeanings: string[];
     lightReadings: string[];

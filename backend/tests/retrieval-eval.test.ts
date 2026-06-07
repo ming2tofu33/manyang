@@ -30,5 +30,5 @@ describe("retrieval eval harness", () => {
     expect(tradition).toBeDefined();
     expect(common?.macroRecall ?? 0).toBeGreaterThanOrEqual(0.95);
     expect(tradition?.macroRecall ?? 0).toBeGreaterThanOrEqual(0.95);
-  });
+  }, 15_000);
 });

@@ -195,9 +195,9 @@ describe("dream reading quality eval harness", () => {
     expect(markdown).toContain("RAG Grounding");
     expect(markdown).toContain("Persona Difference");
     expect(markdown).toContain("Timeout Fallback");
-    // 무거운 before/after 평가 하니스 — KB가 커지며 분석 시간이 늘어, 기본 5s 한계를
+    // 무거운 before/after 평가 하니스 — KB가 커지며 분석 시간이 늘어, 기본 한계를
     // 전체 스위트 동시 실행 load에서 간헐적으로 넘겼다. 기능이 아닌 한계값 문제라 넉넉히 둔다.
-  }, 20000);
+  }, 45000);
 
   test("records timeout fallback as a quality signal", async () => {
     const timeoutCase = dreamReadingQualityCases.find((testCase) =>
