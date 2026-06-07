@@ -145,12 +145,14 @@ describe("generateTarotReadingForUser", () => {
     expect(input.outputContract?.length).toContain("cardReadings must be empty");
     expect(styleContract).toContain("한 장 리딩은 cardReadings를 빈 배열로 두고 overview");
     expect(styleContract).not.toContain("세 장 리딩은 overview에서 세 카드의 관계");
-    expect(styleContract).toContain("cardMessage");
+    expect(styleContract).not.toMatch(/\b(?:selectedMeaning|readingScene|symbolMeanings|visualSymbols|cardMessage|dailyFlow|outputContract)\b/u);
+    expect(styleContract).toContain("한국어 키워드는 자연스러운 띄어쓰기를 유지");
     expect(styleContract).toContain("차분, 조용, 작은 행동, 행동 하나, 충분합니다");
     expect(styleContract).not.toContain("차분, 조용, 흐름, 작은 행동");
     expect(request?.instructions).toContain("한 장 리딩에서는 cardReadings를 만들지 마세요");
     expect(request?.instructions).toContain("overview가 사용자에게 보이는 본문입니다");
     expect(request?.instructions).not.toContain("세 장 리딩은 overview에서 세 장의 관계");
+    expect(request?.instructions).not.toMatch(/\b(?:selectedMeaning|readingScene|symbolMeanings|visualSymbols|cardMessage|dailyFlow|outputContract)\b/u);
     expect(request?.instructions).not.toContain("You are Manyang's production tarot-reading engine.");
   });
 
@@ -253,6 +255,22 @@ describe("generateTarotReadingForUser", () => {
     });
   });
 
+  test("rejects provider JSON that leaks schema contract names into user-facing copy", async () => {
+    const provider = createProvider({
+      ...generatedDisplayFields,
+      title: "계약 이름이 섞인 리딩",
+      overview:
+        "바보 카드의 장면은 새 출발을 비추지만 outputContract라는 스키마 이름이 사용자 본문에 노출되고 있습니다.",
+      cardReadings: [],
+    });
+
+    await expect(generateTarotReadingForUser(oneCardInput, { provider })).resolves.toEqual({
+      status: "unavailable",
+      reason: "invalid_response",
+      retryable: true,
+    });
+  });
+
   test("normalizes cramped Korean display keywords before returning the reading", async () => {
     const provider = createProvider({
       title: "별빛이 다시 보이는 날",
@@ -336,7 +354,11 @@ describe("generateTarotReadingForUser", () => {
 
     expect(styleContract).toContain("세 장 리딩은 overview에서 세 카드의 관계");
     expect(styleContract).not.toContain("한 장 리딩은 cardReadings를 빈 배열");
+    expect(styleContract).toContain("각 카드의 기본 의미를 다시 설명하는 데 머물지 마세요");
+    expect(styleContract).toContain("조언 포지션도 명령형으로 쓰지 마세요");
     expect(request?.instructions).toContain("세 장 리딩은 overview에서 세 장의 관계");
+    expect(request?.instructions).toContain("고정 카드 메시지와 같은 말을 반복하지 마세요");
+    expect(request?.instructions).toContain("~하세요");
     expect(request?.instructions).not.toContain("한 장 리딩에서는 cardReadings를 만들지 마세요");
   });
 

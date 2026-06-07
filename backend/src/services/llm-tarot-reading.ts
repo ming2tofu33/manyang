@@ -62,7 +62,7 @@ const trailingLlmArtifactPatterns = [
 ] as const;
 
 const promptInternalFieldNamePattern =
-  /\b(?:cardMessage|cardReadings|dailyFlow|readingScene|reflectionQuestion|selectedMeaning|smallAction|symbolMeanings|visualSymbols)\b/iu;
+  /\b(?:cardMessage|cardReadings|dailyFlow|outputContract|readingScene|reflectionQuestion|selectedMeaning|smallAction|symbolMeanings|visualSymbols)\b/iu;
 
 const displayKeywordSpacingByCompactValue = new Map([
   ["새출발", "새 출발"],

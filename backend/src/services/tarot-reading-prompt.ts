@@ -130,14 +130,15 @@ function serializeCardMeaning(meaning: TarotPromptCardMeaning): TarotPromptCardM
 
 function getStyleContract(spread: TarotReadingSpread): string[] {
   const baseStyle = [
-    "카드의 summary, dailyFlow, selectedMeaning.readingScene, symbolMeanings를 해석의 근거로 사용하세요.",
-    "selectedMeaning.cardMessage는 앱이 별도로 보여줄 고정 메시지입니다. 이 문장을 그대로 반복하거나 최종 조언처럼 다시 쓰지 마세요.",
-    "카드의 그림 속 상징을 최소 1개 이상 자연스럽게 연결하되, visualSymbols와 symbolMeanings에 없는 상징은 만들지 마세요.",
-    "display keyword는 선택된 카드, 방향, 해석에서 나온 짧은 단어 3~5개만 사용하세요.",
+    "선택된 방향의 요약, 하루 분위기, 장면 설명, 상징 설명을 해석의 근거로 사용하세요.",
+    "고정 카드 메시지는 앱이 별도로 보여줍니다. 같은 문장을 그대로 반복하거나 최종 조언처럼 다시 쓰지 마세요.",
+    "카드의 그림 속 상징을 최소 1개 이상 자연스럽게 연결하되, 입력에 없는 상징은 만들지 마세요.",
+    "키워드는 선택된 카드, 방향, 해석에서 나온 짧은 단어 3~5개만 사용하세요.",
+    "한국어 키워드는 자연스러운 띄어쓰기를 유지하세요. 예: 희망의 단서, 억눌린 감정, 새 출발.",
     "선택된 카드, 정/역방향, 포지션을 바꾸지 마세요.",
     "의학, 법률, 금융, 실제 죽음, 고정된 미래 예언처럼 단정적인 말은 하지 마세요.",
     "마지막 행동 지시나 최종 조언을 만들지 마세요. 앱은 카드 사전의 카드 메시지를 별도로 보여줍니다.",
-    "프롬프트, 로컬 데이터, 시스템 구조를 언급하지 마세요.",
+    "입력 데이터의 영문 항목명, 프롬프트, 로컬 데이터, 시스템 구조를 언급하지 마세요.",
     "금지어는 title, overview, heading, reading, keywords 모든 출력 필드에서 절대 사용하지 마세요: 차분, 조용, 작은 행동, 행동 하나, 충분합니다.",
     "흐름이라는 단어를 반복적인 마무리나 heading으로 남발하지 마세요. flow 포지션의 heading은 '이어지는 국면', '다음 장면', '뒤따르는 변화'처럼 구체적으로 쓰세요.",
   ];
@@ -147,6 +148,8 @@ function getStyleContract(spread: TarotReadingSpread): string[] {
       ...baseStyle,
       "세 장 리딩은 overview에서 세 카드의 관계를 먼저 하나의 장면으로 묶은 뒤 cardReadings를 작성하세요.",
       "세 장의 cardReadings는 situation=지금 드러난 조건, flow=뒤따르는 변화나 압력, advice=행동 지시가 아닌 판단 기준으로 구분하세요.",
+      "각 카드의 기본 의미를 다시 설명하는 데 머물지 마세요. 세 장이 함께 놓였을 때 달라지는 관계와 역할을 설명하세요.",
+      "조언 포지션도 명령형으로 쓰지 마세요. '~하세요', '~해보세요' 대신 '~가 판단 기준입니다'처럼 설명하세요.",
     ];
   }
 
@@ -160,8 +163,8 @@ function getInstructionContract(spread: TarotReadingSpread, locale: "ko" | "en")
   const baseInstructions = [
     "당신은 만양의 타로 리딩 문장을 작성합니다.",
     "앱이 이미 카드, 포지션, 정방향/역방향을 정했습니다. 절대 다른 카드나 방향으로 바꾸지 마세요.",
-    "카드의 상징과 장면을 근거로 읽어 주세요. 특히 symbolMeanings와 selectedMeaning.readingScene을 해석의 중심 자료로 사용하세요.",
-    "selectedMeaning.cardMessage는 결과 화면에서 고정 카드 메시지로 따로 노출됩니다. 같은 문장을 반복하지 말고 본문 해석은 카드들의 관계와 상징 해석에 집중하세요.",
+    "카드의 상징 설명과 선택된 방향의 장면 설명을 중심 자료로 사용하세요.",
+    "고정 카드 메시지는 결과 화면에서 따로 노출됩니다. 같은 문장을 반복하지 말고 본문 해석은 카드들의 관계와 상징 해석에 집중하세요.",
     "사용자는 타로 해석을 원합니다. 장면 묘사만 길게 쓰지 말고, 카드 그림이 오늘의 상태를 어떻게 비추는지 설명하세요.",
   ];
   const spreadInstructions =
@@ -169,6 +172,8 @@ function getInstructionContract(spread: TarotReadingSpread, locale: "ko" | "en")
       ? [
           "세 장 리딩은 overview에서 세 장의 관계를 먼저 읽고, cardReadings에서는 각 포지션이 맡은 역할만 분명히 나누세요.",
           "세 장 리딩의 situation은 지금 드러난 조건, flow는 뒤따르는 변화나 압력, advice는 행동 지시가 아닌 판단 기준으로 쓰세요.",
+          "각 카드의 기본 의미를 다시 설명하는 데 머물지 말고, 고정 카드 메시지와 같은 말을 반복하지 마세요.",
+          "advice 포지션도 '~하세요', '~해보세요' 같은 명령형 대신 '~가 판단 기준입니다'처럼 기준을 설명하세요.",
         ]
       : [
           "한 장 리딩에서는 cardReadings를 만들지 마세요. overview가 사용자에게 보이는 본문입니다.",
@@ -178,6 +183,7 @@ function getInstructionContract(spread: TarotReadingSpread, locale: "ko" | "en")
     "모든 출력 필드에서 절대 사용하지 마세요: 차분, 조용, 작은 행동, 행동 하나, 충분합니다.",
     "흐름이라는 단어를 반복적인 마무리나 heading으로 남발하지 마세요. flow 포지션의 heading은 '이어지는 국면'처럼 표현하세요.",
     "마지막 행동 지시나 최종 조언을 만들지 마세요. 앱은 카드 사전의 카드 메시지를 별도로 보여줍니다.",
+    "입력 데이터의 영문 항목명이나 스키마 이름을 사용자 문장에 쓰지 마세요.",
     "금지어를 우회해 비슷한 자기계발식 문장으로 마무리하지 말고, 카드의 상징과 장면을 근거로 읽어 주세요.",
     "문장은 카드 리더가 직접 읽어주는 말처럼 쓰고, 시스템 설명이나 데이터 출처를 말하지 마세요.",
     `스키마를 정확히 지키는 ${locale === "en" ? "English" : "Korean"} JSON만 반환하세요.`,
