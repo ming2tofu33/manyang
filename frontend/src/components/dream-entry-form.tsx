@@ -70,6 +70,13 @@ type DreamUnavailableApiResponse = {
   safetyNotice?: string;
 };
 
+type DreamLockedApiResponse = {
+  error: "dream reading is locked";
+  reason: string;
+  ctaLabel: string | null;
+  message: string | null;
+};
+
 function isDreamUnavailableApiResponse(value: unknown): value is DreamUnavailableApiResponse {
   return (
     typeof value === "object" &&
@@ -78,6 +85,29 @@ function isDreamUnavailableApiResponse(value: unknown): value is DreamUnavailabl
     typeof (value as DreamUnavailableApiResponse).reason === "string" &&
     typeof (value as DreamUnavailableApiResponse).retryable === "boolean"
   );
+}
+
+function isDreamLockedApiResponse(value: unknown): value is DreamLockedApiResponse {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const body = value as Record<string, unknown>;
+
+  return (
+    body.error === "dream reading is locked" &&
+    typeof body.reason === "string" &&
+    (typeof body.ctaLabel === "string" || body.ctaLabel === null) &&
+    (typeof body.message === "string" || body.message === null)
+  );
+}
+
+export function getDreamAnalyzeFailureMessage(status: number, body: unknown): string | null {
+  if (status === 403 && isDreamLockedApiResponse(body)) {
+    return body.message ?? "지금은 이 꿈 해몽을 열 수 없어요.";
+  }
+
+  return null;
 }
 
 function createDreamNightContext(record: NightCheckInRecord | null, dreamDate: string): DreamNightContext | undefined {
@@ -363,6 +393,18 @@ export function DreamEntryForm() {
             ...(wakeMood ? { wakeMood } : {}),
           });
           router.push("/result");
+          return;
+        }
+
+        const failureMessage = getDreamAnalyzeFailureMessage(response.status, responseBody);
+
+        if (failureMessage) {
+          setError(failureMessage);
+          saveDreamDraftToBrowser({
+            dreamText: trimmedDreamText,
+            catReaderType: requestCatReaderId,
+            ...(wakeMood ? { wakeMood } : {}),
+          });
           return;
         }
 

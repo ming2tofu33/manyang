@@ -81,4 +81,20 @@ describe("DreamEntryForm", () => {
     expect(markup).not.toContain('<button type="submit" disabled');
     expect(markup).not.toContain('disabled=""');
   });
+
+  it("uses the server lock message when dream analysis is gated", async () => {
+    const dreamEntryModule = (await import("./dream-entry-form")) as unknown as {
+      getDreamAnalyzeFailureMessage?: (status: number, body: unknown) => string | null;
+    };
+
+    expect(dreamEntryModule.getDreamAnalyzeFailureMessage).toBeTypeOf("function");
+    expect(
+      dreamEntryModule.getDreamAnalyzeFailureMessage?.(403, {
+        error: "dream reading is locked",
+        reason: "guest_daily_limit",
+        ctaLabel: "로그인하고 매일 꿈 기록 남기기",
+        message: "오늘의 무료 꿈 영수증은 이미 받았어요. 로그인하면 매일 꿈 기록을 이어갈 수 있어요.",
+      }),
+    ).toBe("오늘의 무료 꿈 영수증은 이미 받았어요. 로그인하면 매일 꿈 기록을 이어갈 수 있어요.");
+  });
 });
