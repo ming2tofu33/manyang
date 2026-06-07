@@ -9,15 +9,24 @@ import {
 type FetchLike = (input: string | URL | Request, init?: RequestInit) => Promise<Response>;
 type EnvLike = Record<string, string | undefined>;
 
+export type OpenAIReasoningEffort = "minimal" | "low" | "medium" | "high";
+
 export type OpenAIResponsesProviderOptions = {
   apiKey: string;
   model?: string;
   baseUrl?: string;
   fetchFn?: FetchLike;
+  /** gpt-5 계열 reasoning effort. 꿈해몽은 추론이 아닌 근거 기반 창작이라 기본을 낮춰 지연을 줄인다. */
+  reasoningEffort?: OpenAIReasoningEffort;
 };
 
 const DEFAULT_BASE_URL = "https://api.openai.com/v1";
 const DEFAULT_MODEL = "gpt-5-mini";
+const DEFAULT_REASONING_EFFORT: OpenAIReasoningEffort = "low";
+
+function normalizeReasoningEffort(value: string | undefined): OpenAIReasoningEffort | undefined {
+  return value === "minimal" || value === "low" || value === "medium" || value === "high" ? value : undefined;
+}
 
 function normalizeBaseUrl(baseUrl: string): string {
   return baseUrl.replace(/\/+$/, "");
@@ -72,11 +81,13 @@ export class OpenAIResponsesProvider implements DreamReadingLlmProvider {
   private readonly model: string;
   private readonly baseUrl: string;
   private readonly fetchFn: FetchLike;
+  private readonly reasoningEffort: OpenAIReasoningEffort;
 
   constructor(options: OpenAIResponsesProviderOptions) {
     this.model = options.model ?? DEFAULT_MODEL;
     this.baseUrl = normalizeBaseUrl(options.baseUrl ?? DEFAULT_BASE_URL);
     this.fetchFn = options.fetchFn ?? fetch;
+    this.reasoningEffort = options.reasoningEffort ?? DEFAULT_REASONING_EFFORT;
 
     if (!options.apiKey.trim()) {
       throw new LlmProviderConfigurationError("OPENAI_API_KEY is required when MANYANG_ANALYSIS_MODE=llm");
@@ -108,6 +119,7 @@ export class OpenAIResponsesProvider implements DreamReadingLlmProvider {
           model: request.model ?? this.model,
           instructions: request.instructions,
           input: request.input,
+          reasoning: { effort: this.reasoningEffort },
           text: {
             format: {
               type: "json_schema",
@@ -165,6 +177,7 @@ export function createOpenAIResponsesProviderFromEnv(
     apiKey: env.OPENAI_API_KEY,
     model: env.MANYANG_OPENAI_MODEL ?? env.OPENAI_MODEL ?? DEFAULT_MODEL,
     baseUrl: env.OPENAI_BASE_URL ?? DEFAULT_BASE_URL,
+    reasoningEffort: normalizeReasoningEffort(env.MANYANG_OPENAI_REASONING_EFFORT) ?? DEFAULT_REASONING_EFFORT,
     ...(fetchFn ? { fetchFn } : {}),
   });
 }
