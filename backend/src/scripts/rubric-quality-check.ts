@@ -39,14 +39,23 @@ function loadEnv(): void {
 }
 
 const DEFAULT_DREAMS = [
-  "내 땅에 큰 구렁이와 뱀이 수십 마리 나왔어.",
+  // 고전 길몽
   "돼지가 우리 집으로 들어왔어.",
   "맑은 강에서 커다란 잉어가 내 품으로 뛰어들었어.",
-  "높은 곳에서 갑자기 떨어졌어.",
+  "똥을 온몸에 뒤집어썼어.",
+  // 동물 (신규 심볼 포함)
+  "호랑이가 산에서 나를 내려다보고 있었어.",
+  "사자가 갈기를 휘날리며 천천히 다가왔어.",
+  // 흔한 불안 꿈
   "시험을 보는데 아무리 봐도 답을 모르겠더라.",
-  "회사에서 발표하는데 목소리가 안 나왔어.",
+  "높은 곳에서 갑자기 떨어졌어.",
+  "이가 우수수 다 빠져버렸어.",
+  // 인물·장소 (신규 심볼 포함)
+  "돌아가신 할머니가 환하게 웃으며 손에 뭔가를 쥐여주셨어.",
+  "절에서 스님이 나에게 따뜻한 차를 따라주셨어.",
+  "경찰이 나를 잡으러 끝까지 쫓아왔어.",
+  // 모호 / 무근거
   "장면은 흐릿한데 계속 불안하고 쫓기는 느낌만 남았어.",
-  "친구랑 카페에서 그냥 수다 떨다가 깼어.",
 ];
 
 function toEvidence(symbols: { label: string; evidence: { coreMeanings: string[]; lightReadings: string[]; shadowReadings: string[]; fortune?: unknown } }[]): RubricEvidenceSymbol[] {
@@ -164,29 +173,48 @@ async function run(): Promise<void> {
 
   const dreams = process.argv.slice(2).length > 0 ? process.argv.slice(2) : DEFAULT_DREAMS;
   const results: CaseResult[] = [];
+  let failed = 0;
 
   for (const dreamText of dreams) {
-    const structuredAnalysis = analyzeDreamStructure({ dreamText, locale: "ko" });
-    const evidenceSet = retrieveDreamEvidenceSet({ dreamText, locale: "ko", structuredAnalysis, limit: 5 });
-    const reading = await analyzeDreamWithLlm(
-      { dreamText, locale: "ko" },
-      { provider: genProvider, ...(embeddingProvider ? { embeddingProvider } : {}), ...(vectorIndex ? { vectorIndex } : {}), providerTimeoutMs: 45000 },
-    );
-    const rubric = await scoreDreamReadingWithRubric(judgeProvider, {
-      dreamText,
-      reading: { summary: reading.summary, interpretation: reading.interpretation, symbolReadings: reading.symbolReadings },
-      confirmedEvidence: toEvidence(evidenceSet.confirmedEvidence),
-      selectedFeelings: [],
-      locale: "ko",
-    });
-    results.push({
-      dreamText,
-      confirmedLabels: evidenceSet.confirmedEvidence.map((m) => m.label),
-      reading: { summary: reading.summary, interpretation: reading.interpretation, symbolReadings: reading.symbolReadings },
-      rubric,
-    });
-    console.log(`[${rubric.finalScore}/100] ${rubric.issues.length ? "⚠️" : "  "} "${dreamText.slice(0, 26)}" — ${rubric.verdict.slice(0, 50)}`);
+    try {
+      const structuredAnalysis = analyzeDreamStructure({ dreamText, locale: "ko" });
+      const evidenceSet = retrieveDreamEvidenceSet({ dreamText, locale: "ko", structuredAnalysis, limit: 5 });
+      const reading = await analyzeDreamWithLlm(
+        { dreamText, locale: "ko" },
+        { provider: genProvider, ...(embeddingProvider ? { embeddingProvider } : {}), ...(vectorIndex ? { vectorIndex } : {}), providerTimeoutMs: 45000 },
+      );
+      const judgeInput = {
+        dreamText,
+        reading: { summary: reading.summary, interpretation: reading.interpretation, symbolReadings: reading.symbolReadings },
+        confirmedEvidence: toEvidence(evidenceSet.confirmedEvidence),
+        selectedFeelings: [],
+        locale: "ko" as const,
+      };
+      // judge에 타임아웃을 걸고(미설정 시 undici headers timeout으로 멈춤), 한 번 재시도한다.
+      let rubric;
+      try {
+        rubric = await scoreDreamReadingWithRubric(judgeProvider, judgeInput, { timeoutMs: 60000 });
+      } catch {
+        rubric = await scoreDreamReadingWithRubric(judgeProvider, judgeInput, { timeoutMs: 60000 });
+      }
+      results.push({
+        dreamText,
+        confirmedLabels: evidenceSet.confirmedEvidence.map((m) => m.label),
+        reading: { summary: reading.summary, interpretation: reading.interpretation, symbolReadings: reading.symbolReadings },
+        rubric,
+      });
+      console.log(`[${rubric.finalScore}/100] ${rubric.issues.length ? "⚠️" : "  "} "${dreamText.slice(0, 26)}" — ${rubric.verdict.slice(0, 50)}`);
+    } catch (error) {
+      failed += 1;
+      console.log(`[ERROR] "${dreamText.slice(0, 26)}" — ${(error as Error)?.message ?? String(error)}`);
+    }
   }
+
+  if (results.length === 0) {
+    console.log(`\n모든 케이스 실패(${failed}). 리포트 생략.`);
+    return;
+  }
+  if (failed > 0) console.log(`\n(실패 ${failed}건은 리포트에서 제외)`);
 
   const outDir = resolve(repoRoot, "output", "eval");
   await mkdir(outDir, { recursive: true });
