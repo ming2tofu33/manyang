@@ -19,8 +19,15 @@ export type RubricSubScore = {
   score: number;
 };
 
-/** LLM judge가 채점하는 주관적 품질 (제공된 evidence 대비). */
+/** 추출 recall — score + 꿈에 또렷한데 놓친 심볼 목록. */
+export type RubricRecallSub = RubricSubScore & { missedSymbols: string[] };
+/** 추출 precision — score + 추출됐지만 꿈에 없는 심볼 목록. */
+export type RubricPrecisionSub = RubricSubScore & { spuriousSymbols: string[] };
+
+/** LLM judge가 채점하는 품질 (제공된 evidence 대비 + 추출 대조 + 게슈탈트). */
 export type RubricGroups = {
+  /** 심볼 추출 품질 — judge가 꿈을 독립 분석해 추출본과 대조. */
+  extraction: { recall: RubricRecallSub; precision: RubricPrecisionSub };
   /** 내 꿈인가 — 일반론 아님 = "아무말" 아님. */
   ownership: { sceneBinding: RubricSubScore; nonGeneric: RubricSubScore };
   /** 말이 되는가 — 꿈→의미가 evidence에서 벌어들여졌나. */
@@ -31,6 +38,8 @@ export type RubricGroups = {
   delight: { fortuneClarity: RubricSubScore; folkFraming: RubricSubScore };
   /** 풍부 — 충실·padding 아님. */
   depth: { development: RubricSubScore };
+  /** 전체 게슈탈트 — 꿈 원문 대비 통째로 좋은 해석인가 (한 방). */
+  overall: { gestalt: RubricSubScore };
 };
 
 export type RubricIssueType = "safety" | "fabrication" | "voice" | "fallback";
@@ -74,11 +83,13 @@ export type ScoreDreamReadingInput = {
 
 // ── group 가중치 (만양 우선순위: 신뢰 먼저) ───────────────────────────────────
 export const RUBRIC_GROUP_WEIGHTS = {
-  ownership: 0.3,
-  sense: 0.2,
-  resonance: 0.25,
-  delight: 0.15,
-  depth: 0.1,
+  extraction: 0.15,
+  ownership: 0.22,
+  sense: 0.13,
+  resonance: 0.2,
+  delight: 0.12,
+  depth: 0.08,
+  overall: 0.1,
 } as const;
 
 // ── issue 캡/감점 ────────────────────────────────────────────────────────────
@@ -110,10 +121,42 @@ function subScoreSchema(description: string) {
   } as const;
 }
 
+const symbolListSchema = {
+  type: "array",
+  items: { type: "string", minLength: 1 },
+} as const;
+
 export const DREAM_RUBRIC_JSON_SCHEMA = {
   type: "object",
   additionalProperties: false,
   properties: {
+    extraction: {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        recall: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            evidence: { type: "string", minLength: 1, description: "꿈에 또렷한 핵심 심볼을 다 잡았나 판단 근거" },
+            score: { type: "integer", minimum: 0, maximum: 10 },
+            missedSymbols: { ...symbolListSchema, description: "꿈에 또렷이 있는데 추출본에 없는 심볼(없으면 빈 배열)" },
+          },
+          required: ["evidence", "score", "missedSymbols"],
+        },
+        precision: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            evidence: { type: "string", minLength: 1, description: "추출본이 꿈에 실제로 있는 것들로만 됐나 판단 근거" },
+            score: { type: "integer", minimum: 0, maximum: 10 },
+            spuriousSymbols: { ...symbolListSchema, description: "추출됐지만 꿈에 없는 심볼(없으면 빈 배열)" },
+          },
+          required: ["evidence", "score", "spuriousSymbols"],
+        },
+      },
+      required: ["recall", "precision"],
+    },
     ownership: {
       type: "object",
       additionalProperties: false,
@@ -157,9 +200,17 @@ export const DREAM_RUBRIC_JSON_SCHEMA = {
       },
       required: ["development"],
     },
+    overall: {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        gestalt: subScoreSchema("꿈 원문과 같이 읽었을 때 통째로 만족스럽고 설득력 있는 해석인가(한 방 게슈탈트)"),
+      },
+      required: ["gestalt"],
+    },
     verdict: { type: "string", minLength: 1, description: "한 줄 총평" },
   },
-  required: ["ownership", "sense", "resonance", "delight", "depth", "verdict"],
+  required: ["extraction", "ownership", "sense", "resonance", "delight", "depth", "overall", "verdict"],
 } as const;
 
 export function buildRubricJudgePrompt(input: ScoreDreamReadingInput): { instructions: string; input: string } {
@@ -168,6 +219,7 @@ export function buildRubricJudgePrompt(input: ScoreDreamReadingInput): { instruc
     dreamText: input.dreamText,
     reading: input.reading,
     confirmedEvidence: input.confirmedEvidence,
+    extractedSymbols: input.confirmedEvidence.map((e) => e.label),
     selectedFeelings: input.selectedFeelings ?? [],
   };
 
@@ -175,8 +227,12 @@ export function buildRubricJudgePrompt(input: ScoreDreamReadingInput): { instruc
     instructions: [
       "You are a strict quality judge for Manyang, a cat-themed dream-fortune reader.",
       "A dream has NO correct interpretation, so do NOT judge against an absolute truth.",
+      "FIRST, read the dreamText yourself and decide which concrete dream symbols it clearly contains, INDEPENDENTLY of the system. Then compare your list with extractedSymbols (what the system pulled) to score extraction.",
+      "extraction.recall: score 10 only if every clearly-present important symbol of the dream is in extractedSymbols. List every clearly-present symbol that is MISSING from extractedSymbols in missedSymbols (use the Korean surface word as it appears in the dream); empty array if none missed. A missed key symbol means the whole reading was built on incomplete material — score it low.",
+      "extraction.precision: score 10 only if every extractedSymbol is actually present in the dream. List any extracted symbol that is NOT really in the dream in spuriousSymbols; empty array if none. (A symbol matched only as background or by a homonym counts as spurious.)",
+      "overall.gestalt: step back and read the dream and the whole reading together — as a WHOLE, is this a satisfying, convincing reading of THIS dream? This is a holistic gut judgment, not the average of the other sub-scores.",
       "Judge GROUNDEDNESS strictly against the provided confirmedEvidence and the dreamText: a meaning is grounded only if it traces to a confirmed symbol's lore (coreMeanings/lightReadings/shadowReadings/fortune) or to a concrete detail the user actually wrote. A meaning invented beyond that evidence is fabrication and must score low on ownership and sense.",
-      "Score every sub-score from 0 to 10 and give a short evidence string for each — quote or point to the exact part of the reading that justifies the score. Never give a score without evidence.",
+      "Score every sub-score from 0 to 10 and give a short evidence string for each — quote or point to the exact part of the reading (or dream) that justifies the score. Never give a score without evidence.",
       "ownership.sceneBinding: high only if the reading ties meanings to THIS dream's specific details (quantity, action, place, feeling). ownership.nonGeneric: low if sentences could be pasted onto a different dream.",
       "sense.coherence: does the dream→meaning logic hold without leaps or contradictions, staying within the evidence.",
       "resonance.warmth: does it feel like a warm cat reading by candlelight (comforting), not a clinical or robotic note. resonance.landsOnFeeling: does it meet the user's selectedFeelings (or, if none, the dream's own emotional tone).",
@@ -202,6 +258,10 @@ function clampScore(value: number): number {
   return Math.max(0, Math.min(10, value));
 }
 
+function stringList(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((v): v is string => typeof v === "string" && v.trim().length > 0) : [];
+}
+
 /** judge 응답을 RubricGroups로 검증/파싱. 실패 시 null. */
 export function parseRubricGroups(raw: unknown): { groups: RubricGroups; verdict: string } | null {
   if (typeof raw !== "object" || raw === null) {
@@ -209,6 +269,8 @@ export function parseRubricGroups(raw: unknown): { groups: RubricGroups; verdict
   }
   const r = raw as Record<string, any>;
   const subs: Array<[string, string]> = [
+    ["extraction", "recall"],
+    ["extraction", "precision"],
     ["ownership", "sceneBinding"],
     ["ownership", "nonGeneric"],
     ["sense", "coherence"],
@@ -217,6 +279,7 @@ export function parseRubricGroups(raw: unknown): { groups: RubricGroups; verdict
     ["delight", "fortuneClarity"],
     ["delight", "folkFraming"],
     ["depth", "development"],
+    ["overall", "gestalt"],
   ];
   for (const [group, sub] of subs) {
     if (!isSubScore(r[group]?.[sub])) {
@@ -230,11 +293,16 @@ export function parseRubricGroups(raw: unknown): { groups: RubricGroups; verdict
 
   return {
     groups: {
+      extraction: {
+        recall: { ...clamp("extraction", "recall"), missedSymbols: stringList(r.extraction.recall.missedSymbols) },
+        precision: { ...clamp("extraction", "precision"), spuriousSymbols: stringList(r.extraction.precision.spuriousSymbols) },
+      },
       ownership: { sceneBinding: clamp("ownership", "sceneBinding"), nonGeneric: clamp("ownership", "nonGeneric") },
       sense: { coherence: clamp("sense", "coherence") },
       resonance: { warmth: clamp("resonance", "warmth"), landsOnFeeling: clamp("resonance", "landsOnFeeling") },
       delight: { fortuneClarity: clamp("delight", "fortuneClarity"), folkFraming: clamp("delight", "folkFraming") },
       depth: { development: clamp("depth", "development") },
+      overall: { gestalt: clamp("overall", "gestalt") },
     },
     verdict: typeof r.verdict === "string" ? r.verdict : "",
   };
@@ -248,6 +316,8 @@ function groupAverage(group: Record<string, RubricSubScore>): number {
 /** 모든 sub-score 평균(0-10) × 10 → 0-100 (0to1log 기본 집계). */
 export function rawScoreFromGroups(groups: RubricGroups): number {
   const all = [
+    groups.extraction.recall,
+    groups.extraction.precision,
     groups.ownership.sceneBinding,
     groups.ownership.nonGeneric,
     groups.sense.coherence,
@@ -256,6 +326,7 @@ export function rawScoreFromGroups(groups: RubricGroups): number {
     groups.delight.fortuneClarity,
     groups.delight.folkFraming,
     groups.depth.development,
+    groups.overall.gestalt,
   ].map((s) => s.score);
   return Math.round((all.reduce((a, b) => a + b, 0) / all.length) * 10);
 }
@@ -263,18 +334,22 @@ export function rawScoreFromGroups(groups: RubricGroups): number {
 /** group 가중치(만양 우선순위) 적용 → 0-100. */
 export function weightedScoreFromGroups(groups: RubricGroups): number {
   const perGroup = {
+    extraction: groupAverage(groups.extraction),
     ownership: groupAverage(groups.ownership),
     sense: groupAverage(groups.sense),
     resonance: groupAverage(groups.resonance),
     delight: groupAverage(groups.delight),
     depth: groupAverage(groups.depth),
+    overall: groupAverage(groups.overall),
   };
   const weighted =
+    perGroup.extraction * RUBRIC_GROUP_WEIGHTS.extraction +
     perGroup.ownership * RUBRIC_GROUP_WEIGHTS.ownership +
     perGroup.sense * RUBRIC_GROUP_WEIGHTS.sense +
     perGroup.resonance * RUBRIC_GROUP_WEIGHTS.resonance +
     perGroup.delight * RUBRIC_GROUP_WEIGHTS.delight +
-    perGroup.depth * RUBRIC_GROUP_WEIGHTS.depth;
+    perGroup.depth * RUBRIC_GROUP_WEIGHTS.depth +
+    perGroup.overall * RUBRIC_GROUP_WEIGHTS.overall;
   return Math.round(weighted * 10);
 }
 

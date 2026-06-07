@@ -12,11 +12,16 @@ import {
 function groupsWithScore(score: number): RubricGroups {
   const s = { evidence: "x", score };
   return {
+    extraction: {
+      recall: { ...s, missedSymbols: [] },
+      precision: { ...s, spuriousSymbols: [] },
+    },
     ownership: { sceneBinding: { ...s }, nonGeneric: { ...s } },
     sense: { coherence: { ...s } },
     resonance: { warmth: { ...s }, landsOnFeeling: { ...s } },
     delight: { fortuneClarity: { ...s }, folkFraming: { ...s } },
     depth: { development: { ...s } },
+    overall: { gestalt: { ...s } },
   };
 }
 

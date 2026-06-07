@@ -73,6 +73,8 @@ function bar(score0to10: number): string {
 
 function renderReport(results: CaseResult[]): string {
   const subs: Array<[string, (r: RubricResult) => number]> = [
+    ["extraction.recall", (r) => r.groups.extraction.recall.score],
+    ["extraction.precision", (r) => r.groups.extraction.precision.score],
     ["ownership.sceneBinding", (r) => r.groups.ownership.sceneBinding.score],
     ["ownership.nonGeneric", (r) => r.groups.ownership.nonGeneric.score],
     ["sense.coherence", (r) => r.groups.sense.coherence.score],
@@ -81,6 +83,7 @@ function renderReport(results: CaseResult[]): string {
     ["delight.fortuneClarity", (r) => r.groups.delight.fortuneClarity.score],
     ["delight.folkFraming", (r) => r.groups.delight.folkFraming.score],
     ["depth.development", (r) => r.groups.depth.development.score],
+    ["overall.gestalt", (r) => r.groups.overall.gestalt.score],
   ];
   const lines: string[] = ["# 만양 해몽 Rubric 채점 리포트", ""];
 
@@ -103,6 +106,21 @@ function renderReport(results: CaseResult[]): string {
     lines.push("");
   }
 
+  const allMissed = new Map<string, number>();
+  const allSpurious = new Map<string, number>();
+  for (const r of results) {
+    for (const s of r.rubric.groups.extraction.recall.missedSymbols) allMissed.set(s, (allMissed.get(s) ?? 0) + 1);
+    for (const s of r.rubric.groups.extraction.precision.spuriousSymbols) allSpurious.set(s, (allSpurious.get(s) ?? 0) + 1);
+  }
+  const byCount = (m: Map<string, number>) =>
+    [...m.entries()].sort((a, b) => b[1] - a[1]).map(([s, n]) => `${s}(${n})`).join(", ");
+  if (allMissed.size > 0 || allSpurious.size > 0) {
+    lines.push("## 추출 갭 (매처/백과 보강 타깃)");
+    if (allMissed.size > 0) lines.push(`- 놓친 심볼: ${byCount(allMissed)}`);
+    if (allSpurious.size > 0) lines.push(`- 헛 심볼: ${byCount(allSpurious)}`);
+    lines.push("");
+  }
+
   lines.push("## 케이스별 (최종점수 오름차순)");
   for (const r of [...results].sort((a, b) => a.rubric.finalScore - b.rubric.finalScore)) {
     lines.push(`### ${r.rubric.finalScore}/100 — "${r.dreamText}"`);
@@ -110,6 +128,11 @@ function renderReport(results: CaseResult[]): string {
     lines.push(`- 총평: ${r.rubric.verdict}`);
     if (r.rubric.issues.length > 0) {
       lines.push(`- ⚠️ issues: ${r.rubric.issues.map((i) => `${i.type}(${i.evidence})`).join(" / ")}`);
+    }
+    const missed = r.rubric.groups.extraction.recall.missedSymbols;
+    const spurious = r.rubric.groups.extraction.precision.spuriousSymbols;
+    if (missed.length > 0 || spurious.length > 0) {
+      lines.push(`- 🔎 추출: 놓침[${missed.join(", ") || "-"}] / 헛심볼[${spurious.join(", ") || "-"}]`);
     }
     for (const [name, get] of subs) {
       const sub = name.split(".").reduce<any>((o, k) => o[k], r.rubric.groups);
