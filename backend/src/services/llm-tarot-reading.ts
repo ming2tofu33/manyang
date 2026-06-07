@@ -61,6 +61,15 @@ const trailingLlmArtifactPatterns = [
   /\s*[}\])]{2,}\s*$/u,
 ] as const;
 
+const promptInternalFieldNamePattern =
+  /\b(?:cardMessage|cardReadings|dailyFlow|readingScene|reflectionQuestion|selectedMeaning|smallAction|symbolMeanings|visualSymbols)\b/iu;
+
+const displayKeywordSpacingByCompactValue = new Map([
+  ["새출발", "새 출발"],
+  ["억눌린감정", "억눌린 감정"],
+  ["희망의단서", "희망의 단서"],
+]);
+
 function stripTrailingLlmArtifacts(value: string): string {
   let cleaned = value.trim();
   let previous = "";
@@ -74,6 +83,14 @@ function stripTrailingLlmArtifacts(value: string): string {
   }
 
   return cleaned;
+}
+
+function normalizeDisplayKeyword(value: string): string {
+  return displayKeywordSpacingByCompactValue.get(value.replace(/\s+/g, "")) ?? value;
+}
+
+function containsPromptInternalFieldName(value: string): boolean {
+  return promptInternalFieldNamePattern.test(value);
 }
 
 function cleanString(value: unknown, maxLength = 1400): string | undefined {
@@ -100,13 +117,14 @@ function parseStringArray(value: unknown, maxItems: number, maxItemLength: numbe
 
   for (const item of value) {
     const cleaned = cleanString(item, maxItemLength);
+    const displayValue = cleaned ? normalizeDisplayKeyword(cleaned) : undefined;
 
-    if (!cleaned || seen.has(cleaned)) {
+    if (!displayValue || seen.has(displayValue)) {
       continue;
     }
 
-    seen.add(cleaned);
-    strings.push(cleaned);
+    seen.add(displayValue);
+    strings.push(displayValue);
 
     if (strings.length >= maxItems) {
       break;
@@ -148,6 +166,15 @@ function hasExactPositions(readings: TarotGeneratedCardReading[], expectedPositi
   return expectedPositions.every((position, index) => readings[index]?.position === position);
 }
 
+function hasPromptInternalFieldNameLeak(reading: TarotGeneratedReading): boolean {
+  return (
+    [reading.title, reading.overview, ...reading.keywords].some(containsPromptInternalFieldName) ||
+    reading.cardReadings.some((cardReading) =>
+      [cardReading.heading, cardReading.reading].some(containsPromptInternalFieldName),
+    )
+  );
+}
+
 function parseTarotReadingDraft(input: TarotReadingInput, value: unknown): TarotGeneratedReading | undefined {
   if (!isRecord(value)) {
     return undefined;
@@ -173,12 +200,14 @@ function parseTarotReadingDraft(input: TarotReadingInput, value: unknown): Tarot
     return undefined;
   }
 
-  return {
+  const reading = {
     title,
     overview,
     keywords,
     cardReadings,
   };
+
+  return hasPromptInternalFieldNameLeak(reading) ? undefined : reading;
 }
 
 function normalizeProviderTimeoutMs(timeoutMs: number | undefined): number {

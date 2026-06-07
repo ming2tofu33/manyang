@@ -237,6 +237,39 @@ describe("generateTarotReadingForUser", () => {
     });
   });
 
+  test("rejects provider JSON that leaks prompt-internal field names into user-facing copy", async () => {
+    const provider = createProvider({
+      ...generatedDisplayFields,
+      title: "내부 필드가 섞인 리딩",
+      overview:
+        "바보 카드의 장면은 새 출발을 비추지만 selectedMeaning이 가리키듯 내부 데이터 이름이 사용자 본문에 노출되고 있습니다.",
+      cardReadings: [],
+    });
+
+    await expect(generateTarotReadingForUser(oneCardInput, { provider })).resolves.toEqual({
+      status: "unavailable",
+      reason: "invalid_response",
+      retryable: true,
+    });
+  });
+
+  test("normalizes cramped Korean display keywords before returning the reading", async () => {
+    const provider = createProvider({
+      title: "별빛이 다시 보이는 날",
+      overview:
+        "별 카드의 정방향은 아직 모든 것이 회복되었다고 말하지 않지만, 큰 별빛과 고요한 물이 마음을 다시 열 수 있는 단서를 보여줍니다.",
+      keywords: ["희망의단서", "억눌린감정", "새출발"],
+      cardReadings: [],
+    });
+
+    await expect(generateTarotReadingForUser(oneCardInput, { provider })).resolves.toMatchObject({
+      status: "ok",
+      reading: {
+        keywords: ["희망의 단서", "억눌린 감정", "새 출발"],
+      },
+    });
+  });
+
   test("removes provider tail artifacts from parsed tarot copy", async () => {
     const provider = createProvider({
       ...generatedDisplayFields,
