@@ -131,6 +131,49 @@ describe("buildDreamReadingPrompt", () => {
     expect(payload.userSelectedFeeling?.sensations).toEqual(["떨어지는 느낌"]);
   });
 
+  test("frames selected atmosphere and sensation as an interpretation lens, not the reading subject", () => {
+    const request = {
+      dreamText: "프로젝트 때문에 같이 일하는 남자가 자꾸 꿈에 나와. 엄청 친절하고 다정하고, 꿈에서도 일을 잘해.",
+      locale: "ko" as const,
+      dreamAtmospheres: ["warm", "eerie"],
+      dreamSensations: ["vivid"],
+    };
+    const structuredAnalysis = analyzeDreamStructure(request);
+    const prompt = buildDreamReadingPrompt({
+      request,
+      baseline: analyzeDream(request),
+      structuredAnalysis,
+      matches: findRuntimeSymbolMatches(request.dreamText, { locale: request.locale, limit: 5 }),
+    });
+    const payload = JSON.parse(prompt.input) as {
+      userSelectedFeeling?: {
+        interpretationLens?: {
+          role?: string;
+          surfaceUse?: string;
+          sceneFeelingDifference?: string;
+          lensHints?: string[];
+        };
+      };
+    };
+
+    expect(prompt.instructions).toContain("interpretation lens");
+    expect(prompt.instructions).toContain("not the central subject");
+    expect(prompt.instructions).toContain("Do not repeat selected labels");
+    expect(prompt.instructions).toContain("Do not quote raw selected labels");
+    expect(prompt.instructions).toContain("Do not put selected labels in parentheses");
+    expect(prompt.instructions).toContain("If the dream scene and the selected feelings point in different directions");
+    expect(payload.userSelectedFeeling?.interpretationLens?.role).toContain("meaning direction");
+    expect(payload.userSelectedFeeling?.interpretationLens?.surfaceUse).toContain("Do not turn selected labels");
+    expect(payload.userSelectedFeeling?.interpretationLens?.surfaceUse).toContain("Do not quote raw selected labels");
+    expect(payload.userSelectedFeeling?.interpretationLens?.sceneFeelingDifference).toContain("do not ignore either side");
+    expect(payload.userSelectedFeeling?.interpretationLens?.lensHints).toEqual(
+      expect.arrayContaining([
+        expect.stringContaining("trust, affection, and stability"),
+        expect.stringContaining("keep a small ambiguity"),
+      ]),
+    );
+  });
+
   test("does not inject gray cat as a premium prompt mode", () => {
     const baseRequest = {
       dreamText: "I was walking through a school corridor, but every door kept changing places.",

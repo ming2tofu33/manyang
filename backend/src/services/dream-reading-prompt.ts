@@ -102,6 +102,65 @@ function getInterpretationLengthContract(locale: SupportedDreamPromptLocale): st
     : "2 to 4 short paragraphs, about 450 to 750 Korean characters. Do not compress the reading into one short generic paragraph.";
 }
 
+function buildSelectedFeelingInterpretationLens(
+  request: DreamAnalysisRequest,
+): {
+  role: string;
+  surfaceUse: string;
+  sceneFeelingDifference: string;
+  lensHints: string[];
+} {
+  const atmosphereIds = new Set(request.dreamAtmospheres ?? []);
+  const sensationIds = new Set(request.dreamSensations ?? []);
+  const lensHints: string[] = [];
+
+  if (atmosphereIds.has("warm") && sensationIds.has("vivid")) {
+    lensHints.push(
+      "Warmth plus vividness should tilt a fitting social or work-related scene toward trust, affection, and stability that left a clear impression.",
+    );
+  }
+
+  if (atmosphereIds.has("stifling") || atmosphereIds.has("unpleasant") || sensationIds.has("stuck") || sensationIds.has("heavy")) {
+    lensHints.push(
+      "Stifling, unpleasant, stuck, or heavy feelings should make an otherwise positive scene carry possible burden, comparison, pressure, or a need for distance.",
+    );
+  }
+
+  if (atmosphereIds.has("excited") && (sensationIds.has("hazy") || sensationIds.has("floating"))) {
+    lensHints.push(
+      "Excitement with haziness or floating should give more weight to emotional pull, imagination, and romantic coloring while keeping real-world conclusions soft.",
+    );
+  }
+
+  if (atmosphereIds.has("anxious") && sensationIds.has("vivid")) {
+    lensHints.push(
+      "Anxiety plus vividness should be read as a sharply remembered concern around relationship, evaluation, or work tension, not as proof of fixation.",
+    );
+  }
+
+  if (atmosphereIds.has("eerie") || atmosphereIds.has("unfamiliar") || atmosphereIds.has("complex")) {
+    lensHints.push(
+      "Eerie, unfamiliar, or complex feelings should keep a small ambiguity in the reading instead of resolving the dream into one clean conclusion.",
+    );
+  }
+
+  if (lensHints.length === 0 && (atmosphereIds.size > 0 || sensationIds.size > 0)) {
+    lensHints.push(
+      "Use the selected feeling and sensation to adjust the direction and strength of the scene reading, while keeping the concrete dream image first.",
+    );
+  }
+
+  return {
+    role:
+      "Use selected atmospheres and sensations as an interpretation lens: they adjust the meaning direction and intensity of the concrete dream scene, not the scene subject itself.",
+    surfaceUse:
+      "Do not turn selected labels into the title, opening sentence, or repeated theme. Do not quote raw selected labels such as 따뜻함, 묘함, 선명함, warmth, eeriness, or vividness. Do not put selected labels in parentheses. Rephrase them as natural reading language, e.g. '또렷하게 남은 인상', '설명하기 어려운 여운', or '안심이 남는 분위기'.",
+    sceneFeelingDifference:
+      "If the dream scene and the selected feelings point in different directions, do not ignore either side; explain how the concrete scene and the felt residue coexist.",
+    lensHints,
+  };
+}
+
 type SupportedDreamPromptLocale = NonNullable<DreamAnalysisRequest["locale"]>;
 
 export function buildDreamReadingPrompt(input: DreamReadingPromptInput): DreamReadingPrompt {
@@ -142,6 +201,7 @@ export function buildDreamReadingPrompt(input: DreamReadingPromptInput): DreamRe
     userSelectedFeeling: {
       atmospheres: input.structuredAnalysis.selectedAtmosphereLabels,
       sensations: input.structuredAnalysis.selectedSensationLabels,
+      interpretationLens: buildSelectedFeelingInterpretationLens(input.request),
     },
     fortuneReadings: input.structuredAnalysis.fortuneReadings,
     readingTone: input.structuredAnalysis.readingTone,
@@ -211,9 +271,13 @@ export function buildDreamReadingPrompt(input: DreamReadingPromptInput): DreamRe
       "Use one stable Manyang voice regardless of selected cat theme: Manyang is a warm, cozy cat who reads your dream by candlelight at night — gentle, comforting, and a little tender, while staying confident and clear about the dream's meaning and fortune.",
       "In Korean, write the entire reading — summary, interpretation, and smallPrescription — in a dignified, warm 습니다체 (정중한 해설체). Carry warmth through tender word choice (포근하게/살며시/곁에서 등), never through casual endings or cat verbal tics: do NOT use 반말, chatty 해요체, or any '~냥' ending anywhere. The prescription is simply a gentle 습니다체 closing (e.g., ~해보세요 / ~머물러 보세요).",
       "The selected cat theme is visual presentation only; it must not change interpretation priority, tone, output shape, smallPrescription, or fortune wording.",
-      "userSelectedFeeling.atmospheres and userSelectedFeeling.sensations are feelings and bodily senses the user explicitly tagged for this dream; treat them as the emotional anchor of the reading.",
+      "userSelectedFeeling.atmospheres and userSelectedFeeling.sensations are feelings and bodily senses the user explicitly tagged for this dream. Use them as an interpretation lens, not the central subject: they tune how the concrete dream scene is read, but the dream text and verified evidence remain primary.",
+      "Use userSelectedFeeling.interpretationLens.lensHints when present. They are not phrases to copy; they are direction hints for reading the dream scene.",
+      "Do not repeat selected labels as if the user came to read their survey choices. Avoid opening with, titling, or repeatedly saying labels such as 따뜻함, 선명함, 불안함, 답답함, warmth, vividness, anxiety, or stifled; show their effect through the concrete scene interpretation.",
+      "Do not quote raw selected labels in summary or interpretation. Do not put selected labels in parentheses, such as '선명한 인상(선명함)'. Rephrase labels into natural reading language: '또렷하게 남은 인상' instead of '선명함', '안심이 남는 분위기' instead of '따뜻함', and '설명하기 어려운 여운' instead of '묘함'.",
+      "If the dream scene and the selected feelings point in different directions, do not flatten either side. Reflect the difference in the reading: for example, a kind scene with stifling feelings can mean warmth and burden together, not simply good affinity or bad warning.",
       "Especially shape smallPrescription and the closing around userSelectedFeeling: respond to the feeling and sensation the user actually selected, as a warm, cozy good-morning nudge from Manyang. Do not write it as a task or checklist — avoid productivity language like 우선순위/실행/점검/계획/메모/확인; keep it tender and doable.",
-      "Never contradict an explicitly selected feeling or sensation; if it is absent or empty, fall back to inferredEmotions and the dream scene.",
+      "Do not erase an explicitly selected feeling or sensation; if it is absent or empty, fall back to inferredEmotions and the dream scene.",
       "nightContext is the user's mood, body condition, and optional one-line note from the night before sleep. Use it only as soft emotional context for tone, framing, and smallPrescription; never claim it caused, predicted, or controlled the dream.",
       "Do not invent new symbols or sources. Never make illness, medical, death, or self-harm predictions, and never frame any fortune as an absolute guarantee or a financial instruction to act on.",
       "When no symbol evidence is provided (retrievedSymbolEvidence is empty) and structuredAnalysis.fallbackGrounding is present, the dream had no registered symbol: do NOT invent symbolism or fortune. Ground the reading on structuredAnalysis.fallbackGrounding and the dreamer's stated feeling — read the mood and impression the dream left, warmly and safely, and keep fortune claims out entirely.",
