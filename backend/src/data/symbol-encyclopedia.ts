@@ -7484,7 +7484,7 @@ export const symbolEntries: SymbolEntry[] = [
         {
           alias: "차",
           confirmWhen: ["자동차", "운전", "차를 타", "차 사고", "승용차", "핸들"],
-          rejectWhen: ["차를 마", "차 마시", "찻잔", "녹차", "홍차", "차 한 잔", "차를 우"],
+          rejectWhen: ["차를 마", "차 마시", "찻잔", "찻집", "녹차", "홍차", "보이차", "차 한 잔", "차를 우", "차를 끓", "따라 주", "따라주", "차를 따랐", "차를 우려"],
           fallback: "candidate_only",
         },
       ],
@@ -7861,7 +7861,7 @@ export const symbolEntries: SymbolEntry[] = [
     sourceBasis: ["body symbolism", "speech metaphor", "product safety rule"],
     ko: localized({
       label: "치아",
-      aliases: ["치아", "이빨", "이가 빠지", "이 빠지", "이빨 빠지", "이가 빠졌", "이 빠졌", "이빨 빠졌", "이가 흔들", "이가 빠지는 꿈", "앞니", "어금니", "윗니", "아랫니"],
+      aliases: ["치아", "이빨", "이가", "이가 빠지", "이 빠지", "이빨 빠지", "이가 빠졌", "이 빠졌", "이빨 빠졌", "이가 흔들", "이가 빠지는 꿈", "앞니", "어금니", "윗니", "아랫니"],
       searchText: "치아, 이빨, 이가 빠지는 꿈, 앞니, 어금니, 윗니, 아랫니, 구설, 걱정, 자신감, 말",
       coreMeanings: ["구설·걱정", "자신감", "말", "건강"],
       lightReadings: [
