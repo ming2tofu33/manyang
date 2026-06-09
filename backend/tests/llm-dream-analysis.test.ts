@@ -96,6 +96,42 @@ describe("analyzeDreamWithLlm", () => {
     expect(result.readingBasis.usedSymbols).toContain("Snake");
   });
 
+  test("deduplicates repeated LLM interpretation and prescription copy before returning", async () => {
+    const interpretationSentence =
+      "The snake scene centers on alert life energy and a boundary that should be handled carefully.";
+    const prescriptionSentence = "Hold the boundary gently today.";
+    const provider = new FakeDreamReadingProvider({
+      summary: "A careful boundary is asking for attention.",
+      interpretation: `${interpretationSentence}${interpretationSentence}`,
+      symbolReadings: [
+        {
+          symbol: "Snake",
+          reading: "The snake can point to alert life energy and boundary sensitivity.",
+        },
+      ],
+      smallPrescription: `${prescriptionSentence}${prescriptionSentence}`,
+      card: {
+        name: "Moon of the Quiet Snake",
+        type: "soft_moon",
+        keywords: ["boundary", "energy", "room"],
+        summary: "The dream gathers alert energy inside a private space.",
+        message: "Stay curious without turning the dream into a prediction.",
+        theme: "boundary",
+      },
+    });
+
+    const result = await analyzeDreamWithLlm(
+      {
+        dreamText: "I dreamed that a snake appeared in my room.",
+        locale: "en",
+      },
+      { provider, model: "test-model" },
+    );
+
+    expect(result.interpretation).toBe(interpretationSentence);
+    expect(result.smallPrescription).toBe(prescriptionSentence);
+  });
+
   test("falls back to the deterministic analyzer when the provider fails", async () => {
     const request = {
       dreamText: "I dreamed that a snake appeared in my room.",

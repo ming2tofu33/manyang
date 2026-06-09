@@ -600,13 +600,13 @@ const researchedPriorityBodyRelationshipExpansionSymbols: SymbolEntry[] = [
     sourceBasis: ["internet review: bullying dream symbolism", "social threat and power imbalance metaphor", "school/social anxiety scene function"],
     ko: {
       label: "괴롭힘",
-      aliases: ["괴롭힘", "괴롭힘당하는 꿈", "왕따", "따돌림", "놀림당함"],
-      searchText: "괴롭힘, 괴롭힘당하는 꿈, 왕따, 따돌림, 놀림당함, 권력 차이, 수치심, 소외, 사회적 위협",
+      aliases: ["괴롭힘", "괴롭힘당하는 꿈", "괴롭히는 꿈", "괴롭힘을 당함", "왕따", "따돌림", "놀림당함"],
+      searchText: "괴롭힘, 괴롭힘당하는 꿈, 괴롭히는 꿈, 괴롭힘을 당함, 왕따, 따돌림, 놀림당함, 권력 차이, 수치심, 소외, 사회적 위협",
       coreMeanings: ["권력 차이", "수치심", "소외와 위협"],
       lightReadings: ["괴롭힘 꿈은 내 안의 약한 위치나 불공정한 관계를 알아차리게 하는 장면일 수 있다", "누군가 도와주는 장면은 지지와 보호를 찾으려는 마음과 연결된다"],
       shadowReadings: ["괴롭힘당하는 장면은 평가받거나 배제될 불안이 커진 상태를 비춘다", "내가 누군가를 괴롭히는 꿈은 억눌린 분노가 힘의 방식으로 뒤틀린 장면일 수 있다"],
       sceneModifiers: {
-        victim: modifier("괴롭힘당하는 장면은 사회적 위협과 수치심이 커진 상태를 비춘다", ["괴롭힘당", "놀림", "왕따", "따돌"], 0.9, "cautious"),
+        victim: modifier("괴롭힘당하는 장면은 사회적 위협과 수치심이 커진 상태를 비춘다", ["괴롭힘당", "괴롭힘을 당", "괴롭히", "괴롭혀", "괴롭혔", "놀림", "왕따", "따돌"], 0.9, "cautious"),
         helper: modifier("누군가 도와주는 장면은 지지와 보호를 찾는 마음을 보여준다", ["도와", "막아", "편들", "구해"], 0.78),
         perpetrator: modifier("내가 괴롭히는 장면은 억눌린 분노나 힘의 사용 방식을 점검하게 한다", ["내가 괴롭", "때렸", "놀렸", "몰아붙"], 0.84, "cautious"),
       },

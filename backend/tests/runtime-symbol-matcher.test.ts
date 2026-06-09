@@ -167,6 +167,19 @@ describe("findRuntimeSymbolMatches", () => {
       expect(matchIds).not.toContain("horse");
     });
 
+    test("matches relationship harm actions when a friend is the actor", () => {
+      const matches = findRuntimeSymbolMatches("친구가 나를 계속 괴롭히는 꿈을 꿨어.", {
+        locale: "ko",
+        limit: 8,
+      });
+      const matchIds = matches.map((match) => match.entryId);
+      const bullying = matches.find((match) => match.entryId === "bullying");
+
+      expect(matchIds).toEqual(expect.arrayContaining(["friend", "bullying"]));
+      expect(bullying?.usedFields).toContain("sceneModifiers.victim");
+      expect(bullying?.evidence.coreMeanings).toContain("권력 차이");
+    });
+
     test("uses encyclopedia disambiguation for common Korean homonyms", () => {
       expect(ids("말을 타고 들판을 달렸어")).toContain("horse");
       expect(ids("돼지가 나한테 말을 걸었어")).not.toContain("horse");

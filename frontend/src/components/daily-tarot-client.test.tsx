@@ -328,16 +328,16 @@ describe("DailyTarotClient", () => {
 
   it("cleans provider artifacts from displayed generated copy", () => {
     const artifactReading = {
-      ...foolReading,
+      ...threeCardReading,
       generated: {
-        ...foolReading.generated,
-        cardReadings: foolReading.generated.cardReadings.map((cardReading) => ({
+        ...threeCardReading.generated,
+        cardReadings: threeCardReading.generated.cardReadings.map((cardReading) => ({
           ...cardReading,
           reading: `${cardReading.reading} }} PMID:}`,
         })),
-        advice: `${foolReading.generated.advice} }} PMID:}`,
+        advice: `${threeCardReading.generated.advice} }} PMID:}`,
       },
-      advice: `${foolReading.advice} }} PMID:}`,
+      advice: `${threeCardReading.advice} }} PMID:}`,
     } satisfies DailyTarotReading;
 
     const markup = renderToStaticMarkup(

@@ -295,11 +295,11 @@ function ReceiptStreamingText({
       <p
         id={textFrameId}
         className={className}
+        aria-label={text}
         data-receipt-streaming-text={label}
         data-receipt-text-frame={label}
         data-receipt-overflow-guard={overflowGuard ? "true" : undefined}
       >
-        <span className="sr-only">{text}</span>
         <span aria-hidden="true">
           {words.map((word, index) => (
             <Fragment key={`${word}-${index}`}>

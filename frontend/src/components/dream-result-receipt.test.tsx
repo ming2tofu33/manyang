@@ -243,7 +243,8 @@ describe("DreamResultReceipt", () => {
     expect(markup).toContain("data-receipt-streaming-text=\"interpretation\"");
     expect(markup).not.toContain("data-receipt-streaming-text=\"reader-note\"");
     expect(markup).toContain("data-receipt-streaming-text=\"small-prescription\"");
-    expect(markup).toContain("class=\"sr-only\">이 꿈은 목적지보다 준비 상태가 더 신경 쓰이는 마음과 연결되어 보인다냥.");
+    expect(markup).toContain("aria-label=\"이 꿈은 목적지보다 준비 상태가 더 신경 쓰이는 마음과 연결되어 보인다냥.");
+    expect(markup).not.toContain("class=\"sr-only\"");
     expect(markup).toContain("aria-hidden=\"true\"");
     expect(markup).toContain("receipt-stream-word");
     expect(markup).toContain("animation-delay:6200ms");

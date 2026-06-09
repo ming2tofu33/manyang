@@ -386,6 +386,8 @@ describe("buildDreamReadingPrompt", () => {
 
     expect(prompt.instructions).toContain("Do not make the reading feel interchangeable with another dream");
     expect(prompt.instructions).toContain("Avoid abstract-only sentences");
+    expect(prompt.instructions).toContain("Do not add hypothetical scene details");
+    expect(prompt.instructions).toContain("For relationship dreams, read the action as the axis");
     // 의미-우선: 유저가 쓴 꿈을 되돌려주지 말고 해몽부터.
     expect(prompt.instructions).toContain("they came for its MEANING, not a summary of their own words");
     // 리딩 기계장치 용어 누수 차단.

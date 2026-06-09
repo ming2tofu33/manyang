@@ -128,6 +128,54 @@ function parseSymbolReadings(value: unknown): DreamReadingDraft["symbolReadings"
     .slice(0, 5);
 }
 
+function normalizeForDuplicateCompare(value: string): string {
+  return value.replace(/\s+/g, " ").trim().toLocaleLowerCase();
+}
+
+function removeWholeTextRepetition(text: string): string {
+  const normalized = text.replace(/\s+/g, " ").trim();
+
+  for (let unitLength = 1; unitLength <= Math.floor(normalized.length / 2); unitLength += 1) {
+    if (normalized.length % unitLength !== 0) {
+      continue;
+    }
+
+    const unit = normalized.slice(0, unitLength);
+    if (!unit.trim()) {
+      continue;
+    }
+
+    const repeatCount = normalized.length / unitLength;
+    if (repeatCount > 1 && unit.repeat(repeatCount) === normalized) {
+      return unit.trim();
+    }
+  }
+
+  return normalized;
+}
+
+function removeAdjacentRepeatedSentences(text: string): string {
+  const sentences = text.match(/[^.!?。！？]+[.!?。！？]?/gu) ?? [text];
+  const deduped: string[] = [];
+
+  for (const sentence of sentences) {
+    const normalizedSentence = normalizeForDuplicateCompare(sentence);
+    const previousSentence = deduped.at(-1);
+
+    if (previousSentence && normalizeForDuplicateCompare(previousSentence) === normalizedSentence) {
+      continue;
+    }
+
+    deduped.push(sentence.trim());
+  }
+
+  return deduped.join(" ").replace(/\s+/g, " ").trim();
+}
+
+function dedupeRepeatedDraftText(text: string): string {
+  return removeAdjacentRepeatedSentences(removeWholeTextRepetition(text));
+}
+
 function parseDreamReadingDraft(value: unknown): DreamReadingDraft | undefined {
   if (!isRecord(value)) {
     return undefined;
@@ -145,9 +193,9 @@ function parseDreamReadingDraft(value: unknown): DreamReadingDraft | undefined {
 
   return {
     summary,
-    interpretation,
+    interpretation: dedupeRepeatedDraftText(interpretation),
     symbolReadings,
-    smallPrescription,
+    smallPrescription: dedupeRepeatedDraftText(smallPrescription),
     card,
   };
 }

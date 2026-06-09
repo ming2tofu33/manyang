@@ -295,6 +295,8 @@ export function buildDreamReadingPrompt(input: DreamReadingPromptInput): DreamRe
       "Treat avoidExpressions as absolute or over-certain phrasings to avoid, not banned topics: rephrase the same theme in a lighter, non-absolute, playful way instead of dropping it.",
       "Keep the reading interesting: concrete, image-rich, and specific to the dream scene, while staying grounded in evidence.",
       "Do not make the reading feel interchangeable with another dream; it must reuse concrete details from the user's dream text.",
+      "Do not add hypothetical scene details that the user did not mention. Never write filler like 'even if there was laughter, ignoring, or a crowd' unless that detail is in the dream text or confirmed evidence.",
+      "For relationship dreams, read the action as the axis and the person as context: bullying, rejection, being ignored, apology, argument, avoidance, or confession should steer the meaning more than a generic person symbol such as friend, coworker, or family.",
       "Avoid abstract-only sentences; words like anxiety, change, opportunity, warning, growth, energy, or transition need a concrete dream image beside them.",
       "Even when there is no fortune lean and the dream feels vague, do NOT retreat into abstract psychology or stacked hedges. Commit, in Manyang's voice, to a concrete reading: name the dream's central image, the felt experience, and one clear theme, anchored in the user's own scene details. A vague dream still earns a characterful, specific reading — the uncertainty belongs to the OUTCOME, not to how plainly you name what the dream is about.",
       "If safetySignals indicate a caution or crisis topic, soften the claim and avoid deterministic advice there.",
