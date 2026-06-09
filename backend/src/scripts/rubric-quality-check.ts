@@ -175,14 +175,37 @@ async function run(): Promise<void> {
   const results: CaseResult[] = [];
   let failed = 0;
 
+  // 타임아웃 시 analyzeDreamWithLlm은 조용히 flat baseline을 돌려준다(프로덕션은 unavailable
+  // 화면으로 가지만 여기선 baseline이 옴). baseline은 진짜 해몽이 아니라 채점하면 안 되므로,
+  // baseline이 나오면 점점 넉넉한 타임아웃으로 최대 3회 재생성한다.
+  const isBaselineReading = (r: { summary: string; interpretation: string }) =>
+    /단정하긴\s*어렵지만/.test(r.interpretation) || /특히\s*남은\s*꿈\s*$/.test(r.summary);
+  const generateRealReading = async (dreamText: string) => {
+    const timeouts = [45000, 75000, 110000];
+    let reading = await analyzeDreamWithLlm(
+      { dreamText, locale: "ko" },
+      { provider: genProvider, ...(embeddingProvider ? { embeddingProvider } : {}), ...(vectorIndex ? { vectorIndex } : {}), providerTimeoutMs: timeouts[0]! },
+    );
+    for (let attempt = 1; attempt < timeouts.length && isBaselineReading(reading); attempt += 1) {
+      console.log(`  ↳ baseline 폴백 — 재생성(${timeouts[attempt]}ms) "${dreamText.slice(0, 18)}"`);
+      reading = await analyzeDreamWithLlm(
+        { dreamText, locale: "ko" },
+        { provider: genProvider, ...(embeddingProvider ? { embeddingProvider } : {}), ...(vectorIndex ? { vectorIndex } : {}), providerTimeoutMs: timeouts[attempt]! },
+      );
+    }
+    return reading;
+  };
+
   for (const dreamText of dreams) {
     try {
       const structuredAnalysis = analyzeDreamStructure({ dreamText, locale: "ko" });
       const evidenceSet = retrieveDreamEvidenceSet({ dreamText, locale: "ko", structuredAnalysis, limit: 5 });
-      const reading = await analyzeDreamWithLlm(
-        { dreamText, locale: "ko" },
-        { provider: genProvider, ...(embeddingProvider ? { embeddingProvider } : {}), ...(vectorIndex ? { vectorIndex } : {}), providerTimeoutMs: 45000 },
-      );
+      const reading = await generateRealReading(dreamText);
+      if (isBaselineReading(reading)) {
+        failed += 1;
+        console.log(`[SKIP] "${dreamText.slice(0, 26)}" — 재생성 후에도 baseline(타임아웃). 채점 제외.`);
+        continue;
+      }
       const judgeInput = {
         dreamText,
         reading: { summary: reading.summary, interpretation: reading.interpretation, symbolReadings: reading.symbolReadings },
