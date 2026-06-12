@@ -72,6 +72,14 @@ type SubmitSelectionsOptions = {
   requestSpread?: TarotSpread;
   requestKey?: string;
 };
+type CanAcceptDailyTarotSelectionOptions = {
+  isBusy: boolean;
+  isDrawIdentityPending: boolean;
+  selectedSpread: TarotSpread;
+  canUseThreeCard: boolean;
+  selectionCount: number;
+  spreadLength: number;
+};
 
 let dailyTarotSnapshotCache: DailyTarotSnapshotCache | null = null;
 
@@ -244,6 +252,21 @@ export function createPreparedDailyTarotSelections(
         ]
       : [];
   });
+}
+
+export function canAcceptDailyTarotSelection({
+  isBusy,
+  isDrawIdentityPending,
+  selectedSpread,
+  canUseThreeCard,
+  selectionCount,
+  spreadLength,
+}: CanAcceptDailyTarotSelectionOptions): boolean {
+  if (isBusy || isDrawIdentityPending || selectionCount >= spreadLength) {
+    return false;
+  }
+
+  return selectedSpread !== "daily_three_card" || canUseThreeCard;
 }
 
 function DailyTarotFanDeck({
@@ -1363,6 +1386,8 @@ export function DailyTarotClient({
   const [generationStatus, setGenerationStatus] = useState<GenerationStatus>("idle");
   const [generationError, setGenerationError] = useState<string | null>(null);
   const revealTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const acceptedSelectionsRef = useRef<DailyTarotCardSelection[]>([]);
+  const isSelectionLockedRef = useRef(false);
   const generationRequestStatusRef = useRef<GenerationRequestStatus>("idle");
   const generationRequestKeyRef = useRef<string | null>(null);
   const accessState = useAccessPlan();
@@ -1419,6 +1444,7 @@ export function DailyTarotClient({
   const isRevealing = Boolean(revealingState) || generationStatus === "revealing";
   const isBusy = isGenerating || isRevealing;
   const isDrawIdentityPending = drawIdentityKey === pendingDailyTarotDrawIdentityKey;
+  const hasOpenedAllCards = pendingSelections.length >= positions.length;
   const shouldShowShuffleIntro = pendingSelections.length === 0 && generationStatus === "idle";
   const preparedRequestKey = createGenerationRequestKey(appDate, selectedSpread, drawIdentityKey, preparedSelections);
   const drawStageInstruction =
@@ -1479,6 +1505,8 @@ export function DailyTarotClient({
 
   function resetDrawState(nextSpread: TarotSpread) {
     clearRevealTimer();
+    acceptedSelectionsRef.current = [];
+    isSelectionLockedRef.current = false;
     generationRequestStatusRef.current = "idle";
     generationRequestKeyRef.current = null;
     setOpenedReadingRequestKey(null);
@@ -1503,6 +1531,7 @@ export function DailyTarotClient({
     generationRequestKeyRef.current = requestKey;
     generationRequestStatusRef.current = "pending";
     if (updatePendingSelections) {
+      acceptedSelectionsRef.current = selections;
       setPendingSelections(selections);
     }
     if (showLoadingImmediately) {
@@ -1585,16 +1614,30 @@ export function DailyTarotClient({
   ]);
 
   function handleSelect(option: DailyTarotOption, optionIndex: number) {
-    if (isBusy || isDrawIdentityPending || (selectedSpread === "daily_three_card" && !canUseThreeCard)) {
+    const currentSelections = acceptedSelectionsRef.current;
+    const currentSelectionCount = currentSelections.length;
+
+    if (
+      isSelectionLockedRef.current ||
+      !canAcceptDailyTarotSelection({
+        isBusy,
+        isDrawIdentityPending,
+        selectedSpread,
+        canUseThreeCard,
+        selectionCount: currentSelectionCount,
+        spreadLength: positions.length,
+      })
+    ) {
       return;
     }
 
-    const selectedPreparedSelection = preparedSelections[pendingSelections.length];
+    const selectedPreparedSelection = preparedSelections[currentSelectionCount];
     const fallbackCard = getTarotMajorCardById(option.cardId);
+    const currentPosition = positions[currentSelectionCount] ?? positions[positions.length - 1];
     const nextSelection = selectedPreparedSelection ??
       (fallbackCard
         ? {
-            position: nextPosition,
+            position: currentPosition,
             card: fallbackCard,
             orientation: option.orientation,
           }
@@ -1604,11 +1647,15 @@ export function DailyTarotClient({
       return;
     }
 
-    const nextSelections = [...pendingSelections, nextSelection];
+    const nextSelections = [...currentSelections, nextSelection];
+    const selectedCardIdsForReveal = new Set(currentSelections.map((selection) => selection.card.id));
+    const currentAvailableOptions = options.filter((availableOption) => !selectedCardIdsForReveal.has(availableOption.cardId));
 
     clearRevealTimer();
+    acceptedSelectionsRef.current = nextSelections;
+    isSelectionLockedRef.current = true;
     setRevealingState({
-      options: availableOptions,
+      options: currentAvailableOptions,
       selectedOptionId: option.id,
       selectedOptionIndex: optionIndex,
       selection: nextSelection,
@@ -1637,6 +1684,7 @@ export function DailyTarotClient({
       if (nextSelections.length < positions.length) {
         setPendingSelections(nextSelections);
         setGenerationStatus("idle");
+        isSelectionLockedRef.current = false;
         return;
       }
 
@@ -1703,7 +1751,11 @@ export function DailyTarotClient({
           <p className="text-[12px] font-semibold text-[#f2c27d]">
             {drawStageInstruction}
           </p>
-          <DailyTarotFanDeck options={availableOptions} onSelect={handleSelect} disabled={isBusy || isDrawIdentityPending} />
+          <DailyTarotFanDeck
+            options={availableOptions}
+            onSelect={handleSelect}
+            disabled={isBusy || isDrawIdentityPending || hasOpenedAllCards}
+          />
           {shouldShowShuffleIntro ? <DailyTarotShuffleIntro /> : null}
         </div>
       )}

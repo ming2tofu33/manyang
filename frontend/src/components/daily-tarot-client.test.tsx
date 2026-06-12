@@ -17,6 +17,7 @@ import {
   DailyTarotLoadingPanel,
   DailyTarotPendingResult,
   DailyTarotRevealPanel,
+  canAcceptDailyTarotSelection,
   createPreparedDailyTarotSelections,
   getStableDailyTarotReadingSnapshot,
 } from "./daily-tarot-client";
@@ -251,6 +252,20 @@ describe("DailyTarotClient", () => {
     ]);
   });
 
+  it("stops accepting selections after a three-card spread is complete", () => {
+    const selectionState = {
+      isBusy: false,
+      isDrawIdentityPending: false,
+      selectedSpread: "daily_three_card",
+      canUseThreeCard: true,
+      spreadLength: 3,
+    } as const;
+
+    expect(canAcceptDailyTarotSelection({ ...selectionState, selectionCount: 2 })).toBe(true);
+    expect(canAcceptDailyTarotSelection({ ...selectionState, selectionCount: 3 })).toBe(false);
+    expect(canAcceptDailyTarotSelection({ ...selectionState, selectionCount: 4 })).toBe(false);
+  });
+
   it("starts the tarot reading request from prepared shuffle selections before card selection", () => {
     const source = readFileSync(path.join(process.cwd(), "src", "components", "daily-tarot-client.tsx"), "utf8");
     const preselectStart = source.indexOf("const preparedSelections = useMemo");
@@ -261,7 +276,7 @@ describe("DailyTarotClient", () => {
     expect(effectStart).toBeGreaterThan(preselectStart);
     expect(handleSelectStart).toBeGreaterThan(effectStart);
     expect(source).toContain("updatePendingSelections: false");
-    expect(source).toContain("preparedSelections[pendingSelections.length]");
+    expect(source).toContain("preparedSelections[currentSelectionCount]");
   });
 
   it("keeps prefetched tarot readings hidden until the prepared cards are opened", () => {
@@ -437,7 +452,7 @@ describe("DailyTarotClient", () => {
 
     expect(handleSelectStart).toBeGreaterThanOrEqual(0);
     expect(handleRetryStart).toBeGreaterThan(handleSelectStart);
-    const preparedSelectionStart = handleSelectSource.indexOf("preparedSelections[pendingSelections.length]");
+    const preparedSelectionStart = handleSelectSource.indexOf("preparedSelections[currentSelectionCount]");
     const fallbackRequestStart = handleSelectSource.indexOf("void submitSelections(nextSelections");
     const revealTimerStart = handleSelectSource.indexOf("revealTimerRef.current = setTimeout");
 
