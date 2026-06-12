@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import {
   createDailyTarotOptions,
+  dailyTarotDisplayTitle,
   dailyTarotStorageKey,
   type DailyTarotPosition,
   type DailyTarotReading,
@@ -19,6 +20,7 @@ import {
   DailyTarotRevealPanel,
   canAcceptDailyTarotSelection,
   createPreparedDailyTarotSelections,
+  getDailyTarotCardReadingDisplayHeading,
   getStableDailyTarotReadingSnapshot,
 } from "./daily-tarot-client";
 
@@ -302,7 +304,7 @@ describe("DailyTarotClient", () => {
     expect(markup).toContain('data-daily-tarot-zoom-trigger="true"');
     expect(markup).toContain("tarot-result-card-enter w-full text-center");
     expect(markup).toContain("바보");
-    expect(markup).toContain("오늘의 타로");
+    expect(markup).not.toContain(`>${dailyTarotDisplayTitle}</p>`);
     expect(markup).not.toContain("A small first step opens the day");
     expect(markup).not.toContain('data-daily-tarot-card-story="true"');
     expect(markup).not.toContain("카드가 전하는 이야기");
@@ -328,6 +330,16 @@ describe("DailyTarotClient", () => {
     expect(markup).not.toContain('data-daily-tarot-premium-tag="moon-pass"');
     expect(markup).not.toContain("data-daily-tarot-option");
     expect(markup).toContain("타로는 오늘의 흐름을 상징적으로 비춰보는 참고용 안내입니다.");
+  });
+
+  it("hides result action buttons in shared read-only mode", () => {
+    const markup = renderToStaticMarkup(
+      <DailyTarotClient appDate="2026-05-31" initialReading={foolReading} isSharedView />,
+    );
+
+    expect(markup).toContain('data-daily-tarot-state="result"');
+    expect(markup).toContain('data-daily-tarot-shared-view="true"');
+    expect(markup).not.toContain('data-daily-tarot-result-actions="true"');
   });
 
   it("can ignore an existing reading when admin tarot test mode starts a fresh flow", () => {
@@ -425,6 +437,53 @@ describe("DailyTarotClient", () => {
     expect(markup).toContain("상황 카드는 지금 드러난 조건을 먼저 보라고 말합니다.");
     expect(markup).toContain("다음 장면 카드는 뒤따르는 변화를 너무 빨리 단정하지 말라고 말합니다.");
     expect(markup).toContain("조언 카드는 이미 확인한 단서를 기준으로 선택하라고 말합니다.");
+  });
+
+  it("renders fixed three-card section headings instead of provider headings or duplicate title", () => {
+    const readingWithProviderHeadings = {
+      ...threeCardReading,
+      generated: {
+        ...threeCardReading.generated,
+        title: "PROVIDER TITLE SHOULD NOT SHOW",
+        cardReadings: [
+          {
+            position: "situation",
+            heading: "LLM SITUATION HEADING SHOULD NOT SHOW",
+            reading: "The situation reading should still be visible.",
+          },
+          {
+            position: "flow",
+            heading: "LLM FLOW HEADING SHOULD NOT SHOW",
+            reading: "The flow reading should still be visible.",
+          },
+          {
+            position: "advice",
+            heading: "LLM ADVICE HEADING SHOULD NOT SHOW",
+            reading: "The advice reading should still be visible.",
+          },
+        ],
+      },
+      title: "PROVIDER TITLE SHOULD NOT SHOW",
+      message: threeCardReading.message,
+    } satisfies DailyTarotReading;
+    const markup = renderToStaticMarkup(
+      <DailyTarotClient appDate="2026-05-31" initialReading={readingWithProviderHeadings} />,
+    );
+
+    expect(getDailyTarotCardReadingDisplayHeading("situation")).toBe("지금 드러난 조건");
+    expect(getDailyTarotCardReadingDisplayHeading("flow")).toBe("이어지는 국면");
+    expect(getDailyTarotCardReadingDisplayHeading("advice")).toBe("판단의 기준");
+    expect(markup).toContain("지금 드러난 조건");
+    expect(markup).toContain("이어지는 국면");
+    expect(markup).toContain("판단의 기준");
+    expect(markup).toContain("The situation reading should still be visible.");
+    expect(markup).toContain("The flow reading should still be visible.");
+    expect(markup).toContain("The advice reading should still be visible.");
+    expect(markup).not.toContain("LLM SITUATION HEADING SHOULD NOT SHOW");
+    expect(markup).not.toContain("LLM FLOW HEADING SHOULD NOT SHOW");
+    expect(markup).not.toContain("LLM ADVICE HEADING SHOULD NOT SHOW");
+    expect(markup).not.toContain("PROVIDER TITLE SHOULD NOT SHOW");
+    expect(markup).not.toContain(`>${dailyTarotDisplayTitle}</p>`);
   });
 
   it("does not expand the interpreting card before showing the result", () => {

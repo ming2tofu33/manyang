@@ -112,7 +112,7 @@ export function createResultEncyclopediaHref(symbol: string): string {
 }
 
 export function createReceiptFileName(payload: DreamCompletedPayload): string {
-  return `manyang-receipt-${payload.dreamDate}-${payload.analysis.dreamId}.svg`;
+  return `manyang-receipt-${payload.dreamDate}-${payload.analysis.dreamId}.png`;
 }
 
 export function createReceiptShareText(payload: DreamCompletedPayload): string {
@@ -198,7 +198,7 @@ function sanitizeFileSegment(value: string): string {
 export function createTarotReadingFileName(reading: DailyTarotReading): string {
   const primaryCard = getTarotReadingCards(reading)[0]?.card ?? reading.card;
 
-  return `manyang-tarot-${reading.appDate}-${reading.spread}-${sanitizeFileSegment(primaryCard.slug)}.svg`;
+  return `manyang-tarot-${reading.appDate}-${reading.spread}-${sanitizeFileSegment(primaryCard.slug)}.png`;
 }
 
 export function createTarotReadingShareText(reading: DailyTarotReading): string {

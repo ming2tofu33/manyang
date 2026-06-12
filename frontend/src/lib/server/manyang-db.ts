@@ -12,6 +12,7 @@ import type { MorningMoodRecord } from "@/lib/morning-mood";
 import type { NightCheckInRecord } from "@/lib/night-checkin";
 import type { PawprintInput, PawprintRecord, PawprintSaveResult, PawprintSource } from "@/lib/pawprints";
 import type { DailyTarotReading, TarotSpread } from "@/lib/daily-tarot";
+import type { ShareRecordKind } from "@/lib/share-records";
 import { getSupabaseDatabaseUrl } from "@/lib/supabase/env";
 
 let manyangPool: Pool | null = null;
@@ -45,6 +46,20 @@ export type PersistFeedbackEventInput = {
   rating?: number | null;
   feedbackText?: string | null;
   metadata?: Record<string, unknown>;
+};
+
+export type PersistSharedResultInput = {
+  publicId: string;
+  kind: ShareRecordKind;
+  payload: Record<string, unknown>;
+  userId?: string | null;
+};
+
+export type SharedResultRecord = {
+  id: string;
+  kind: ShareRecordKind;
+  payload: Record<string, unknown>;
+  createdAt: string;
 };
 
 export function createManyangDbPool(config: PoolConfig = {}): Pool {
@@ -264,6 +279,84 @@ export async function listTarotReadingsForUser(
   );
 
   return result.rows.map((row) => row.raw_reading);
+}
+
+function createSharedResultRecordFromDbRow(row: {
+  public_id: string;
+  kind: ShareRecordKind;
+  payload: Record<string, unknown>;
+  created_at: string;
+}): SharedResultRecord {
+  return {
+    id: row.public_id,
+    kind: row.kind,
+    payload: row.payload,
+    createdAt: row.created_at,
+  };
+}
+
+export async function persistSharedResult(
+  input: PersistSharedResultInput,
+  pool = getManyangDbPool(),
+): Promise<SharedResultRecord> {
+  const result = await pool.query<{
+    public_id: string;
+    kind: ShareRecordKind;
+    payload: Record<string, unknown>;
+    created_at: string;
+  }>(
+    `
+      insert into manyang.shared_results (
+        public_id,
+        kind,
+        payload,
+        user_id
+      )
+      values ($1, $2, $3::jsonb, $4)
+      returning
+        public_id,
+        kind,
+        payload,
+        created_at::text as created_at
+    `,
+    [input.publicId, input.kind, JSON.stringify(input.payload), input.userId ?? null],
+  );
+  const row = result.rows[0];
+
+  if (!row) {
+    throw new Error("Failed to create manyang shared result");
+  }
+
+  return createSharedResultRecordFromDbRow(row);
+}
+
+export async function findSharedResult(
+  publicId: string,
+  kind: ShareRecordKind,
+  pool = getManyangDbPool(),
+): Promise<SharedResultRecord | null> {
+  const result = await pool.query<{
+    public_id: string;
+    kind: ShareRecordKind;
+    payload: Record<string, unknown>;
+    created_at: string;
+  }>(
+    `
+      select
+        public_id,
+        kind,
+        payload,
+        created_at::text as created_at
+      from manyang.shared_results
+      where public_id = $1
+        and kind = $2
+        and (expires_at is null or expires_at > now())
+      limit 1
+    `,
+    [publicId, kind],
+  );
+
+  return result.rows[0] ? createSharedResultRecordFromDbRow(result.rows[0]) : null;
 }
 
 export async function isAdminUser(userId: string, pool = getManyangDbPool()): Promise<boolean> {

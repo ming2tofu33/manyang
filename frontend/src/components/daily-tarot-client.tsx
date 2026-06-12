@@ -18,7 +18,6 @@ import { AssetTextButton } from "@/components/asset-primitives";
 import {
   createDailyTarotOptions,
   createDailyTarotUserIdentityKey,
-  dailyTarotDisplayTitle,
   dailyTarotStorageKey,
   getDailyTarotReadingFromBrowser,
   getOrCreateDailyTarotGuestIdentityFromBrowser,
@@ -37,6 +36,8 @@ import {
   createTarotReadingShareText,
   createTarotReadingSvg,
 } from "@/lib/result-actions";
+import { downloadSvgAsPng } from "@/lib/share-image-export";
+import { createShareResultLink, sharePublicLink } from "@/lib/share-link-client";
 import { cn, ui } from "@/lib/styles";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { getTarotMajorCardById } from "@/lib/tarot-major-cards";
@@ -48,6 +49,7 @@ type DailyTarotClientProps = {
   ignoreStoredReading?: boolean;
   initialReading: DailyTarotReading | null;
   initialUserId?: string | null;
+  isSharedView?: boolean;
 };
 
 type DailyTarotSnapshotCache = {
@@ -102,6 +104,17 @@ const positionLabels = {
   flow: "이어지는 흐름",
   advice: "오늘의 조언",
 } satisfies Record<DailyTarotPosition, string>;
+
+const cardReadingDisplayHeadingLabels = {
+  today: "오늘의 리딩",
+  situation: "지금 드러난 조건",
+  flow: "이어지는 국면",
+  advice: "판단의 기준",
+} satisfies Record<DailyTarotPosition, string>;
+
+export function getDailyTarotCardReadingDisplayHeading(position: DailyTarotPosition): string {
+  return cardReadingDisplayHeadingLabels[position];
+}
 
 const initialDrawInstruction = "마음이 닿는 뒷면을 터치해 오늘의 카드를 열어보세요.";
 
@@ -1164,9 +1177,11 @@ export function DailyTarotPendingResult({ selections }: { selections: DailyTarot
 function DailyTarotResult({
   reading,
   onSelectThreeCard,
+  isSharedView = false,
 }: {
   reading: DailyTarotReading;
   onSelectThreeCard?: () => void;
+  isSharedView?: boolean;
 }) {
   const [zoomedSelection, setZoomedSelection] = useState<DailyTarotCardSelection | null>(null);
   const cards = resolveDailyTarotResultSelections(
@@ -1177,7 +1192,7 @@ function DailyTarotResult({
     reading.spread === "daily_three_card"
       ? generated?.cardReadings.map((cardReading) => ({
           ...cardReading,
-          heading: cleanTarotDisplayText(cardReading.heading),
+          heading: getDailyTarotCardReadingDisplayHeading(cardReading.position),
           reading: cleanTarotDisplayText(cardReading.reading),
         }))
       : [];
@@ -1186,35 +1201,31 @@ function DailyTarotResult({
     5,
   );
 
-  function handleDownload() {
+  async function handleDownload() {
     const svg = createTarotReadingSvg(reading);
-    const blob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
 
-    anchor.href = url;
-    anchor.download = createTarotReadingFileName(reading);
-    anchor.click();
-    URL.revokeObjectURL(url);
+    await downloadSvgAsPng(svg, createTarotReadingFileName(reading));
   }
 
   async function handleShare() {
     const text = createTarotReadingShareText(reading);
 
-    if (navigator.share) {
-      await navigator.share({
-        title: "오늘의 타로",
-        text,
-      });
-      return;
-    }
+    const link = await createShareResultLink({
+      kind: "tarot",
+      payload: reading,
+    });
 
-    await navigator.clipboard?.writeText(text);
+    await sharePublicLink({
+      url: link.url,
+      text,
+      title: "오늘의 타로",
+    });
   }
 
   return (
     <section
       data-daily-tarot-state="result"
+      data-daily-tarot-shared-view={isSharedView ? "true" : undefined}
       className="mx-auto w-full max-w-[28rem] px-4 py-5 text-[#fff3d7]"
     >
       <DailyTarotResultCardGrid cards={cards} onZoom={setZoomedSelection} />
@@ -1225,7 +1236,6 @@ function DailyTarotResult({
         style={{ "--tarot-result-enter-delay": "220ms" } as CSSProperties}
       >
         <p className="text-[12px] font-bold text-[#f4b65f]">오늘의 리딩</p>
-        <p className="text-[15px] font-bold leading-6 text-[#ffe7b5]">{dailyTarotDisplayTitle}</p>
         {keywords.length > 0 ? (
           <div data-daily-tarot-keywords="true" className="flex flex-wrap gap-1.5">
             {keywords.map((keyword) => (
@@ -1249,6 +1259,7 @@ function DailyTarotResult({
 
       <DailyTarotFixedGuidanceSection enterDelay="320ms" selections={cards} showKeywords={false} />
 
+      {!isSharedView ? (
       <div
         className="tarot-result-content-enter mt-4 grid grid-cols-2 gap-3"
         data-daily-tarot-result-actions="true"
@@ -1257,7 +1268,7 @@ function DailyTarotResult({
         <AssetTextButton
           frame={manyangAssets.buttons.compactPrimary}
           iconSrc={manyangAssets.actionIcons.download}
-          onClick={handleDownload}
+          onClick={() => void handleDownload()}
           contentClassName="min-h-[3.45rem] px-2.5 text-[14px]"
           iconClassName="h-6 w-6"
         >
@@ -1273,6 +1284,7 @@ function DailyTarotResult({
           공유하기
         </AssetTextButton>
       </div>
+      ) : null}
 
       {reading.spread === "daily_one_card" && onSelectThreeCard ? (
         <button
@@ -1371,6 +1383,7 @@ export function DailyTarotClient({
   ignoreStoredReading = false,
   initialReading,
   initialUserId = null,
+  isSharedView = false,
 }: DailyTarotClientProps) {
   const [drawIdentityKey, setDrawIdentityKey] = useState(() => createInitialDailyTarotDrawIdentityKey(initialUserId));
   const options = useMemo(() => createDailyTarotOptions(appDate, { drawIdentityKey }), [appDate, drawIdentityKey]);
@@ -1434,9 +1447,10 @@ export function DailyTarotClient({
     isMatchingDailyTarotDrawIdentity(initialReading, drawIdentityKey)
       ? initialReading
       : null;
-  const reading = ignoreStoredReading
+  const sharedReading = isSharedView && isCompletedLlmReading(initialReading) ? initialReading : null;
+  const reading = sharedReading ?? (ignoreStoredReading
     ? openedSelectedReadingForDate
-    : (storedReadingForDate ?? openedSelectedReadingForDate ?? initialReadingForDate);
+    : (storedReadingForDate ?? openedSelectedReadingForDate ?? initialReadingForDate));
   const selectedCardIds = new Set(pendingSelections.map((selection) => selection.card.id));
   const availableOptions = options.filter((option) => !selectedCardIds.has(option.cardId));
   const nextPosition = positions[pendingSelections.length] ?? positions[positions.length - 1];
@@ -1709,7 +1723,13 @@ export function DailyTarotClient({
   }
 
   if (reading && !isRevealing && !isGenerating) {
-    return <DailyTarotResult reading={reading} onSelectThreeCard={() => resetDrawState("daily_three_card")} />;
+    return (
+      <DailyTarotResult
+        reading={reading}
+        isSharedView={isSharedView}
+        onSelectThreeCard={isSharedView ? undefined : () => resetDrawState("daily_three_card")}
+      />
+    );
   }
 
   if (isGenerating && pendingSelections.length === positions.length) {

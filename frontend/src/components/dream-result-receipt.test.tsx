@@ -316,6 +316,17 @@ describe("DreamResultReceipt", () => {
     expect(markup).not.toContain("data-symbol-basis-panel=\"true\" style=\"animation-delay:9000ms\"");
   });
 
+  it("hides save, share, and archive-only controls in shared read-only mode", () => {
+    const markup = renderToStaticMarkup(
+      <DreamResultReceipt payloadOverride={createLongReceiptPayload()} isSharedView />,
+    );
+
+    expect(markup).not.toContain("data-receipt-result-actions=\"true\"");
+    expect(markup).not.toContain("data-receipt-save-slot=\"true\"");
+    expect(markup).not.toContain("data-receipt-delete-slot=\"true\"");
+    expect(markup).toContain("data-receipt-shared-view=\"true\"");
+  });
+
   it("shows the original dream text below the receipt without putting it inside the paper", () => {
     const markup = renderToStaticMarkup(<DreamResultReceipt payloadOverride={createLongReceiptPayload()} />);
     const receiptPaperIndex = markup.indexOf("data-receipt-paper=\"sliced\"");

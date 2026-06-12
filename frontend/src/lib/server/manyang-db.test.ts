@@ -4,6 +4,7 @@ import {
   deleteAllProductRecordsForUser,
   findCompletedTarotReadingForUser,
   getActiveSubscriptionPlanForUser,
+  findSharedResult,
   hasReadingUsageForGuestOnDate,
   hasReadingUsageForUserOnDate,
   incrementReadingUsageForGuest,
@@ -11,6 +12,7 @@ import {
   isAdminUser,
   listMorningCheckInsForUser,
   listTarotReadingsForUser,
+  persistSharedResult,
   persistMorningCheckInForUser,
   persistAuditEvent,
   persistFeedbackEvent,
@@ -253,6 +255,67 @@ describe("manyang db helpers", () => {
       "subscription.updated",
       JSON.stringify({ provider: "stripe" }),
     ]);
+  });
+
+  test("persists a public dream share result", async () => {
+    const pool = {
+      query: vi.fn(async () => ({
+        rows: [
+          {
+            public_id: "share-1",
+            kind: "dream",
+            payload: { dreamText: "corridor" },
+            created_at: "2026-06-12T00:00:00.000Z",
+          },
+        ],
+      })),
+    };
+
+    await expect(
+      persistSharedResult(
+        {
+          publicId: "share-1",
+          kind: "dream",
+          payload: { dreamText: "corridor" },
+          userId: "user-1",
+        },
+        pool as never,
+      ),
+    ).resolves.toEqual({
+      id: "share-1",
+      kind: "dream",
+      payload: { dreamText: "corridor" },
+      createdAt: "2026-06-12T00:00:00.000Z",
+    });
+    expect(pool.query).toHaveBeenCalledWith(expect.stringContaining("insert into manyang.shared_results"), [
+      "share-1",
+      "dream",
+      JSON.stringify({ dreamText: "corridor" }),
+      "user-1",
+    ]);
+  });
+
+  test("finds a public share result by id and kind", async () => {
+    const pool = {
+      query: vi.fn(async () => ({
+        rows: [
+          {
+            public_id: "share-1",
+            kind: "tarot",
+            payload: { title: "Daily card" },
+            created_at: "2026-06-12T00:00:00.000Z",
+          },
+        ],
+      })),
+    };
+
+    await expect(findSharedResult("share-1", "tarot", pool as never)).resolves.toEqual({
+      id: "share-1",
+      kind: "tarot",
+      payload: { title: "Daily card" },
+      createdAt: "2026-06-12T00:00:00.000Z",
+    });
+    expect(pool.query).toHaveBeenCalledWith(expect.stringContaining("from manyang.shared_results"), ["share-1", "tarot"]);
   });
 
   test("persists feedback events for user or guest identity", async () => {

@@ -33,6 +33,8 @@ import {
   createReceiptShareText,
   createReceiptSvg,
 } from "@/lib/result-actions";
+import { downloadSvgAsPng } from "@/lib/share-image-export";
+import { createShareResultLink, sharePublicLink } from "@/lib/share-link-client";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useArchiveDreamRecords } from "@/lib/use-archive-dream-records";
 import { mergeRemotePawprintResult, useRoutineRecords } from "@/lib/use-routine-records";
@@ -320,9 +322,10 @@ function ReceiptStreamingText({
 
 type DreamResultReceiptProps = {
   payloadOverride?: DreamCompletedPayload;
+  isSharedView?: boolean;
 };
 
-export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps = {}) {
+export function DreamResultReceipt({ payloadOverride, isSharedView = false }: DreamResultReceiptProps = {}) {
   const storedPayload = useSyncExternalStore(
     subscribeToStorage,
     getLatestAnalysisSnapshotFromBrowser,
@@ -420,16 +423,10 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
     setShowPawprintLoginPrompt(false);
   }
 
-  function handleDownload() {
+  async function handleDownload() {
     const svg = createReceiptSvg(payload);
-    const blob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
 
-    anchor.href = url;
-    anchor.download = createReceiptFileName(payload);
-    anchor.click();
-    URL.revokeObjectURL(url);
+    await downloadSvgAsPng(svg, createReceiptFileName(payload));
 
     void saveReceiptPawprint();
   }
@@ -437,15 +434,16 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
   async function handleShare() {
     const text = createReceiptShareText(payload);
 
-    if (navigator.share) {
-      await navigator.share({
-        title: "오늘의 꿈 영수증",
-        text,
-      });
-      return;
-    }
+    const link = await createShareResultLink({
+      kind: "dream",
+      payload,
+    });
 
-    await navigator.clipboard.writeText(text);
+    await sharePublicLink({
+      url: link.url,
+      text,
+      title: "오늘의 꿈 영수증",
+    });
   }
 
   async function handleDeleteStoredReceipt() {
@@ -477,7 +475,7 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
   }
 
   return (
-    <div className="mt-2 space-y-4 pb-5">
+    <div className="mt-2 space-y-4 pb-5" data-receipt-shared-view={isSharedView ? "true" : undefined}>
       <div
         className="relative left-1/2 w-screen -translate-x-1/2 overflow-visible"
         data-receipt-viewport-frame="true"
@@ -646,6 +644,8 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
         data-receipt-completion-stack="true"
         style={createReceiptDelayStyle(receiptPaperSettledDelayMs)}
       >
+        {!isSharedView ? (
+          <>
         <div
           className="grid grid-cols-2 gap-3"
           data-receipt-result-actions="true"
@@ -653,7 +653,7 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
           <AssetTextButton
             frame={manyangAssets.buttons.compactPrimary}
             iconSrc={manyangAssets.actionIcons.download}
-            onClick={handleDownload}
+            onClick={() => void handleDownload()}
             contentClassName="min-h-[3.45rem] px-2.5 text-[14px]"
             iconClassName="h-6 w-6"
           >
@@ -672,7 +672,9 @@ export function DreamResultReceipt({ payloadOverride }: DreamResultReceiptProps 
         <div data-receipt-save-slot="true">
           <ReceiptSaveCta />
         </div>
-        {storedDreamRecord ? (
+          </>
+        ) : null}
+        {!isSharedView && storedDreamRecord ? (
           <div data-receipt-delete-slot="true" data-receipt-delete-action={storedDreamRecord.id}>
             <AssetTextButton
               frame={manyangAssets.buttons.mediumSecondary}

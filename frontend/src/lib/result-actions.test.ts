@@ -154,8 +154,8 @@ describe("result action helpers", () => {
     expect(getPrimarySymbolSlug(["낯선상징"])).toBe("%EB%82%AF%EC%84%A0%EC%83%81%EC%A7%95");
   });
 
-  test("creates a stable svg receipt filename", () => {
-    expect(createReceiptFileName(createPayload())).toBe("manyang-receipt-2026-05-24-dream-id.svg");
+  test("creates a stable png receipt filename", () => {
+    expect(createReceiptFileName(createPayload())).toBe("manyang-receipt-2026-05-24-dream-id.png");
   });
 
   test("creates share text with the summary, symbols, and prescription", () => {
@@ -180,9 +180,9 @@ describe("result action helpers", () => {
     expect(svg).toContain("준비물 하나만 먼저 확인해보자냥.");
   });
 
-  test("creates a stable tarot reading svg filename", () => {
+  test("creates a stable tarot reading png filename", () => {
     expect(createTarotReadingFileName(createTarotReading())).toBe(
-      "manyang-tarot-2026-06-01-daily_one_card-the-fool.svg",
+      "manyang-tarot-2026-06-01-daily_one_card-the-fool.png",
     );
   });
 
