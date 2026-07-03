@@ -27,7 +27,12 @@ export type PersistCompletedTarotReadingInput = {
   reading: DailyTarotReading;
 };
 
-export type ReadingUsageFeatureKey = "dream_basic" | "dream_premium" | "tarot_one_card" | "tarot_three_card";
+export type ReadingUsageFeatureKey =
+  | "dream_basic"
+  | "dream_premium"
+  | "tarot_one_card"
+  | "tarot_question_one_card"
+  | "tarot_three_card";
 
 export type PersistAuditEventInput = {
   actorUserId?: string | null;
@@ -192,12 +197,14 @@ export async function persistCompletedTarotReading(
   input: PersistCompletedTarotReadingInput,
   pool = getManyangDbPool(),
 ): Promise<string> {
+  const readingKey = createTarotReadingPersistenceKey(input.reading);
   const result = await pool.query<{ id: string }>(
     `
       insert into manyang.tarot_readings (
         user_id,
         app_date,
         spread,
+        reading_key,
         cards,
         title,
         overview,
@@ -205,8 +212,8 @@ export async function persistCompletedTarotReading(
         advice,
         raw_reading
       )
-      values ($1, $2::date, $3, $4::jsonb, $5, $6, $7::jsonb, $8, $9::jsonb)
-      on conflict (user_id, app_date, spread) do update
+      values ($1, $2::date, $3, $4, $5::jsonb, $6, $7, $8::jsonb, $9, $10::jsonb)
+      on conflict (user_id, app_date, spread, reading_key) do update
         set cards = excluded.cards,
             title = excluded.title,
             overview = excluded.overview,
@@ -220,6 +227,7 @@ export async function persistCompletedTarotReading(
       input.userId,
       input.reading.appDate,
       input.reading.spread,
+      readingKey,
       JSON.stringify(input.reading.cards ?? []),
       input.reading.generated?.title ?? input.reading.title,
       input.reading.generated?.overview ?? input.reading.message,
@@ -237,17 +245,33 @@ export async function persistCompletedTarotReading(
   return tarotReadingId;
 }
 
+export function createTarotReadingPersistenceKey(reading: DailyTarotReading): string {
+  if (reading.spread !== "question_one_card") {
+    return "daily";
+  }
+
+  const context = reading.questionContext;
+  const unlockMethod = reading.unlockMethod ?? "daily_free";
+
+  return context
+    ? `question:${context.stateKey}:${context.questionKey}:${unlockMethod}`
+    : `question:unknown:${unlockMethod}`;
+}
+
 /**
- * 같은 유저가 같은 날 같은 스프레드로 이미 받은 타로 리딩이 있으면 그대로 돌려준다.
- * 타로 리딩은 (user, app_date, spread)당 결정론적으로 1개이므로, 재요청 시 LLM을
+ * 같은 유저가 같은 날 같은 스프레드/리딩 키로 이미 받은 타로 리딩이 있으면 그대로 돌려준다.
+ * 일일 타로는 daily 키를, 질문 타로는 질문별 키를 사용해 재요청 시 LLM을
  * 다시 부르지 않고 저장본을 반환해 비용을 아낀다(같은 날 → 같은 리딩).
  */
 export async function findCompletedTarotReadingForUser(
   userId: string,
   appDate: string,
   spread: TarotSpread,
-  pool = getManyangDbPool(),
+  readingKeyOrPool: string | Pool = "daily",
+  poolOrUndefined?: Pool,
 ): Promise<DailyTarotReading | null> {
+  const readingKey = typeof readingKeyOrPool === "string" ? readingKeyOrPool : "daily";
+  const pool = typeof readingKeyOrPool === "string" ? (poolOrUndefined ?? getManyangDbPool()) : readingKeyOrPool;
   const result = await pool.query<{ raw_reading: DailyTarotReading }>(
     `
       select raw_reading
@@ -255,9 +279,10 @@ export async function findCompletedTarotReadingForUser(
       where user_id = $1
         and app_date = $2::date
         and spread = $3
+        and reading_key = $4
       limit 1
     `,
-    [userId, appDate, spread],
+    [userId, appDate, spread, readingKey],
   );
 
   return result.rows[0]?.raw_reading ?? null;
