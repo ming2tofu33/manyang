@@ -81,24 +81,53 @@ describe("share records", () => {
   });
 
   test("recognizes shared tarot result payloads", () => {
-    expect(
-      isSharedTarotPayload({
-        id: "tarot-1",
-        appDate: "2026-06-12",
-        selectedAt: "2026-06-12T00:00:00.000Z",
-        spread: "daily_one_card",
-        source: "llm",
-        card: { id: 0 },
-        orientation: "upright",
-        position: "today",
-        cards: [],
-        generated: { title: "title", overview: "overview", cardReadings: [], advice: "advice" },
-        keywords: [],
-        title: "title",
-        message: "message",
-        advice: "advice",
-      }),
-    ).toBe(true);
+    const sharedTarotPayload = {
+      id: "tarot-1",
+      appDate: "2026-06-12",
+      selectedAt: "2026-06-12T00:00:00.000Z",
+      spread: "daily_one_card",
+      source: "llm",
+      card: { id: 0 },
+      orientation: "upright",
+      position: "today",
+      cards: [],
+      generated: { title: "title", overview: "overview", cardReadings: [], advice: "advice" },
+      keywords: [],
+      title: "title",
+      message: "message",
+      advice: "advice",
+    };
+
+    expect(isSharedTarotPayload(sharedTarotPayload)).toBe(true);
     expect(isSharedTarotPayload({ title: "title" })).toBe(false);
+  });
+
+  test("recognizes shared question tarot result payloads with question context", () => {
+    const questionTarotPayload = {
+      id: "tarot-question-1",
+      appDate: "2026-07-03",
+      selectedAt: "2026-07-03T00:00:00.000Z",
+      spread: "question_one_card",
+      source: "llm",
+      card: { id: 22 },
+      orientation: "upright",
+      position: "today",
+      cards: [],
+      generated: { title: "title", overview: "overview", cardReadings: [], advice: "advice" },
+      keywords: [],
+      title: "title",
+      message: "message",
+      advice: "advice",
+      questionContext: {
+        stateKey: "mind_complex",
+        stateLabel: "마음이 복잡해",
+        questionKey: "held_feeling",
+        questionText: "오늘 내 마음이 붙잡고 있는 건 뭐야?",
+      },
+      unlockMethod: "daily_free",
+    };
+
+    expect(isSharedTarotPayload(questionTarotPayload)).toBe(true);
+    expect(isSharedTarotPayload({ ...questionTarotPayload, questionContext: undefined })).toBe(false);
   });
 });

@@ -88,16 +88,44 @@ export function isSharedDreamPayload(value: unknown): value is DreamCompletedPay
   );
 }
 
+function isTarotSpread(value: unknown): value is DailyTarotReading["spread"] {
+  return value === "daily_one_card" || value === "question_one_card" || value === "daily_three_card";
+}
+
+function isTarotQuestionContext(value: unknown): value is NonNullable<DailyTarotReading["questionContext"]> {
+  return (
+    isRecord(value) &&
+    typeof value.stateKey === "string" &&
+    value.stateKey.trim().length > 0 &&
+    typeof value.stateLabel === "string" &&
+    value.stateLabel.trim().length > 0 &&
+    typeof value.questionKey === "string" &&
+    value.questionKey.trim().length > 0 &&
+    typeof value.questionText === "string" &&
+    value.questionText.trim().length > 0
+  );
+}
+
+function isTarotUnlockMethod(value: unknown): value is NonNullable<DailyTarotReading["unlockMethod"]> {
+  return value === "daily_free" || value === "rewarded_ad" || value === "moon_pass" || value === "admin";
+}
+
 export function isSharedTarotPayload(value: unknown): value is DailyTarotReading {
   if (!isRecord(value) || !isRecord(value.card) || !isRecord(value.generated)) {
     return false;
   }
 
+  const hasValidQuestionContext =
+    value.spread === "question_one_card"
+      ? isTarotQuestionContext(value.questionContext) && isTarotUnlockMethod(value.unlockMethod)
+      : value.questionContext === undefined &&
+        (value.unlockMethod === undefined || isTarotUnlockMethod(value.unlockMethod));
+
   return (
     typeof value.id === "string" &&
     typeof value.appDate === "string" &&
     typeof value.selectedAt === "string" &&
-    (value.spread === "daily_one_card" || value.spread === "daily_three_card") &&
+    isTarotSpread(value.spread) &&
     value.source === "llm" &&
     typeof value.card.id === "number" &&
     (value.orientation === "upright" || value.orientation === "reversed") &&
@@ -110,6 +138,7 @@ export function isSharedTarotPayload(value: unknown): value is DailyTarotReading
     isStringArray(value.keywords) &&
     typeof value.title === "string" &&
     typeof value.message === "string" &&
-    typeof value.advice === "string"
+    typeof value.advice === "string" &&
+    hasValidQuestionContext
   );
 }

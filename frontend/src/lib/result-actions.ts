@@ -182,6 +182,10 @@ const tarotPositionLabels = {
   advice: "오늘의 조언",
 } satisfies Record<DailyTarotPosition, string>;
 
+function getTarotDisplayTitle(reading: DailyTarotReading): string {
+  return reading.spread === "question_one_card" ? "질문 타로" : dailyTarotDisplayTitle;
+}
+
 function getTarotReadingCards(reading: DailyTarotReading): DailyTarotCardSelection[] {
   return reading.cards && reading.cards.length > 0
     ? reading.cards
@@ -209,13 +213,15 @@ export function createTarotReadingShareText(reading: DailyTarotReading): string 
       ? `${tarotPositionLabels[selection.position]}: ${cardText}`
       : cardText;
   });
+  const questionLine = reading.questionContext ? `질문: ${reading.questionContext.questionText}` : null;
 
   return [
-    dailyTarotDisplayTitle,
+    getTarotDisplayTitle(reading),
+    questionLine,
     `카드: ${cardLines.join(" / ")}`,
     `흐름: ${reading.message}`,
     `카드 메시지: ${reading.advice}`,
-  ].join("\n");
+  ].filter((line): line is string => Boolean(line)).join("\n");
 }
 
 export function createTarotReadingSvg(reading: DailyTarotReading): string {
@@ -224,7 +230,7 @@ export function createTarotReadingSvg(reading: DailyTarotReading): string {
 
     return `${label}${selection.card.nameKo} / ${selection.card.nameEn} · ${tarotOrientationLabels[selection.orientation]}`;
   });
-  const titleLines = wrapText(dailyTarotDisplayTitle, 24).slice(0, 2);
+  const titleLines = wrapText(getTarotDisplayTitle(reading), 24).slice(0, 2);
   const messageLines = wrapText(reading.message, 30).slice(0, 6);
   const adviceLines = wrapText(reading.advice, 30).slice(0, 4);
 
@@ -239,7 +245,7 @@ export function createTarotReadingSvg(reading: DailyTarotReading): string {
     .meta { fill: #f2c27d; font: 27px sans-serif; text-anchor: middle; }
   </style>
   <rect width="900" height="1300" class="bg"/>
-  <text x="450" y="92" class="brand">오늘의 타로</text>
+  <text x="450" y="92" class="brand">${escapeXml(getTarotDisplayTitle(reading))}</text>
   <rect x="85" y="140" width="730" height="1040" rx="34" class="paper"/>
   <text x="450" y="228" class="meta">${escapeXml(reading.appDate)}</text>
   ${renderSvgLines(titleLines, 450, 315, 50, "title")}

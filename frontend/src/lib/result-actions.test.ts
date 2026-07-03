@@ -123,6 +123,21 @@ function createTarotReading(): DailyTarotReading {
   };
 }
 
+function createQuestionTarotReading(): DailyTarotReading {
+  return {
+    ...createTarotReading(),
+    id: "daily-tarot-question_one_card-2026-06-01-mind_complex-held_feeling-daily_free",
+    spread: "question_one_card",
+    questionContext: {
+      stateKey: "mind_complex",
+      stateLabel: "마음이 복잡해",
+      questionKey: "held_feeling",
+      questionText: "오늘 내 마음이 붙잡고 있는 건 뭐야?",
+    },
+    unlockMethod: "daily_free",
+  };
+}
+
 describe("result action helpers", () => {
   test("maps the primary known symbol to an encyclopedia slug", () => {
     expect(getPrimarySymbolSlug(["복도", "신발"])).toBe("corridor");
@@ -186,6 +201,12 @@ describe("result action helpers", () => {
     );
   });
 
+  test("creates a stable question tarot reading png filename", () => {
+    expect(createTarotReadingFileName(createQuestionTarotReading())).toBe(
+      "manyang-tarot-2026-06-01-question_one_card-the-fool.png",
+    );
+  });
+
   test("creates tarot share text with card, orientation, and card message", () => {
     const text = createTarotReadingShareText(createTarotReading());
 
@@ -195,6 +216,15 @@ describe("result action helpers", () => {
     expect(text).toContain("카드 메시지: Choose one small action.");
     expect(text).not.toContain("조언: Choose one small action.");
     expect(text).toContain("Choose one small action.");
+  });
+
+  test("creates question tarot share text with the selected question", () => {
+    const text = createTarotReadingShareText(createQuestionTarotReading());
+
+    expect(text).toContain("질문 타로");
+    expect(text).toContain("질문: 오늘 내 마음이 붙잡고 있는 건 뭐야?");
+    expect(text).toContain("The Fool · 정방향");
+    expect(text).toContain("카드 메시지: Choose one small action.");
   });
 
   test("creates a tarot svg image document", () => {
