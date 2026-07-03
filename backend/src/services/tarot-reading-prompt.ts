@@ -35,7 +35,7 @@ export const TAROT_READING_DRAFT_JSON_SCHEMA = {
           },
           heading: {
             type: "string",
-            minLength: 1,
+            enum: ["지금 드러난 조건", "이어지는 국면", "판단의 기준"],
           },
           reading: {
             type: "string",
@@ -49,7 +49,7 @@ export const TAROT_READING_DRAFT_JSON_SCHEMA = {
   required: ["title", "overview", "keywords", "cardReadings"],
 } as const;
 
-export type TarotReadingSpread = "daily_one_card" | "daily_three_card";
+export type TarotReadingSpread = "daily_one_card" | "question_one_card" | "daily_three_card";
 export type TarotReadingPosition = "today" | "situation" | "flow" | "advice";
 export type TarotReadingOrientation = "upright" | "reversed";
 
@@ -83,11 +83,19 @@ export type TarotReadingPromptCardInput = {
   card: TarotPromptCard;
 };
 
+export type TarotQuestionPromptContext = {
+  stateKey: string;
+  stateLabel: string;
+  questionKey: string;
+  questionText: string;
+};
+
 export type TarotReadingPromptInput = {
   appDate: string;
   locale?: "ko" | "en";
   spread: TarotReadingSpread;
   cards: TarotReadingPromptCardInput[];
+  questionContext?: TarotQuestionPromptContext;
 };
 
 export type TarotReadingPrompt = {
@@ -102,6 +110,10 @@ function getSpreadContract(spread: TarotReadingSpread): string {
       "situation reads the visible current condition; flow reads the next change or pressure; advice reads a judgment criterion, not an action command.",
       "The overview must connect all three cards before the per-card readings.",
     ].join(" ");
+  }
+
+  if (spread === "question_one_card") {
+    return "Use cardReadings as an empty array for question_one_card; answer the selected question through the one selected card in overview.";
   }
 
   return "Use cardReadings as an empty array for daily_one_card; put the full user-facing reading in overview.";
@@ -130,6 +142,7 @@ function serializeCardMeaning(meaning: TarotPromptCardMeaning): TarotPromptCardM
 
 function getStyleContract(spread: TarotReadingSpread): string[] {
   const baseStyle = [
+    "키워드는 보고서식 명사보다 생활어에 가까운 짧은 구절로 쓰세요. 좋은 예: 흔들린 기반, 오해가 풀리는 중, 다시 판단할 때. 피할 예: 구조의 드러남, 불확실성 해명, 과거 재평가.",
     "선택된 방향의 요약, 하루 분위기, 장면 설명, 상징 설명을 해석의 근거로 사용하세요.",
     "고정 카드 메시지는 앱이 별도로 보여줍니다. 같은 문장을 그대로 반복하거나 최종 조언처럼 다시 쓰지 마세요.",
     "카드의 그림 속 상징을 최소 1개 이상 자연스럽게 연결하되, 입력에 없는 상징은 만들지 마세요.",
@@ -153,6 +166,14 @@ function getStyleContract(spread: TarotReadingSpread): string[] {
     ];
   }
 
+  if (spread === "question_one_card") {
+    return [
+      ...baseStyle,
+      "질문형 한 장 리딩은 선택한 질문을 직접 답하되, 예/아니오나 미래 단정으로 답하지 마세요.",
+      "overview 안에서 카드 장면, 질문의 맥락, 오늘 확인할 기준을 자연스럽게 이어 쓰세요.",
+    ];
+  }
+
   return [
     ...baseStyle,
     "한 장 리딩은 cardReadings를 빈 배열로 두고 overview 안에서 카드 장면, 오늘의 상태, 주의해서 볼 지점을 자연스럽게 이어 쓰세요.",
@@ -170,15 +191,22 @@ function getInstructionContract(spread: TarotReadingSpread, locale: "ko" | "en")
   const spreadInstructions =
     spread === "daily_three_card"
       ? [
+          "heading은 position에 맞는 고정 문구만 사용하세요: situation=지금 드러난 조건, flow=이어지는 국면, advice=판단의 기준.",
           "세 장 리딩은 overview에서 세 장의 관계를 먼저 읽고, cardReadings에서는 각 포지션이 맡은 역할만 분명히 나누세요.",
           "세 장 리딩의 situation은 지금 드러난 조건, flow는 뒤따르는 변화나 압력, advice는 행동 지시가 아닌 판단 기준으로 쓰세요.",
           "각 카드의 기본 의미를 다시 설명하는 데 머물지 말고, 고정 카드 메시지와 같은 말을 반복하지 마세요.",
           "advice 포지션도 '~하세요', '~해보세요' 같은 명령형 대신 '~가 판단 기준입니다'처럼 기준을 설명하세요.",
         ]
-      : [
-          "한 장 리딩에서는 cardReadings를 만들지 마세요. overview가 사용자에게 보이는 본문입니다.",
-          "한 장 리딩의 overview는 카드 장면에서 출발해 오늘의 상태와 사용자가 주의해서 볼 지점을 하나의 글로 이어 주세요.",
-        ];
+      : spread === "question_one_card"
+        ? [
+            "한 장 리딩에서는 cardReadings를 만들지 마세요. overview가 사용자에게 보이는 본문입니다.",
+            "선택한 질문을 카드의 상징과 방향으로 읽되, 예/아니오나 확정 예언으로 답하지 마세요.",
+            "결론은 행동 명령이 아니라 오늘 확인할 기준으로 마무리하세요.",
+          ]
+        : [
+            "한 장 리딩에서는 cardReadings를 만들지 마세요. overview가 사용자에게 보이는 본문입니다.",
+            "한 장 리딩의 overview는 카드 장면에서 출발해 오늘의 상태와 사용자가 주의해서 볼 지점을 하나의 글로 이어 주세요.",
+          ];
   const commonInstructions = [
     "모든 출력 필드에서 절대 사용하지 마세요: 차분, 조용, 작은 행동, 행동 하나, 충분합니다.",
     "흐름이라는 단어를 반복적인 마무리나 heading으로 남발하지 마세요. flow 포지션의 heading은 '이어지는 국면'처럼 표현하세요.",
@@ -198,6 +226,7 @@ export function buildTarotReadingPrompt(input: TarotReadingPromptInput): TarotRe
     locale,
     appDate: input.appDate,
     spread: input.spread,
+    questionContext: input.questionContext,
     cards: input.cards.map((selection) => {
       const selectedMeaning = serializeCardMeaning(selection.card[selection.orientation]);
 

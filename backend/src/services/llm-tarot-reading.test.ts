@@ -1,5 +1,6 @@
 import { describe, expect, test, vi } from "vitest";
 
+import { buildTarotReadingPrompt, TAROT_READING_DRAFT_JSON_SCHEMA } from "./tarot-reading-prompt";
 import { LlmProviderTimeoutError, type DreamReadingLlmProvider, type DreamReadingLlmRequest } from "./llm-provider";
 import { generateTarotReadingForUser, type TarotReadingInput } from "./llm-tarot-reading";
 
@@ -53,6 +54,17 @@ const oneCardInput = {
   ],
 } satisfies TarotReadingInput;
 
+const questionOneCardInput = {
+  ...oneCardInput,
+  spread: "question_one_card",
+  questionContext: {
+    stateKey: "mind_complex",
+    stateLabel: "마음이 복잡해",
+    questionKey: "held_feeling",
+    questionText: "오늘 내 마음이 붙잡고 있는 건 뭐야?",
+  },
+} satisfies TarotReadingInput;
+
 const threeCardInput = {
   appDate: "2026-05-31",
   locale: "ko",
@@ -100,6 +112,31 @@ describe("generateTarotReadingForUser", () => {
       reason: "provider_missing",
       retryable: false,
     });
+  });
+
+  test("constrains three-card drafts to fixed headings and conversational keyword wording", () => {
+    const prompt = buildTarotReadingPrompt(threeCardInput);
+    const input = JSON.parse(prompt.input) as {
+      outputContract?: { style?: string[] };
+    };
+    const styleContract = input.outputContract?.style?.join("\n") ?? "";
+    const cardReadingsSchema = TAROT_READING_DRAFT_JSON_SCHEMA.properties.cardReadings as {
+      items?: { properties?: { heading?: { enum?: readonly string[] } } };
+    };
+
+    expect(cardReadingsSchema.items?.properties?.heading?.enum).toEqual([
+      "지금 드러난 조건",
+      "이어지는 국면",
+      "판단의 기준",
+    ]);
+    expect(prompt.instructions).toContain("heading은 position에 맞는 고정 문구만 사용하세요");
+    expect(styleContract).toContain("키워드는 보고서식 명사보다 생활어에 가까운 짧은 구절로 쓰세요");
+    expect(styleContract).toContain("흔들린 기반");
+    expect(styleContract).toContain("오해가 풀리는 중");
+    expect(styleContract).toContain("다시 판단할 때");
+    expect(styleContract).toContain("구조의 드러남");
+    expect(styleContract).toContain("불확실성 해명");
+    expect(styleContract).toContain("과거 재평가");
   });
 
   test("generates a one-card tarot reading from overview-focused provider JSON", async () => {
@@ -154,6 +191,25 @@ describe("generateTarotReadingForUser", () => {
     expect(request?.instructions).not.toContain("세 장 리딩은 overview에서 세 장의 관계");
     expect(request?.instructions).not.toMatch(/\b(?:selectedMeaning|readingScene|symbolMeanings|visualSymbols|cardMessage|dailyFlow|outputContract)\b/u);
     expect(request?.instructions).not.toContain("You are Manyang's production tarot-reading engine.");
+  });
+
+  test("builds question one-card prompts with selected question context", async () => {
+    const provider = createProvider({
+      ...generatedDisplayFields,
+      title: "질문을 비추는 카드",
+      overview:
+        "선택한 질문을 카드의 장면과 연결해 읽는 본문입니다. 질문의 맥락을 벗어나지 않고 오늘 확인할 기준을 보여줍니다.",
+      cardReadings: [],
+    });
+
+    await expect(generateTarotReadingForUser(questionOneCardInput, { provider })).resolves.toMatchObject({
+      status: "ok",
+      reading: { cardReadings: [] },
+    });
+
+    const request = provider.requests[0];
+    expect(request?.input).toContain("오늘 내 마음이 붙잡고 있는 건 뭐야?");
+    expect(request?.instructions).toContain("선택한 질문");
   });
 
   test("rejects one-card provider JSON that still returns per-card readings", async () => {
@@ -360,6 +416,42 @@ describe("generateTarotReadingForUser", () => {
     expect(request?.instructions).toContain("고정 카드 메시지와 같은 말을 반복하지 마세요");
     expect(request?.instructions).toContain("~하세요");
     expect(request?.instructions).not.toContain("한 장 리딩에서는 cardReadings를 만들지 마세요");
+  });
+
+  test("normalizes three-card provider headings before returning the reading", async () => {
+    const provider = createProvider({
+      ...generatedDisplayFields,
+      title: "Three card reading",
+      overview: "The three selected cards connect the visible condition, the next pressure, and the standard for judgment.",
+      cardReadings: [
+        {
+          position: "situation",
+          heading: "LLM SITUATION HEADING",
+          reading: "The first card explains the visible condition.",
+        },
+        {
+          position: "flow",
+          heading: "LLM FLOW HEADING",
+          reading: "The second card explains the next pressure.",
+        },
+        {
+          position: "advice",
+          heading: "LLM ADVICE HEADING",
+          reading: "The third card explains the standard for judgment.",
+        },
+      ],
+    });
+
+    await expect(generateTarotReadingForUser(threeCardInput, { provider })).resolves.toMatchObject({
+      status: "ok",
+      reading: {
+        cardReadings: [
+          { position: "situation", heading: "지금 드러난 조건" },
+          { position: "flow", heading: "이어지는 국면" },
+          { position: "advice", heading: "판단의 기준" },
+        ],
+      },
+    });
   });
 
   test("returns invalid_response when provider JSON does not match the requested spread", async () => {

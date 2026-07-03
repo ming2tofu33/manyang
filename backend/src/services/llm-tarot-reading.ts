@@ -69,6 +69,16 @@ const displayKeywordSpacingByCompactValue = new Map([
   ["억눌린감정", "억눌린 감정"],
   ["희망의단서", "희망의 단서"],
 ]);
+const generatedCardReadingHeadingByPosition = {
+  today: "오늘의 리딩",
+  situation: "지금 드러난 조건",
+  flow: "이어지는 국면",
+  advice: "판단의 기준",
+} satisfies Record<TarotReadingPosition, string>;
+
+function getGeneratedCardReadingHeading(position: TarotReadingPosition): string {
+  return generatedCardReadingHeadingByPosition[position] ?? "오늘의 리딩";
+}
 
 function stripTrailingLlmArtifacts(value: string): string {
   let cleaned = value.trim();
@@ -149,7 +159,7 @@ function parseCardReadings(value: unknown): TarotGeneratedCardReading[] {
     const reading = cleanString(item.reading, 520);
 
     return isTarotReadingPosition(position) && heading && reading
-      ? [{ position, heading, reading }]
+      ? [{ position, heading: getGeneratedCardReadingHeading(position), reading }]
       : [];
   });
 }
