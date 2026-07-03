@@ -95,6 +95,7 @@ const orientationLabels = {
 
 const spreadPositions = {
   daily_one_card: ["today"],
+  question_one_card: ["today"],
   daily_three_card: ["situation", "flow", "advice"],
 } satisfies Record<TarotSpread, DailyTarotPosition[]>;
 
@@ -282,7 +283,7 @@ export function canAcceptDailyTarotSelection({
   return selectedSpread !== "daily_three_card" || canUseThreeCard;
 }
 
-function DailyTarotFanDeck({
+export function DailyTarotFanDeck({
   options,
   onSelect,
   disabled,
@@ -1174,7 +1175,7 @@ export function DailyTarotPendingResult({ selections }: { selections: DailyTarot
   );
 }
 
-function DailyTarotResult({
+export function DailyTarotResult({
   reading,
   onSelectThreeCard,
   isSharedView = false,
@@ -1209,6 +1210,7 @@ function DailyTarotResult({
 
   async function handleShare() {
     const text = createTarotReadingShareText(reading);
+    const title = reading.spread === "question_one_card" ? "질문 타로" : dailyTarotDisplayTitle;
 
     const link = await createShareResultLink({
       kind: "tarot",
@@ -1218,7 +1220,7 @@ function DailyTarotResult({
     await sharePublicLink({
       url: link.url,
       text,
-      title: "오늘의 타로",
+      title,
     });
   }
 
@@ -1236,6 +1238,14 @@ function DailyTarotResult({
         style={{ "--tarot-result-enter-delay": "220ms" } as CSSProperties}
       >
         <p className="text-[12px] font-bold text-[#f4b65f]">오늘의 리딩</p>
+        {reading.questionContext ? (
+          <p
+            data-question-tarot-result-question="true"
+            className="rounded-[0.75rem] border border-[#f2c27d]/24 bg-[#f2c27d]/8 px-3 py-2 text-[12px] font-bold leading-5 text-[#ffe7b5]"
+          >
+            질문: {reading.questionContext.questionText}
+          </p>
+        ) : null}
         {keywords.length > 0 ? (
           <div data-daily-tarot-keywords="true" className="flex flex-wrap gap-1.5">
             {keywords.map((keyword) => (
