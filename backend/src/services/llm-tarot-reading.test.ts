@@ -212,6 +212,44 @@ describe("generateTarotReadingForUser", () => {
     expect(request?.instructions).toContain("선택한 질문");
   });
 
+  test("adds question one-card style guidance for natural symbolic Korean copy", () => {
+    const prompt = buildTarotReadingPrompt(questionOneCardInput);
+    const input = JSON.parse(prompt.input) as {
+      outputContract?: { style?: string[] };
+    };
+    const styleContract = input.outputContract?.style?.join("\n") ?? "";
+
+    expect(styleContract).toContain("첫 문장은 선택한 질문에 바로 답하세요");
+    expect(styleContract).toContain("카드와 정방향/역방향의 상징 근거");
+    expect(styleContract).toContain("오늘 실제로 알아차릴 수 있는 신호");
+    expect(styleContract).toContain("오늘 확인할 기준");
+    expect(styleContract).toContain("어색한 예: 불씨의 흥분");
+    expect(styleContract).toContain("자연스러운 예: 막 붙기 시작한 의욕");
+    expect(styleContract).toContain("시각적으로는");
+    expect(styleContract).toContain("~라는 점입니다");
+    expect(styleContract).toContain("같은 상징어를 두 번 이상 반복하지 마세요");
+    expect(prompt.instructions).toContain("정위치라는 말 대신 정방향이라고 쓰세요");
+  });
+
+  test("normalizes question one-card orientation wording and awkward repeated keywords", async () => {
+    const provider = createProvider({
+      title: "정위치 완드 에이스",
+      overview:
+        "오늘 카드는 정위치의 완드 에이스입니다. 시각적으로는 불타는 완드와 시작의 씨앗이 중심을 이루는데, 지금 당신에게 중요한 건 아이디어의 결과가 아니라 그 불씨가 실제로 살아있느냐는 점입니다. 일이 막힌 느낌 속에서도 새 가능성의 흥분이 올라오면 그것이 집중의 신호가 됩니다.",
+      keywords: ["불씨의 흥분", "새 가능성", "지속되는 흥분"],
+      cardReadings: [],
+    });
+
+    await expect(generateTarotReadingForUser(questionOneCardInput, { provider })).resolves.toMatchObject({
+      status: "ok",
+      reading: {
+        title: "정방향 완드 에이스",
+        overview: expect.not.stringContaining("정위치"),
+        keywords: ["시작의 불씨", "새 가능성", "남은 의욕"],
+      },
+    });
+  });
+
   test("rejects one-card provider JSON that still returns per-card readings", async () => {
     const provider = createProvider({
       ...generatedDisplayFields,

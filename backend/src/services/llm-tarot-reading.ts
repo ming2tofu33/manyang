@@ -69,6 +69,12 @@ const displayKeywordSpacingByCompactValue = new Map([
   ["억눌린감정", "억눌린 감정"],
   ["희망의단서", "희망의 단서"],
 ]);
+const naturalKeywordByAwkwardCompactValue = new Map([
+  ["불씨의흥분", "시작의 불씨"],
+  ["가능성의흥분", "새 가능성"],
+  ["지속되는흥분", "남은 의욕"],
+  ["계속되는흥분", "남은 의욕"],
+]);
 const generatedCardReadingHeadingByPosition = {
   today: "오늘의 리딩",
   situation: "지금 드러난 조건",
@@ -95,8 +101,22 @@ function stripTrailingLlmArtifacts(value: string): string {
   return cleaned;
 }
 
+function normalizeUserFacingCopy(value: string): string {
+  return value
+    .replaceAll("정위치", "정방향")
+    .replaceAll("역위치", "역방향")
+    .replace(/시각적으로는\s*/gu, "");
+}
+
 function normalizeDisplayKeyword(value: string): string {
-  return displayKeywordSpacingByCompactValue.get(value.replace(/\s+/g, "")) ?? value;
+  const normalizedValue = normalizeUserFacingCopy(value);
+  const compactValue = normalizedValue.replace(/\s+/g, "");
+
+  return (
+    naturalKeywordByAwkwardCompactValue.get(compactValue) ??
+    displayKeywordSpacingByCompactValue.get(compactValue) ??
+    normalizedValue
+  );
 }
 
 function containsPromptInternalFieldName(value: string): boolean {
@@ -108,7 +128,7 @@ function cleanString(value: unknown, maxLength = 1400): string | undefined {
     return undefined;
   }
 
-  const trimmed = stripTrailingLlmArtifacts(value).slice(0, maxLength).trim();
+  const trimmed = normalizeUserFacingCopy(stripTrailingLlmArtifacts(value).slice(0, maxLength)).trim();
 
   return trimmed ? trimmed.slice(0, maxLength) : undefined;
 }
