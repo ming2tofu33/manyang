@@ -51,6 +51,7 @@ function createReading(
 function createGeneratedReading(
   appDate: string,
   spread: DailyTarotReading["spread"] = "daily_one_card",
+  overrides: Partial<DailyTarotReading> = {},
 ): DailyTarotReading {
   const base = createReading(appDate);
   const situationCard = getTarotMajorCardById(1);
@@ -89,6 +90,7 @@ function createGeneratedReading(
           : [],
       advice: "카드가 보여준 장면을 기준으로 오늘의 선택을 살펴보세요.",
     },
+    ...overrides,
   };
 }
 
@@ -366,6 +368,40 @@ describe("daily tarot draw logic", () => {
     expect(getDailyTarotReading(storage, "2026-05-31", "daily_one_card")).toEqual(oneCard);
     expect(getDailyTarotReading(storage, "2026-05-31", "daily_three_card")).toEqual(threeCard);
     expect(JSON.parse(storage.getItem(dailyTarotStorageKey) ?? "[]")).toEqual([threeCard, oneCard]);
+  });
+
+  test("loads question one-card readings only when question metadata is present", () => {
+    const questionReading = createGeneratedReading("2026-07-03", "question_one_card", {
+      questionContext: {
+        stateKey: "mind_complex",
+        stateLabel: "마음이 복잡해",
+        questionKey: "held_feeling",
+        questionText: "오늘 내 마음이 붙잡고 있는 건 뭐야?",
+      },
+      unlockMethod: "daily_free",
+    });
+    const invalidQuestionReading = {
+      ...questionReading,
+      id: "invalid-question-reading",
+      questionContext: undefined,
+    };
+    const storage = createMemoryStorage({
+      [dailyTarotStorageKey]: JSON.stringify([invalidQuestionReading, questionReading]),
+    });
+
+    expect(getDailyTarotReadingsSnapshot(storage)).toEqual([questionReading]);
+    expect(getDailyTarotReading(storage, "2026-07-03", "question_one_card")).toEqual(questionReading);
+  });
+
+  test("keeps existing daily and three-card readings valid without question metadata", () => {
+    const storage = createMemoryStorage({
+      [dailyTarotStorageKey]: JSON.stringify([
+        createGeneratedReading("2026-07-03", "daily_one_card"),
+        createGeneratedReading("2026-07-03", "daily_three_card"),
+      ]),
+    });
+
+    expect(getDailyTarotReadingsSnapshot(storage)).toHaveLength(2);
   });
 
   test("returns null for malformed stored JSON", () => {

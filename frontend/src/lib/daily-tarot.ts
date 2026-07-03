@@ -7,7 +7,8 @@ export type StorageLike = {
 };
 
 export type TarotOrientation = "upright" | "reversed";
-export type TarotSpread = "daily_one_card" | "daily_three_card";
+export type TarotSpread = "daily_one_card" | "question_one_card" | "daily_three_card";
+export type TarotUnlockMethod = "daily_free" | "rewarded_ad" | "moon_pass" | "admin";
 export type DailyTarotPosition = "today" | "situation" | "flow" | "advice";
 
 export type DailyTarotOption = {
@@ -36,6 +37,13 @@ export type DailyTarotGeneratedReading = {
   advice: string;
 };
 
+export type DailyTarotQuestionContext = {
+  stateKey: string;
+  stateLabel: string;
+  questionKey: string;
+  questionText: string;
+};
+
 export type DailyTarotReading = {
   id: string;
   spread: TarotSpread;
@@ -52,6 +60,8 @@ export type DailyTarotReading = {
   title: string;
   message: string;
   advice: string;
+  questionContext?: DailyTarotQuestionContext;
+  unlockMethod?: TarotUnlockMethod;
 };
 
 export type CreateDailyTarotReadingInput = {
@@ -204,7 +214,7 @@ function isTarotOrientation(value: unknown): value is TarotOrientation {
 }
 
 function isTarotSpread(value: unknown): value is TarotSpread {
-  return value === "daily_one_card" || value === "daily_three_card";
+  return value === "daily_one_card" || value === "question_one_card" || value === "daily_three_card";
 }
 
 function isDailyTarotPosition(value: unknown): value is DailyTarotPosition {
@@ -223,7 +233,7 @@ function hasExpectedGeneratedCardReadingsForSpread(
   cardReadings: DailyTarotGeneratedCardReading[],
   spread: TarotSpread,
 ): boolean {
-  if (spread === "daily_one_card") {
+  if (spread !== "daily_three_card") {
     return hasExactPositions(cardReadings, []) || hasExactPositions(cardReadings, ["today"]);
   }
 
@@ -232,6 +242,24 @@ function hasExpectedGeneratedCardReadingsForSpread(
 
 function isValidStoredDrawIdentityKey(value: unknown): value is string | undefined {
   return value === undefined || (typeof value === "string" && value.trim().length > 0);
+}
+
+function isDailyTarotQuestionContext(value: unknown): value is DailyTarotQuestionContext {
+  return (
+    isRecord(value) &&
+    typeof value.stateKey === "string" &&
+    value.stateKey.trim().length > 0 &&
+    typeof value.stateLabel === "string" &&
+    value.stateLabel.trim().length > 0 &&
+    typeof value.questionKey === "string" &&
+    value.questionKey.trim().length > 0 &&
+    typeof value.questionText === "string" &&
+    value.questionText.trim().length > 0
+  );
+}
+
+function isTarotUnlockMethod(value: unknown): value is TarotUnlockMethod {
+  return value === "daily_free" || value === "rewarded_ad" || value === "moon_pass" || value === "admin";
 }
 
 function isStoredTarotCard(value: unknown): value is TarotCard {
@@ -306,6 +334,12 @@ function isStoredDailyTarotReading(value: unknown): value is DailyTarotReading {
     return false;
   }
 
+  const hasValidQuestionContext =
+    spread === "question_one_card"
+      ? isDailyTarotQuestionContext(value.questionContext) && isTarotUnlockMethod(value.unlockMethod)
+      : value.questionContext === undefined &&
+        (value.unlockMethod === undefined || isTarotUnlockMethod(value.unlockMethod));
+
   return (
     typeof value.id === "string" &&
     typeof value.appDate === "string" &&
@@ -320,7 +354,8 @@ function isStoredDailyTarotReading(value: unknown): value is DailyTarotReading {
     isStringArray(value.keywords) &&
     typeof value.title === "string" &&
     typeof value.message === "string" &&
-    typeof value.advice === "string"
+    typeof value.advice === "string" &&
+    hasValidQuestionContext
   );
 }
 
@@ -363,7 +398,11 @@ function resolveCreateDailyTarotOptionsConfig(
 function resolveGetDailyTarotReadingOptions(
   spreadOrOptions: TarotSpread | GetDailyTarotReadingOptions | undefined,
 ): Required<GetDailyTarotReadingOptions> {
-  if (spreadOrOptions === "daily_one_card" || spreadOrOptions === "daily_three_card") {
+  if (
+    spreadOrOptions === "daily_one_card" ||
+    spreadOrOptions === "question_one_card" ||
+    spreadOrOptions === "daily_three_card"
+  ) {
     return {
       spread: spreadOrOptions,
       drawIdentityKey: null,
