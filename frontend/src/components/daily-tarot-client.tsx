@@ -18,6 +18,7 @@ import { AssetTextButton } from "@/components/asset-primitives";
 import {
   createDailyTarotOptions,
   createDailyTarotUserIdentityKey,
+  dailyTarotDisplayTitle,
   dailyTarotStorageKey,
   getDailyTarotReadingFromBrowser,
   getOrCreateDailyTarotGuestIdentityFromBrowser,

@@ -309,7 +309,12 @@ export function validateTarotReadingRequestBody(body: unknown): TarotReadingVali
     return { ok: false, error: "unlockMethod must be daily_free, rewarded_ad, moon_pass, or admin" };
   }
 
-  if (body.spread === "question_one_card" && !isDailyTarotQuestionContext(body.questionContext)) {
+  const questionContext =
+    body.spread === "question_one_card" && isDailyTarotQuestionContext(body.questionContext)
+      ? body.questionContext
+      : undefined;
+
+  if (body.spread === "question_one_card" && !questionContext) {
     return { ok: false, error: "questionContext is required for question_one_card" };
   }
 
@@ -327,7 +332,7 @@ export function validateTarotReadingRequestBody(body: unknown): TarotReadingVali
       selectedAt: body.selectedAt,
       selections: selections.value.selections,
       ...(body.spread === "question_one_card"
-        ? { questionContext: body.questionContext, unlockMethod }
+        ? { questionContext, unlockMethod }
         : {}),
     },
   };
