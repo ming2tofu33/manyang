@@ -90,11 +90,11 @@ status: active
 | RAG-IMP-09 | 하드코딩 정리 | done | P2 | 흩뿌린 if-체인을 데이터 표로: mock-analysis `SYMBOL_COMBO_OVERRIDES`(3함수 6블록→1표), structured `SYMBOL_EMOTION_SIGNALS`·`SCENE_QUERY_RULES`(trigger 선언형)·`AMBIGUOUS_SCENE_OVERRIDES`(searching 3곳 통합). 동작 보존(167 테스트·eval 불변), 새 조합=표에 한 줄 |
 | TAROT-00 | 마이너 카드 누끼와 1장 뽑기 연결 | done | P0 | 원본 보존, 56장 배경 제거 산출물 생성, minor asset mapping, daily one-card minor 렌더 검증 |
 | TAROT-DOC-01 | 타로 카드 해설 문서 커밋 준비 | review | P0 | `docs/tarot/`의 메이저/마이너 해설 문서를 커밋 가능한 기준 문서로 확정 |
-| TAROT-01 | 타로 78장 카드 데이터 계약 통합 | todo | P0 | 공통 `TarotCard`, 안정 `cardKey`, `deckMode`, legacy major id 호환 테스트 구현 |
-| TAROT-02 | 오늘의 한 장 78장 확장 | todo | P0 | daily one-card가 전체 78장 덱에서 뽑히고 기존 저장 결과가 계속 열림 |
-| TAROT-03 | 질문별 한 장 리딩 MVP | todo | P0 | 상태 선택 -> 질문 5개 -> 카드 결과 -> 저장/공유 진입점 구현 |
+| TAROT-01 | 타로 78장 카드 데이터 계약 통합 | review | P0 | 공통 `TarotCard`, 안정 `cardKey`, legacy major id 호환 테스트 구현 완료. 명시적 `deckMode`는 후속 |
+| TAROT-02 | 오늘의 한 장 78장 확장 | done | P0 | daily one-card가 전체 78장 덱에서 뽑히고 기존 저장 결과가 계속 열림 |
+| TAROT-03 | 질문별 한 장 리딩 MVP | review | P0 | 상태 선택 -> 질문 5개 -> 카드 결과 -> 저장/공유 진입점 구현. `question_one_card`, `tarot_question_one_card`, future `rewarded_ad` 계약 포함 |
 | TAROT-04 | 카드 기록/회고 루프 | todo | P1 | 사용자가 뽑은 카드, 질문, 한 줄 회고를 기록에서 다시 확인 |
-| TAROT-05 | 공유용 타로 결과 콘텐츠 | todo | P1 | 질문/카드/짧은 메시지를 공유 가능한 결과물로 생성 |
+| TAROT-05 | 공유용 타로 결과 콘텐츠 | review | P1 | 질문/카드/짧은 메시지를 공유 가능한 결과물로 생성. 공유 이벤트 로깅은 후속 |
 | ENC-09 | 미해결 matching 케이스 | todo | P1 | retrieval-eval 잔여 miss: 우수수→teeth(형태소), 도망쳤어→chased(패러프레이즈), molar→teeth, en chased 보강 |
 
 ## Encyclopedia Quality & RAG Sprint (2026-06-03)
@@ -304,6 +304,7 @@ status: active
 
 ## Evidence
 
+- TAROT-02/TAROT-03/TAROT-05: `tarotCards` 통합 78장 덱과 minor asset mapping으로 오늘의 한 장을 확장하고, 질문별 한 장 MVP를 `/tarot/question`에 추가했다. 질문 플로우는 상태 6개 -> 질문 5개 -> 1장 draw -> LLM 결과 -> 저장/공유로 이어지며, API/DB/localStorage/share payload는 `question_one_card`, `reading_key`, `tarot_question_one_card`, `unlockMethod`를 포함한다. 현재 `rewarded_ad`는 타입과 403 `rewarded_ad_required` 응답으로 대비하고 실제 광고 검증은 후속 작업으로 남긴다.
 - AI-RAG-14: `docs/plans/2026-05-29-dream-reading-engine-hardening.md`에 API validation, KB 확장, structure analysis refactor, RAG evidence policy, safety matching, live quality eval 순서의 6-phase 계획을 작성. Phase 1로 `frontend/src/app/api/dreams/analyze/route.ts`에 수동 validator를 추가해 malformed JSON, non-object body, empty/oversized `dreamText`, invalid `locale`, invalid `catReaderType`, invalid `dreamDate`, oversized optional string을 400으로 차단하고 sanitized request만 backend analyzer에 전달한다. `frontend` focused route test, 전체 test, build와 `backend` typecheck/test 통과.
 - AI-RAG-15: Dream reading engine hardening Phase 2A로 `backend/src/data/symbol-encyclopedia.ts`와 `vault/05-Content/symbols/*.yaml`에 20개 coverage symbol을 추가해 전체 백과를 50개로 확장. `backend/tests/symbol-encyclopedia-data.test.ts`는 50개 accepted ID와 Phase 2A category/sensitive coverage를 검증하도록 업데이트. 새 YAML 20개는 PyYAML로 파싱 확인. `backend` focused tests, 전체 test, typecheck 통과.
 - AI-RAG-16: Dream reading engine hardening Phase 2B로 `backend/src/data/symbol-encyclopedia.ts`와 `vault/05-Content/symbols/*.yaml`에 20개 coverage symbol을 추가해 전체 백과를 70개로 확장. `backend/tests/symbol-encyclopedia-data.test.ts`는 70개 accepted ID와 Phase 2B category/sensitive coverage를 검증하고, `backend/tests/runtime-symbol-matcher.test.ts`는 길/다리/쫓김/피 매칭을 검증한다. `blood`가 검증 상징으로 승격되면서 `evidence-gate`는 semantic chunk의 넓은 matched text가 `cancer` 같은 미등록 안전 단어를 검증 근거로 승격하지 못하도록 좁혔다. 새 YAML 20개는 PyYAML로 파싱 확인. `backend` focused tests, 전체 test, typecheck와 `frontend` build 통과. `frontend test`는 기존 버튼 이미지 크기 fixture 불일치로 실패.
