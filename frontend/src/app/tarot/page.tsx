@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { AppShell } from "@/components/app-shell";
 import { DailyTarotClient } from "@/components/daily-tarot-client";
@@ -58,6 +59,14 @@ export default async function TarotPage({ searchParams }: TarotPageProps) {
       showBottomNav={false}
     >
       <section data-daily-tarot-page className="flex min-h-full flex-col px-1 pb-4 pt-1 text-[#fff3d7]">
+        <div className="mx-auto mb-2 flex w-full max-w-[28rem] justify-end px-3">
+          <Link
+            href="/tarot/question"
+            className="rounded-full border border-[#f2c27d]/36 bg-[#05040b]/48 px-3 py-1.5 text-[12px] font-bold text-[#f2c27d] shadow-[0_8px_18px_rgba(0,0,0,0.18)] transition hover:border-[#ffd08a]/70 hover:text-[#ffe7b5] focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
+          >
+            질문 타로
+          </Link>
+        </div>
         <DailyTarotClient
           appDate={appDate}
           ignoreStoredReading={isAdminTarotTestMode}
