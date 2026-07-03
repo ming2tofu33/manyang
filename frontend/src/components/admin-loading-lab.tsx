@@ -25,7 +25,7 @@ import {
 } from "@/lib/daily-tarot";
 import { manyangAssets } from "@/lib/manyang-assets";
 import { cn } from "@/lib/styles";
-import { getTarotMajorCardById } from "@/lib/tarot-major-cards";
+import { getTarotCardById } from "@/lib/tarot-cards";
 import { useAccessPlan } from "@/lib/use-access-plan";
 
 type LoadingLabMode = "dream" | "tarot";
@@ -76,7 +76,7 @@ function getSelectedTarotOptions(cardCount: TarotCardCount): DailyTarotOption[] 
 function createTarotSelections(cardCount: TarotCardCount): DailyTarotCardSelection[] {
   return getSelectedTarotOptions(cardCount)
     .map((option, index): DailyTarotCardSelection | null => {
-      const card = getTarotMajorCardById(option.cardId);
+      const card = getTarotCardById(option.cardId);
 
       if (!card) {
         return null;
@@ -98,7 +98,7 @@ function createTarotRevealState(cardCount: TarotCardCount) {
   });
   const selectedOptionIndex = cardCount === 1 ? 2 : 1;
   const selectedOption = options[selectedOptionIndex] ?? options[0];
-  const card = selectedOption ? getTarotMajorCardById(selectedOption.cardId) : null;
+  const card = selectedOption ? getTarotCardById(selectedOption.cardId) : null;
 
   if (!selectedOption || !card) {
     return null;

@@ -88,6 +88,13 @@ status: active
 | RAG-IMP-07 | 타로 카드 데이터 테이블 분리 | todo | P2 | 78장 의미를 RAG 아닌 버전관리 lookup 데이터로 정리 |
 | RAG-IMP-08 | coverage eval(심볼 충분도) | done | P0 | `coverage-eval.ts` 72개 흔한 상징 탐침, matching/coverage 갭 분리, `npm run eval:coverage`, 회귀 테스트 |
 | RAG-IMP-09 | 하드코딩 정리 | done | P2 | 흩뿌린 if-체인을 데이터 표로: mock-analysis `SYMBOL_COMBO_OVERRIDES`(3함수 6블록→1표), structured `SYMBOL_EMOTION_SIGNALS`·`SCENE_QUERY_RULES`(trigger 선언형)·`AMBIGUOUS_SCENE_OVERRIDES`(searching 3곳 통합). 동작 보존(167 테스트·eval 불변), 새 조합=표에 한 줄 |
+| TAROT-00 | 마이너 카드 누끼와 1장 뽑기 연결 | done | P0 | 원본 보존, 56장 배경 제거 산출물 생성, minor asset mapping, daily one-card minor 렌더 검증 |
+| TAROT-DOC-01 | 타로 카드 해설 문서 커밋 준비 | review | P0 | `docs/tarot/`의 메이저/마이너 해설 문서를 커밋 가능한 기준 문서로 확정 |
+| TAROT-01 | 타로 78장 카드 데이터 계약 통합 | todo | P0 | 공통 `TarotCard`, 안정 `cardKey`, `deckMode`, legacy major id 호환 테스트 구현 |
+| TAROT-02 | 오늘의 한 장 78장 확장 | todo | P0 | daily one-card가 전체 78장 덱에서 뽑히고 기존 저장 결과가 계속 열림 |
+| TAROT-03 | 질문별 한 장 리딩 MVP | todo | P0 | 상태 선택 -> 질문 5개 -> 카드 결과 -> 저장/공유 진입점 구현 |
+| TAROT-04 | 카드 기록/회고 루프 | todo | P1 | 사용자가 뽑은 카드, 질문, 한 줄 회고를 기록에서 다시 확인 |
+| TAROT-05 | 공유용 타로 결과 콘텐츠 | todo | P1 | 질문/카드/짧은 메시지를 공유 가능한 결과물로 생성 |
 | ENC-09 | 미해결 matching 케이스 | todo | P1 | retrieval-eval 잔여 miss: 우수수→teeth(형태소), 도망쳤어→chased(패러프레이즈), molar→teeth, en chased 보강 |
 
 ## Encyclopedia Quality & RAG Sprint (2026-06-03)
@@ -272,6 +279,7 @@ status: active
 - [[../../../docs/plans/2026-05-26-ai-rag-db-pgvector-later|AI RAG DB pgvector Later Implementation Plan]]
 - [[../../../docs/plans/2026-05-28-frontend-optimization|Frontend Optimization Implementation Plan]]
 - [[../../../docs/plans/2026-05-29-dream-reading-engine-hardening|Dream Reading Engine Hardening Implementation Plan]]
+- [[plans/2026-07-03-tarot-content-expansion-sprint|Tarot Content Expansion Sprint]]
 - [[Frontend-Optimization-Guide|Frontend Optimization Guide]]
 - [[Dream-Reading-Contracts|Dream Reading Contracts]]
 - [[Dream-Reading-LLM-Logic|Dream Reading LLM Logic]]

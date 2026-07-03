@@ -1,4 +1,4 @@
-import { getTarotMajorCardById, tarotMajorCards, type TarotMajorCard } from "./tarot-major-cards";
+import { getTarotCardById, tarotCards, type TarotCard } from "./tarot-cards";
 
 export type StorageLike = {
   getItem(key: string): string | null;
@@ -18,7 +18,7 @@ export type DailyTarotOption = {
 
 export type DailyTarotCardSelection = {
   position: DailyTarotPosition;
-  card: TarotMajorCard;
+  card: TarotCard;
   orientation: TarotOrientation;
 };
 
@@ -43,7 +43,7 @@ export type DailyTarotReading = {
   drawIdentityKey?: string;
   appDate: string;
   selectedAt: string;
-  card: TarotMajorCard;
+  card: TarotCard;
   orientation: TarotOrientation;
   position: DailyTarotPosition;
   cards?: DailyTarotCardSelection[];
@@ -179,9 +179,9 @@ export function getOrCreateDailyTarotGuestIdentityFromBrowser(): string {
   return storage ? getOrCreateDailyTarotGuestIdentity(storage) : pendingDailyTarotDrawIdentityKey;
 }
 
-function shuffleCards(seedSource: string): TarotMajorCard[] {
+function shuffleCards(seedSource: string): TarotCard[] {
   const random = createRandom(createSeed(seedSource));
-  const cards = [...tarotMajorCards];
+  const cards = [...tarotCards];
 
   for (let index = cards.length - 1; index > 0; index -= 1) {
     const swapIndex = Math.floor(random() * (index + 1));
@@ -234,12 +234,12 @@ function isValidStoredDrawIdentityKey(value: unknown): value is string | undefin
   return value === undefined || (typeof value === "string" && value.trim().length > 0);
 }
 
-function isStoredTarotMajorCard(value: unknown): value is TarotMajorCard {
+function isStoredTarotCard(value: unknown): value is TarotCard {
   if (!isRecord(value) || typeof value.id !== "number") {
     return false;
   }
 
-  return getTarotMajorCardById(value.id) !== null;
+  return getTarotCardById(value.id) !== null;
 }
 
 function isDailyTarotCardSelection(value: unknown): value is DailyTarotCardSelection {
@@ -247,7 +247,7 @@ function isDailyTarotCardSelection(value: unknown): value is DailyTarotCardSelec
     isRecord(value) &&
     isDailyTarotPosition(value.position) &&
     isTarotOrientation(value.orientation) &&
-    isStoredTarotMajorCard(value.card)
+    isStoredTarotCard(value.card)
   );
 }
 
@@ -311,7 +311,7 @@ function isStoredDailyTarotReading(value: unknown): value is DailyTarotReading {
     typeof value.appDate === "string" &&
     typeof value.selectedAt === "string" &&
     typeof value.card.id === "number" &&
-    getTarotMajorCardById(value.card.id) !== null &&
+    getTarotCardById(value.card.id) !== null &&
     isTarotOrientation(value.orientation) &&
     isDailyTarotPosition(value.position) &&
     cards.every(isDailyTarotCardSelection) &&
@@ -355,7 +355,7 @@ function resolveCreateDailyTarotOptionsConfig(
   }
 
   return {
-    count: configOrCount?.count ?? tarotMajorCards.length,
+    count: configOrCount?.count ?? tarotCards.length,
     drawIdentityKey: normalizeDailyTarotDrawIdentityKey(configOrCount?.drawIdentityKey),
   };
 }
@@ -386,10 +386,10 @@ function matchesDailyTarotDrawIdentity(reading: DailyTarotReading, drawIdentityK
 
 export function createDailyTarotOptions(
   appDate: string,
-  configOrCount: number | CreateDailyTarotOptionsConfig = tarotMajorCards.length,
+  configOrCount: number | CreateDailyTarotOptionsConfig = tarotCards.length,
 ): DailyTarotOption[] {
   const config = resolveCreateDailyTarotOptionsConfig(configOrCount);
-  const optionCount = Math.max(0, Math.min(config.count, tarotMajorCards.length));
+  const optionCount = Math.max(0, Math.min(config.count, tarotCards.length));
   const seedSource = config.drawIdentityKey ? `${appDate}:${config.drawIdentityKey}` : appDate;
   const orientationRandom = createRandom(createSeed(`${seedSource}:orientation`));
   const selectedCards = shuffleCards(seedSource).slice(0, optionCount);
@@ -416,10 +416,10 @@ export function createDailyTarotOptions(
 }
 
 export function createDailyTarotReading(input: CreateDailyTarotReadingInput): DailyTarotReading {
-  const card = getTarotMajorCardById(input.option.cardId);
+  const card = getTarotCardById(input.option.cardId);
 
   if (!card) {
-    throw new Error(`Unknown tarot major card id: ${input.option.cardId}`);
+    throw new Error(`Unknown tarot card id: ${input.option.cardId}`);
   }
 
   const orientationContent = card[input.option.orientation];

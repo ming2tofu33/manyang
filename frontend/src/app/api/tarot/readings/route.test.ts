@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 import { getTarotMajorCardById } from "@/lib/tarot-major-cards";
+import { getTarotCardById } from "@/lib/tarot-cards";
 import type { DailyTarotReading } from "@/lib/daily-tarot";
 
 import { handleTarotReadingRequest, resolveTarotLlmTimeoutMs } from "./route";
@@ -221,6 +222,56 @@ describe("POST /api/tarot/readings", () => {
       userId: "00000000-0000-4000-8000-000000000001",
       reading: body,
     });
+  });
+
+  test("accepts a minor arcana card for one-card readings", async () => {
+    const minorCard = getTarotCardById(75);
+    const generateTarotReadingForUser = vi.fn(async () => ({
+      status: "ok" as const,
+      reading: generatedOneCard,
+    }));
+
+    expect(minorCard).toMatchObject({ nameKo: "펜타클 기사", arcana: "minor" });
+
+    const response = await handleTarotReadingRequest(
+      createJsonRequest(
+        createOneCardBody({
+          selections: [{ cardId: 75, orientation: "upright", position: "today" }],
+        }),
+      ),
+      {
+        getAuthenticatedUserId: async () => "00000000-0000-4000-8000-000000000001",
+        getAccessPlanForUser: async () => "free_account",
+        findCompletedTarotReadingForUser: async () => null,
+        createProvider: () => ({ generateJson: async () => generatedOneCard }),
+        generateTarotReadingForUser,
+        persistCompletedTarotReading: async () => undefined,
+      },
+    );
+
+    expect(response.status).toBe(200);
+    const body = await response.json();
+
+    expect(body).toMatchObject({
+      source: "llm",
+      spread: "daily_one_card",
+      card: { id: 75, nameKo: "펜타클 기사", arcana: "minor" },
+      cards: [{ position: "today", card: { id: 75, arcana: "minor" } }],
+      advice: minorCard?.upright.cardMessage,
+      generated: {
+        advice: minorCard?.upright.cardMessage,
+      },
+    });
+    expect(generateTarotReadingForUser).toHaveBeenCalledWith(
+      expect.objectContaining({
+        cards: [
+          expect.objectContaining({
+            card: expect.objectContaining({ id: 75, nameKo: "펜타클 기사", arcana: "minor" }),
+          }),
+        ],
+      }),
+      expect.any(Object),
+    );
   });
 
   test("returns the existing reading without calling the LLM for returning users", async () => {

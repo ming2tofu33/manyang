@@ -20,6 +20,7 @@ import {
   type DailyTarotReading,
   type StorageLike,
 } from "./daily-tarot";
+import { getTarotCardById } from "./tarot-cards";
 import { getTarotMajorCardById } from "./tarot-major-cards";
 
 function createMemoryStorage(initialEntries: Record<string, string> = {}): StorageLike {
@@ -190,11 +191,35 @@ describe("daily tarot draw logic", () => {
     );
   });
 
-  test("uses the full major arcana deck by default", () => {
+  test("uses the full 78-card tarot deck by default", () => {
     const options = createDailyTarotOptions("2026-05-31");
 
-    expect(options).toHaveLength(22);
-    expect(new Set(options.map((option) => option.cardId)).size).toBe(22);
+    expect(options).toHaveLength(78);
+    expect(new Set(options.map((option) => option.cardId)).size).toBe(78);
+    expect(options.some((option) => getTarotCardById(option.cardId)?.arcana === "minor")).toBe(true);
+  });
+
+  test("creates a daily tarot reading from a minor arcana option", () => {
+    const card = getTarotCardById(75);
+
+    expect(card).toMatchObject({ nameKo: "펜타클 기사", arcana: "minor" });
+
+    const reading = createDailyTarotReading({
+      appDate: "2026-05-31",
+      selectedAt: "2026-05-31T09:30:00.000Z",
+      option: { id: "option-1", cardId: 75, orientation: "upright" },
+    });
+
+    expect(reading).toMatchObject({
+      id: "daily-tarot-2026-05-31",
+      spread: "daily_one_card",
+      card: { id: 75, nameKo: "펜타클 기사", arcana: "minor" },
+      orientation: "upright",
+      keywords: card?.keywords,
+      title: card?.upright.summary,
+      message: card?.upright.dailyFlow,
+      advice: card?.upright.cardMessage,
+    });
   });
 
   test("creates a reversed daily tarot reading from an option", () => {
@@ -247,7 +272,7 @@ describe("daily tarot draw logic", () => {
         selectedAt: "2026-05-31T09:30:00.000Z",
         option: { id: "option-1", cardId: 999, orientation: "upright" },
       }),
-    ).toThrow("Unknown tarot major card id: 999");
+    ).toThrow("Unknown tarot card id: 999");
   });
 
   test("saves and reads a daily tarot reading by app date", () => {

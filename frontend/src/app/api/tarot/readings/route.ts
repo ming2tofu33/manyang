@@ -10,7 +10,7 @@ import {
 
 import { randomUUID } from "node:crypto";
 
-import { getTarotMajorCardById, type TarotMajorCard } from "@/lib/tarot-major-cards";
+import { getTarotCardById, type TarotCard } from "@/lib/tarot-cards";
 import {
   persistCompletedTarotReading,
   findCompletedTarotReadingForUser,
@@ -219,7 +219,7 @@ function validateSelections(spread: TarotSpread, selections: unknown): TarotRead
       return { ok: false, error: "selections must not repeat cards" };
     }
 
-    if (!getTarotMajorCardById(selection.cardId)) {
+    if (!getTarotCardById(selection.cardId)) {
       return { ok: false, error: "selection.cardId is unknown" };
     }
 
@@ -285,10 +285,10 @@ export function validateTarotReadingRequestBody(body: unknown): TarotReadingVali
 }
 
 function resolveSelection(selection: TarotReadingSelectionRequest): DailyTarotCardSelection {
-  const card = getTarotMajorCardById(selection.cardId);
+  const card = getTarotCardById(selection.cardId);
 
   if (!card) {
-    throw new Error(`Unknown tarot major card id: ${selection.cardId}`);
+    throw new Error(`Unknown tarot card id: ${selection.cardId}`);
   }
 
   return {
@@ -323,7 +323,7 @@ function createDailyTarotReadingFromGenerated(
   selections: DailyTarotCardSelection[],
   generated: Extract<TarotReadingResult, { status: "ok" }>["reading"],
 ): DailyTarotReading {
-  const primarySelection = selections[0] as DailyTarotCardSelection & { card: TarotMajorCard };
+  const primarySelection = selections[0] as DailyTarotCardSelection & { card: TarotCard };
   const cardMessage = resolvePrimaryDictionaryCardMessage(selections);
   const generatedWithAdvice = createGeneratedReadingWithDictionaryAdvice(generated, cardMessage);
 

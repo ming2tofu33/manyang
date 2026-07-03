@@ -40,7 +40,7 @@ import { downloadSvgAsPng } from "@/lib/share-image-export";
 import { createShareResultLink, sharePublicLink } from "@/lib/share-link-client";
 import { cn, ui } from "@/lib/styles";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { getTarotMajorCardById } from "@/lib/tarot-major-cards";
+import { getTarotCardById } from "@/lib/tarot-cards";
 import { canUseTarotThreeCardReading, tarotThreeCardFreeEvent } from "@/lib/tarot-event";
 import { useAccessPlan } from "@/lib/use-access-plan";
 
@@ -253,7 +253,7 @@ export function createPreparedDailyTarotSelections(
 
   return positions.flatMap((position, index) => {
     const option = options[wrapDeckIndex(centerIndex + index, options.length)];
-    const card = option ? getTarotMajorCardById(option.cardId) : null;
+    const card = option ? getTarotCardById(option.cardId) : null;
 
     return option && card
       ? [
@@ -471,7 +471,7 @@ function DailyTarotFanDeck({
     >
       <div
         role="group"
-        aria-label="22장 메이저 아르카나 덱"
+        aria-label="78장 타로 덱"
         className="relative mx-[-2.5rem] h-[23rem] overflow-hidden touch-pan-y select-none"
         onPointerDownCapture={handlePointerDown}
         onPointerMoveCapture={handlePointerMove}
@@ -1010,7 +1010,7 @@ function TarotThreeCardAccessTag({ active = false }: { active?: boolean }) {
 function resolveDailyTarotResultSelections(selections: DailyTarotCardSelection[]): DailyTarotCardSelection[] {
   return selections.map((selection) => ({
     ...selection,
-    card: getTarotMajorCardById(selection.card.id) ?? selection.card,
+    card: getTarotCardById(selection.card.id) ?? selection.card,
   }));
 }
 
@@ -1646,7 +1646,7 @@ export function DailyTarotClient({
     }
 
     const selectedPreparedSelection = preparedSelections[currentSelectionCount];
-    const fallbackCard = getTarotMajorCardById(option.cardId);
+    const fallbackCard = getTarotCardById(option.cardId);
     const currentPosition = positions[currentSelectionCount] ?? positions[positions.length - 1];
     const nextSelection = selectedPreparedSelection ??
       (fallbackCard

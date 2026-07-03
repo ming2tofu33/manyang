@@ -481,6 +481,29 @@ describe("manyang assets", () => {
     });
   });
 
+  test("exposes minor arcana cutout assets for the full 56-card minor deck", () => {
+    expect(Object.keys(manyangAssets.tarot.minorCutout)).toEqual(["wands", "cups", "swords", "pentacles"]);
+    expect(Object.values(manyangAssets.tarot.minorCutout).flatMap((suitAssets) => Object.values(suitAssets))).toHaveLength(56);
+    expect(manyangAssets.tarot.minorCutout.wands.ace).toBe(
+      "/manyang/tarot/minor-cutout/wands/01-ace-of-wands.png",
+    );
+    expect(manyangAssets.tarot.minorCutout.pentacles.knight).toBe(
+      "/manyang/tarot/minor-cutout/pentacles/12-knight-of-pentacles.png",
+    );
+
+    Object.values(manyangAssets.tarot.minorCutout)
+      .flatMap((suitAssets) => Object.values(suitAssets))
+      .forEach((assetPath) => {
+        expect(publicAssetExists(assetPath)).toBe(true);
+        const size = readImageSize(assetPath);
+
+        expect(size.width).toBeGreaterThanOrEqual(850);
+        expect(size.height).toBeGreaterThanOrEqual(1400);
+        expect(size.width / size.height).toBeGreaterThan(0.6);
+        expect(size.width / size.height).toBeLessThan(0.62);
+      });
+  });
+
   test("exposes separated action glyph assets for CSS circle icon buttons", () => {
     expect(manyangAssets.actionIcons.arrowLeft).toBe("/manyang/ui/action-icons/action-arrow-left.png");
     expect(manyangAssets.actionIcons.bell).toBe("/manyang/ui/action-icons/action-bell.png");

@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "tarot:cutouts": "node scripts/generate-tarot-major-cutouts.mjs",
+    "tarot:minor-cutouts": "node scripts/generate-tarot-minor-cutouts.mjs",
     "test": "vitest run"
   },
   "dependencies": {
