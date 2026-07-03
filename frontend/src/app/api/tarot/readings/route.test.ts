@@ -30,6 +30,23 @@ function createOneCardBody(overrides: Record<string, unknown> = {}) {
   };
 }
 
+function createQuestionOneCardBody(overrides: Record<string, unknown> = {}) {
+  return {
+    appDate: "2026-07-03",
+    spread: "question_one_card",
+    selectedAt: "2026-07-03T10:00:00.000Z",
+    questionContext: {
+      stateKey: "mind_complex",
+      stateLabel: "마음이 복잡해",
+      questionKey: "held_feeling",
+      questionText: "오늘 내 마음이 붙잡고 있는 건 뭐야?",
+    },
+    unlockMethod: "daily_free",
+    selections: [{ cardId: 22, orientation: "upright", position: "today" }],
+    ...overrides,
+  };
+}
+
 function createThreeCardBody(overrides: Record<string, unknown> = {}) {
   return {
     appDate: "2026-05-31",
@@ -109,6 +126,110 @@ describe("POST /api/tarot/readings", () => {
     await expect(response.json()).resolves.toEqual({
       error: "appDate must use YYYY-MM-DD",
     });
+    expect(generateTarotReadingForUser).not.toHaveBeenCalled();
+  });
+
+  test("rejects question tarot without question context", async () => {
+    const generateTarotReadingForUser = vi.fn();
+    const response = await handleTarotReadingRequest(
+      createJsonRequest(createQuestionOneCardBody({ questionContext: undefined })),
+      {
+        generateTarotReadingForUser,
+      },
+    );
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toEqual({
+      error: "questionContext is required for question_one_card",
+    });
+    expect(generateTarotReadingForUser).not.toHaveBeenCalled();
+  });
+
+  test("uses a separate guest usage key for question one-card tarot", async () => {
+    const hasReadingUsageForGuestOnDate = vi.fn(async () => false);
+    const incrementReadingUsageForGuest = vi.fn(async () => undefined);
+    const generateTarotReadingForUser = vi.fn(async () => ({
+      status: "ok" as const,
+      reading: generatedOneCard,
+    }));
+
+    const response = await handleTarotReadingRequest(
+      new Request("http://localhost/api/tarot/readings", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          cookie: "manyang_guest_id=00000000-0000-4000-8000-000000000abc",
+        },
+        body: JSON.stringify(createQuestionOneCardBody()),
+      }),
+      {
+        getAuthenticatedUserId: async () => null,
+        getAccessPlanForUser: async () => "guest",
+        hasReadingUsageForGuestOnDate,
+        incrementReadingUsageForGuest,
+        createProvider: () => ({ generateJson: async () => generatedOneCard }),
+        generateTarotReadingForUser,
+        persistCompletedTarotReading: async () => undefined,
+      },
+    );
+
+    expect(response.status).toBe(200);
+    const body = await response.json();
+
+    expect(body).toMatchObject({
+      spread: "question_one_card",
+      questionContext: {
+        stateKey: "mind_complex",
+        questionKey: "held_feeling",
+      },
+      unlockMethod: "daily_free",
+    });
+    expect(hasReadingUsageForGuestOnDate).toHaveBeenCalledWith(
+      "00000000-0000-4000-8000-000000000abc",
+      "2026-07-03",
+      "tarot_question_one_card",
+    );
+    expect(incrementReadingUsageForGuest).toHaveBeenCalledWith(
+      "00000000-0000-4000-8000-000000000abc",
+      "2026-07-03",
+      "tarot_question_one_card",
+    );
+    expect(generateTarotReadingForUser).toHaveBeenCalledWith(
+      expect.objectContaining({
+        spread: "question_one_card",
+        questionContext: expect.objectContaining({
+          questionKey: "held_feeling",
+        }),
+      }),
+      expect.any(Object),
+    );
+  });
+
+  test("requires rewarded ads when authenticated question tarot daily free use is spent", async () => {
+    const hasReadingUsageForUserOnDate = vi.fn(async () => true);
+    const generateTarotReadingForUser = vi.fn();
+
+    const response = await handleTarotReadingRequest(createJsonRequest(createQuestionOneCardBody()), {
+      getAuthenticatedUserId: async () => "00000000-0000-4000-8000-000000000001",
+      getAccessPlanForUser: async () => "free_account",
+      isAdminUser: async () => false,
+      findCompletedTarotReadingForUser: async () => null,
+      hasReadingUsageForUserOnDate,
+      createProvider: () => ({ generateJson: async () => generatedOneCard }),
+      generateTarotReadingForUser,
+    });
+
+    expect(response.status).toBe(403);
+    await expect(response.json()).resolves.toMatchObject({
+      error: "question tarot requires rewarded ad",
+      reason: "rewarded_ad_required",
+      rewardedAdAvailable: false,
+    });
+    expect(hasReadingUsageForUserOnDate).toHaveBeenCalledWith(
+      "00000000-0000-4000-8000-000000000001",
+      "2026-07-03",
+      "tarot_question_one_card",
+    );
     expect(generateTarotReadingForUser).not.toHaveBeenCalled();
   });
 
@@ -311,6 +432,7 @@ describe("POST /api/tarot/readings", () => {
       "00000000-0000-4000-8000-000000000001",
       "2026-05-31",
       "daily_one_card",
+      "daily",
     );
     expect(generateTarotReadingForUser).not.toHaveBeenCalled();
     expect(persistCompletedTarotReading).not.toHaveBeenCalled();

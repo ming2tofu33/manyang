@@ -15,7 +15,9 @@ import {
   persistCompletedTarotReading,
   findCompletedTarotReadingForUser,
   isAdminUser as isAdminUserFromDb,
+  hasReadingUsageForUserOnDate,
   hasReadingUsageForGuestOnDate,
+  incrementReadingUsageForUser,
   incrementReadingUsageForGuest,
   type PersistCompletedTarotReadingInput,
   type ReadingUsageFeatureKey,
@@ -30,7 +32,9 @@ import type {
   DailyTarotCardSelection,
   DailyTarotGeneratedReading,
   DailyTarotPosition,
+  DailyTarotQuestionContext,
   DailyTarotReading,
+  TarotUnlockMethod,
   TarotOrientation,
   TarotSpread,
 } from "@/lib/daily-tarot";
@@ -86,6 +90,8 @@ type TarotReadingRequestBody = {
   spread: TarotSpread;
   selectedAt: string;
   selections: TarotReadingSelectionRequest[];
+  questionContext?: DailyTarotQuestionContext;
+  unlockMethod?: TarotUnlockMethod;
 };
 
 type TarotReadingValidationResult =
@@ -116,13 +122,24 @@ export type TarotReadingsRouteDependencies = {
     userId: string,
     appDate: string,
     spread: TarotSpread,
+    readingKey?: string,
   ) => Promise<DailyTarotReading | null>;
   logTarotEvent?: (event: TarotReadingLogEvent) => void;
+  hasReadingUsageForUserOnDate?: (
+    userId: string,
+    usageDate: string,
+    featureKey: ReadingUsageFeatureKey,
+  ) => Promise<boolean>;
   hasReadingUsageForGuestOnDate?: (
     guestId: string,
     usageDate: string,
     featureKey: ReadingUsageFeatureKey,
   ) => Promise<boolean>;
+  incrementReadingUsageForUser?: (
+    userId: string,
+    usageDate: string,
+    featureKey: ReadingUsageFeatureKey,
+  ) => Promise<void>;
   incrementReadingUsageForGuest?: (
     guestId: string,
     usageDate: string,
@@ -136,7 +153,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function isTarotSpread(value: unknown): value is TarotSpread {
-  return value === "daily_one_card" || value === "daily_three_card";
+  return value === "daily_one_card" || value === "question_one_card" || value === "daily_three_card";
 }
 
 function isTarotOrientation(value: unknown): value is TarotOrientation {
@@ -145,6 +162,24 @@ function isTarotOrientation(value: unknown): value is TarotOrientation {
 
 function isDailyTarotPosition(value: unknown): value is DailyTarotPosition {
   return value === "today" || value === "situation" || value === "flow" || value === "advice";
+}
+
+function isDailyTarotQuestionContext(value: unknown): value is DailyTarotQuestionContext {
+  return (
+    isRecord(value) &&
+    typeof value.stateKey === "string" &&
+    value.stateKey.trim().length > 0 &&
+    typeof value.stateLabel === "string" &&
+    value.stateLabel.trim().length > 0 &&
+    typeof value.questionKey === "string" &&
+    value.questionKey.trim().length > 0 &&
+    typeof value.questionText === "string" &&
+    value.questionText.trim().length > 0
+  );
+}
+
+function isTarotUnlockMethod(value: unknown): value is TarotUnlockMethod {
+  return value === "daily_free" || value === "rewarded_ad" || value === "moon_pass" || value === "admin";
 }
 
 function expectedPositionsForSpread(spread: TarotSpread): DailyTarotPosition[] {
@@ -246,6 +281,7 @@ function validateSelections(spread: TarotSpread, selections: unknown): TarotRead
       spread,
       selectedAt: "",
       selections: parsedSelections,
+      unlockMethod: "daily_free",
     },
   };
 }
@@ -260,11 +296,21 @@ export function validateTarotReadingRequestBody(body: unknown): TarotReadingVali
   }
 
   if (!isTarotSpread(body.spread)) {
-    return { ok: false, error: "spread must be daily_one_card or daily_three_card" };
+    return { ok: false, error: "spread must be daily_one_card, question_one_card, or daily_three_card" };
   }
 
   if (typeof body.selectedAt !== "string" || body.selectedAt.trim().length === 0) {
     return { ok: false, error: "selectedAt is required" };
+  }
+
+  const unlockMethod = body.unlockMethod === undefined ? "daily_free" : body.unlockMethod;
+
+  if (!isTarotUnlockMethod(unlockMethod)) {
+    return { ok: false, error: "unlockMethod must be daily_free, rewarded_ad, moon_pass, or admin" };
+  }
+
+  if (body.spread === "question_one_card" && !isDailyTarotQuestionContext(body.questionContext)) {
+    return { ok: false, error: "questionContext is required for question_one_card" };
   }
 
   const selections = validateSelections(body.spread, body.selections);
@@ -280,6 +326,9 @@ export function validateTarotReadingRequestBody(body: unknown): TarotReadingVali
       spread: body.spread,
       selectedAt: body.selectedAt,
       selections: selections.value.selections,
+      ...(body.spread === "question_one_card"
+        ? { questionContext: body.questionContext, unlockMethod }
+        : {}),
     },
   };
 }
@@ -298,8 +347,20 @@ function resolveSelection(selection: TarotReadingSelectionRequest): DailyTarotCa
   };
 }
 
-function createReadingId(spread: TarotSpread, appDate: string): string {
-  return `daily-tarot-${spread}-${appDate}`;
+function createReadingId(input: TarotReadingRequestBody): string {
+  if (input.spread === "question_one_card" && input.questionContext) {
+    return `daily-tarot-question_one_card-${input.appDate}-${input.questionContext.stateKey}-${input.questionContext.questionKey}-${input.unlockMethod ?? "daily_free"}`;
+  }
+
+  return `daily-tarot-${input.spread}-${input.appDate}`;
+}
+
+function createReadingPersistenceKeyFromRequest(input: TarotReadingRequestBody): string {
+  if (input.spread !== "question_one_card" || !input.questionContext) {
+    return "daily";
+  }
+
+  return `question:${input.questionContext.stateKey}:${input.questionContext.questionKey}:${input.unlockMethod ?? "daily_free"}`;
 }
 
 function resolvePrimaryDictionaryCardMessage(selections: DailyTarotCardSelection[]): string {
@@ -328,7 +389,7 @@ function createDailyTarotReadingFromGenerated(
   const generatedWithAdvice = createGeneratedReadingWithDictionaryAdvice(generated, cardMessage);
 
   return {
-    id: createReadingId(input.spread, input.appDate),
+    id: createReadingId(input),
     spread: input.spread,
     source: "llm",
     appDate: input.appDate,
@@ -342,6 +403,12 @@ function createDailyTarotReadingFromGenerated(
     message: generated.overview,
     advice: cardMessage,
     generated: generatedWithAdvice,
+    ...(input.spread === "question_one_card" && input.questionContext
+      ? {
+          questionContext: input.questionContext,
+          unlockMethod: input.unlockMethod ?? "daily_free",
+        }
+      : {}),
   };
 }
 
@@ -358,6 +425,9 @@ function createTarotReadingInput(
       orientation: selection.orientation,
       card: selection.card,
     })),
+    ...(requestBody.spread === "question_one_card" && requestBody.questionContext
+      ? { questionContext: requestBody.questionContext }
+      : {}),
   };
 }
 
@@ -384,10 +454,16 @@ async function findExistingTarotReadingBestEffort(
   userId: string,
   appDate: string,
   spread: TarotSpread,
-  find: (userId: string, appDate: string, spread: TarotSpread) => Promise<DailyTarotReading | null>,
+  readingKey: string,
+  find: (
+    userId: string,
+    appDate: string,
+    spread: TarotSpread,
+    readingKey?: string,
+  ) => Promise<DailyTarotReading | null>,
 ): Promise<DailyTarotReading | null> {
   try {
-    return await find(userId, appDate, spread);
+    return await find(userId, appDate, spread, readingKey);
   } catch {
     return null;
   }
@@ -404,7 +480,41 @@ function createJsonResponse(body: unknown, init?: ResponseInit, guestSession?: G
 }
 
 function tarotUsageFeatureKey(spread: TarotSpread): ReadingUsageFeatureKey {
-  return spread === "daily_three_card" ? "tarot_three_card" : "tarot_one_card";
+  if (spread === "daily_three_card") {
+    return "tarot_three_card";
+  }
+
+  if (spread === "question_one_card") {
+    return "tarot_question_one_card";
+  }
+
+  return "tarot_one_card";
+}
+
+function createQuestionRewardedAdRequiredPayload() {
+  return {
+    error: "question tarot requires rewarded ad",
+    reason: "rewarded_ad_required",
+    rewardedAdAvailable: false,
+    message: "오늘의 질문 타로는 이미 열었어요. 다음에는 광고를 보고 한 번 더 볼 수 있게 준비할게요.",
+  };
+}
+
+async function incrementUserQuestionTarotUsageBestEffort(
+  userId: string | null,
+  appDate: string,
+  spread: TarotSpread,
+  increment: (userId: string, usageDate: string, featureKey: ReadingUsageFeatureKey) => Promise<void>,
+): Promise<void> {
+  if (!userId || spread !== "question_one_card") {
+    return;
+  }
+
+  try {
+    await increment(userId, appDate, tarotUsageFeatureKey(spread));
+  } catch {
+    // The generated reading can still be returned even if usage metering fails.
+  }
 }
 
 async function incrementGuestTarotUsageBestEffort(
@@ -437,7 +547,9 @@ export async function handleTarotReadingRequest(
     persistCompletedTarotReading,
     findCompletedTarotReadingForUser,
     logTarotEvent: logTarotReadingEvent,
+    hasReadingUsageForUserOnDate,
     hasReadingUsageForGuestOnDate,
+    incrementReadingUsageForUser,
     incrementReadingUsageForGuest,
     createGuestId: randomUUID,
     ...dependencies,
@@ -460,6 +572,14 @@ export async function handleTarotReadingRequest(
   const userId = await resolvedDependencies.getAuthenticatedUserId();
   const accessPlan = await resolvedDependencies.getAccessPlanForUser(userId);
   const isAdmin = userId ? await resolvedDependencies.isAdminUser(userId) : false;
+  const requestBody: TarotReadingRequestBody =
+    validatedBody.value.spread === "question_one_card"
+      ? {
+          ...validatedBody.value,
+          unlockMethod: isAdmin ? "admin" : "daily_free",
+        }
+      : validatedBody.value;
+  const readingKey = createReadingPersistenceKeyFromRequest(requestBody);
 
   // 재요청 단락: 로그인 유저가 같은 날 같은 스프레드로 이미 받은 리딩이 있으면
   // LLM을 다시 부르지 않고 저장본을 그대로 돌려준다(같은 날 → 같은 리딩, 추가 비용 없음).
@@ -467,8 +587,9 @@ export async function handleTarotReadingRequest(
   if (userId && !isAdmin) {
     const existingReading = await findExistingTarotReadingBestEffort(
       userId,
-      validatedBody.value.appDate,
-      validatedBody.value.spread,
+      requestBody.appDate,
+      requestBody.spread,
+      readingKey,
       resolvedDependencies.findCompletedTarotReadingForUser,
     );
 
@@ -481,7 +602,7 @@ export async function handleTarotReadingRequest(
   const guestSession = userId ? null : resolveGuestSession(request, resolvedDependencies.createGuestId);
 
   if (
-    validatedBody.value.spread === "daily_three_card" &&
+    requestBody.spread === "daily_three_card" &&
     !canUseTarotThreeCardReading({ accessPlan, isAdmin })
   ) {
     return createJsonResponse(
@@ -496,15 +617,31 @@ export async function handleTarotReadingRequest(
     );
   }
 
+  if (userId && !isAdmin && requestBody.spread === "question_one_card") {
+    const alreadyUsed = await resolvedDependencies.hasReadingUsageForUserOnDate(
+      userId,
+      requestBody.appDate,
+      tarotUsageFeatureKey(requestBody.spread),
+    );
+
+    if (alreadyUsed) {
+      return createJsonResponse(createQuestionRewardedAdRequiredPayload(), { status: 403 }, guestSession);
+    }
+  }
+
   if (guestSession) {
-    const featureKey = tarotUsageFeatureKey(validatedBody.value.spread);
+    const featureKey = tarotUsageFeatureKey(requestBody.spread);
     const alreadyUsed = await resolvedDependencies.hasReadingUsageForGuestOnDate(
       guestSession.guestId,
-      validatedBody.value.appDate,
+      requestBody.appDate,
       featureKey,
     );
 
     if (alreadyUsed) {
+      if (requestBody.spread === "question_one_card") {
+        return createJsonResponse(createQuestionRewardedAdRequiredPayload(), { status: 403 }, guestSession);
+      }
+
       return createJsonResponse(
         {
           error: "tarot reading is rate limited",
@@ -528,8 +665,8 @@ export async function handleTarotReadingRequest(
         type: "unavailable",
         reason: "provider_missing",
         retryable: false,
-        spread: validatedBody.value.spread,
-        appDate: validatedBody.value.appDate,
+        spread: requestBody.spread,
+        appDate: requestBody.appDate,
         authenticated: Boolean(userId),
       });
       return createJsonResponse(createUnavailablePayload("provider_missing", false), { status: 503 }, guestSession);
@@ -543,24 +680,24 @@ export async function handleTarotReadingRequest(
       type: "unavailable",
       reason: "provider_missing",
       retryable: false,
-      spread: validatedBody.value.spread,
-      appDate: validatedBody.value.appDate,
+      spread: requestBody.spread,
+      appDate: requestBody.appDate,
       authenticated: Boolean(userId),
     });
     return createJsonResponse(createUnavailablePayload("provider_missing", false), { status: 503 }, guestSession);
   }
 
-  const selections = validatedBody.value.selections.map(resolveSelection);
+  const selections = requestBody.selections.map(resolveSelection);
   const result = await resolvedDependencies.generateTarotReadingForUser(
-    createTarotReadingInput(validatedBody.value, selections),
+    createTarotReadingInput(requestBody, selections),
     {
       provider,
       providerTimeoutMs: resolveTarotLlmTimeoutMs(),
       onProviderError: (error) =>
         resolvedDependencies.logTarotEvent({
           type: "provider_error",
-          spread: validatedBody.value.spread,
-          appDate: validatedBody.value.appDate,
+          spread: requestBody.spread,
+          appDate: requestBody.appDate,
           authenticated: Boolean(userId),
           error,
         }),
@@ -572,14 +709,14 @@ export async function handleTarotReadingRequest(
       type: "unavailable",
       reason: result.reason,
       retryable: result.retryable,
-      spread: validatedBody.value.spread,
-      appDate: validatedBody.value.appDate,
+      spread: requestBody.spread,
+      appDate: requestBody.appDate,
       authenticated: Boolean(userId),
     });
     return createJsonResponse(createUnavailablePayload(result.reason, result.retryable), { status: 503 }, guestSession);
   }
 
-  const reading = createDailyTarotReadingFromGenerated(validatedBody.value, selections, result.reading);
+  const reading = createDailyTarotReadingFromGenerated(requestBody, selections, result.reading);
 
   await persistCompletedTarotReadingBestEffort(
     userId,
@@ -587,10 +724,17 @@ export async function handleTarotReadingRequest(
     resolvedDependencies.persistCompletedTarotReading,
   );
 
+  await incrementUserQuestionTarotUsageBestEffort(
+    userId && !isAdmin ? userId : null,
+    requestBody.appDate,
+    requestBody.spread,
+    resolvedDependencies.incrementReadingUsageForUser,
+  );
+
   await incrementGuestTarotUsageBestEffort(
     guestSession,
-    validatedBody.value.appDate,
-    validatedBody.value.spread,
+    requestBody.appDate,
+    requestBody.spread,
     resolvedDependencies.incrementReadingUsageForGuest,
   );
 
