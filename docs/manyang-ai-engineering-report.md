@@ -106,6 +106,7 @@ request validation
 | fallback 대신 unavailable | LLM 실패 시 가짜 해몽을 반환하지 않고 명시적 실패 상태를 반환한다. |
 | Korean NLP 보강 | 한국어 어미 변화와 자연어 표현을 보완하기 위해 선택형 Kiwi lemmatizer 서비스를 분리했다. |
 | eval 가능한 경계 분리 | symbol matcher, evidence gate, prompt, safety policy, vector index를 각각 테스트 가능하게 나눴다. |
+| 질문형 타로 prompt 제어 | 질문 카테고리별 interpretation lens와 frame을 분리해 같은 카드도 질문 의도에 맞게 읽도록 제어한다. |
 
 ## 2. 핵심 문제 정의
 
@@ -796,6 +797,76 @@ baseline의 역할은 다음이다.
 
 이는 “그럴듯한 fake fallback”보다 더 정직하고 안전한 처리다.
 
+### 7.7 질문형 타로 Prompt 확장
+
+최근 추가된 질문형 타로는 꿈해몽 RAG와 다른 방식의 AI 제어 사례다. 꿈해몽은 상징 백과사전과 evidence gate로 “무엇을 해석해도 되는가”를 통제한다. 반면 질문형 타로는 이미 선택된 카드와 사용자의 질문 맥락이 주어지므로, 핵심은 “같은 카드라도 어떤 관점으로 읽을 것인가”를 통제하는 데 있다.
+
+관련 구현은 다음 파일에 있다.
+
+- `frontend/src/lib/tarot-question-prompts.ts`
+- `frontend/src/lib/tarot-cards.ts`
+- `frontend/src/lib/tarot-major-cards.ts`
+- `frontend/src/lib/tarot-minor-cards.ts`
+- `backend/src/services/tarot-reading-prompt.ts`
+- `backend/src/services/llm-tarot-reading.ts`
+
+질문형 타로는 `question_one_card` spread를 사용한다. API 요청에는 `questionContext`가 포함된다.
+
+```text
+stateKey
+stateLabel
+questionKey
+questionText
+```
+
+프론트엔드의 질문 상태는 6개다.
+
+| stateKey | 도메인 | 역할 |
+| --- | --- | --- |
+| `mind_complex` | 마음 | 내면 감정, 인정하지 못한 마음, 반복되는 생각을 읽는다. |
+| `relationship_concern` | 관계 | 상대의 마음을 확정하지 않고 관계 안의 기대, 거리감, 감정 온도를 읽는다. |
+| `work_blocked` | 일 | 진행, 막힌 원인, 집중할 지점, 다음 방향을 읽는다. |
+| `reality_anxiety` | 현실/돈 | 돈, 시간, 체력, 도움, 남아 있는 기반 같은 자원 흐름을 읽는다. |
+| `decision_point` | 선택 | 정답 판정이 아니라 지키고 싶은 것과 감수해야 할 것을 읽는다. |
+| `daily_signal` | 오늘 | 하루 전체의 예언이 아니라 오늘 놓치지 말아야 할 장면을 읽는다. |
+
+백엔드 prompt builder는 이 `stateKey`를 기반으로 두 가지 제어 정보를 만든다.
+
+첫째, `questionInterpretationLens`는 도메인별 해석 렌즈다. 예를 들어 관계 질문에는 “기대”, “서운함”, “거리감” 같은 prefer terms를 주고, “프로젝트”, “성과”, “업무” 같은 avoid terms를 둔다. 반대로 일 질문에는 “집중할 지점”, “막힌 부분”, “다음 방향”을 선호하고, “상대의 마음”, “연애” 같은 표현을 피한다.
+
+둘째, `questionFrame`은 답변의 목표와 문단 역할을 정의한다. 감정 질문은 알아차림으로 닫고, 도움 질문은 도움으로 삼을 관점으로 닫고, 현실/돈 질문은 불안을 키우는 예고가 아니라 확인 가능한 자원 점검으로 닫는다. 이 구조 덕분에 모든 질문이 “신호를 확인하세요” 같은 동일한 템플릿으로 수렴하지 않는다.
+
+### 7.8 타로 카드 데이터와 Schema 제어
+
+타로 리딩도 꿈해몽처럼 schema-first 출력 구조를 사용한다. schema 이름은 `tarot_reading_draft`이고, 주요 필드는 다음이다.
+
+- `title`
+- `overview`
+- `keywords`
+- `cardReadings`
+
+spread별 contract도 다르다.
+
+| spread | 카드 수 | 출력 구조 |
+| --- | --- | --- |
+| `daily_one_card` | 1장 | `cardReadings`를 비우고 `overview`에 전체 리딩을 작성한다. |
+| `question_one_card` | 1장 | 선택 질문에 바로 답하되, 예/아니오와 확정 예언을 피한다. |
+| `daily_three_card` | 3장 | `situation`, `flow`, `advice` 순서로 카드별 리딩을 작성한다. |
+
+카드 데이터는 총 78장 덱으로 구성된다. 메이저 아르카나 22장은 개별 카드 정의를 갖고, 마이너 아르카나 56장은 suit와 rank 조합으로 생성된다. 각 카드는 다음 정보를 prompt에 전달할 수 있다.
+
+- 카드 ID와 이름
+- 정방향/역방향 의미
+- 키워드
+- 시각 상징
+- 상징별 의미
+- 카드 분위기
+- 선택된 방향의 의미
+
+마이너 카드에는 카드별 visual anchor도 들어간다. 예를 들어 펜타클 9번은 일반적인 rank stage만 쓰지 않고, “스스로 가꾼 정원과 손에 든 펜타클” 같은 시각 앵커를 사용한다. 이는 LLM이 카드 이름만 보고 일반론을 쓰는 것을 줄이고, 실제 카드 이미지와 연결된 리딩을 만들게 한다.
+
+타로 prompt에도 내부 필드 누출 방지 규칙이 있다. `answerGoal`, `questionFrame`, `questionInterpretationLens`, `paragraphRoles`, `preferTerms`, `avoidTerms` 같은 내부 prompt field가 사용자-facing 문장에 나오면 안 된다. 이 규칙은 `backend/src/services/llm-tarot-reading.test.ts`에서 별도로 검증된다.
+
 ## 8. Safety 설계
 
 ### 8.1 꿈해몽 도메인의 Safety Risk
@@ -1117,6 +1188,19 @@ Manyang에서 좋은 해몽은 “멋진 문장”만이 아니다.
 6. 고양이 페르소나 톤은 유지하되 과하지 않다.
 7. UI가 사용할 수 있는 안정적인 구조를 가진다.
 
+### 11.9 타로 AI 테스트
+
+최근 타로 확장에서는 다음 항목도 테스트 대상이 되었다.
+
+- 질문형 타로가 `question_one_card` spread와 `questionContext`를 사용한다.
+- 질문 상태가 6개이고 각 상태에 5개 질문이 있다.
+- 직접 질문은 공백이 정규화되고 80자 제한을 넘으면 거절된다.
+- 22장 메이저와 56장 마이너가 합쳐져 78장 덱을 이룬다.
+- 마이너 카드는 `minor:wands:01` 같은 안정적인 card key와 cutout 이미지 경로를 가진다.
+- 질문 도메인별 `questionInterpretationLens`가 prefer/avoid terms를 다르게 만든다.
+- `questionFrame`이 감정, 관계, 일, 현실/돈, 선택, 오늘 질문의 답변 목적을 다르게 만든다.
+- `questionFrame`, `questionInterpretationLens`, `paragraphRoles` 같은 내부 prompt field가 사용자-facing 문장에 누출되면 invalid response로 처리한다.
+
 ## 12. 대표 기술 의사결정
 
 ### 12.1 RAG를 도입한 이유
@@ -1422,9 +1506,11 @@ Manyang은 실패를 unavailable로 드러내고, retry 가능성과 safety noti
 | 파일 | 역할 |
 | --- | --- |
 | `backend/src/services/llm-dream-analysis.ts` | LLM 해몽 오케스트레이션, unavailable 처리, merge/postprocess |
+| `backend/src/services/llm-tarot-reading.ts` | LLM 타로 리딩 오케스트레이션, schema 검증, 내부 필드 누출 방지 |
 | `backend/src/services/llm-provider.ts` | LLM provider 인터페이스와 timeout error |
 | `backend/src/services/openai-responses-provider.ts` | OpenAI Responses provider |
 | `frontend/src/app/api/dreams/analyze/route.ts` | 꿈 분석 API route, request/access/provider 검증 |
+| `frontend/src/app/api/tarot/readings/route.ts` | 타로 리딩 API route, spread/questionContext/usage 검증 |
 
 ### 16.2 RAG and Retrieval
 
@@ -1444,6 +1530,7 @@ Manyang은 실패를 unavailable로 드러내고, retry 가능성과 safety noti
 | `backend/src/services/evidence-gate.ts` | verified symbol, sceneOnly, evidence rules |
 | `backend/src/services/dream-safety-policy.ts` | safety risk detection and response policy |
 | `backend/src/services/dream-reading-prompt.ts` | prompt builder and JSON schema |
+| `backend/src/services/tarot-reading-prompt.ts` | 타로 prompt builder, question lens/frame, JSON schema |
 | `backend/src/services/dream-reading-quality-eval.ts` | dream reading quality evaluation |
 | `backend/src/services/dream-reading-rubric.ts` | quality rubric |
 
@@ -1459,6 +1546,10 @@ Manyang은 실패를 unavailable로 드러내고, retry 가능성과 safety noti
 | `backend/src/services/korean-lemmatizer.ts` | Korean lemmatizer interface/fallback |
 | `backend/src/services/http-korean-lemmatizer.ts` | HTTP Korean lemmatizer client |
 | `services/korean-analyzer/` | Kiwi NLP HTTP service |
+| `frontend/src/lib/tarot-question-prompts.ts` | 질문형 타로 상태/프리셋 질문/직접 질문 생성 |
+| `frontend/src/lib/tarot-cards.ts` | 78장 타로 덱 통합과 card key lookup |
+| `frontend/src/lib/tarot-major-cards.ts` | 메이저 아르카나 카드 데이터 |
+| `frontend/src/lib/tarot-minor-cards.ts` | 마이너 아르카나 카드 데이터 생성, visual anchor, suit/rank 구조 |
 
 ### 16.5 Evaluation Scripts
 
@@ -1472,4 +1563,3 @@ Manyang은 실패를 unavailable로 드러내고, retry 가능성과 safety noti
 | `npm run rubric:check` | rubric quality check |
 | `npm test` | backend test suite |
 | `npm run typecheck` | TypeScript type check |
-
