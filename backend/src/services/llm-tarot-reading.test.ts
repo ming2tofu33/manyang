@@ -65,6 +65,83 @@ const questionOneCardInput = {
   },
 } satisfies TarotReadingInput;
 
+const hiddenEmotionQuestionOneCardInput = {
+  ...oneCardInput,
+  spread: "question_one_card",
+  questionContext: {
+    stateKey: "mind_complex",
+    stateLabel: "내 마음이 궁금해",
+    questionKey: "unrecognized_feeling",
+    questionText: "내가 모른 척하고 있는 감정은 뭘까?",
+  },
+} satisfies TarotReadingInput;
+
+const relationshipQuestionOneCardInput = {
+  ...oneCardInput,
+  spread: "question_one_card",
+  questionContext: {
+    stateKey: "relationship_concern",
+    stateLabel: "관계가 신경 쓰여",
+    questionKey: "between_us",
+    questionText: "상대와 나 사이에 놓인 감정은?",
+  },
+} satisfies TarotReadingInput;
+
+const workQuestionOneCardInput = {
+  ...oneCardInput,
+  spread: "question_one_card",
+  questionContext: {
+    stateKey: "work_blocked",
+    stateLabel: "일이 막힌 느낌이야",
+    questionKey: "focus_point",
+    questionText: "오늘 내가 집중해야 할 핵심은?",
+  },
+} satisfies TarotReadingInput;
+
+const realityQuestionOneCardInput = {
+  ...oneCardInput,
+  spread: "question_one_card",
+  questionContext: {
+    stateKey: "reality_anxiety",
+    stateLabel: "돈이나 현실이 불안해",
+    questionKey: "next_practical_check",
+    questionText: "현실적으로 다음에 확인해야 할 건?",
+  },
+} satisfies TarotReadingInput;
+
+const decisionQuestionOneCardInput = {
+  ...oneCardInput,
+  spread: "question_one_card",
+  questionContext: {
+    stateKey: "decision_point",
+    stateLabel: "결정해야 할 일이 있어",
+    questionKey: "real_criterion",
+    questionText: "이 선택에서 먼저 봐야 할 건 뭐야?",
+  },
+} satisfies TarotReadingInput;
+
+const dailyQuestionOneCardInput = {
+  ...oneCardInput,
+  spread: "question_one_card",
+  questionContext: {
+    stateKey: "daily_signal",
+    stateLabel: "오늘 하루가 궁금해",
+    questionKey: "missed_signal",
+    questionText: "오늘 내가 놓치지 말아야 할 건 뭐야?",
+  },
+} satisfies TarotReadingInput;
+
+const helpfulEnergyQuestionOneCardInput = {
+  ...oneCardInput,
+  spread: "question_one_card",
+  questionContext: {
+    stateKey: "daily_signal",
+    stateLabel: "오늘 하루가 궁금해",
+    questionKey: "helpful_energy",
+    questionText: "오늘 나를 도와줄 기운은 뭐야?",
+  },
+} satisfies TarotReadingInput;
+
 const threeCardInput = {
   appDate: "2026-05-31",
   locale: "ko",
@@ -212,6 +289,232 @@ describe("generateTarotReadingForUser", () => {
     expect(request?.instructions).toContain("선택한 질문");
   });
 
+  test("adds a relationship interpretation lens for relationship questions", () => {
+    const prompt = buildTarotReadingPrompt(relationshipQuestionOneCardInput);
+    const input = JSON.parse(prompt.input) as {
+      questionInterpretationLens?: {
+        domain?: string;
+        readThrough?: string;
+        preferTerms?: string[];
+        avoidTerms?: string[];
+      };
+    };
+
+    expect(input.questionInterpretationLens).toMatchObject({
+      domain: "관계",
+      readThrough: expect.stringContaining("감정"),
+      preferTerms: expect.arrayContaining(["기대", "서운함", "거리감", "마음을 보태는 방식", "엇갈린 태도"]),
+      avoidTerms: expect.arrayContaining(["피드백", "프로젝트", "담당", "성과", "협업"]),
+    });
+    expect(prompt.instructions).toContain("카드의 기본 의미를 질문 카테고리의 생활 영역 언어로 바꾸어 쓰세요");
+  });
+
+  test("uses direct relationship reading language for relationship emotion questions", () => {
+    const prompt = buildTarotReadingPrompt(relationshipQuestionOneCardInput);
+    const input = JSON.parse(prompt.input) as {
+      questionFrame?: {
+        type?: string;
+        answerGoal?: string;
+        paragraphRoles?: string[];
+        keywordMode?: string;
+        closingGuidance?: string;
+        languageRegister?: string;
+        phrasePalette?: string[];
+      };
+    };
+
+    expect(input.questionFrame).toMatchObject({
+      type: "relationship_emotion",
+      answerGoal: expect.stringContaining("두 사람 사이에 남아 있는 마음"),
+      paragraphRoles: expect.arrayContaining([
+        expect.stringContaining("어떤 마음이 남아 있는지"),
+        expect.stringContaining("말, 침묵, 거리감, 기대"),
+        expect.stringContaining("상대의 마음을 확정하지 말고"),
+      ]),
+      keywordMode: expect.stringContaining("관계 안에서 느껴지는 마음과 태도"),
+      closingGuidance: expect.stringContaining("어떤 마음을 꺼내기 어려운지"),
+      languageRegister: expect.stringContaining("관계 분석 보고서가 아니라"),
+      phrasePalette: expect.arrayContaining([
+        "마음을 쉽게 꺼내지 못함",
+        "먼저 무너지기 싫은 마음",
+        "서운한데 단단한 척함",
+        "가까워지고 싶지만 선을 세움",
+        "말보다 태도로 버티는 분위기",
+      ]),
+    });
+    expect(input.questionFrame?.answerGoal).not.toContain("정서적 긴장");
+  });
+
+  test("uses direct inner language for general mind questions", () => {
+    const prompt = buildTarotReadingPrompt(questionOneCardInput);
+    const input = JSON.parse(prompt.input) as {
+      questionFrame?: {
+        type?: string;
+        answerGoal?: string;
+        paragraphRoles?: string[];
+        closingGuidance?: string;
+        languageRegister?: string;
+        phrasePalette?: string[];
+      };
+    };
+
+    expect(input.questionFrame).toMatchObject({
+      type: "inner_reflection",
+      answerGoal: expect.stringContaining("지금 마음에 남아 있는 감정이나 생각"),
+      paragraphRoles: expect.arrayContaining([
+        expect.stringContaining("무엇이 마음에 걸려 있는지"),
+        expect.stringContaining("몸의 반응, 반복되는 생각"),
+      ]),
+      closingGuidance: expect.stringContaining("당장 해결해야 할 문제로 몰지"),
+      languageRegister: expect.stringContaining("상담 기록이 아니라"),
+      phrasePalette: expect.arrayContaining([
+        "자꾸 돌아오는 생각",
+        "마음이 걸리는 지점",
+        "겉으로는 괜찮은 척함",
+        "쉽게 내려놓지 못함",
+        "몸이 먼저 아는 피로",
+      ]),
+    });
+  });
+
+  test("uses concrete reality reading language for practical check questions", () => {
+    const prompt = buildTarotReadingPrompt(realityQuestionOneCardInput);
+    const input = JSON.parse(prompt.input) as {
+      questionFrame?: {
+        type?: string;
+        answerGoal?: string;
+        paragraphRoles?: string[];
+        closingGuidance?: string;
+        languageRegister?: string;
+        phrasePalette?: string[];
+      };
+    };
+
+    expect(input.questionFrame).toMatchObject({
+      type: "practical_check",
+      answerGoal: expect.stringContaining("돈이나 자원에서 놓치고 있는 흐름"),
+      paragraphRoles: expect.arrayContaining([
+        expect.stringContaining("점검 항목을 나열하지 말고"),
+        expect.stringContaining("돈, 시간, 체력, 도움, 회복감"),
+        expect.stringContaining("1~2개만"),
+      ]),
+      closingGuidance: expect.stringContaining("남아 있는 기반"),
+      languageRegister: expect.stringContaining("점검표가 아니라"),
+      phrasePalette: expect.arrayContaining([
+        "조금씩 새는 자원",
+        "이미 가진 기반",
+        "미뤄둔 확인",
+        "회복을 못 믿는 마음",
+        "다시 붙잡을 수 있는 여유",
+      ]),
+    });
+  });
+
+  test("uses concrete decision reading language for decision questions", () => {
+    const prompt = buildTarotReadingPrompt(decisionQuestionOneCardInput);
+    const input = JSON.parse(prompt.input) as {
+      questionFrame?: {
+        type?: string;
+        answerGoal?: string;
+        paragraphRoles?: string[];
+        keywordMode?: string;
+        closingGuidance?: string;
+        languageRegister?: string;
+        phrasePalette?: string[];
+      };
+    };
+
+    expect(input.questionFrame).toMatchObject({
+      type: "decision_standard",
+      answerGoal: expect.stringContaining("지키고 싶은 것과 감수해야 할 것"),
+      paragraphRoles: expect.arrayContaining([
+        expect.stringContaining("무엇을 지키고 싶은지"),
+        expect.stringContaining("무엇을 감수해야 하는지"),
+        expect.stringContaining("피하고 싶은 불편함"),
+      ]),
+      keywordMode: expect.stringContaining("선택 뒤에 남을 생활의 변화"),
+      closingGuidance: expect.stringContaining("정답이 아니라"),
+      languageRegister: expect.stringContaining("판정문이 아니라"),
+      phrasePalette: expect.arrayContaining([
+        "지키고 싶은 것",
+        "감수해야 할 것",
+        "피하고 싶은 불편함",
+        "결정 뒤에 남을 책임",
+        "마음이 끌리는 쪽",
+      ]),
+    });
+  });
+
+  test("uses concrete daily reading language for daily signal questions", () => {
+    const prompt = buildTarotReadingPrompt(dailyQuestionOneCardInput);
+    const input = JSON.parse(prompt.input) as {
+      questionFrame?: {
+        type?: string;
+        answerGoal?: string;
+        paragraphRoles?: string[];
+        closingGuidance?: string;
+        languageRegister?: string;
+        phrasePalette?: string[];
+      };
+    };
+
+    expect(input.questionFrame).toMatchObject({
+      type: "daily_attention",
+      answerGoal: expect.stringContaining("오늘 눈에 들어올 장면"),
+      paragraphRoles: expect.arrayContaining([
+        expect.stringContaining("오늘 무엇을 놓치지 말아야 하는지"),
+        expect.stringContaining("말, 분위기, 일정, 몸의 반응"),
+      ]),
+      closingGuidance: expect.stringContaining("하루 전체를 예언하지"),
+      languageRegister: expect.stringContaining("운세 문구가 아니라"),
+      phrasePalette: expect.arrayContaining([
+        "오늘 눈에 들어올 장면",
+        "가볍게 넘기면 안 되는 말",
+        "반복해서 보이는 분위기",
+        "몸이 먼저 알아차리는 신호",
+        "하루를 덜 흐트러뜨리는 태도",
+      ]),
+    });
+  });
+
+  test("uses different interpretation language for relationship and work questions", () => {
+    const relationshipPrompt = buildTarotReadingPrompt(relationshipQuestionOneCardInput);
+    const workPrompt = buildTarotReadingPrompt(workQuestionOneCardInput);
+    const relationshipInput = JSON.parse(relationshipPrompt.input) as {
+      questionInterpretationLens?: { preferTerms?: string[]; avoidTerms?: string[] };
+    };
+    const workInput = JSON.parse(workPrompt.input) as {
+      questionInterpretationLens?: { preferTerms?: string[]; avoidTerms?: string[] };
+    };
+
+    expect(relationshipInput.questionInterpretationLens?.preferTerms).toContain("마음을 보태는 방식");
+    expect(relationshipInput.questionInterpretationLens?.avoidTerms).toContain("업무");
+    expect(workInput.questionInterpretationLens?.preferTerms).toContain("집중할 지점");
+    expect(workInput.questionInterpretationLens?.avoidTerms).toContain("상대의 마음");
+  });
+
+  test("adds a grounded reality lens that avoids alarming money predictions", () => {
+    const prompt = buildTarotReadingPrompt(realityQuestionOneCardInput);
+    const input = JSON.parse(prompt.input) as {
+      questionInterpretationLens?: {
+        readThrough?: string;
+        preferTerms?: string[];
+        avoidTerms?: string[];
+      };
+    };
+
+    expect(input.questionInterpretationLens?.readThrough).toContain("카드 상징을 먼저");
+    expect(input.questionInterpretationLens?.readThrough).toContain("돈, 시간, 체력, 도움");
+    expect(input.questionInterpretationLens?.preferTerms).toEqual(
+      expect.arrayContaining(["조금씩 새는 자원", "이미 가진 기반", "회복의 단서"]),
+    );
+    expect(input.questionInterpretationLens?.avoidTerms).toEqual(
+      expect.arrayContaining(["손실 예고", "갑작스런 고지서", "심장이 조이는 느낌"]),
+    );
+    expect(prompt.instructions).toContain("현실/돈 질문은 불안을 키우는 예고가 아니라");
+    expect(prompt.instructions).toContain("은행, 계약, 지출 같은 실무 예시는 카드 상징보다 앞세워 나열하지 마세요");
+  });
+
   test("adds question one-card style guidance for natural symbolic Korean copy", () => {
     const prompt = buildTarotReadingPrompt(questionOneCardInput);
     const input = JSON.parse(prompt.input) as {
@@ -220,15 +523,87 @@ describe("generateTarotReadingForUser", () => {
     const styleContract = input.outputContract?.style?.join("\n") ?? "";
 
     expect(styleContract).toContain("첫 문장은 선택한 질문에 바로 답하세요");
-    expect(styleContract).toContain("카드와 정방향/역방향의 상징 근거");
-    expect(styleContract).toContain("오늘 실제로 알아차릴 수 있는 신호");
-    expect(styleContract).toContain("오늘 확인할 기준");
-    expect(styleContract).toContain("어색한 예: 불씨의 흥분");
-    expect(styleContract).toContain("자연스러운 예: 막 붙기 시작한 의욕");
-    expect(styleContract).toContain("시각적으로는");
-    expect(styleContract).toContain("~라는 점입니다");
+    expect(styleContract).toContain("질문 프레임의 답변 목적");
+    expect(styleContract).toContain("모든 질문을 '신호→확인할 기준' 틀로 맞추지 마세요");
+    expect(styleContract).toContain("질문에 맞는 마무리");
+    expect(styleContract).not.toContain("오늘 실제로 알아차릴 수 있는 신호, 오늘 확인할 기준 순서");
+    expect(styleContract).not.toContain("어색한 예: 불씨의 흥분");
     expect(styleContract).toContain("같은 상징어를 두 번 이상 반복하지 마세요");
     expect(prompt.instructions).toContain("정위치라는 말 대신 정방향이라고 쓰세요");
+  });
+
+  test("adds a hidden emotion question frame for unrecognized feeling questions", () => {
+    const prompt = buildTarotReadingPrompt(hiddenEmotionQuestionOneCardInput);
+    const input = JSON.parse(prompt.input) as {
+      questionFrame?: {
+        type?: string;
+        answerGoal?: string;
+        paragraphRoles?: string[];
+        keywordMode?: string;
+        closingGuidance?: string;
+      };
+    };
+
+    expect(input.questionFrame).toMatchObject({
+      type: "hidden_emotion",
+      answerGoal: expect.stringContaining("모른 척하고 있는 감정"),
+      paragraphRoles: expect.arrayContaining([
+        expect.stringContaining("감정을 첫 문장에서 바로 말합니다"),
+        expect.stringContaining("알아차림의 문장으로 닫습니다"),
+      ]),
+      keywordMode: expect.stringContaining("감정"),
+      closingGuidance: expect.stringContaining("말하지 못한 감정이나 미뤄둔 표현"),
+    });
+    expect(input.questionFrame?.closingGuidance).not.toContain("내면의 단서");
+  });
+
+  test("uses a supportive energy frame instead of a fixed criteria ending", () => {
+    const prompt = buildTarotReadingPrompt(helpfulEnergyQuestionOneCardInput);
+    const input = JSON.parse(prompt.input) as {
+      questionFrame?: {
+        type?: string;
+        answerGoal?: string;
+        paragraphRoles?: string[];
+        closingGuidance?: string;
+      };
+    };
+
+    expect(input.questionFrame).toMatchObject({
+      type: "supportive_energy",
+      answerGoal: expect.stringContaining("도움으로 삼을 태도"),
+      paragraphRoles: expect.arrayContaining([
+        expect.stringContaining("도움 되는 기운"),
+        expect.stringContaining("도움으로 삼을 관점"),
+      ]),
+      closingGuidance: expect.stringContaining("확인 기준이 아니라"),
+    });
+  });
+
+  test("uses a softer work focus frame for focus point questions", () => {
+    const prompt = buildTarotReadingPrompt(workQuestionOneCardInput);
+    const input = JSON.parse(prompt.input) as {
+      questionFrame?: {
+        type?: string;
+        answerGoal?: string;
+        languageRegister?: string;
+        phrasePalette?: string[];
+        closingGuidance?: string;
+      };
+    };
+
+    expect(input.questionFrame).toMatchObject({
+      type: "work_focus",
+      answerGoal: expect.stringContaining("오늘 집중할 지점"),
+      languageRegister: expect.stringContaining("업무 보고서가 아니라"),
+      phrasePalette: expect.arrayContaining([
+        "혼자 안고 있던 일",
+        "말로만 지나간 약속",
+        "누가 맡았는지",
+        "밖으로 꺼내야 할 부분",
+        "일이 덜 꼬이게 하는 정리",
+      ]),
+      closingGuidance: expect.stringContaining("오늘 초점"),
+    });
   });
 
   test("normalizes question one-card orientation wording and awkward repeated keywords", async () => {
@@ -359,6 +734,54 @@ describe("generateTarotReadingForUser", () => {
     });
 
     await expect(generateTarotReadingForUser(oneCardInput, { provider })).resolves.toEqual({
+      status: "unavailable",
+      reason: "invalid_response",
+      retryable: true,
+    });
+  });
+
+  test("rejects provider JSON that leaks question lens field names into user-facing copy", async () => {
+    const provider = createProvider({
+      ...generatedDisplayFields,
+      title: "질문 렌즈가 섞인 리딩",
+      overview:
+        "바보 카드의 장면은 새 출발을 비추지만 questionInterpretationLens라는 내부 항목명이 사용자 본문에 노출되고 있습니다.",
+      cardReadings: [],
+    });
+
+    await expect(generateTarotReadingForUser(relationshipQuestionOneCardInput, { provider })).resolves.toEqual({
+      status: "unavailable",
+      reason: "invalid_response",
+      retryable: true,
+    });
+  });
+
+  test("rejects provider JSON that leaks question frame field names into user-facing copy", async () => {
+    const provider = createProvider({
+      ...generatedDisplayFields,
+      title: "질문 프레임이 섞인 리딩",
+      overview:
+        "바보 카드의 장면은 새 출발을 비추지만 questionFrame과 paragraphRoles라는 내부 항목명이 사용자 본문에 노출되고 있습니다.",
+      cardReadings: [],
+    });
+
+    await expect(generateTarotReadingForUser(hiddenEmotionQuestionOneCardInput, { provider })).resolves.toEqual({
+      status: "unavailable",
+      reason: "invalid_response",
+      retryable: true,
+    });
+  });
+
+  test("rejects provider JSON that leaks question frame register field names into user-facing copy", async () => {
+    const provider = createProvider({
+      ...generatedDisplayFields,
+      title: "질문 프레임 말투가 섞인 리딩",
+      overview:
+        "바보 카드의 장면은 새 출발을 비추지만 languageRegister와 phrasePalette라는 내부 항목명이 사용자 본문에 노출되고 있습니다.",
+      cardReadings: [],
+    });
+
+    await expect(generateTarotReadingForUser(workQuestionOneCardInput, { provider })).resolves.toEqual({
       status: "unavailable",
       reason: "invalid_response",
       retryable: true,
