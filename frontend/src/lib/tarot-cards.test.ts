@@ -44,6 +44,35 @@ describe("tarot cards", () => {
     });
   });
 
+  test("uses card-specific minor arcana anchors instead of only rank-stage labels", () => {
+    const nineOfPentacles = getTarotCardByKey("minor:pentacles:09");
+
+    expect(nineOfPentacles?.visualSymbols).toContain("스스로 가꾼 정원과 손에 든 펜타클");
+    expect(nineOfPentacles?.visualSymbols).not.toContain("완성 직전의 개인적 결산");
+    expect(nineOfPentacles?.mood).toContain("스스로 가꾼 정원과 손에 든 펜타클");
+    expect(nineOfPentacles?.mood).not.toContain("완성 직전");
+    expect(nineOfPentacles?.symbolMeanings).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          symbol: "스스로 가꾼 정원과 손에 든 펜타클",
+          meaning: expect.stringContaining("독립"),
+        }),
+      ]),
+    );
+  });
+
+  test("uses natural Korean topic particles in generated minor card messages", () => {
+    expect(getTarotCardByKey("minor:swords:07")?.upright.cardMessage).toContain(
+      "소드 7은 전략이 필요한 지혜인지",
+    );
+    expect(getTarotCardByKey("minor:swords:14")?.upright.cardMessage).toContain(
+      "소드 왕은 객관성이 성숙한 판단인지",
+    );
+    expect(getTarotCardByKey("minor:wands:01")?.upright.cardMessage).toContain(
+      "완드 에이스는 가능성 자체보다",
+    );
+  });
+
   test("keeps every runtime tarot card usable by the LLM prompt and result UI", () => {
     tarotCards.forEach((card) => {
       expect(card.nameKo.trim().length).toBeGreaterThan(0);

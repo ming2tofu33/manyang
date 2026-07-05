@@ -26,6 +26,8 @@ type MinorCardDefinition = {
   suit: TarotMinorSuit;
   rank: TarotMinorRank;
   keywords: readonly string[];
+  visualAnchor?: string;
+  visualAnchorMeaning?: string;
   upright: string;
   reversed: string;
   point: string;
@@ -512,6 +514,9 @@ const minorCardDefinitions = [
     suit: "pentacles",
     rank: 9,
     keywords: ["독립", "풍요", "자기 관리", "여유"],
+    visualAnchor: "스스로 가꾼 정원과 손에 든 펜타클",
+    visualAnchorMeaning:
+      "스스로 만든 안정, 독립된 생활 기반, 여유와 압박이 함께 남는 자립의 감각을 보여줍니다.",
     upright: "스스로 만든 안정과 여유를 누리는 카드입니다. 경제적 독립, 생활의 질, 자기 관리가 강조됩니다.",
     reversed: "겉보기 여유 뒤의 의존, 불안, 허세가 드러날 수 있습니다. 진짜 독립인지 독립처럼 보이려는 긴장인지 봐야 합니다.",
     point: "독립이 여유인지, 혼자 해내야 한다는 압박인지 봅니다.",
@@ -572,11 +577,53 @@ function createMinorNameKo(suit: TarotMinorSuit, rank: TarotMinorRank): string {
   return `${suitProfiles[suit].nameKo} ${rankProfiles[rank].nameKo}`;
 }
 
+function hasFinalConsonantInKoreanNumber(value: number): boolean {
+  const finalDigit = Math.abs(value) % 10;
+
+  if (value === 0) {
+    return true;
+  }
+
+  if (finalDigit === 0) {
+    return true;
+  }
+
+  return finalDigit === 1 || finalDigit === 3 || finalDigit === 6 || finalDigit === 7 || finalDigit === 8;
+}
+
+function hasFinalConsonant(value: string): boolean {
+  const trailingNumberMatch = value.trim().match(/(\d+)$/u);
+
+  if (trailingNumberMatch) {
+    return hasFinalConsonantInKoreanNumber(Number(trailingNumberMatch[1]));
+  }
+
+  const lastHangulSyllable = [...value].reverse().find((char) => {
+    const code = char.charCodeAt(0);
+
+    return code >= 0xac00 && code <= 0xd7a3;
+  });
+
+  if (!lastHangulSyllable) {
+    return false;
+  }
+
+  return (lastHangulSyllable.charCodeAt(0) - 0xac00) % 28 !== 0;
+}
+
+function appendTopicParticle(value: string): string {
+  return `${value}${hasFinalConsonant(value) ? "은" : "는"}`;
+}
+
+function appendSubjectParticle(value: string): string {
+  return `${value}${hasFinalConsonant(value) ? "이" : "가"}`;
+}
+
 function createMinorMeaning(cardName: string, text: string, point: string): TarotMajorCardMeaning {
   return {
     summary: text,
     dailyFlow: text,
-    cardMessage: `${cardName}는 ${point}`,
+    cardMessage: `${appendTopicParticle(cardName)} ${point}`,
     readingScene: `${text} ${point}`,
   };
 }
@@ -588,6 +635,8 @@ function createMinorCard(definition: MinorCardDefinition): TarotMinorCard {
   const id = 22 + suitOffset + definition.rank - 1;
   const nameKo = createMinorNameKo(definition.suit, definition.rank);
   const nameEn = `${rankProfile.nameEn} OF ${suitProfile.nameEn}`;
+  const visualAnchor = definition.visualAnchor ?? rankProfile.stage;
+  const visualAnchorMeaning = definition.visualAnchorMeaning ?? definition.point;
 
   return {
     id,
@@ -600,18 +649,18 @@ function createMinorCard(definition: MinorCardDefinition): TarotMinorCard {
     nameKo,
     image: createMinorImagePath(definition.suit, definition.rank),
     keywords: definition.keywords,
-    visualSymbols: [suitProfile.symbol, rankProfile.stage],
+    visualSymbols: [suitProfile.symbol, visualAnchor],
     symbolMeanings: [
       {
         symbol: suitProfile.symbol,
-        meaning: `${suitProfile.nameKo}는 ${suitProfile.element} 원소의 ${suitProfile.theme}을 보여줍니다.`,
+        meaning: `${appendTopicParticle(suitProfile.nameKo)} ${suitProfile.element} 원소의 ${suitProfile.theme}을 보여줍니다.`,
       },
       {
-        symbol: rankProfile.stage,
-        meaning: definition.point,
+        symbol: visualAnchor,
+        meaning: visualAnchorMeaning,
       },
     ],
-    mood: `${suitProfile.mood} ${rankProfile.stage}가 중심에 놓입니다.`,
+    mood: `${suitProfile.mood} ${appendSubjectParticle(visualAnchor)} 중심에 놓입니다.`,
     upright: createMinorMeaning(nameKo, definition.upright, definition.point),
     reversed: createMinorMeaning(nameKo, definition.reversed, definition.point),
     contexts: {
