@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { CSSProperties } from "react";
-import { Fragment, useEffect, useState, useSyncExternalStore } from "react";
+import { Fragment, useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 import { AssetTextButton } from "@/components/asset-primitives";
 import { ReceiptSaveCta } from "@/components/receipt-save-cta";
@@ -31,9 +31,8 @@ import {
   createResultEncyclopediaHref,
   createReceiptFileName,
   createReceiptShareText,
-  createReceiptSvg,
 } from "@/lib/result-actions";
-import { downloadSvgAsPng } from "@/lib/share-image-export";
+import { downloadElementAsPng } from "@/lib/share-image-export";
 import { createShareResultLink, sharePublicLink } from "@/lib/share-link-client";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useArchiveDreamRecords } from "@/lib/use-archive-dream-records";
@@ -326,6 +325,7 @@ type DreamResultReceiptProps = {
 };
 
 export function DreamResultReceipt({ payloadOverride, isSharedView = false }: DreamResultReceiptProps = {}) {
+  const receiptPaperRef = useRef<HTMLElement | null>(null);
   const storedPayload = useSyncExternalStore(
     subscribeToStorage,
     getLatestAnalysisSnapshotFromBrowser,
@@ -424,9 +424,13 @@ export function DreamResultReceipt({ payloadOverride, isSharedView = false }: Dr
   }
 
   async function handleDownload() {
-    const svg = createReceiptSvg(payload);
+    const receiptPaper = receiptPaperRef.current;
 
-    await downloadSvgAsPng(svg, createReceiptFileName(payload));
+    if (!receiptPaper) {
+      return;
+    }
+
+    await downloadElementAsPng(receiptPaper, createReceiptFileName(payload), { padding: 28 });
 
     void saveReceiptPawprint();
   }
@@ -481,8 +485,10 @@ export function DreamResultReceipt({ payloadOverride, isSharedView = false }: Dr
         data-receipt-viewport-frame="true"
       >
         <section
+          ref={receiptPaperRef}
           className="animate-receipt-slide-up relative mx-auto w-full max-w-[372px] overflow-visible"
           data-receipt-paper="sliced"
+          data-receipt-export-target="true"
           style={receiptPaperStyle}
         >
           <div

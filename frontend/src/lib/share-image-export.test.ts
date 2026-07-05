@@ -1,4 +1,5 @@
 import { describe, expect, test } from "vitest";
+import { readFileSync } from "node:fs";
 
 import { getSvgImageSize } from "./share-image-export";
 
@@ -12,5 +13,12 @@ describe("share image export", () => {
 
   test("falls back to the shared result image size when SVG dimensions are missing", () => {
     expect(getSvgImageSize("<svg></svg>")).toEqual({ width: 900, height: 1300 });
+  });
+
+  test("exports receipt DOM without SVG foreignObject composition", () => {
+    const source = readFileSync(new URL("./share-image-export.ts", import.meta.url), "utf8");
+
+    expect(source).toContain("html2canvas");
+    expect(source).not.toContain("foreignObject");
   });
 });

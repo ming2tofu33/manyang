@@ -15,6 +15,12 @@ type SharePngImageInput = {
   text?: string;
 };
 
+type ElementPngExportOptions = {
+  backgroundColor?: string | null;
+  padding?: number;
+  pixelRatio?: number;
+};
+
 export type SharePngImageResult = "shared" | "downloaded" | "cancelled";
 
 function parseSvgDimension(svg: string, attributeName: "height" | "width"): number | null {
@@ -28,6 +34,17 @@ export function getSvgImageSize(svg: string, fallback: ShareImageSize = defaultS
   return {
     width: parseSvgDimension(svg, "width") ?? fallback.width,
     height: parseSvgDimension(svg, "height") ?? fallback.height,
+  };
+}
+
+function getElementImageSize(element: HTMLElement, padding = 0): ShareImageSize {
+  const rect = element.getBoundingClientRect();
+  const width = Math.ceil(Math.max(rect.width, element.scrollWidth));
+  const height = Math.ceil(Math.max(rect.height, element.scrollHeight));
+
+  return {
+    width: width + padding * 2,
+    height: height + padding * 2,
   };
 }
 
@@ -57,6 +74,69 @@ function createCanvasBlob(canvas: HTMLCanvasElement): Promise<Blob> {
       0.95,
     );
   });
+}
+
+export async function createPngBlobFromElement(
+  element: HTMLElement,
+  { backgroundColor = null, padding = 0, pixelRatio = 2 }: ElementPngExportOptions = {},
+): Promise<Blob> {
+  await document.fonts?.ready;
+
+  const { default: html2canvas } = await import("html2canvas");
+  const size = getElementImageSize(element);
+  const exportRoot = document.createElement("div");
+  const clone = element.cloneNode(true) as HTMLElement;
+  const style = document.createElement("style");
+
+  style.textContent = `
+    [data-share-image-export="true"],
+    [data-share-image-export="true"] * {
+      animation: none !important;
+      transition: none !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+
+    [data-share-image-export="true"] {
+      margin: 0 !important;
+      max-width: none !important;
+      transform: none !important;
+    }
+  `;
+
+  clone.setAttribute("data-share-image-export", "true");
+  clone.style.width = `${size.width}px`;
+  clone.style.maxWidth = "none";
+  clone.style.margin = "0";
+  clone.style.transform = "none";
+
+  exportRoot.style.position = "fixed";
+  exportRoot.style.left = "-10000px";
+  exportRoot.style.top = "0";
+  exportRoot.style.width = `${size.width + padding * 2}px`;
+  exportRoot.style.minHeight = `${size.height + padding * 2}px`;
+  exportRoot.style.padding = `${padding}px`;
+  exportRoot.style.boxSizing = "border-box";
+  exportRoot.style.background = backgroundColor ?? "transparent";
+  exportRoot.style.pointerEvents = "none";
+  exportRoot.append(style, clone);
+  document.body.append(exportRoot);
+
+  try {
+    const canvas = await html2canvas(exportRoot, {
+      allowTaint: false,
+      backgroundColor,
+      imageTimeout: 15000,
+      logging: false,
+      removeContainer: true,
+      scale: Math.max(1, pixelRatio),
+      useCORS: true,
+    });
+
+    return await createCanvasBlob(canvas);
+  } finally {
+    exportRoot.remove();
+  }
 }
 
 export async function createPngBlobFromSvg(svg: string, pixelRatio = 2): Promise<Blob> {
@@ -101,6 +181,16 @@ export function downloadBlob(blob: Blob, fileName: string): void {
 
 export async function downloadSvgAsPng(svg: string, fileName: string): Promise<void> {
   const pngBlob = await createPngBlobFromSvg(svg);
+
+  downloadBlob(pngBlob, fileName);
+}
+
+export async function downloadElementAsPng(
+  element: HTMLElement,
+  fileName: string,
+  options?: ElementPngExportOptions,
+): Promise<void> {
+  const pngBlob = await createPngBlobFromElement(element, options);
 
   downloadBlob(pngBlob, fileName);
 }

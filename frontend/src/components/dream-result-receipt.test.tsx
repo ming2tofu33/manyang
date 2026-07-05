@@ -142,6 +142,7 @@ describe("DreamResultReceipt", () => {
     expect(markup).not.toContain("aspect-[771/1730]");
     expect(markup).not.toContain("object-fill drop-shadow-[0_18px_60px_rgba(0,0,0,0.38)]");
     expect(markup).toContain("data-receipt-paper=\"sliced\"");
+    expect(markup).toContain("data-receipt-export-target=\"true\"");
     expect(markup).toContain("data-receipt-paper-middle=\"true\"");
     expect(markup).toContain("--receipt-paper-width:min(calc(100vw - 32px), 372px)");
     expect(markup).toContain("min-height:calc(var(--receipt-paper-width) * 720 / 771)");
