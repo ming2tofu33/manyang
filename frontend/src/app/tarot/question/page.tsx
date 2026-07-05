@@ -23,7 +23,7 @@ export default async function TarotQuestionPage() {
     <AppShell
       background={manyangAssets.backgrounds.default}
       title="질문 타로"
-      subtitle="지금 궁금한 마음을 고르고 한 장으로 비춰봐요."
+      subtitle="궁금한 주제를 고르고 한 장으로 비춰봐요."
       titleIconSrc={manyangAssets.pageIcons.tarot}
       backHref="/tarot"
       rightAction="none"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { type FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   DailyTarotFanDeck,
@@ -22,6 +22,8 @@ import {
 } from "@/lib/daily-tarot";
 import { cn } from "@/lib/styles";
 import {
+  createCustomTarotQuestionPrompt,
+  maxCustomTarotQuestionLength,
   tarotQuestionStates,
   type TarotQuestionPrompt,
   type TarotQuestionState,
@@ -99,6 +101,7 @@ export function QuestionTarotClient({
   const [step, setStep] = useState<QuestionTarotStep>(initialReading ? "result" : "state-select");
   const [selectedState, setSelectedState] = useState<TarotQuestionState | null>(null);
   const [selectedQuestion, setSelectedQuestion] = useState<TarotQuestionPrompt | null>(null);
+  const [customQuestionText, setCustomQuestionText] = useState("");
   const [reading, setReading] = useState<DailyTarotReading | null>(initialReading);
   const [revealState, setRevealState] = useState<QuestionTarotRevealState | null>(null);
   const [pendingSelections, setPendingSelections] = useState<DailyTarotCardSelection[]>([]);
@@ -123,10 +126,15 @@ export function QuestionTarotClient({
       drawIdentityKey: createQuestionDrawIdentity(drawIdentityKey, selectedState, selectedQuestion),
     });
   }, [appDate, drawIdentityKey, selectedQuestion, selectedState]);
+  const customQuestion = useMemo(
+    () => createCustomTarotQuestionPrompt(customQuestionText),
+    [customQuestionText],
+  );
 
   function handleSelectState(state: TarotQuestionState) {
     setSelectedState(state);
     setSelectedQuestion(null);
+    setCustomQuestionText("");
     setErrorMessage(null);
     setStep("question-select");
   }
@@ -138,6 +146,17 @@ export function QuestionTarotClient({
     setSelectedQuestion(question);
     setErrorMessage(null);
     setStep("draw");
+  }
+
+  function handleSubmitCustomQuestion(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!customQuestion) {
+      setErrorMessage("질문을 조금 더 짧고 분명하게 적어주세요.");
+      return;
+    }
+
+    handleSelectQuestion(customQuestion);
   }
 
   async function submitQuestionReading(selection: DailyTarotCardSelection) {
@@ -267,7 +286,7 @@ export function QuestionTarotClient({
         <div className="space-y-3">
           <div className="space-y-1.5 text-center">
             <p className="text-[13px] font-bold text-[#f4b65f]">질문 타로</p>
-            <h2 className="text-[20px] font-extrabold leading-7 text-[#ffe7b5]">지금 가까운 마음을 골라주세요</h2>
+            <h2 className="text-[20px] font-extrabold leading-7 text-[#ffe7b5]">지금 가장 궁금한 걸 골라주세요</h2>
           </div>
           <div className="grid gap-2">
             {tarotQuestionStates.map((state) => (
@@ -293,6 +312,7 @@ export function QuestionTarotClient({
               onClick={() => {
                 setSelectedState(null);
                 setSelectedQuestion(null);
+                setCustomQuestionText("");
                 setStep("state-select");
               }}
               className="rounded-full border border-[#b98255]/40 px-3 py-1.5 text-[12px] font-bold text-[#f2c27d] focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
@@ -301,18 +321,61 @@ export function QuestionTarotClient({
             </button>
             <p className="text-right text-[12px] font-bold text-[#f4b65f]">{selectedState.label}</p>
           </div>
-          <div className="grid gap-2">
-            {selectedState.questions.map((question) => (
+          <form
+            onSubmit={handleSubmitCustomQuestion}
+            className="space-y-2 rounded-[0.9rem] border border-[#b98255]/30 bg-[#05040b]/42 p-3"
+          >
+            <label htmlFor="question-tarot-custom-question" className="block text-[13px] font-extrabold text-[#ffe7b5]">
+              직접 질문하기
+            </label>
+            <textarea
+              id="question-tarot-custom-question"
+              data-question-tarot-custom-question
+              value={customQuestionText}
+              onChange={(event) => {
+                setCustomQuestionText(event.target.value);
+                setErrorMessage(null);
+              }}
+              maxLength={maxCustomTarotQuestionLength}
+              rows={2}
+              placeholder="예: 그 사람은 지금 어떤 마음일까?"
+              className="min-h-[4.25rem] w-full resize-none rounded-[0.75rem] border border-[#b98255]/36 bg-[#080711]/82 px-3 py-2 text-[14px] font-bold leading-6 text-[#fff3d7] outline-none placeholder:text-[#8f755e] focus:border-[#ffd08a]/70 focus:ring-2 focus:ring-[#d799ff]/70"
+            />
+            {errorMessage ? <p className="text-[12px] font-bold leading-5 text-[#ffb59f]">{errorMessage}</p> : null}
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-[11px] font-bold text-[#9f846b]">
+                {customQuestionText.length}/{maxCustomTarotQuestionLength}
+              </p>
               <button
-                key={question.key}
-                type="button"
-                data-question-tarot-question-option={question.key}
-                onClick={() => handleSelectQuestion(question)}
-                className="rounded-[0.9rem] border border-[#b98255]/36 bg-[#05040b]/52 px-4 py-3 text-left text-[14px] font-bold leading-6 text-[#fff3d7] shadow-[0_12px_26px_rgba(0,0,0,0.2)] transition hover:border-[#ffd08a]/70 hover:bg-[#140d24]/78 focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
+                type="submit"
+                data-question-tarot-custom-submit
+                disabled={!customQuestion}
+                className={cn(
+                  "rounded-full border px-4 py-2 text-[13px] font-extrabold transition focus:outline-none focus:ring-2 focus:ring-[#d799ff]",
+                  customQuestion
+                    ? "border-[#f2c27d]/55 bg-[#f2c27d]/12 text-[#ffe7b5] hover:border-[#ffd08a]/80"
+                    : "cursor-not-allowed border-[#6d5948]/35 text-[#7d6854]",
+                )}
               >
-                {question.text}
+                이 질문으로 보기
               </button>
-            ))}
+            </div>
+          </form>
+          <div className="space-y-2">
+            <p className="px-1 text-[12px] font-bold text-[#c7a98a]">또는 아래 질문에서 골라보세요</p>
+            <div className="grid gap-2">
+              {selectedState.questions.map((question) => (
+                <button
+                  key={question.key}
+                  type="button"
+                  data-question-tarot-question-option={question.key}
+                  onClick={() => handleSelectQuestion(question)}
+                  className="rounded-[0.9rem] border border-[#b98255]/36 bg-[#05040b]/52 px-4 py-3 text-left text-[14px] font-bold leading-6 text-[#fff3d7] shadow-[0_12px_26px_rgba(0,0,0,0.2)] transition hover:border-[#ffd08a]/70 hover:bg-[#140d24]/78 focus:outline-none focus:ring-2 focus:ring-[#d799ff]"
+                >
+                  {question.text}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       ) : null}

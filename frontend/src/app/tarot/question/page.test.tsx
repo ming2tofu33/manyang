@@ -20,6 +20,7 @@ describe("/tarot/question", () => {
     const markup = renderToStaticMarkup(await TarotQuestionPage());
 
     expect(markup).toContain("질문 타로");
+    expect(markup).toContain("궁금한 주제를 고르고 한 장으로 비춰봐요.");
     expect(markup).toContain("data-question-tarot-page");
     expect(markup).toContain('data-question-tarot-state="state-select"');
   });

@@ -23,4 +23,15 @@ describe("tarot page rendering mode", () => {
     expect(markup).toContain("질문 타로");
     expect(markup).toContain("data-daily-tarot-page");
   });
+
+  test("presents daily and question tarot as primary mode choices", async () => {
+    const markup = renderToStaticMarkup(await TarotPage({ searchParams: Promise.resolve({}) }));
+
+    expect(markup).toContain('data-tarot-mode-selector="true"');
+    expect(markup).toContain('data-tarot-mode-option="daily"');
+    expect(markup).toContain('data-tarot-mode-option="question"');
+    expect(markup).toContain("오늘 하루의 분위기와 기준을 봐요");
+    expect(markup).toContain("궁금한 주제를 고르고 한 장으로 비춰봐요");
+    expect(markup.indexOf("오늘의 한 장")).toBeLessThan(markup.indexOf("질문 타로"));
+  });
 });
