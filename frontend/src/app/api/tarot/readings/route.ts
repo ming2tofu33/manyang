@@ -105,7 +105,7 @@ type TarotReadingValidationResult =
     };
 
 const MIN_LLM_TIMEOUT_MS = 1_000;
-const MAX_LLM_TIMEOUT_MS = 60_000;
+const MAX_LLM_TIMEOUT_MS = 90_000;
 const DEFAULT_TAROT_LLM_TIMEOUT_MS = 25_000;
 
 export type TarotReadingsRouteDependencies = {
@@ -196,13 +196,35 @@ function createUnavailablePayload(reason: Extract<TarotReadingResult, { status: 
 }
 
 export function resolveTarotLlmTimeoutMs(env: EnvLike = process.env): number {
-  const configuredTimeoutMs = Number(env.MANYANG_LLM_TIMEOUT_MS);
+  return (
+    normalizeLlmTimeoutMs(env.MANYANG_TAROT_LLM_TIMEOUT_MS) ??
+    normalizeLlmTimeoutMs(env.MANYANG_LLM_TIMEOUT_MS) ??
+    DEFAULT_TAROT_LLM_TIMEOUT_MS
+  );
+}
+
+function readTrimmedEnv(value: string | undefined): string | undefined {
+  const trimmed = value?.trim();
+
+  return trimmed ? trimmed : undefined;
+}
+
+function normalizeLlmTimeoutMs(value: string | undefined): number | undefined {
+  const configuredTimeoutMs = Number(value);
 
   if (!Number.isFinite(configuredTimeoutMs) || configuredTimeoutMs <= 0) {
-    return DEFAULT_TAROT_LLM_TIMEOUT_MS;
+    return undefined;
   }
 
   return Math.min(MAX_LLM_TIMEOUT_MS, Math.max(MIN_LLM_TIMEOUT_MS, Math.round(configuredTimeoutMs)));
+}
+
+export function resolveTarotLlmModel(env: EnvLike = process.env): string | undefined {
+  return (
+    readTrimmedEnv(env.MANYANG_TAROT_OPENAI_MODEL) ??
+    readTrimmedEnv(env.MANYANG_OPENAI_MODEL) ??
+    readTrimmedEnv(env.OPENAI_MODEL)
+  );
 }
 
 async function getDefaultAccessPlanForUser(userId: string | null): Promise<AccessPlan> {
@@ -693,11 +715,13 @@ export async function handleTarotReadingRequest(
   }
 
   const selections = requestBody.selections.map(resolveSelection);
+  const model = resolveTarotLlmModel();
   const result = await resolvedDependencies.generateTarotReadingForUser(
     createTarotReadingInput(requestBody, selections),
     {
       provider,
       providerTimeoutMs: resolveTarotLlmTimeoutMs(),
+      ...(model ? { model } : {}),
       onProviderError: (error) =>
         resolvedDependencies.logTarotEvent({
           type: "provider_error",

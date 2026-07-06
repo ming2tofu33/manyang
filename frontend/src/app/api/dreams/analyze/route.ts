@@ -13,6 +13,7 @@ import {
   type CatReaderType,
   type DreamAnalysisRequest,
   type DreamAnalysisResponse,
+  type DreamReadingLlmProvider,
   type DreamReadingResult,
   type DreamReadingUnavailableReason,
 } from "@manyang/backend";
@@ -44,7 +45,7 @@ export const runtime = "nodejs";
 
 type EnvLike = Record<string, string | undefined>;
 const MIN_LLM_TIMEOUT_MS = 1_000;
-const MAX_LLM_TIMEOUT_MS = 60_000;
+const MAX_LLM_TIMEOUT_MS = 90_000;
 export const DREAM_ANALYZE_MAX_DREAM_TEXT_LENGTH = 1000;
 const OPTIONAL_TEXT_MAX_LENGTH = 160;
 const NIGHT_CONTEXT_NOTE_MAX_LENGTH = 100;
@@ -87,6 +88,8 @@ export type DreamAnalyzeRouteDependencies = {
   hasCompletedGuestBasicReadingOnDate?: (guestId: string, dreamDate: string) => Promise<boolean>;
   persistCompletedDreamReading?: (input: PersistCompletedDreamReadingInput) => Promise<unknown>;
   persistGuestBasicReadingUsage?: (input: PersistGuestBasicReadingUsageInput) => Promise<unknown>;
+  createProvider?: () => DreamReadingLlmProvider | undefined;
+  generateDreamReadingForUser?: typeof generateDreamReadingForUser;
   createGuestId?: () => string;
 };
 
@@ -321,14 +324,36 @@ export function resolveDreamRagVectorIndexPath(locale: unknown, env: EnvLike = p
   return env.MANYANG_RAG_VECTOR_INDEX_PATH;
 }
 
-export function resolveDreamLlmTimeoutMs(env: EnvLike = process.env): number {
-  const configuredTimeoutMs = Number(env.MANYANG_LLM_TIMEOUT_MS);
+function readTrimmedEnv(value: string | undefined): string | undefined {
+  const trimmed = value?.trim();
+
+  return trimmed ? trimmed : undefined;
+}
+
+function normalizeLlmTimeoutMs(value: string | undefined): number | undefined {
+  const configuredTimeoutMs = Number(value);
 
   if (!Number.isFinite(configuredTimeoutMs) || configuredTimeoutMs <= 0) {
-    return DEFAULT_LLM_PROVIDER_TIMEOUT_MS;
+    return undefined;
   }
 
   return Math.min(MAX_LLM_TIMEOUT_MS, Math.max(MIN_LLM_TIMEOUT_MS, Math.round(configuredTimeoutMs)));
+}
+
+export function resolveDreamLlmModel(env: EnvLike = process.env): string | undefined {
+  return (
+    readTrimmedEnv(env.MANYANG_DREAM_OPENAI_MODEL) ??
+    readTrimmedEnv(env.MANYANG_OPENAI_MODEL) ??
+    readTrimmedEnv(env.OPENAI_MODEL)
+  );
+}
+
+export function resolveDreamLlmTimeoutMs(env: EnvLike = process.env): number {
+  return (
+    normalizeLlmTimeoutMs(env.MANYANG_DREAM_LLM_TIMEOUT_MS) ??
+    normalizeLlmTimeoutMs(env.MANYANG_LLM_TIMEOUT_MS) ??
+    DEFAULT_LLM_PROVIDER_TIMEOUT_MS
+  );
 }
 
 export function shouldAllowMockDreamAnalysis(env: EnvLike = process.env): boolean {
@@ -391,6 +416,10 @@ async function getDefaultIsAdminUser(userId: string): Promise<boolean> {
   } catch {
     return false;
   }
+}
+
+function createDefaultProvider(): DreamReadingLlmProvider | undefined {
+  return createOpenAIResponsesProviderFromEnv(process.env);
 }
 
 async function persistCompletedReadingForAuthenticatedUser(
@@ -468,6 +497,8 @@ export async function handleDreamAnalyzeRequest(
     hasCompletedGuestBasicReadingOnDate,
     persistCompletedDreamReading,
     persistGuestBasicReadingUsage,
+    createProvider: createDefaultProvider,
+    generateDreamReadingForUser,
     createGuestId: randomUUID,
     ...dependencies,
   };
@@ -536,10 +567,10 @@ export async function handleDreamAnalyzeRequest(
       );
     }
 
-    let provider: ReturnType<typeof createOpenAIResponsesProviderFromEnv>;
+    let provider: DreamReadingLlmProvider | undefined;
 
     try {
-      provider = createOpenAIResponsesProviderFromEnv(process.env);
+      provider = resolvedDependencies.createProvider();
     } catch (error) {
       if (error instanceof LlmProviderConfigurationError) {
         const safetyNotice = analyzeDream(validatedBody.value).safetyNotice;
@@ -564,9 +595,11 @@ export async function handleDreamAnalyzeRequest(
         : createKoreanLemmatizerFromEnv(process.env)
       : undefined;
     if (provider) {
-      const result = await generateDreamReadingForUser(validatedBody.value, {
+      const model = resolveDreamLlmModel();
+      const result = await resolvedDependencies.generateDreamReadingForUser(validatedBody.value, {
         provider,
         providerTimeoutMs: resolveDreamLlmTimeoutMs(),
+        ...(model ? { model } : {}),
         ...vectorOptions,
         ...(lemmatizer ? { lemmatizer } : {}),
       });

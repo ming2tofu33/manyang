@@ -4,7 +4,7 @@ import { getTarotMajorCardById } from "@/lib/tarot-major-cards";
 import { getTarotCardById } from "@/lib/tarot-cards";
 import type { DailyTarotReading } from "@/lib/daily-tarot";
 
-import { handleTarotReadingRequest, resolveTarotLlmTimeoutMs } from "./route";
+import { handleTarotReadingRequest, resolveTarotLlmModel, resolveTarotLlmTimeoutMs } from "./route";
 
 afterEach(() => {
   vi.unstubAllEnvs();
@@ -99,9 +99,23 @@ describe("POST /api/tarot/readings", () => {
   test("resolves tarot LLM timeout env with safe bounds", () => {
     expect(resolveTarotLlmTimeoutMs({})).toBe(25_000);
     expect(resolveTarotLlmTimeoutMs({ MANYANG_LLM_TIMEOUT_MS: "45000" })).toBe(45_000);
+    expect(resolveTarotLlmTimeoutMs({ MANYANG_TAROT_LLM_TIMEOUT_MS: "70000", MANYANG_LLM_TIMEOUT_MS: "12000" })).toBe(70_000);
+    expect(resolveTarotLlmTimeoutMs({ MANYANG_TAROT_LLM_TIMEOUT_MS: "bad", MANYANG_LLM_TIMEOUT_MS: "12000" })).toBe(12_000);
     expect(resolveTarotLlmTimeoutMs({ MANYANG_LLM_TIMEOUT_MS: "50" })).toBe(1_000);
-    expect(resolveTarotLlmTimeoutMs({ MANYANG_LLM_TIMEOUT_MS: "120000" })).toBe(60_000);
+    expect(resolveTarotLlmTimeoutMs({ MANYANG_LLM_TIMEOUT_MS: "120000" })).toBe(90_000);
     expect(resolveTarotLlmTimeoutMs({ MANYANG_LLM_TIMEOUT_MS: "not-a-number" })).toBe(25_000);
+  });
+
+  test("resolves tarot-specific model before global model env", () => {
+    expect(resolveTarotLlmModel({})).toBeUndefined();
+    expect(resolveTarotLlmModel({ OPENAI_MODEL: "gpt-5-mini" })).toBe("gpt-5-mini");
+    expect(resolveTarotLlmModel({ MANYANG_OPENAI_MODEL: "gpt-5-mini", OPENAI_MODEL: "gpt-4.1-mini" })).toBe("gpt-5-mini");
+    expect(
+      resolveTarotLlmModel({
+        MANYANG_TAROT_OPENAI_MODEL: " gpt-5 ",
+        MANYANG_OPENAI_MODEL: "gpt-5-mini",
+      }),
+    ).toBe("gpt-5");
   });
 
   test("rejects invalid tarot reading requests before LLM work starts", async () => {
@@ -283,7 +297,8 @@ describe("POST /api/tarot/readings", () => {
   });
 
   test("returns and persists a generated one-card tarot reading for authenticated users", async () => {
-    vi.stubEnv("MANYANG_LLM_TIMEOUT_MS", "45000");
+    vi.stubEnv("MANYANG_TAROT_OPENAI_MODEL", "gpt-5");
+    vi.stubEnv("MANYANG_TAROT_LLM_TIMEOUT_MS", "70000");
 
     const persistCompletedTarotReading = vi.fn();
     const generateTarotReadingForUser = vi.fn(async () => ({
@@ -337,7 +352,7 @@ describe("POST /api/tarot/readings", () => {
           }),
         ],
       }),
-      expect.objectContaining({ provider: expect.any(Object), providerTimeoutMs: 45_000 }),
+      expect.objectContaining({ provider: expect.any(Object), model: "gpt-5", providerTimeoutMs: 70_000 }),
     );
     expect(persistCompletedTarotReading).toHaveBeenCalledWith({
       userId: "00000000-0000-4000-8000-000000000001",

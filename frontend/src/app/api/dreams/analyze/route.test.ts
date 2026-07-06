@@ -1,10 +1,11 @@
-import type { DreamAnalysisResponse } from "@manyang/backend";
+import { analyzeDream, type DreamAnalysisResponse } from "@manyang/backend";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 import {
   DREAM_ANALYZE_MAX_DREAM_TEXT_LENGTH,
   handleDreamAnalyzeRequest,
   POST,
+  resolveDreamLlmModel,
   resolveDreamLlmTimeoutMs,
   resolveDreamRagVectorIndexPath,
   validateDreamAnalyzeRequestBody,
@@ -642,6 +643,41 @@ describe("POST /api/dreams/analyze", () => {
     });
   });
 
+  test("passes dream-specific model and timeout to the LLM reading generator", async () => {
+    process.env.MANYANG_ANALYSIS_MODE = "llm";
+    vi.stubEnv("OPENAI_API_KEY", "test-key");
+    vi.stubEnv("OPENAI_BASE_URL", "http://127.0.0.1:9");
+    vi.stubEnv("MANYANG_DREAM_OPENAI_MODEL", "gpt-5");
+    vi.stubEnv("MANYANG_DREAM_LLM_TIMEOUT_MS", "70000");
+
+    const requestBody = {
+      dreamText: "꿈에서 오래된 집의 문을 열었고 안쪽에 밝은 방이 있었어요.",
+      locale: "ko" as const,
+    };
+    const generated = analyzeDream(requestBody);
+    const generateDreamReadingForUser = vi.fn(async () => ({
+      status: "ok" as const,
+      response: generated,
+    }));
+
+    const response = await handleDreamAnalyzeRequest(createJsonRequest(requestBody), {
+      createProvider: () => ({ generateJson: async () => ({}) }),
+      generateDreamReadingForUser,
+      hasCompletedGuestBasicReadingOnDate: async () => false,
+      persistGuestBasicReadingUsage: async () => undefined,
+    });
+
+    expect(response.status).toBe(200);
+    expect(generateDreamReadingForUser).toHaveBeenCalledWith(
+      expect.objectContaining({ dreamText: requestBody.dreamText }),
+      expect.objectContaining({
+        provider: expect.any(Object),
+        model: "gpt-5",
+        providerTimeoutMs: 70_000,
+      }),
+    );
+  });
+
   test("resolves locale-specific RAG vector index paths before the generic fallback", () => {
     expect(
       resolveDreamRagVectorIndexPath("ko", {
@@ -667,8 +703,22 @@ describe("POST /api/dreams/analyze", () => {
   test("resolves LLM timeout env with safe bounds", () => {
     expect(resolveDreamLlmTimeoutMs({})).toBe(25_000);
     expect(resolveDreamLlmTimeoutMs({ MANYANG_LLM_TIMEOUT_MS: "12000" })).toBe(12_000);
+    expect(resolveDreamLlmTimeoutMs({ MANYANG_DREAM_LLM_TIMEOUT_MS: "70000", MANYANG_LLM_TIMEOUT_MS: "12000" })).toBe(70_000);
+    expect(resolveDreamLlmTimeoutMs({ MANYANG_DREAM_LLM_TIMEOUT_MS: "bad", MANYANG_LLM_TIMEOUT_MS: "12000" })).toBe(12_000);
     expect(resolveDreamLlmTimeoutMs({ MANYANG_LLM_TIMEOUT_MS: "50" })).toBe(1_000);
-    expect(resolveDreamLlmTimeoutMs({ MANYANG_LLM_TIMEOUT_MS: "120000" })).toBe(60_000);
+    expect(resolveDreamLlmTimeoutMs({ MANYANG_LLM_TIMEOUT_MS: "120000" })).toBe(90_000);
     expect(resolveDreamLlmTimeoutMs({ MANYANG_LLM_TIMEOUT_MS: "not-a-number" })).toBe(25_000);
+  });
+
+  test("resolves dream-specific model before global model env", () => {
+    expect(resolveDreamLlmModel({})).toBeUndefined();
+    expect(resolveDreamLlmModel({ OPENAI_MODEL: "gpt-5-mini" })).toBe("gpt-5-mini");
+    expect(resolveDreamLlmModel({ MANYANG_OPENAI_MODEL: "gpt-5-mini", OPENAI_MODEL: "gpt-4.1-mini" })).toBe("gpt-5-mini");
+    expect(
+      resolveDreamLlmModel({
+        MANYANG_DREAM_OPENAI_MODEL: " gpt-5 ",
+        MANYANG_OPENAI_MODEL: "gpt-5-mini",
+      }),
+    ).toBe("gpt-5");
   });
 });
