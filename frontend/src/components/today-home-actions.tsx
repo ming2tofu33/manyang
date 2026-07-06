@@ -27,6 +27,7 @@ export function PrimaryDreamButton() {
       frame={manyangAssets.buttons.dreammemoryWrite}
       width={860}
       height={235}
+      priority
       className={homeActionButtonClassName}
       imageClassName="manyang-button-glow"
       contentClassName={homeActionButtonContentClassName}
@@ -54,6 +55,7 @@ function DailyTarotButton() {
       frame={manyangAssets.buttons.dreammemoryWrite}
       width={860}
       height={235}
+      priority
       className={homeActionButtonClassName}
       imageClassName="manyang-button-glow"
       contentClassName={homeActionButtonContentClassName}

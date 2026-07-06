@@ -407,7 +407,7 @@ describe("manyang assets", () => {
   });
 
   test("exposes the reference button image assets used by the home and write flows", () => {
-    expect(manyangAssets.buttons.dreammemoryWrite).toBe("/manyang/ui/buttons/dreammemory-write-frame-slim.png");
+    expect(manyangAssets.buttons.dreammemoryWrite).toBe("/manyang/ui/buttons/dreammemory-write-frame-slim.webp");
     expect(manyangAssets.buttons.dreammemoryForgot).toBe("/manyang/ui/buttons/dreammemory-forgot-frame.png");
     expect(manyangAssets.buttons.dreammemorySubmit).toBe("/manyang/ui/buttons/dreammemory-submit-frame-slim.png");
     expect(manyangAssets.buttons.dreamseed).toBe("/manyang/ui/buttons/dreamseed-frame.png");
@@ -429,18 +429,36 @@ describe("manyang assets", () => {
   });
 
   test("exposes the generated footer frame and navigation icon assets", () => {
-    expect(manyangAssets.footer.frame).toBe("/manyang/ui/footer/footer-frame.png");
-    expect(manyangAssets.footer.icons.today).toBe("/manyang/ui/footer/footer-icon-today.png");
-    expect(manyangAssets.footer.icons.write).toBe("/manyang/ui/footer/footer-icon-write.png");
-    expect(manyangAssets.footer.icons.archive).toBe("/manyang/ui/footer/footer-icon-archive.png");
-    expect(manyangAssets.footer.icons.encyclopedia).toBe("/manyang/ui/footer/footer-icon-encyclopedia.png");
-    expect(manyangAssets.footer.icons.profile).toBe("/manyang/ui/footer/footer-icon-profile.png");
+    expect(manyangAssets.footer.frame).toBe("/manyang/ui/footer/footer-frame.webp");
+    expect(manyangAssets.footer.icons.today).toBe("/manyang/ui/footer/footer-icon-today.webp");
+    expect(manyangAssets.footer.icons.write).toBe("/manyang/ui/footer/footer-icon-write.webp");
+    expect(manyangAssets.footer.icons.archive).toBe("/manyang/ui/footer/footer-icon-archive.webp");
+    expect(manyangAssets.footer.icons.encyclopedia).toBe("/manyang/ui/footer/footer-icon-encyclopedia.webp");
+    expect(manyangAssets.footer.icons.profile).toBe("/manyang/ui/footer/footer-icon-profile.webp");
 
     [
       manyangAssets.footer.frame,
       ...Object.values(manyangAssets.footer.icons),
     ].forEach((assetPath) => {
       expect(publicAssetExists(assetPath)).toBe(true);
+    });
+  });
+
+  test("uses optimized WebP runtime UI assets that are smaller than their source PNGs", () => {
+    [
+      ["/manyang/ui/buttons/dreammemory-write-frame-slim.png", manyangAssets.buttons.dreammemoryWrite, 0.12],
+      ["/manyang/ui/footer/footer-frame.png", manyangAssets.footer.frame, 0.08],
+      ["/manyang/ui/footer/footer-icon-today.png", manyangAssets.footer.icons.today, 0.4],
+      ["/manyang/ui/footer/footer-icon-write.png", manyangAssets.footer.icons.write, 0.4],
+      ["/manyang/ui/footer/footer-icon-archive.png", manyangAssets.footer.icons.archive, 0.3],
+      ["/manyang/ui/footer/footer-icon-encyclopedia.png", manyangAssets.footer.icons.encyclopedia, 0.3],
+      ["/manyang/ui/footer/footer-icon-profile.png", manyangAssets.footer.icons.profile, 0.35],
+      ["/manyang/ui/action-icons/action-bell.png", manyangAssets.actionIcons.bell, 0.2],
+      ["/manyang/ui/action-icons/action-settings.png", manyangAssets.actionIcons.settings, 0.2],
+    ].forEach(([sourceAssetPath, optimizedAssetPath, maxRatio]) => {
+      expect(statSync(publicAssetPath(optimizedAssetPath as string)).size).toBeLessThan(
+        statSync(publicAssetPath(sourceAssetPath as string)).size * (maxRatio as number),
+      );
     });
   });
 
@@ -506,8 +524,8 @@ describe("manyang assets", () => {
 
   test("exposes separated action glyph assets for CSS circle icon buttons", () => {
     expect(manyangAssets.actionIcons.arrowLeft).toBe("/manyang/ui/action-icons/action-arrow-left.png");
-    expect(manyangAssets.actionIcons.bell).toBe("/manyang/ui/action-icons/action-bell.png");
-    expect(manyangAssets.actionIcons.settings).toBe("/manyang/ui/action-icons/action-settings.png");
+    expect(manyangAssets.actionIcons.bell).toBe("/manyang/ui/action-icons/action-bell.webp");
+    expect(manyangAssets.actionIcons.settings).toBe("/manyang/ui/action-icons/action-settings.webp");
     expect(manyangAssets.actionIcons.book).toBe("/manyang/ui/action-icons/action-book.png");
     expect(manyangAssets.actionIcons.trash).toBe("/manyang/ui/action-icons/action-trash.png");
 

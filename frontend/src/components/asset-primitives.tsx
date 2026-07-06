@@ -91,6 +91,7 @@ type AssetImageTextButtonProps = {
   height: number;
   href?: string;
   sizes?: string;
+  priority?: boolean;
   type?: ComponentPropsWithoutRef<"button">["type"];
   onClick?: ComponentPropsWithoutRef<"button">["onClick"];
   disabled?: boolean;
@@ -108,6 +109,7 @@ export function AssetImageTextButton({
   height,
   href,
   sizes = "382px",
+  priority = false,
   type = "button",
   onClick,
   disabled,
@@ -126,6 +128,8 @@ export function AssetImageTextButton({
         width={width}
         height={height}
         sizes={sizes}
+        priority={priority}
+        fetchPriority={priority ? "high" : undefined}
         unoptimized
         className={cn("pointer-events-none h-auto w-full select-none object-contain", imageClassName)}
       />

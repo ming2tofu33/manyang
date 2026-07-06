@@ -54,6 +54,8 @@ describe("TodayHomeActions", () => {
     expect(markup).toContain("[text-shadow:var(--manyang-cat-button-shadow)]");
     expect(markup).toContain('width="860"');
     expect(markup).toContain('height="235"');
+    expect(markup).toContain('fetchPriority="high"');
+    expect(markup).not.toContain('loading="lazy"');
     expect(markup).not.toContain('height="375"');
     expect(markup).not.toContain("w-[82%] max-w-[310px] px-3 py-2");
   });
