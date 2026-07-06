@@ -16,6 +16,9 @@ export const rootMetadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: siteName,
   description: rootDescription,
+  other: {
+    "aim-verification": "aim_verify_DyhIum5PLQGrXmHFh4GLKoKHgUQEIQcL",
+  },
   alternates: {
     canonical: "/",
   },

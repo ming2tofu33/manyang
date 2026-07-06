@@ -21,5 +21,8 @@ describe("site metadata", () => {
       card: "summary_large_image",
       images: [socialShareImage],
     });
+    expect(rootMetadata.other).toEqual({
+      "aim-verification": "aim_verify_DyhIum5PLQGrXmHFh4GLKoKHgUQEIQcL",
+    });
   });
 });
