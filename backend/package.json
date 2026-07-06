@@ -9,6 +9,7 @@
   "scripts": {
     "build:rag-index": "tsx src/scripts/build-dream-rag-vector-index.ts",
     "quality:live": "tsx src/scripts/live-prompt-quality-check.ts",
+    "quality:tarot-ab": "tsx src/scripts/run-tarot-model-ab-check.ts",
     "rubric:check": "tsx src/scripts/rubric-quality-check.ts",
     "eval:retrieval": "tsx src/scripts/run-retrieval-eval.ts",
     "eval:coverage": "tsx src/scripts/run-coverage-eval.ts",
