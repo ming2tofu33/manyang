@@ -8,11 +8,16 @@ tags:
   - mvp
 source: conversation
 updated: 2026-05-31
+status: superseded
+superseded_by: Character-Reading-Retention-and-Monetization
 ---
 
 # Cat Theme Monetization Strategy
 
 > 고양이는 해몽 결과를 바꾸는 해몽사가 아니라, 동일한 꿈해몽 엔진 위에 얹는 동행자 테마와 스킨이다.
+
+> [!IMPORTANT]
+> 이 문서의 **고양이를 시각 테마로만 제한하는 장기 방향은 2026-07-11 결정으로 대체되었다.** 리딩 정확도와 안전 기준을 공통으로 유지하는 원칙은 계속 유효하며, 관계·편지·에피소드·수집 확장은 [[Character-Reading-Retention-and-Monetization]]을 따른다.
 
 ---
 

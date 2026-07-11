@@ -10,6 +10,9 @@ source: docs/manyang-dream-project-spec-updated.md
 
 > Next.js 앱에서 시작하고, Supabase와 LLM API를 붙여 웹 MVP를 만든다.
 
+> [!IMPORTANT]
+> 이 문서는 웹 MVP의 현재 구조를 설명한다. 확장 제품의 웹·모바일 구조는 [[Web-Mobile-Shared-Architecture]]를 우선한다.
+
 ---
 
 ## MVP 기술 스택
@@ -74,6 +77,7 @@ flowchart TD
 - [[Database-Schema]]
 - [[API-Contract]]
 - [[Tech-Decisions]]
+- [[Web-Mobile-Shared-Architecture]]
 
 ## See Also
 

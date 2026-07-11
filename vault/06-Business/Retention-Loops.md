@@ -43,6 +43,21 @@ source: docs/manyang-dream-project-spec-updated.md
 | 주간 리포트 | 아니오 | 2차 MVP |
 | 밤의 기록 | 예 | 해몽 신뢰도와 다음날 재방문 보강 |
 
+## 확장 제품 루프
+
+웹 MVP의 기록 루프는 유지하되, 확장 제품에서는 캐릭터 관계와 타로 소비를 전면에 둔다.
+
+```text
+주 동반자 고양이를 만나러 옴
+→ 무료 오늘의 타로
+→ 반응 또는 기록
+→ 관계·대사·장면 해금
+→ 달조각 리딩 또는 수집 콘텐츠
+→ 주간 편지와 개인 리딩 서재
+```
+
+세부 관계 단계와 과금 경계는 [[Character-Reading-Retention-and-Monetization]]을 따른다.
+
 ## Related
 
 - [[Monetization-Roadmap]]

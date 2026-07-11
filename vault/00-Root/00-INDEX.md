@@ -4,9 +4,9 @@ tags:
   - root
 ---
 
-# 마냥 꿈해몽
+# 마냥
 
-> 고양이 해몽 백과사전을 기반으로 꿈속 상징을 읽고, 사용자의 꿈을 카드와 기록으로 남겨주는 감성 꿈 리딩 서비스.
+> 타로를 주 소비 콘텐츠로, 꿈과 감정 기록을 개인화 자산으로 사용하는 고양이 감성 운세·리딩 서비스.
 
 ## Navigation
 
@@ -37,6 +37,8 @@ tags:
 - [[Layout-Contract]] — 에셋 기반 모바일 UI 레이아웃 계약과 화면별 기준표
 - [[Frontend-Optimization-Guide]] — 프론트엔드 성능, 에셋, 애니메이션, 레이아웃 안정화 기준
 - [[Screen-Inventory]] — 화면 목록
+- [[Character-Reading-Retention-and-Monetization]] — 캐릭터 관계, 타로, 달조각, Moon Pass 확장 전략
+- [[Web-Mobile-Shared-Architecture]] — Next.js 웹과 Expo 앱의 공유 아키텍처
 - [[Source-Documents]] — 원본 문서와 참고 이미지
 
 ## Current Decision
@@ -44,3 +46,5 @@ tags:
 - 서비스명은 **마냥 꿈해몽**으로 고정한다.
 - “달빛 냥몽관”은 제품명이 아니라 공간/비주얼 콘셉트로 사용한다.
 - 1차 MVP는 **꿈 입력 → 해몽 결과 → 카드/영수증 → 기록 저장** 루프 검증에 집중한다.
+- 확장 제품은 **고양이가 읽어주는 감성 운세·리딩 서비스**로 가져간다.
+- 웹은 무료 체험·SEO·앱 전환을 담당하고, Expo·React Native 앱은 관계·수집·결제의 본체로 제작한다.

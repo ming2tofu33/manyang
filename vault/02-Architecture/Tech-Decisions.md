@@ -32,14 +32,22 @@ source: docs/manyang-dream-project-spec-updated.md
 
 꿈 해석은 오락과 자기 성찰용이며 진단이 아니라는 문구를 결과 화면과 설정/고지 영역에 둔다.
 
+## 결정 6. 웹과 모바일 UI를 분리한다
+
+웹은 Next.js로 유지하고 모바일은 Expo·React Native 별도 클라이언트로 제작한다. UI는 플랫폼별로 구현하고 타로·관계·달조각 규칙, 콘텐츠, API 계약, 서버를 공유한다. 세부 구조는 [[Web-Mobile-Shared-Architecture]]를 따른다.
+
+## 결정 7. 웹은 유입, 앱은 관계·수집·결제를 담당한다
+
+웹 결제는 제공하지 않는다. 웹은 무료 체험, SEO, 공유, 앱 설치 전환을 담당하고 앱은 고양이 관계, 수집, 달조각 구매·사용, Moon Pass를 담당한다.
+
 ## Related
 
 - [[System-Architecture]]
 - [[Database-Schema]]
 - [[API-Contract]]
+- [[Web-Mobile-Shared-Architecture]]
 
 ## See Also
 
 - [[MVP-Scope]] — 기술 결정을 제한하는 MVP 범위 (01-Core)
 - [[Safety-&-Compliance]] — 표현 안전 기준 (07-Operations)
-

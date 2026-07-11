@@ -6,11 +6,16 @@ tags:
   - retention
   - mvp
 source: conversation
+status: current-web-mvp
+expanded_by: Character-Reading-Retention-and-Monetization
 ---
 
 # MVP Currency Strategy
 
 > MVP의 재화 시스템은 과금 완성이 아니라, 재방문과 유료 의향을 검증하기 위한 최소 루프다.
+
+> [!NOTE]
+> 이 문서는 현재 웹 MVP의 검증용 재화 전략이다. 앱 출시 단계의 실제 달조각 구매·사용과 Moon Pass 확장은 [[Character-Reading-Retention-and-Monetization]]을 따른다.
 
 ---
 
