@@ -4,8 +4,8 @@
   "private": true,
   "workspaces": ["backend", "frontend", "packages/*"],
   "scripts": {
-    "test": "npm run test --workspace @manyang/backend && npm run test --workspace frontend",
-    "typecheck": "npm run typecheck --workspace @manyang/backend && npm run typecheck --workspace frontend",
+    "test": "npm run test --workspace @manyang/contracts && npm run test --workspace @manyang/backend && npm run test --workspace frontend",
+    "typecheck": "npm run typecheck --workspace @manyang/contracts && npm run typecheck --workspace @manyang/backend && npm run typecheck --workspace frontend",
     "lint": "npm run lint --workspace frontend",
     "build": "npm run build --workspace frontend",
     "verify": "npm run test && npm run typecheck && npm run lint && npm run build"
