@@ -10,13 +10,15 @@ import {
   loadCachedDreamVectorIndex,
   LlmProviderConfigurationError,
   type AnalyzeDreamWithLlmOptions,
-  type CatReaderType,
-  type DreamAnalysisRequest,
-  type DreamAnalysisResponse,
   type DreamReadingLlmProvider,
   type DreamReadingResult,
   type DreamReadingUnavailableReason,
 } from "@manyang/backend";
+import type {
+  CatReaderType,
+  DreamAnalysisRequest,
+  DreamAnalysisResponse,
+} from "@manyang/contracts/dream";
 import { randomUUID } from "node:crypto";
 
 import {

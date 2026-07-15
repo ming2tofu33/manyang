@@ -3,7 +3,8 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState, useSyncExternalStore } from "react";
-import type { DreamAnalysisResponse, DreamNightContext, DreamReadingUnavailableReason } from "@manyang/backend";
+import type { DreamReadingUnavailableReason } from "@manyang/backend";
+import type { DreamAnalysisResponse, DreamNightContext } from "@manyang/contracts/dream";
 
 import { CatReaderPicker } from "./cat-reader-picker";
 import { DreamLoadingOverlay } from "./dream-loading-overlay";

@@ -1,4 +1,5 @@
-import { analyzeDream, type DreamAnalysisResponse } from "@manyang/backend";
+import type { DreamAnalysisResponse } from "@manyang/contracts/dream";
+import { analyzeDream } from "@manyang/backend";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 import {

@@ -1,4 +1,5 @@
-import type { DreamAnalysisResponse, DreamNightContext, DreamReadingUnavailableReason } from "@manyang/backend";
+import type { DreamReadingUnavailableReason } from "@manyang/backend";
+import type { DreamAnalysisResponse, DreamNightContext } from "@manyang/contracts/dream";
 import type { CatReaderId } from "./cat-readers";
 
 export type StorageLike = {
