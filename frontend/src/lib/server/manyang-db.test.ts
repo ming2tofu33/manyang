@@ -185,7 +185,7 @@ describe("manyang db helpers", () => {
       "tarot-row-1",
     );
 
-    const [sql, params] = pool.query.mock.calls[0] ?? [];
+    const [sql, params] = pool.query.mock.calls[0] as unknown as [string, unknown[]];
     expect(sql).toContain("reading_key");
     expect(sql).toContain("on conflict (user_id, app_date, spread, reading_key)");
     expect(params).toEqual([
