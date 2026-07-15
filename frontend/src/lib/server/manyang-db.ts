@@ -1,4 +1,4 @@
-import type { DreamAnalysisResponse } from "@manyang/backend";
+import type { DreamAnalysisResponse } from "@manyang/contracts/dream";
 import { Pool, type PoolClient, type PoolConfig } from "pg";
 
 import type { AccessPlan } from "@/lib/access-policy";

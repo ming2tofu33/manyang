@@ -1,6 +1,7 @@
 "use client";
 
-import type { DreamAnalysisRequest, DreamAnalysisResponse, DreamReadingUnavailableReason } from "@manyang/backend";
+import type { DreamReadingUnavailableReason } from "@manyang/backend";
+import type { DreamAnalysisRequest, DreamAnalysisResponse } from "@manyang/contracts/dream";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useSyncExternalStore } from "react";

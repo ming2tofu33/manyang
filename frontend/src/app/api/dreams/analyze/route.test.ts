@@ -1,4 +1,6 @@
-import { analyzeDream, type DreamAnalysisResponse } from "@manyang/backend";
+import { CAT_READER_TYPES } from "@manyang/contracts/dream";
+import type { DreamAnalysisResponse } from "@manyang/contracts/dream";
+import { analyzeDream } from "@manyang/backend";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 import {
@@ -496,6 +498,25 @@ describe("POST /api/dreams/analyze", () => {
     await expect(response.json()).resolves.toEqual({
       error: "locale must be one of: ko, en",
     });
+  });
+
+  test.each(CAT_READER_TYPES)("accepts the shared reader id %s", async (catReaderType) => {
+    const response = await handleDreamAnalyzeRequest(
+      createJsonRequest({
+        dreamText: "I dreamed about a quiet train by the sea.",
+        dreamDate: "2026-05-30",
+        catReaderType,
+      }),
+      {
+        getAuthenticatedUserId: async () => "00000000-0000-4000-8000-000000000001",
+        getAccessPlanForUser: async () => "moon_pass",
+        isAdminUser: async () => true,
+        persistCompletedDreamReading: async () => undefined,
+        createProvider: () => undefined,
+      },
+    );
+
+    expect(response.status).not.toBe(400);
   });
 
   test("validates and sanitizes a dream analysis request body", () => {

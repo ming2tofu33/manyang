@@ -1,3 +1,4 @@
+import { CAT_READER_TYPES } from "@manyang/contracts/dream";
 import { describe, expect, test } from "vitest";
 
 import type { DreamCompletedPayload, DreamRecord } from "@/lib/dream-storage";
@@ -83,6 +84,28 @@ describe("GET /api/dreams", () => {
 });
 
 describe("POST /api/dreams", () => {
+  test.each(CAT_READER_TYPES)("accepts the shared reader id %s", async (catReaderType) => {
+    const response = await handleDreamRecordsRequest(
+      new Request("http://localhost/api/dreams", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          dreamText: "I dreamed about a quiet train by the sea.",
+          dreamDate: "2026-05-30",
+          catReaderType,
+          analysis: createDreamAnalysisResponse(),
+        }),
+      }),
+      {
+        getAuthenticatedUserId: async () => "00000000-0000-4000-8000-000000000001",
+        listDreamRecordsForUser: async () => [],
+        persistCompletedDreamReading: async () => "db-dream-id",
+      },
+    );
+
+    expect(response.status).not.toBe(400);
+  });
+
   test("saves a latest completed receipt for an authenticated user", async () => {
     const persistedInputs: unknown[] = [];
     const response = await handleDreamRecordsRequest(

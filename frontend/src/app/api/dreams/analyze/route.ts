@@ -10,13 +10,17 @@ import {
   loadCachedDreamVectorIndex,
   LlmProviderConfigurationError,
   type AnalyzeDreamWithLlmOptions,
-  type CatReaderType,
-  type DreamAnalysisRequest,
-  type DreamAnalysisResponse,
   type DreamReadingLlmProvider,
   type DreamReadingResult,
   type DreamReadingUnavailableReason,
 } from "@manyang/backend";
+import {
+  CAT_READER_TYPES,
+  DREAM_LOCALES,
+  type CatReaderType,
+  type DreamAnalysisRequest,
+  type DreamAnalysisResponse,
+} from "@manyang/contracts/dream";
 import { randomUUID } from "node:crypto";
 
 import {
@@ -53,8 +57,8 @@ const TIME_ZONE_MAX_LENGTH = 80;
 const FEELING_IDS_MAX_ITEMS = 4;
 const FEELING_ID_MAX_LENGTH = 32;
 const FEELING_OTHER_MAX_LENGTH = 30;
-const validLocales = new Set(["ko", "en"]);
-const validCatReaderTypes = new Set(["black_cat", "white_cat", "cheese_cat", "gray_cat"]);
+const validLocales = new Set<string>(DREAM_LOCALES);
+const validCatReaderTypes = new Set<string>(CAT_READER_TYPES);
 
 type DreamAnalyzeValidationResult =
   | {

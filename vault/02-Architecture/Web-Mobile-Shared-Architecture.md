@@ -8,7 +8,7 @@ tags:
   - monorepo
 source: product discussion 2026-07-11
 status: confirmed
-updated: 2026-07-11
+updated: 2026-07-15
 ---
 
 # Web Mobile Shared Architecture
@@ -242,6 +242,10 @@ web/mobile → backend 직접 import 금지
 - 푸시 제공자와 알림 스케줄러
 - 앱 분석 이벤트 수집 도구
 - 앱 최소 지원 OS
+
+## Progress
+
+- 2026-07-15: 루트 npm workspace와 `@manyang/contracts`를 도입하고, 꿈(dream) transport 계약을 백엔드와 웹이 공유하도록 전환했다. 타로 계약과 content/domain 분리는 후속 스프린트로 남긴다. Expo 클라이언트는 아직 시작하지 않았다.
 
 ## Related
 

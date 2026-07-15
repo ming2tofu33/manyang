@@ -1,7 +1,4 @@
-export {
-  CAT_READER_TYPES,
-  DREAM_LOCALES,
-} from "@manyang/contracts/dream";
+export { CAT_READER_TYPES, DREAM_LOCALES } from "./dream";
 
 export type {
   CatReaderAccess,
@@ -14,4 +11,4 @@ export type {
   DreamNightContext,
   DreamSymbolCategory,
   EncyclopediaEntry,
-} from "@manyang/contracts/dream";
+} from "./dream";
