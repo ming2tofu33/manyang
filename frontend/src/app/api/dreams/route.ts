@@ -1,3 +1,5 @@
+import { CAT_READER_TYPES } from "@manyang/contracts/dream";
+
 import { listDreamRecordsForUser, persistCompletedDreamReading } from "@/lib/server/manyang-db";
 import { getAuthenticatedUserId } from "@/lib/supabase/server";
 import type { DreamCompletedPayload, DreamRecord } from "@/lib/dream-storage";
@@ -9,7 +11,7 @@ const DREAM_TEXT_MAX_LENGTH = 1000;
 const FEELING_IDS_MAX_ITEMS = 4;
 const FEELING_ID_MAX_LENGTH = 32;
 const FEELING_OTHER_MAX_LENGTH = 30;
-const validCatReaderTypes = new Set(["black_cat", "white_cat", "cheese_cat", "gray_cat"]);
+const validCatReaderTypes = new Set<string>(CAT_READER_TYPES);
 
 export type DreamRecordsRouteDependencies = {
   getAuthenticatedUserId?: () => Promise<string | null>;
