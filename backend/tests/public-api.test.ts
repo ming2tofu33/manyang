@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+
 import { describe, expect, it } from "vitest";
 
 import {
@@ -9,6 +11,12 @@ import {
 } from "../src";
 
 describe("backend public API", () => {
+  it("re-exports shared dream transport contracts", () => {
+    const source = readFileSync(new URL("../src/index.ts", import.meta.url), "utf8");
+
+    expect(source).toContain('from "@manyang/contracts/dream"');
+  });
+
   it("exports runtime encyclopedia and retrieval helpers", () => {
     expect(SUPPORTED_LOCALES).toEqual(["ko", "en"]);
     expect(getRuntimeSymbolEntries("ko").length).toBeGreaterThanOrEqual(10);

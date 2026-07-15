@@ -18,6 +18,9 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "@manyang/contracts": "0.1.0"
+  },
   "devDependencies": {
     "@types/node": "^20",
     "tsx": "^4.22.3",

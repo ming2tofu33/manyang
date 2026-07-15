@@ -5,10 +5,13 @@ export type {
   DreamAnalysisRequest,
   DreamAnalysisResponse,
   DreamCardResponse,
+  DreamLocale,
   DreamNightContext,
   DreamSymbolCategory,
   EncyclopediaEntry,
-} from "./contracts/dream";
+} from "@manyang/contracts/dream";
+
+export { CAT_READER_TYPES, DREAM_LOCALES } from "@manyang/contracts/dream";
 export {
   SUPPORTED_LOCALES,
   SYMBOL_ACCESS_TIERS,
