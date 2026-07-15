@@ -18,6 +18,18 @@ status: active
 
 현재 추가 준비 목표는 **실제 LLM/RAG 구현 전에 백과사전 데이터 구조, 검색 계약, 품질 검증 기준을 먼저 고정하는 것**이다.
 
+## Web/Mobile Shared Foundation (2026-07-15)
+
+- [x] 루트 npm workspace 구성
+- [x] `@manyang/contracts`와 꿈 transport 계약 생성
+- [x] 백엔드와 웹의 꿈 transport 계약 공유
+- [x] API reader/locale 검증 상수 통합
+- [ ] Expo 클라이언트 시작 (이번 스프린트 범위 아님)
+
+### Next Recommended Sprint
+
+- 공통 타로 계약과 content/domain 분리
+
 ## Tasks
 
 | ID | 제목 | 상태 | 우선순위 | 완료 기준 |
