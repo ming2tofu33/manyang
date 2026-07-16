@@ -1,0 +1,22 @@
+{
+  "name": "@manyang/content",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./tarot": "./src/tarot/index.ts",
+    "./tarot/questions": "./src/tarot/questions.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@manyang/contracts": "0.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5",
+    "vitest": "^4.1.7"
+  }
+}
