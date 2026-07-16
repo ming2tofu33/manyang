@@ -7,7 +7,13 @@ import {
   getTarotCardByKey,
   tarotCards,
   tarotMinorCards,
+  type TarotCard,
 } from "./tarot-cards";
+import { getTarotMajorCardById, tarotMajorCards } from "./tarot-major-cards";
+import {
+  getTarotMinorCardById,
+  type TarotMinorCard,
+} from "./tarot-minor-cards";
 
 const publicAssetExists = (assetPath: string) =>
   existsSync(path.join(process.cwd(), "public", assetPath.replace(/^\//, "")));
@@ -18,6 +24,52 @@ describe("tarot cards", () => {
     expect(tarotMinorCards).toHaveLength(56);
     expect(tarotCards.map((card) => card.id)).toEqual(Array.from({ length: 78 }, (_, id) => id));
     expect(new Set(tarotCards.map((card) => card.cardKey)).size).toBe(78);
+    expect(tarotCards.every((card) => card.arcana === "major" || card.arcana === "minor")).toBe(
+      true,
+    );
+    expect(tarotCards.every((card) => card.imageKey.length > 0)).toBe(true);
+  });
+
+  test("reuses the exact resolved major and minor adapter objects", () => {
+    expect(tarotCards[0]).toBe(tarotMajorCards[0]);
+    expect(getTarotCardById(0)).toBe(getTarotMajorCardById(0));
+    expect(tarotCards[22]).toBe(tarotMinorCards[0]);
+    expect(getTarotCardById(22)).toBe(getTarotMinorCardById(22));
+  });
+
+  test("exposes the resolved web collections as readonly arrays", () => {
+    type HasPush<T> = "push" extends keyof T ? true : false;
+    const deckHasPush: HasPush<typeof tarotCards> = false;
+    const minorHasPush: HasPush<typeof tarotMinorCards> = false;
+
+    expect({ deckHasPush, minorHasPush }).toEqual({
+      deckHasPush: false,
+      minorHasPush: false,
+    });
+  });
+
+  test("keeps legacy stored card snapshots assignable to the public web types", () => {
+    const runtimeMajorCard = tarotCards[0];
+
+    if (runtimeMajorCard.arcana !== "major") {
+      throw new Error("Expected the first tarot card to be major arcana");
+    }
+
+    const { arcana, cardKey, imageKey, ...legacyMajorCard } = runtimeMajorCard;
+    const compatibleLegacyMajorCard: TarotCard = legacyMajorCard;
+    const { imageKey: legacyMinorImageKey, ...legacyMinorCard } = tarotMinorCards[0];
+    const compatibleLegacyMinorCard: TarotMinorCard = legacyMinorCard;
+    const compatibleStoredMinorCard: TarotCard = legacyMinorCard;
+
+    expect(compatibleLegacyMajorCard.slug).toBe("the-fool");
+    expect(compatibleLegacyMinorCard.cardKey).toBe("minor:wands:01");
+    expect(compatibleStoredMinorCard.cardKey).toBe("minor:wands:01");
+    expect({ arcana, cardKey, imageKey, legacyMinorImageKey }).toEqual({
+      arcana: "major",
+      cardKey: "major:00",
+      imageKey: "major/00-the-fool.png",
+      legacyMinorImageKey: "minor-cutout/wands/01-ace-of-wands.png",
+    });
   });
 
   test("exposes minor cards with cutout images and stable card keys", () => {

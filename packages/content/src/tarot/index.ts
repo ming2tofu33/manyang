@@ -4,6 +4,17 @@ export {
 } from "./major";
 
 export {
+  getTarotMinorCardContentById,
+  tarotMinorCardContent,
+} from "./minor";
+
+export {
+  getTarotCardContentById,
+  getTarotCardContentByKey,
+  tarotCardContent,
+} from "./cards";
+
+export {
   getTarotQuestionByKey,
   getTarotQuestionStateByKey,
   tarotQuestionStates,

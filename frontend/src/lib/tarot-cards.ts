@@ -1,30 +1,44 @@
 import {
-  getTarotMajorCardById,
-  tarotMajorCards,
-  type TarotMajorCard,
-} from "./tarot-major-cards";
-import {
-  getTarotMinorCardById,
-  tarotMinorCards,
-  type TarotMinorCard,
-} from "./tarot-minor-cards";
+  getTarotCardContentById,
+  getTarotCardContentByKey,
+} from "@manyang/content/tarot";
+import type {
+  TarotCard as TarotCardSnapshot,
+  TarotCardContent,
+} from "@manyang/contracts/tarot";
 
-export type TarotCard = (TarotMajorCard & { arcana?: "major"; cardKey?: string }) | TarotMinorCard;
+import { tarotMajorCards } from "./tarot-major-cards";
+import { tarotMinorCards } from "./tarot-minor-cards";
 
-const tarotMajorDeckCards = tarotMajorCards.map((card) => ({
-  ...card,
-  arcana: "major" as const,
-  cardKey: `major:${String(card.id).padStart(2, "0")}`,
-}));
+export type TarotCard = TarotCardSnapshot;
+
+type ResolvedTarotCard = TarotCardContent & {
+  image: string;
+};
 
 export { tarotMinorCards };
 
-export const tarotCards = [...tarotMajorDeckCards, ...tarotMinorCards] as const satisfies readonly TarotCard[];
+export const tarotCards: readonly ResolvedTarotCard[] = [
+  ...tarotMajorCards,
+  ...tarotMinorCards,
+] satisfies readonly ResolvedTarotCard[];
 
 export function getTarotCardById(id: number): TarotCard | null {
-  return tarotCards.find((card) => card.id === id) ?? getTarotMajorCardById(id) ?? getTarotMinorCardById(id);
+  const sharedCard = getTarotCardContentById(id);
+
+  if (!sharedCard) {
+    return null;
+  }
+
+  return tarotCards.find((card) => card.id === sharedCard.id) ?? null;
 }
 
 export function getTarotCardByKey(cardKey: string): TarotCard | null {
-  return tarotCards.find((card) => card.cardKey === cardKey) ?? null;
+  const sharedCard = getTarotCardContentByKey(cardKey);
+
+  if (!sharedCard) {
+    return null;
+  }
+
+  return tarotCards.find((card) => card.cardKey === sharedCard.cardKey) ?? null;
 }
