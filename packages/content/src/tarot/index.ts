@@ -1,4 +1,9 @@
 export {
+  getTarotMajorCardContentById,
+  tarotMajorCardContent,
+} from "./major";
+
+export {
   getTarotQuestionByKey,
   getTarotQuestionStateByKey,
   tarotQuestionStates,

@@ -6,6 +6,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./tarot": "./src/tarot/index.ts",
+    "./tarot/major": "./src/tarot/major.ts",
     "./tarot/questions": "./src/tarot/questions.ts"
   },
   "scripts": {
