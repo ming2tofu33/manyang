@@ -18,17 +18,20 @@ status: active
 
 현재 추가 준비 목표는 **실제 LLM/RAG 구현 전에 백과사전 데이터 구조, 검색 계약, 품질 검증 기준을 먼저 고정하는 것**이다.
 
-## Web/Mobile Shared Foundation (2026-07-15)
+## Web/Mobile Shared Foundation (2026-07-16)
 
 - [x] 루트 npm workspace 구성
 - [x] `@manyang/contracts`와 꿈 transport 계약 생성
 - [x] 백엔드와 웹의 꿈 transport 계약 공유
 - [x] API reader/locale 검증 상수 통합
-- [ ] Expo 클라이언트 시작 (이번 스프린트 범위 아님)
+- [x] 공용 타로 기반 전환 (`@manyang/contracts` 계약, `@manyang/content` 78장 카드·질문 상태 6개, 웹 호환 어댑터, 백엔드 경계)
+- [ ] Expo 클라이언트 시작 (미착수, 후속 범위)
+- [ ] 관계 기능 확장 (미착수, 후속 범위)
+- [ ] 달 조각·결제 연동 (미착수, 후속 범위)
 
 ### Next Recommended Sprint
 
-- 공통 타로 계약과 content/domain 분리
+- 타로 순수 규칙과 브라우저 저장 어댑터 분리
 
 ## Tasks
 
@@ -97,12 +100,13 @@ status: active
 | RAG-IMP-04 | 트리거/searchText 동의어 확장 | done | P1 | eval 미스 4건(teeth·death·chased·en-teeth) 폐쇄: 과거형 구문 alias(이가 빠졌/도망쳤), 죽은/죽었, molar(s), KOREAN_SUFFIXES에 "와서" 추가. **micro/macro recall 1.0, precision@5 0.885, 전 태그 1.0** |
 | RAG-IMP-05 | 재랭킹/임계값 튜닝 | doing | P1 | (완료: 벡터 explicit-동반 임계값 0.68→0.62 — en teeth 0.628 구제, precision 0.738 유지) 남은: exact 포화·일반어 라벨 과매치 |
 | RAG-IMP-06 | 무매칭/저매칭 폴백 전략 | done | P2 | `dream-fallback-grounding.ts` 안전·보편 grounding 데이터 세트 + 리졸버. structured가 explicit 상징 0이면 `fallbackGrounding` 세팅(남은 감정/분위기 앵커), mock baseline·LLM 프롬프트가 그것에 기대 — 상징 날조 대신 "남은 느낌"을 읽음. evidence-gate 유지, 점/의료 금지. 7 신규 테스트 |
-| RAG-IMP-07 | 타로 카드 데이터 테이블 분리 | todo | P2 | 78장 의미를 RAG 아닌 버전관리 lookup 데이터로 정리 |
+| RAG-IMP-07A | 타로 카드 공용 lookup 원본 분리 | done | P2 | `@manyang/content`에 78장 의미를 RAG 아닌 버전관리 lookup 데이터로 정리 |
+| RAG-IMP-07B | 타로 RAG 수집·인덱싱·검색·평가 | todo | P2 | 필요성 검증 전까지 후속으로 보류하며 현재 공용 lookup 원본에는 포함하지 않음 |
 | RAG-IMP-08 | coverage eval(심볼 충분도) | done | P0 | `coverage-eval.ts` 72개 흔한 상징 탐침, matching/coverage 갭 분리, `npm run eval:coverage`, 회귀 테스트 |
 | RAG-IMP-09 | 하드코딩 정리 | done | P2 | 흩뿌린 if-체인을 데이터 표로: mock-analysis `SYMBOL_COMBO_OVERRIDES`(3함수 6블록→1표), structured `SYMBOL_EMOTION_SIGNALS`·`SCENE_QUERY_RULES`(trigger 선언형)·`AMBIGUOUS_SCENE_OVERRIDES`(searching 3곳 통합). 동작 보존(167 테스트·eval 불변), 새 조합=표에 한 줄 |
 | TAROT-00 | 마이너 카드 누끼와 1장 뽑기 연결 | done | P0 | 원본 보존, 56장 배경 제거 산출물 생성, minor asset mapping, daily one-card minor 렌더 검증 |
 | TAROT-DOC-01 | 타로 카드 해설 문서 커밋 준비 | review | P0 | `docs/tarot/`의 메이저/마이너 해설 문서를 커밋 가능한 기준 문서로 확정 |
-| TAROT-01 | 타로 78장 카드 데이터 계약 통합 | review | P0 | 공통 `TarotCard`, 안정 `cardKey`, legacy major id 호환 테스트 구현 완료. 명시적 `deckMode`는 후속 |
+| TAROT-01 | 타로 78장 카드 데이터 계약 통합 | done | P0 | `@manyang/contracts` 계약과 `@manyang/content` 78장 공용 원본, 안정 `cardKey`, legacy major id 호환 테스트 완료. 명시적 `deckMode`는 후속 |
 | TAROT-02 | 오늘의 한 장 78장 확장 | done | P0 | daily one-card가 전체 78장 덱에서 뽑히고 기존 저장 결과가 계속 열림 |
 | TAROT-03 | 질문별 한 장 리딩 MVP | review | P0 | 상태 선택 -> 질문 5개 -> 카드 결과 -> 저장/공유 진입점 구현. `question_one_card`, `tarot_question_one_card`, future `rewarded_ad` 계약 포함 |
 | TAROT-04 | 카드 기록/회고 루프 | todo | P1 | 사용자가 뽑은 카드, 질문, 한 줄 회고를 기록에서 다시 확인 |
@@ -168,7 +172,7 @@ status: active
 - [x] RAG-IMP-04 ✓: 평가셋 recall 구멍 4건 전부 폐쇄. 핵심 인사이트 = 한국어 과거형 축약(빠지+었→빠졌, 도망치+었→도망쳤)은 어간이 바뀌어 현재형 alias로 못 잡으니 **과거형 구문 alias를 따로** 넣어야 하고, 오다/가다 불규칙 연결어미 "와서"는 KOREAN_SUFFIXES에 없어 "뒤따라"가 "뒤따라와서"를 못 잡았다(추가함). 결과 micro/macro recall 1.0·precision@5 0.885·perfect-recall 1.0. retrieval-eval.test floor를 0.95/0.95/0.85로 상향해 gain 고정.
 - [ ] RAG-IMP-05: 재랭킹 — exact 포화 완화, 일반어 라벨 과매치 보정(예: "땅" 라벨이 snake를 제친 사례)
 - [ ] RAG-IMP-06: 저/무매칭 폴백
-- [ ] RAG-IMP-07: 타로 카드 의미를 버전관리 lookup 데이터로 분리(타로는 닫힌 집합이라 RAG 대상 아님)
+- [ ] RAG-IMP-07B: 타로 RAG 수집·인덱싱·검색·평가는 필요성 검증 전까지 보류
 
 ### 측정 결과 (2026-06-03)
 

@@ -8,7 +8,7 @@ tags:
   - monorepo
 source: product discussion 2026-07-11
 status: confirmed
-updated: 2026-07-15
+updated: 2026-07-16
 ---
 
 # Web Mobile Shared Architecture
@@ -246,6 +246,7 @@ web/mobile → backend 직접 import 금지
 ## Progress
 
 - 2026-07-15: 루트 npm workspace와 `@manyang/contracts`를 도입하고, 꿈(dream) transport 계약을 백엔드와 웹이 공유하도록 전환했다. 타로 계약과 content/domain 분리는 후속 스프린트로 남긴다. Expo 클라이언트는 아직 시작하지 않았다.
+- 2026-07-16: `@manyang/contracts`의 타로 계약과 `@manyang/content`의 78장 카드·질문 콘텐츠를 공용 원본으로 전환했다. 웹은 `imageKey`를 기존 URL로 변환하는 호환 어댑터를 사용하며, 기존 API·저장 기록·뽑기·UI 동작은 유지했다. 브라우저 저장소와 순수 뽑기 규칙의 분리는 후속 작업으로 남긴다.
 
 ## Related
 
