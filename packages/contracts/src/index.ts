@@ -1,4 +1,13 @@
 export { CAT_READER_TYPES, DREAM_LOCALES } from "./dream";
+export {
+  TAROT_ARCANAS,
+  TAROT_MINOR_RANKS,
+  TAROT_MINOR_SUITS,
+  TAROT_ORIENTATIONS,
+  TAROT_POSITIONS,
+  TAROT_SPREADS,
+  TAROT_UNLOCK_METHODS,
+} from "./tarot";
 
 export type {
   CatReaderAccess,
@@ -12,3 +21,37 @@ export type {
   DreamSymbolCategory,
   EncyclopediaEntry,
 } from "./dream";
+
+export type {
+  DailyTarotCardSelection,
+  DailyTarotGeneratedCardReading,
+  DailyTarotGeneratedReading,
+  DailyTarotOption,
+  DailyTarotPosition,
+  DailyTarotQuestionContext,
+  DailyTarotReading,
+  TarotArcana,
+  TarotCard,
+  TarotCardContent,
+  TarotCardContexts,
+  TarotCardMeaning,
+  TarotCardSymbolMeaning,
+  TarotMajorCardContent,
+  TarotMajorCardSnapshot,
+  TarotMinorCardContent,
+  TarotMinorCardSnapshot,
+  TarotMinorRank,
+  TarotMinorSuit,
+  TarotOrientation,
+  TarotPromptCardMeaning,
+  TarotQuestionPrompt,
+  TarotQuestionState,
+  TarotQuestionStateKey,
+  TarotReadingOrientation,
+  TarotReadingPosition,
+  TarotReadingRequest,
+  TarotReadingSelectionRequest,
+  TarotReadingSpread,
+  TarotSpread,
+  TarotUnlockMethod,
+} from "./tarot";
