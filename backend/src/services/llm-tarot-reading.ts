@@ -1,8 +1,12 @@
 import {
+  TAROT_POSITIONS,
+  type TarotReadingPosition,
+} from "@manyang/contracts/tarot";
+
+import {
   buildTarotReadingPrompt,
   TAROT_READING_DRAFT_JSON_SCHEMA,
   TAROT_READING_DRAFT_SCHEMA_NAME,
-  type TarotReadingPosition,
   type TarotReadingPromptInput,
 } from "./tarot-reading-prompt";
 import { LlmProviderTimeoutError, type DreamReadingLlmProvider, type DreamReadingLlmRequest } from "./llm-provider";
@@ -43,6 +47,8 @@ export type GenerateTarotReadingOptions = {
 };
 
 const DEFAULT_TAROT_LLM_PROVIDER_TIMEOUT_MS = 25_000;
+const tarotReadingPositionValues = new Set<unknown>(TAROT_POSITIONS);
+const threeCardTarotReadingPositions = TAROT_POSITIONS.slice(1);
 
 class InvalidTarotReadingDraftError extends Error {
   constructor() {
@@ -134,7 +140,7 @@ function cleanString(value: unknown, maxLength = 1400): string | undefined {
 }
 
 function isTarotReadingPosition(value: unknown): value is TarotReadingPosition {
-  return value === "today" || value === "situation" || value === "flow" || value === "advice";
+  return tarotReadingPositionValues.has(value);
 }
 
 function parseStringArray(value: unknown, maxItems: number, maxItemLength: number): string[] {
@@ -184,11 +190,14 @@ function parseCardReadings(value: unknown): TarotGeneratedCardReading[] {
   });
 }
 
-function expectedPositionsForInput(input: TarotReadingInput): TarotReadingPosition[] {
-  return input.spread === "daily_three_card" ? ["situation", "flow", "advice"] : [];
+function expectedPositionsForInput(input: TarotReadingInput): readonly TarotReadingPosition[] {
+  return input.spread === "daily_three_card" ? threeCardTarotReadingPositions : [];
 }
 
-function hasExactPositions(readings: TarotGeneratedCardReading[], expectedPositions: TarotReadingPosition[]): boolean {
+function hasExactPositions(
+  readings: TarotGeneratedCardReading[],
+  expectedPositions: readonly TarotReadingPosition[],
+): boolean {
   if (readings.length !== expectedPositions.length) {
     return false;
   }

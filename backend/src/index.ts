@@ -13,6 +13,48 @@ export type {
 
 export { CAT_READER_TYPES, DREAM_LOCALES } from "@manyang/contracts/dream";
 export {
+  TAROT_ARCANAS,
+  TAROT_MINOR_RANKS,
+  TAROT_MINOR_SUITS,
+  TAROT_ORIENTATIONS,
+  TAROT_POSITIONS,
+  TAROT_SPREADS,
+  TAROT_UNLOCK_METHODS,
+} from "@manyang/contracts/tarot";
+export type {
+  DailyTarotCardSelection,
+  DailyTarotGeneratedCardReading,
+  DailyTarotGeneratedReading,
+  DailyTarotOption,
+  DailyTarotPosition,
+  DailyTarotQuestionContext,
+  DailyTarotReading,
+  TarotArcana,
+  TarotCard,
+  TarotCardContent,
+  TarotCardContexts,
+  TarotCardMeaning,
+  TarotCardSymbolMeaning,
+  TarotMajorCardContent,
+  TarotMajorCardSnapshot,
+  TarotMinorCardContent,
+  TarotMinorCardSnapshot,
+  TarotMinorRank,
+  TarotMinorSuit,
+  TarotOrientation,
+  TarotPromptCardMeaning,
+  TarotQuestionPrompt,
+  TarotQuestionState,
+  TarotQuestionStateKey,
+  TarotReadingOrientation,
+  TarotReadingPosition,
+  TarotReadingRequest,
+  TarotReadingSelectionRequest,
+  TarotReadingSpread,
+  TarotSpread,
+  TarotUnlockMethod,
+} from "@manyang/contracts/tarot";
+export {
   SUPPORTED_LOCALES,
   SYMBOL_ACCESS_TIERS,
   SYMBOL_CATEGORIES,
@@ -78,13 +120,9 @@ export {
 } from "./services/tarot-reading-prompt";
 export type {
   TarotPromptCard,
-  TarotPromptCardMeaning,
-  TarotReadingOrientation,
-  TarotReadingPosition,
   TarotReadingPrompt,
   TarotReadingPromptCardInput,
   TarotReadingPromptInput,
-  TarotReadingSpread,
 } from "./services/tarot-reading-prompt";
 export { buildDreamRagChunks } from "./services/dream-rag-chunks";
 export type { DreamRagChunk } from "./services/dream-rag-chunks";

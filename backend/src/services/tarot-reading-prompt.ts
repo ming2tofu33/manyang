@@ -1,3 +1,21 @@
+import {
+  TAROT_POSITIONS,
+  type DailyTarotQuestionContext,
+  type TarotCardSymbolMeaning,
+  type TarotPromptCardMeaning,
+  type TarotReadingOrientation,
+  type TarotReadingPosition,
+  type TarotReadingSpread,
+} from "@manyang/contracts/tarot";
+
+export type {
+  TarotCardSymbolMeaning,
+  TarotPromptCardMeaning,
+  TarotReadingOrientation,
+  TarotReadingPosition,
+  TarotReadingSpread,
+} from "@manyang/contracts/tarot";
+
 export const TAROT_READING_DRAFT_SCHEMA_NAME = "tarot_reading_draft";
 
 export const TAROT_READING_DRAFT_JSON_SCHEMA = {
@@ -31,7 +49,7 @@ export const TAROT_READING_DRAFT_JSON_SCHEMA = {
         properties: {
           position: {
             type: "string",
-            enum: ["today", "situation", "flow", "advice"],
+            enum: TAROT_POSITIONS,
           },
           heading: {
             type: "string",
@@ -48,22 +66,6 @@ export const TAROT_READING_DRAFT_JSON_SCHEMA = {
   },
   required: ["title", "overview", "keywords", "cardReadings"],
 } as const;
-
-export type TarotReadingSpread = "daily_one_card" | "question_one_card" | "daily_three_card";
-export type TarotReadingPosition = "today" | "situation" | "flow" | "advice";
-export type TarotReadingOrientation = "upright" | "reversed";
-
-export type TarotCardSymbolMeaning = {
-  symbol: string;
-  meaning: string;
-};
-
-export type TarotPromptCardMeaning = {
-  summary: string;
-  dailyFlow: string;
-  cardMessage: string;
-  readingScene: string;
-};
 
 export type TarotPromptCard = {
   id: number;
@@ -83,12 +85,7 @@ export type TarotReadingPromptCardInput = {
   card: TarotPromptCard;
 };
 
-export type TarotQuestionPromptContext = {
-  stateKey: string;
-  stateLabel: string;
-  questionKey: string;
-  questionText: string;
-};
+export type TarotQuestionPromptContext = DailyTarotQuestionContext;
 
 export type TarotQuestionInterpretationLens = {
   domain: string;
