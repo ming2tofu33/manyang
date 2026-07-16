@@ -3,6 +3,8 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { getTarotCardContentByKey } from "@manyang/content/tarot";
+
 import type { TarotReadingOrientation } from "../services/tarot-reading-prompt";
 import {
   createTarotModelAbMarkdown,
@@ -11,7 +13,6 @@ import {
   type TarotModelAbCase,
 } from "../services/tarot-model-ab-eval";
 import { createOpenAIResponsesProviderFromEnv } from "../services/openai-responses-provider";
-import { getTarotCardByKey } from "../../../frontend/src/lib/tarot-cards";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(scriptDir, "../../..");
@@ -301,7 +302,7 @@ function parseScriptOptions(argv: readonly string[], env: NodeJS.ProcessEnv): Sc
 }
 
 function getRequiredTarotCard(cardKey: string) {
-  const card = getTarotCardByKey(cardKey);
+  const card = getTarotCardContentByKey(cardKey);
 
   if (!card) {
     throw new Error(`Unknown tarot card key: ${cardKey}`);

@@ -7,6 +7,22 @@ import {
   type TarotReadingInput,
   type TarotReadingResult,
 } from "@manyang/backend";
+import {
+  TAROT_ORIENTATIONS,
+  TAROT_POSITIONS,
+  TAROT_SPREADS,
+  TAROT_UNLOCK_METHODS,
+  type DailyTarotCardSelection,
+  type DailyTarotGeneratedReading,
+  type DailyTarotPosition,
+  type DailyTarotQuestionContext,
+  type DailyTarotReading,
+  type TarotOrientation,
+  type TarotReadingRequest,
+  type TarotReadingSelectionRequest,
+  type TarotSpread,
+  type TarotUnlockMethod,
+} from "@manyang/contracts/tarot";
 
 import { randomUUID } from "node:crypto";
 
@@ -28,16 +44,6 @@ import {
   type GuestSession,
 } from "@/lib/server/guest-session";
 import { getAuthenticatedAccessPlan, getAuthenticatedUserId } from "@/lib/supabase/server";
-import type {
-  DailyTarotCardSelection,
-  DailyTarotGeneratedReading,
-  DailyTarotPosition,
-  DailyTarotQuestionContext,
-  DailyTarotReading,
-  TarotUnlockMethod,
-  TarotOrientation,
-  TarotSpread,
-} from "@/lib/daily-tarot";
 import type { AccessPlan } from "@/lib/access-policy";
 import { canUseTarotThreeCardReading } from "@/lib/tarot-event";
 
@@ -79,25 +85,10 @@ function logTarotReadingEvent(event: TarotReadingLogEvent): void {
   console.warn(JSON.stringify({ ...base, reason: event.reason, retryable: event.retryable }));
 }
 
-type TarotReadingSelectionRequest = {
-  cardId: number;
-  orientation: TarotOrientation;
-  position: DailyTarotPosition;
-};
-
-type TarotReadingRequestBody = {
-  appDate: string;
-  spread: TarotSpread;
-  selectedAt: string;
-  selections: TarotReadingSelectionRequest[];
-  questionContext?: DailyTarotQuestionContext;
-  unlockMethod?: TarotUnlockMethod;
-};
-
 type TarotReadingValidationResult =
   | {
       ok: true;
-      value: TarotReadingRequestBody;
+      value: TarotReadingRequest;
     }
   | {
       ok: false;
@@ -107,6 +98,12 @@ type TarotReadingValidationResult =
 const MIN_LLM_TIMEOUT_MS = 1_000;
 const MAX_LLM_TIMEOUT_MS = 90_000;
 const DEFAULT_TAROT_LLM_TIMEOUT_MS = 25_000;
+const tarotSpreadValues = new Set<unknown>(TAROT_SPREADS);
+const tarotOrientationValues = new Set<unknown>(TAROT_ORIENTATIONS);
+const dailyTarotPositionValues = new Set<unknown>(TAROT_POSITIONS);
+const tarotUnlockMethodValues = new Set<unknown>(TAROT_UNLOCK_METHODS);
+const oneCardTarotPositions = TAROT_POSITIONS.slice(0, 1);
+const threeCardTarotPositions = TAROT_POSITIONS.slice(1);
 
 export type TarotReadingsRouteDependencies = {
   getAuthenticatedUserId?: () => Promise<string | null>;
@@ -153,15 +150,15 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function isTarotSpread(value: unknown): value is TarotSpread {
-  return value === "daily_one_card" || value === "question_one_card" || value === "daily_three_card";
+  return tarotSpreadValues.has(value);
 }
 
 function isTarotOrientation(value: unknown): value is TarotOrientation {
-  return value === "upright" || value === "reversed";
+  return tarotOrientationValues.has(value);
 }
 
 function isDailyTarotPosition(value: unknown): value is DailyTarotPosition {
-  return value === "today" || value === "situation" || value === "flow" || value === "advice";
+  return dailyTarotPositionValues.has(value);
 }
 
 function isDailyTarotQuestionContext(value: unknown): value is DailyTarotQuestionContext {
@@ -179,11 +176,11 @@ function isDailyTarotQuestionContext(value: unknown): value is DailyTarotQuestio
 }
 
 function isTarotUnlockMethod(value: unknown): value is TarotUnlockMethod {
-  return value === "daily_free" || value === "rewarded_ad" || value === "moon_pass" || value === "admin";
+  return tarotUnlockMethodValues.has(value);
 }
 
-function expectedPositionsForSpread(spread: TarotSpread): DailyTarotPosition[] {
-  return spread === "daily_three_card" ? ["situation", "flow", "advice"] : ["today"];
+function expectedPositionsForSpread(spread: TarotSpread): readonly DailyTarotPosition[] {
+  return spread === "daily_three_card" ? threeCardTarotPositions : oneCardTarotPositions;
 }
 
 function createUnavailablePayload(reason: Extract<TarotReadingResult, { status: "unavailable" }>["reason"], retryable: boolean) {
@@ -374,7 +371,7 @@ function resolveSelection(selection: TarotReadingSelectionRequest): DailyTarotCa
   };
 }
 
-function createReadingId(input: TarotReadingRequestBody): string {
+function createReadingId(input: TarotReadingRequest): string {
   if (input.spread === "question_one_card" && input.questionContext) {
     return `daily-tarot-question_one_card-${input.appDate}-${input.questionContext.stateKey}-${input.questionContext.questionKey}-${input.unlockMethod ?? "daily_free"}`;
   }
@@ -382,7 +379,7 @@ function createReadingId(input: TarotReadingRequestBody): string {
   return `daily-tarot-${input.spread}-${input.appDate}`;
 }
 
-function createReadingPersistenceKeyFromRequest(input: TarotReadingRequestBody): string {
+function createReadingPersistenceKeyFromRequest(input: TarotReadingRequest): string {
   if (input.spread !== "question_one_card" || !input.questionContext) {
     return "daily";
   }
@@ -407,7 +404,7 @@ function createGeneratedReadingWithDictionaryAdvice(
 }
 
 function createDailyTarotReadingFromGenerated(
-  input: TarotReadingRequestBody,
+  input: TarotReadingRequest,
   selections: DailyTarotCardSelection[],
   generated: Extract<TarotReadingResult, { status: "ok" }>["reading"],
 ): DailyTarotReading {
@@ -440,7 +437,7 @@ function createDailyTarotReadingFromGenerated(
 }
 
 function createTarotReadingInput(
-  requestBody: TarotReadingRequestBody,
+  requestBody: TarotReadingRequest,
   selections: DailyTarotCardSelection[],
 ): TarotReadingInput {
   return {
@@ -599,7 +596,7 @@ export async function handleTarotReadingRequest(
   const userId = await resolvedDependencies.getAuthenticatedUserId();
   const accessPlan = await resolvedDependencies.getAccessPlanForUser(userId);
   const isAdmin = userId ? await resolvedDependencies.isAdminUser(userId) : false;
-  const requestBody: TarotReadingRequestBody =
+  const requestBody: TarotReadingRequest =
     validatedBody.value.spread === "question_one_card"
       ? {
           ...validatedBody.value,

@@ -2,7 +2,11 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, test } from "vitest";
 
-import { getTarotMajorCardById, tarotMajorCards } from "./tarot-major-cards";
+import {
+  getTarotMajorCardById,
+  tarotMajorCards,
+  type TarotMajorCard,
+} from "./tarot-major-cards";
 
 const publicAssetExists = (assetPath: string) =>
   existsSync(path.join(process.cwd(), "public", assetPath.replace(/^\//, "")));
@@ -57,6 +61,25 @@ describe("tarot major cards", () => {
     expect(tarotMajorCards).toHaveLength(22);
     expect(tarotMajorCards.map((card) => card.id)).toEqual(Array.from({ length: 22 }, (_, id) => id));
     expect(tarotMajorCards.map((card) => card.slug)).toEqual(expectedSlugs);
+  });
+
+  test("exposes the resolved web collection as a readonly array", () => {
+    type HasPush<T> = "push" extends keyof T ? true : false;
+    const hasPush: HasPush<typeof tarotMajorCards> = false;
+
+    expect(hasPush).toBe(false);
+  });
+
+  test("keeps legacy major card snapshots assignable to the public web type", () => {
+    const { arcana, cardKey, imageKey, ...legacyMajorCard } = tarotMajorCards[0];
+    const compatibleLegacyMajorCard: TarotMajorCard = legacyMajorCard;
+
+    expect(compatibleLegacyMajorCard.slug).toBe("the-fool");
+    expect({ arcana, cardKey, imageKey }).toEqual({
+      arcana: "major",
+      cardKey: "major:00",
+      imageKey: "major/00-the-fool.png",
+    });
   });
 
   test("uses expected display names and slugs for the first and final cards", () => {

@@ -1,67 +1,35 @@
+import type {
+  DailyTarotCardSelection,
+  DailyTarotGeneratedCardReading,
+  DailyTarotGeneratedReading,
+  DailyTarotOption,
+  DailyTarotPosition,
+  DailyTarotQuestionContext,
+  DailyTarotReading,
+  TarotOrientation,
+  TarotSpread,
+  TarotUnlockMethod,
+} from "@manyang/contracts/tarot";
+
 import { getTarotCardById, tarotCards, type TarotCard } from "./tarot-cards";
+
+export type {
+  DailyTarotCardSelection,
+  DailyTarotGeneratedCardReading,
+  DailyTarotGeneratedReading,
+  DailyTarotOption,
+  DailyTarotPosition,
+  DailyTarotQuestionContext,
+  DailyTarotReading,
+  TarotOrientation,
+  TarotSpread,
+  TarotUnlockMethod,
+} from "@manyang/contracts/tarot";
 
 export type StorageLike = {
   getItem(key: string): string | null;
   setItem(key: string, value: string): void;
   removeItem(key: string): void;
-};
-
-export type TarotOrientation = "upright" | "reversed";
-export type TarotSpread = "daily_one_card" | "question_one_card" | "daily_three_card";
-export type TarotUnlockMethod = "daily_free" | "rewarded_ad" | "moon_pass" | "admin";
-export type DailyTarotPosition = "today" | "situation" | "flow" | "advice";
-
-export type DailyTarotOption = {
-  id: string;
-  cardId: number;
-  orientation: TarotOrientation;
-};
-
-export type DailyTarotCardSelection = {
-  position: DailyTarotPosition;
-  card: TarotCard;
-  orientation: TarotOrientation;
-};
-
-export type DailyTarotGeneratedCardReading = {
-  position: DailyTarotPosition;
-  heading: string;
-  reading: string;
-};
-
-export type DailyTarotGeneratedReading = {
-  title: string;
-  overview: string;
-  keywords?: string[];
-  cardReadings: DailyTarotGeneratedCardReading[];
-  advice: string;
-};
-
-export type DailyTarotQuestionContext = {
-  stateKey: string;
-  stateLabel: string;
-  questionKey: string;
-  questionText: string;
-};
-
-export type DailyTarotReading = {
-  id: string;
-  spread: TarotSpread;
-  source?: "local" | "llm";
-  drawIdentityKey?: string;
-  appDate: string;
-  selectedAt: string;
-  card: TarotCard;
-  orientation: TarotOrientation;
-  position: DailyTarotPosition;
-  cards?: DailyTarotCardSelection[];
-  generated?: DailyTarotGeneratedReading;
-  keywords: string[];
-  title: string;
-  message: string;
-  advice: string;
-  questionContext?: DailyTarotQuestionContext;
-  unlockMethod?: TarotUnlockMethod;
 };
 
 export type CreateDailyTarotReadingInput = {

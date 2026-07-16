@@ -1,10 +1,22 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
+import {
+  TAROT_ORIENTATIONS,
+  TAROT_POSITIONS,
+  TAROT_SPREADS,
+  TAROT_UNLOCK_METHODS,
+  type TarotSpread,
+} from "@manyang/contracts/tarot";
 
 import { getTarotMajorCardById } from "@/lib/tarot-major-cards";
 import { getTarotCardById } from "@/lib/tarot-cards";
 import type { DailyTarotReading } from "@/lib/daily-tarot";
 
-import { handleTarotReadingRequest, resolveTarotLlmModel, resolveTarotLlmTimeoutMs } from "./route";
+import {
+  handleTarotReadingRequest,
+  resolveTarotLlmModel,
+  resolveTarotLlmTimeoutMs,
+  validateTarotReadingRequestBody,
+} from "./route";
 
 afterEach(() => {
   vi.unstubAllEnvs();
@@ -95,7 +107,102 @@ const generatedThreeCard = {
   advice: "이 provider advice는 결과에 포함되지 않아야 합니다.",
 };
 
+function createBodyForSpread(spread: TarotSpread) {
+  if (spread === "question_one_card") {
+    return createQuestionOneCardBody();
+  }
+
+  return spread === "daily_three_card" ? createThreeCardBody() : createOneCardBody();
+}
+
 describe("POST /api/tarot/readings", () => {
+  test("accepts every spread in the shared tarot contract", () => {
+    for (const spread of TAROT_SPREADS) {
+      expect(validateTarotReadingRequestBody(createBodyForSpread(spread))).toMatchObject({
+        ok: true,
+        value: { spread },
+      });
+    }
+  });
+
+  test("accepts every orientation in the shared tarot contract", () => {
+    for (const orientation of TAROT_ORIENTATIONS) {
+      expect(
+        validateTarotReadingRequestBody(
+          createOneCardBody({
+            selections: [{ cardId: 0, orientation, position: "today" }],
+          }),
+        ),
+      ).toMatchObject({
+        ok: true,
+        value: { selections: [{ orientation }] },
+      });
+    }
+  });
+
+  test("accepts every position in the shared tarot contract", () => {
+    const validatedBodies = [
+      validateTarotReadingRequestBody(createOneCardBody()),
+      validateTarotReadingRequestBody(createThreeCardBody()),
+    ];
+    const acceptedPositions = validatedBodies.flatMap((result) =>
+      result.ok ? result.value.selections.map((selection) => selection.position) : [],
+    );
+
+    expect(acceptedPositions).toEqual(TAROT_POSITIONS);
+  });
+
+  test("accepts every unlock method in the shared tarot contract", () => {
+    for (const unlockMethod of TAROT_UNLOCK_METHODS) {
+      expect(
+        validateTarotReadingRequestBody(createQuestionOneCardBody({ unlockMethod })),
+      ).toMatchObject({
+        ok: true,
+        value: { spread: "question_one_card", unlockMethod },
+      });
+    }
+  });
+
+  test.each([
+    {
+      field: "spread",
+      body: createOneCardBody({ spread: "weekly_four_card" }),
+      error: "spread must be daily_one_card, question_one_card, or daily_three_card",
+    },
+    {
+      field: "orientation",
+      body: createOneCardBody({
+        selections: [{ cardId: 0, orientation: "sideways", position: "today" }],
+      }),
+      error: "selection.orientation must be upright or reversed",
+    },
+    {
+      field: "position",
+      body: createOneCardBody({
+        selections: [{ cardId: 0, orientation: "upright", position: "crossroads" }],
+      }),
+      error: "selection.position must be today",
+    },
+    {
+      field: "unlock method",
+      body: createQuestionOneCardBody({ unlockMethod: "subscription" }),
+      error: "unlockMethod must be daily_free, rewarded_ad, moon_pass, or admin",
+    },
+  ])("rejects an invalid $field with the exact validation response", async ({ body, error }) => {
+    const expectedValidationResult = { ok: false as const, error };
+    const generateTarotReadingForUser = vi.fn();
+
+    expect(validateTarotReadingRequestBody(body)).toEqual(expectedValidationResult);
+
+    const response = await handleTarotReadingRequest(createJsonRequest(body), {
+      generateTarotReadingForUser,
+    });
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toEqual({ error });
+    expect(generateTarotReadingForUser).not.toHaveBeenCalled();
+  });
+
   test("resolves tarot LLM timeout env with safe bounds", () => {
     expect(resolveTarotLlmTimeoutMs({})).toBe(25_000);
     expect(resolveTarotLlmTimeoutMs({ MANYANG_LLM_TIMEOUT_MS: "45000" })).toBe(45_000);
