@@ -243,32 +243,6 @@ function getCircularDeckOffset(index: number, activeIndex: number, length: numbe
   return offset;
 }
 
-export function createPreparedDailyTarotSelections(
-  options: DailyTarotOption[],
-  positions: readonly DailyTarotPosition[],
-): DailyTarotCardSelection[] {
-  if (options.length === 0 || positions.length === 0) {
-    return [];
-  }
-
-  const centerIndex = Math.floor(options.length / 2);
-
-  return positions.flatMap((position, index) => {
-    const option = options[wrapDeckIndex(centerIndex + index, options.length)];
-    const card = option ? getTarotCardById(option.cardId) : null;
-
-    return option && card
-      ? [
-          {
-            position,
-            card,
-            orientation: option.orientation,
-          },
-        ]
-      : [];
-  });
-}
-
 export function canAcceptDailyTarotSelection({
   isBusy,
   isDrawIdentityPending,
@@ -1421,10 +1395,6 @@ export function DailyTarotClient({
     isAdmin: accessState.role === "admin",
   });
   const positions = spreadPositions[selectedSpread];
-  const preparedSelections = useMemo(
-    () => createPreparedDailyTarotSelections(options, positions),
-    [options, positions],
-  );
   const storedReading = useSyncExternalStore(
     subscribeToDailyTarot,
     () => (ignoreStoredReading ? null : getStableDailyTarotReadingSnapshot(appDate, selectedSpread, drawIdentityKey)),
@@ -1471,7 +1441,6 @@ export function DailyTarotClient({
   const isDrawIdentityPending = drawIdentityKey === pendingDailyTarotDrawIdentityKey;
   const hasOpenedAllCards = pendingSelections.length >= positions.length;
   const shouldShowShuffleIntro = pendingSelections.length === 0 && generationStatus === "idle";
-  const preparedRequestKey = createGenerationRequestKey(appDate, selectedSpread, drawIdentityKey, preparedSelections);
   const drawStageInstruction =
     pendingSelections.length === 0
       ? initialDrawInstruction
@@ -1607,37 +1576,6 @@ export function DailyTarotClient({
     }
   }, [appDate, drawIdentityKey, selectedSpread]);
 
-  useEffect(() => {
-    if (
-      isDrawIdentityPending ||
-      reading ||
-      preparedSelections.length !== positions.length ||
-      (selectedSpread === "daily_three_card" && !canUseThreeCard)
-    ) {
-      return;
-    }
-
-    if (generationRequestKeyRef.current === preparedRequestKey && generationRequestStatusRef.current !== "idle") {
-      return;
-    }
-
-    void submitSelections(preparedSelections, {
-      showLoadingImmediately: false,
-      updatePendingSelections: false,
-      requestSpread: selectedSpread,
-      requestKey: preparedRequestKey,
-    });
-  }, [
-    canUseThreeCard,
-    isDrawIdentityPending,
-    positions.length,
-    preparedRequestKey,
-    preparedSelections,
-    reading,
-    selectedSpread,
-    submitSelections,
-  ]);
-
   function handleSelect(option: DailyTarotOption, optionIndex: number) {
     const currentSelections = acceptedSelectionsRef.current;
     const currentSelectionCount = currentSelections.length;
@@ -1656,17 +1594,15 @@ export function DailyTarotClient({
       return;
     }
 
-    const selectedPreparedSelection = preparedSelections[currentSelectionCount];
-    const fallbackCard = getTarotCardById(option.cardId);
+    const selectedCard = getTarotCardById(option.cardId);
     const currentPosition = positions[currentSelectionCount] ?? positions[positions.length - 1];
-    const nextSelection = selectedPreparedSelection ??
-      (fallbackCard
-        ? {
-            position: currentPosition,
-            card: fallbackCard,
-            orientation: option.orientation,
-          }
-        : null);
+    const nextSelection = selectedCard
+      ? {
+          position: currentPosition,
+          card: selectedCard,
+          orientation: option.orientation,
+        }
+      : null;
 
     if (!nextSelection) {
       return;
@@ -1689,15 +1625,17 @@ export function DailyTarotClient({
     setGenerationError(null);
 
     if (nextSelections.length === positions.length) {
-      setPendingSelections(nextSelections);
-      setOpenedReadingRequestKey(preparedRequestKey);
+      const requestKey = createGenerationRequestKey(appDate, selectedSpread, drawIdentityKey, nextSelections);
 
-      if (generationRequestKeyRef.current !== preparedRequestKey || generationRequestStatusRef.current === "idle") {
+      setPendingSelections(nextSelections);
+      setOpenedReadingRequestKey(requestKey);
+
+      if (generationRequestKeyRef.current !== requestKey || generationRequestStatusRef.current === "idle") {
         void submitSelections(nextSelections, {
           showLoadingImmediately: false,
           updatePendingSelections: false,
           requestSpread: selectedSpread,
-          requestKey: preparedRequestKey,
+          requestKey,
         });
       }
     }
